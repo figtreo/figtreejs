@@ -25,7 +25,7 @@ function FigTree(props:{width:number,height:number,layout:"rectangular"|"circula
     const {width,height,margins,tree} = props;
    
     const layout = layoutFunctions[props.layout]
-    const vertices = layout(treeData)
+    const vertices = layout(tree)
         
     const xdomain = extent(Object.values(vertices),d=>d.x);
     const ydomain =  extent(Object.values(vertices),d=>d.y);
@@ -39,9 +39,9 @@ function FigTree(props:{width:number,height:number,layout:"rectangular"|"circula
     for(const [key,value] of Object.entries(vertices)){
         scaledVertices[key] = {id:value.id,x:scales.x(value.x),y:scales.y(value.y)};
     }
-
+    //context gives us a nicer api where the data don't need to based to the subcomponents of the figure
     return (
-                <TreeContext.Provider value={treeData}>
+                <TreeContext.Provider value={tree}>
                     <LayoutContext.Provider value={scaledVertices}>
                        
                         {/*<rect x="0" y="0" width="100%" height="100%" fill="none" pointerEvents={"visible"} onClick={()=>nodeDispatch({type:"clearSelection"})}/>*/}

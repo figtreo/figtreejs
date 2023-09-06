@@ -5,11 +5,6 @@ import withLinearGradient from "../../../../HOC/WithLinearGradient";
 import {areEqualShallow} from "../../../../../utils/utilities";
 
 // potentiall pass in mapper not attrs so we can cache and make more efficient.
-const rectangularBranchPath=(props)=>{
-    let {x0,y0,x1,y1,attrs,...rest} = props;
-    let path ={d:branchPathGenerator({x0,y0,x1,y1})};
-    return(<path {...attrs}  {...path} {...rest} fill={"none"} />)
-};
 function branchPathGenerator({x0,y0,x1,y1}) {
         const branchLine = line()
             .x((v) => v.x)
@@ -22,7 +17,13 @@ function branchPathGenerator({x0,y0,x1,y1}) {
                 ]))
         // return (output)
 }
-const RectangularBranchPath = React.memo(rectangularBranchPath,sameProps);
+const RectangularBranchPath = React.memo((props)=>{
+    let {x0,y0,x1,y1,attrs,...rest} = props;
+    // let path =useSpring({d:branchPathGenerator({x0,y0,x1,y1})});
+    let path ={d:branchPathGenerator({x0,y0,x1,y1})};
+    return(<animated.path {...attrs}  {...path} {...rest} fill={"none"} />)
+}
+,sameProps);
 function sameProps(prev,curr){
     const primitiveKeys=["x0","y0","x1","y1"];
     for(const key of primitiveKeys){

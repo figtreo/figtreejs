@@ -3,9 +3,9 @@ import {useSpring,animated} from "@react-spring/web";
 
 export const AnimatedCircle = React.memo( (props)=>{
    const {attrs,interactions,tooltip,x:cx,y:cy} = props;
-    const visibleProperties= useSpring({...attrs,cx,cy});
+    const visibleProperties= useSpring({...attrs});
     return (
-    	<animated.circle {...tooltip}  className={"node-shape"} {...visibleProperties} {...interactions}/>
+    	<animated.circle {...tooltip}  className={"node-shape"} {...visibleProperties} cx={cx} cy={cy} {...interactions}/>
     	);
 },sameAttributes);
 

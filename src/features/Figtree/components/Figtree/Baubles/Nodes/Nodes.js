@@ -1,7 +1,7 @@
 import React, {useMemo, useContext} from "react"
 import {Circle,AnimatedCircle} from "./Shapes/Circle";
 import CoalescentShape from "./Shapes/CoalescentShape";
-import {useAttributeMappers, useLayout, useScales} from "../../../../hooks";
+import {useAttributeMappers, useLayout, useTree} from "../../../../hooks";
 import Rectangle from "./Shapes/Rectangle";
 
 /**
@@ -15,12 +15,13 @@ import Rectangle from "./Shapes/Rectangle";
 function NodesHOC(ShapeComponent) {
     return function Nodes(props) {
         const vertices =useLayout();
+        const tree = useTree();
         const {filter,hoverKey,selectionKey,sortFactor,...rest} = props;
         const shapeProps = useAttributeMappers(props,hoverKey,selectionKey);
         return (
             <g className={"node-layer"}>
                 {[...Object.values(vertices)].sort((a,b)=>sortFactor*(a.x-b.x)).reduce( (all, v) => {
-                    if (filter(v)) {//filter needs to us tree api
+                    if (filter(tree.getNode(v.id))) {//filter needs to us tree api
                         const element = <ShapeComponent key={v.id} {...rest}    {...shapeProps(v)} vertex={v}  x={v.x} y={v.y}/> //scales above?
                         // const element = <ShapeComponent key={v.id} {...rest}  {...shapeProps(v)}   vertex={v}  x={scales.x(v.x)} y={scales.y(v.y)}/> //scales above?
                             all.push(element)

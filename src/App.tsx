@@ -18,17 +18,13 @@ const tree = parseNewick(newickString);
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <Tree/>
+      <div className="Settings">
         <Layout/>
         <Appearance/>
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <span>
-          <span>Learn </span>
-        </span>
-      </header>
+      </div>
+      <div className="Figtree">
+        <Tree/>
+      </div>
     </div>
   );
 }

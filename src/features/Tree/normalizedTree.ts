@@ -111,9 +111,29 @@ export class NormalizedTree  {
     get root(): Node | null {
         return this.getNode(this._data.rootNode!)
     }
+    getPostorderNodes(node:Node = this.root!):Generator<Node>{
+        return postorderGenerator(this._data,node)
+    }
     // set root(node: Node | null) {
     //     throw new Error("Method not implemented.")
     // }
    
+
+}
+
+
+function* postorderGenerator(tree:TreeState,node: Node): Generator<Node> {
+
+    const traverse = function* (node: Node): Generator<Node> {
+        const childCount = node.children.length;
+        if (childCount>0) {
+            for (let i=0;i<childCount;i++) {
+                const child = tree.nodes.byId[node.children[i]];
+                yield* traverse(child);
+            }
+        }
+        yield node;
+    };
+    yield* traverse(node);
 
 }

@@ -1,5 +1,12 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import layoutReducer from './layout/layoutSlice';
+import appearanceReducer from './appearance/appearanceSlice';
+import { combineReducers } from '@reduxjs/toolkit';
 
-//TODO refactor sub components into this slice
-const initialState = {
-}
+
+const  settingsReducer = combineReducers({
+    layout:layoutReducer,
+    appearance:appearanceReducer
+});
+
+export default settingsReducer;
+//TODO make all the settings. 

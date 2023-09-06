@@ -11,7 +11,7 @@ function BranchesHOC(PathComponent) {
         const {attrs, filter} = props;
         const attrMapper = useMemo(() => mapAttrsToProps(attrs), [attrs]);
         function getPosition(v){
-            const parent = tree.nodes.byId[v.id].parent
+            const parent = tree.getParent(v.id);
             return {
                 x0: vertices[parent].x,
                 y0: vertices[parent].y,
@@ -22,7 +22,7 @@ function BranchesHOC(PathComponent) {
         };
 
         return (<g className={"branch-layer"}>
-            {[...Object.values(vertices)].filter(hasParent(tree)).filter(filter).map(e => {
+            {[...Object.values(vertices)].filter(hasParent(tree)).filter(v=>filter(tree.getNode(v.id))).map(e => {
                 return (<PathComponent  key={`branch-${e.id}`} {...getPosition(e)}
                                        attrs={attrMapper(e)}
                                        edge={e}/>)
@@ -33,7 +33,7 @@ function BranchesHOC(PathComponent) {
 }
 
 const hasParent = (tree) =>(vertex)=>{
-   return tree.nodes.byId[vertex.id].parent?true:false;
+   return tree.getNode(vertex.id).parent?true:false;
 }
 
 const RectangularBranches=BranchesHOC(RectangularBranchPath);

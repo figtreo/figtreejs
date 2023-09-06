@@ -1,3 +1,4 @@
+import { NormalizedTree } from "../../../Tree/normalizedTree";
 import { getHeight, postorderGenerator } from "../../../Tree/treeFunctions";
 import { TreeState } from "../../../Tree/treeSlice";
 
@@ -10,14 +11,14 @@ export interface Vertices {
     }
 
 interface layoutFunction {
-    (tree:TreeState):Vertices
+    (tree:NormalizedTree):Vertices
 }
 //TODO cache
-function rectangularLayout (tree:TreeState):Vertices {
+function rectangularLayout (tree:NormalizedTree):Vertices {
     
     let currentY=0;
     const vertices:Vertices = {};
-    for(const node of postorderGenerator(tree,tree.nodes.byId[tree.rootNode!])) {
+    for(const node of tree.getPostorderNodes()) {
 
         if(node.children.length>0) {
             const children = node.children.map((childId) => vertices[childId]);

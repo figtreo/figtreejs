@@ -44,6 +44,6 @@ export const appearanceSlice = createSlice({
 //export actions from slice
 export const { setColourBy, setColourScheme, setLineWidth, setWidthBy, setMinWidth } = appearanceSlice.actions;
 
-export const selectAppearance = (state:RootState) => state.appearance;
-export const selectLineWidth = (state:RootState) => state.appearance.lineWidth;
+export const selectAppearance = (state:RootState) => state.settings.appearance;
+export const selectLineWidth = (state:RootState) => state.settings.appearance.lineWidth;
 export default appearanceSlice.reducer;

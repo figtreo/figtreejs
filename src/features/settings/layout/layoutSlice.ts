@@ -48,6 +48,6 @@ export const layoutSlice = createSlice({
 
 export const { setLayout, setExpansion, setFisheye, setRootLength, setCurvature, flipAlignTipLabels } = layoutSlice.actions;
 
-export const selectLayout = (state:RootState) => state.layout
+export const selectLayout = (state:RootState) => state.settings.layout
 
 export default layoutSlice.reducer;

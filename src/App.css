@@ -1,5 +1,10 @@
 .App {
   text-align: center;
+  display:grid;
+  grid-template-areas:
+    'header header header header header header'
+    'settings figure figure figure figure figure'
+    'settings footer footer footer footer footer';
 }
 
 .App-logo {
@@ -36,4 +41,12 @@
   100% {
     transform: translateY(0px);
   }
+}
+
+.Settings{
+ grid-area:settings
+}
+
+.Figtree{
+grid-area: figure;
 }
