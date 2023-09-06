@@ -1,0 +1,68 @@
+import { AnnotationType } from './parsing/TreeParser';
+import treeReducer, { TreeState, rotate } from './treeSlice';
+  
+  describe('tree reducer', () => {
+    const initialState: TreeState = {
+        nodes:{
+            byId:{node0:{
+                id:'node0',
+                children:['node1','node2'],
+                parent:null,
+                label:'root',
+                height:0.1,
+                divergence:0,
+            length:null},
+            node1:{
+                id:'node1',
+                children:[],
+                parent:'node0',
+                label:'A',
+                length:0.1,
+                height:0,
+                divergence:0.1,
+            },
+            node2:{
+                id:'node2',
+                children:[],
+                parent:'node0',
+                label:'B',
+                length:0.1,
+                height:0,
+                divergence:0.1,
+            }
+            },
+            allIds:["node0"],
+        },
+        rootNode:'node0',
+        annotations:{
+            'node1':{location:'A',rate:0.1},
+            'node2':{location:'B',rate:0.2}
+        },
+        annotationTypes:{location:AnnotationType.DISCRETE,rate:AnnotationType.CONTINUOUS},
+      status: 'idle'
+    };
+
+    const realInitialState: TreeState = {
+        nodes:{
+            byId:{},
+            allIds:[]
+        },
+        rootNode:null,
+        annotations:{},
+        annotationTypes:{},
+        status: 'idle',
+    }
+    it('should handle initial state', () => {
+      expect(treeReducer(undefined, { type: 'unknown' })).toEqual(realInitialState)
+    });
+  
+    it('should rotate', () => {
+      const actual = treeReducer(initialState, rotate('node0'));
+      expect(actual.nodes.byId.node0.children).toEqual(['node2','node1']);
+    });
+    it('should rotate with fake tree', () => {
+        const actual = treeReducer(initialState, rotate('node0'));
+        expect(actual.nodes.byId.node0.children).toEqual(['node2','node1']);
+      });
+  });
+  

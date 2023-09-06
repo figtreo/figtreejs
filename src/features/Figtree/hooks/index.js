@@ -1,0 +1,108 @@
+import {useCallback,useContext} from "react";
+import {mapAttrsToProps} from "../utils/baubleHelpers";
+import {
+    DataContext,
+    InteractionContext,
+    InteractionDispatchContext,
+    InteractionStateContext, LayoutContext,
+    ScaleContext, TreeContext
+} from "../Context/context";
+import {DataType} from "../utils/utilities";
+
+export function useAttributeMappers(props,hoverKey="id",selectionKey="id"){
+    const { attrs, selectedAttrs, hoveredAttrs,interactions,tooltip} = props;
+    const {scales}=useScales();
+    const {state,dispatch} =useInteractions();
+    const baseAttrMapper = useCallback(mapAttrsToProps((attrs?attrs:{}),scales), [attrs,scales]);
+    const selectedAttrMapper = useCallback(mapAttrsToProps((selectedAttrs?selectedAttrs:{}),scales), [selectedAttrs,scales]);
+    const hoveredAttrMapper = useCallback(mapAttrsToProps((hoveredAttrs?hoveredAttrs:{}),scales), [hoveredAttrs,scales]);
+    const tooltipMapper = useCallback(mapAttrsToProps((tooltip?tooltip:{}),scales),[tooltip,scales]);
+
+    function attrMapper(dataEntry) {
+        let attrs = baseAttrMapper(dataEntry);
+        if (hoverPredicate(state,dataEntry)) {
+            attrs = {...attrs, ...hoveredAttrMapper(dataEntry)};
+        }
+        // if (select.predicate(state,dataEntry)) {
+        //     attrs = {...attrs, ...selectedAttrMapper(dataEntry)};
+        // }
+        return attrs;
+    };
+
+    function interactionMapper(dataEntry) {
+        const optionalInteractions = interactions ? interactions : {};
+        return {
+            onMouseEnter: () => {
+                if ("onMouseEnter" in optionalInteractions) {
+                    interactions.onMouseEnter(dataEntry);
+                }
+                dispatch(hoverAction(dataEntry, hoverKey))
+            },
+            onMouseLeave: () => {
+                if ("onMouseLeave" in optionalInteractions) {
+                    interactions.onMouseLeave(dataEntry);
+                }
+                dispatch({type: "unhover"})
+            },
+            onClick: () => {
+                if ("onClick" in optionalInteractions) {
+                    console.log("clicked");
+                    interactions.onClick(dataEntry);
+                }
+                // dispatch(select.actionCreator(dataEntry))}
+            }
+        };
+    }
+    return function shapeProps(dataEntry) {
+        return {attrs: attrMapper(dataEntry), interactions: interactionMapper(dataEntry),tooltip:tooltipMapper(dataEntry)}
+    }
+
+}
+
+export  function useInteractions(){
+    const state = useInteractionsState();
+    const dispatch = useInteractionsDispatch();
+    return {state,dispatch}
+}
+export function useInteractionsState(){
+    return useContext(InteractionStateContext)
+}
+export function useInteractionsDispatch(){
+    return useContext(InteractionDispatchContext)
+}
+
+export  function useScales(){
+    return useContext(ScaleContext)
+}
+export function useData(){
+    return useContext(DataContext);
+}
+export function useLayout(){
+    return useContext(LayoutContext);
+}
+export function useTree(){
+    return useContext(TreeContext);
+}
+export const useFigtreeContext={scales:useScales,layout:useLayout,tree:useTree};
+
+
+
+
+function hoverAction(dataEntry,key){
+    const value = key==="id"?dataEntry.id:dataEntry.annotations[key];
+    return {type:"hover",payload:{type:DataType.DISCRETE,key:key,value:value}}
+}
+
+function hoverPredicate({hovered},dataEntry){
+    console.log(hovered)
+    console.log(dataEntry)
+    if(hovered.key==="id") {
+        return dataEntry.id === hovered.value;
+    }
+    if("annotations" in dataEntry){
+        if(hovered.key in dataEntry.annotations) {
+            return hovered.value===dataEntry.annotations[hovered.key]
+        }
+    }
+    return false;
+}
