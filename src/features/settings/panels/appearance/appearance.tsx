@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { useAppSelector, useAppDispatch } from '../../../app/hooks';
+import { useAppSelector, useAppDispatch } from '../../../../app/hooks';
 import { selectAppearance, setColourBy, setLineWidth, setMinWidth, setWidthBy } from './appearanceSlice';
-import { selectAnnotationTypes } from '../../Tree/treeSlice';
+import { selectAnnotationTypes } from '../../../Tree/treeSlice';
+import { SettingPanel } from '../PanelHeader';
 export function Appearance(){
     const { colourBy,
         lineWidth,
@@ -13,16 +14,16 @@ export function Appearance(){
     
     const options = []
     for(const key of attributeKeys){
-        options.push(<option value={key}>{key}</option>)
+        options.push(<option key={key} value={key}>{key}</option>)
     }
     
     const dispatch = useAppDispatch();
 
 
     return (
-        <div>
+        <SettingPanel title="Appearance">
             <div>
-                <select name="colourBy" id="colourBy" onChange={e=>dispatch(setColourBy(e.target.value))} value = {colourBy}>
+                <select  name="colourBy" id="colourBy" onChange={e=>dispatch(setColourBy(e.target.value))} value = {colourBy}>
                     {options}
                 </select>
                 <label htmlFor='colourBy'>Colour By:</label>
@@ -32,7 +33,7 @@ export function Appearance(){
                 <label htmlFor='width'>Line Width</label>
             </div>
             <div>
-            <select name="widthBy" id="widthBy" onChange={e=>dispatch(setWidthBy(e.target.value))} value = {widthBy}>
+            <select  name="widthBy" id="widthBy" onChange={e=>dispatch(setWidthBy(e.target.value))} value = {widthBy}>
                     {options}
                 </select>
                 <label htmlFor='widthBy'>Width By:</label>
@@ -41,7 +42,7 @@ export function Appearance(){
                 <input name="minWidth" id="minWidth" type="number" value={minWidth} onChange={e=>dispatch(setMinWidth(e.target.value))} />
                 <label htmlFor='minWidth'>Min Width</label>
             </div>
-        </div>
+        </SettingPanel>
     )
 
 }

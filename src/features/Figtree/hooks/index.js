@@ -9,17 +9,27 @@ import {
 } from "../Context/context";
 import {DataType} from "../utils/utilities";
 
+/*
+This function takes props which define the attributes of an element and provide information about how to update
+those attributes if the element is selected or hovered. There are also options for a tooltip and interaction
+object. 
+It returns a function that maps data to attributes and updates those attributes if the node is hovered or selected.
+
+It's not clear what dataEntry is here and I think it should be a node ref which can be made from a vertex.
+*/
+
 export function useAttributeMappers(props,hoverKey="id",selectionKey="id"){
     const { attrs, selectedAttrs, hoveredAttrs,interactions,tooltip} = props;
-    const {scales}=useScales();
     const {state,dispatch} =useInteractions();
-    const baseAttrMapper = useCallback(mapAttrsToProps((attrs?attrs:{}),scales), [attrs,scales]);
-    const selectedAttrMapper = useCallback(mapAttrsToProps((selectedAttrs?selectedAttrs:{}),scales), [selectedAttrs,scales]);
-    const hoveredAttrMapper = useCallback(mapAttrsToProps((hoveredAttrs?hoveredAttrs:{}),scales), [hoveredAttrs,scales]);
-    const tooltipMapper = useCallback(mapAttrsToProps((tooltip?tooltip:{}),scales),[tooltip,scales]);
+    //This memorizes the functions so they are not made each time - maybe overkill.
+    const baseAttrMapper = useCallback(mapAttrsToProps((attrs?attrs:{})), [attrs]);
+    const selectedAttrMapper = useCallback(mapAttrsToProps((selectedAttrs?selectedAttrs:{})), [selectedAttrs]);
+    const hoveredAttrMapper = useCallback(mapAttrsToProps((hoveredAttrs?hoveredAttrs:{})), [hoveredAttrs]);
+    const tooltipMapper = useCallback(mapAttrsToProps((tooltip?tooltip:{})),[tooltip]);
 
     function attrMapper(dataEntry) {
         let attrs = baseAttrMapper(dataEntry);
+        //state is true false 
         if (hoverPredicate(state,dataEntry)) {
             attrs = {...attrs, ...hoveredAttrMapper(dataEntry)};
         }
@@ -28,6 +38,8 @@ export function useAttributeMappers(props,hoverKey="id",selectionKey="id"){
         // }
         return attrs;
     };
+
+    //Maps interactions to element. Default hover dispatch etc. 
 
     function interactionMapper(dataEntry) {
         const optionalInteractions = interactions ? interactions : {};
@@ -87,12 +99,15 @@ export const useFigtreeContext={scales:useScales,layout:useLayout,tree:useTree};
 
 
 
-
+//Dispatch a hover action are we hovering by id (just this node) or by annotation all nodes with this annotation value?
 function hoverAction(dataEntry,key){
     const value = key==="id"?dataEntry.id:dataEntry.annotations[key];
     return {type:"hover",payload:{type:DataType.DISCRETE,key:key,value:value}}
 }
 
+//Should this node be hovered? 
+// Assumes a certain structure to the data 
+// Todo this could be extracted and made available 
 function hoverPredicate({hovered},dataEntry){
     console.log(hovered)
     console.log(dataEntry)

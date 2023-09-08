@@ -4,6 +4,8 @@ import { Vertices } from "../components/Figtree/layoutFunctions"
 import { TreeState } from "../../Tree/treeSlice";
 import { parseNewick } from "../../Tree/parsing/TreeParser";
 import { NormalizedTree } from "../../Tree/normalizedTree";
+
+
 export const InteractionStateContext = React.createContext(false);
 export const InteractionDispatchContext = React.createContext(false);
 

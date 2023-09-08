@@ -1,0 +1,76 @@
+import React from "react";
+import { labelActions, labelTarget, selectLabelState } from "./labelSlice";
+import { useAppDispatch, useAppSelector } from "../../../../app/hooks";
+import { selectAnnotationTypes } from "../../../Tree/treeSlice";
+import { SettingPanel } from "../PanelHeader";
+
+
+
+export function BaseLabel(props: { target: labelTarget, }) {
+
+    const dispatch = useAppDispatch();
+    const settings = useAppSelector(selectLabelState(props.target))
+
+    //duplicate code
+    const attributeTypes = useAppSelector(selectAnnotationTypes);
+    //TODO add defaults like height/length/ etc.
+    const attributeKeys = Object.keys(attributeTypes).length > 0 ? ["Selection", ...Object.keys(attributeTypes)] : ["No attributes"]
+
+    const options = []
+    for (const key of attributeKeys) {
+        options.push(<option key={key} value={key}>{key}</option>)
+    }
+    const formats = []
+    for (const key of ["Decimal", "Scientific", "Percent", "Roman"]) {
+        formats.push(<option key={key} value={key}>{key}</option>)
+    }
+    const { setDisplay, setColourBy, setFormat, setSigDigs, setFontSize } = labelActions[props.target]
+
+    return (
+        <div>
+            <div>
+            <label htmlFor='display'>Display: </label>
+
+                <select name="display" id="display" onChange={e => dispatch(setDisplay(e.target.value))} value={settings.display}>
+                    {options}
+                </select>
+            </div>
+            <div>
+            <label htmlFor='colourBy'>Colour By:</label>
+
+                <select name="colourBy" id="colourBy" onChange={e => dispatch(setColourBy(e.target.value))} value={settings.colourBy}>
+                    {options}
+                </select>
+            </div>
+            <div>
+            <label htmlFor='fontSize'>Font Size: </label>
+
+                <input name="fontSize" id="fontSize" min={1} type="number" value={settings.fontSize} onChange={e => dispatch(setFontSize(e.target.value))} />
+            </div>
+            <div>
+            <label htmlFor='format'>Format: </label>
+
+                <select name="format" id="format" onChange={e => dispatch(setFormat(e.target.value))} value={settings.format}>
+                    {formats}
+                </select>
+            </div>
+            <div>
+            <label htmlFor='sigDigits'>Sig. Digits: </label>
+                <input name="sigDigits" id="sigDigits" type="number" value={settings.sigDigs} min={2} onChange={e => dispatch(setSigDigs(e.target.value))} />
+            </div>
+        </div>
+    )
+
+}
+
+export function Labels(props:{target:labelTarget}){
+
+    const dispatch = useAppDispatch();
+    const settings = useAppSelector(selectLabelState(props.target))
+    const flipActivated = labelActions[props.target].flipActivated
+    return (
+        <SettingPanel title={`${props.target[0].toLocaleUpperCase()+props.target.slice(1)} Label`} checkable={true} onClick={()=>dispatch(flipActivated(false))} checked={settings.activated}>
+            <BaseLabel target={props.target} />
+        </SettingPanel>
+    )
+}

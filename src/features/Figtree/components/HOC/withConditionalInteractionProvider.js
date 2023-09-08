@@ -3,6 +3,7 @@ import {InteractionDispatchContext,InteractionStateContext} from "../../Context/
 import {useInteractionsState} from "../../hooks";
 import interactionReducer, {initialState} from "../../Context/reducers/interactionReducer";
 
+//Why the condition?
 export default function withConditionalInteractionProvider(WrappedComponent){
 
     return function(props){

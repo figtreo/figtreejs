@@ -4,8 +4,8 @@ import { selectNodeCount,parseNewick, selectTree, Node} from './treeSlice';
 
 import styles from './tree.module.css';
 import { Branches, FigTree, Nodes } from '../Figtree';
-import { selectLineWidth } from '../settings/appearance/appearanceSlice';
-import { selectLayout } from '../settings/layout/layoutSlice';
+import { selectLineWidth } from '../settings/panels/appearance/appearanceSlice';
+import { selectLayout } from '../settings/panels/layout/layoutSlice';
 import { NormalizedTree } from './normalizedTree';
 const margins = {top:10,bottom:10,left:10,right:10};
 export function Tree(){
@@ -44,6 +44,7 @@ export function Tree(){
       return (
         <div>
         <p>Paste newick string</p>
+        <p> ((((((virus1:0.1,virus2:0.12)0.95:0.08,(virus3:0.011,virus4:0.0087)1.0:0.15)0.65:0.03,virus5:0.21)1.0:0.2,(virus6:0.45,virus7:0.4)0.51:0.02)1.0:0.1,virus8:0.4)1.0:0.1,(virus9:0.04,virus10:0.03)1.0:0.6);</p>
       </div>
       )
     }

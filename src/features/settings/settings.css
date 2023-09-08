@@ -1,0 +1,86 @@
+@font-awesome/fontawesome-free;
+
+/* // The main container element */
+.Collapsible {
+  /* background-color: #cbb700; */
+}
+
+
+/* //The content within the collaspable area */
+.Collapsible__contentInner {
+  padding: 10px;
+  border-top: 0;
+
+  p {
+    margin-bottom: 10px;
+    font-size: 14px;
+    line-height: 20px;
+
+      /* &:last-child {
+        margin-bottom: 0;
+      } */
+  }
+}
+.Collapsible .Collapsible{
+  padding-top:10px
+}
+
+/* //The link which when clicked opens the collapsable area */
+.Collapsible__trigger {
+  display: block;
+  font-weight: 400;
+  text-decoration: none;
+  position: relative;
+  border-bottom: 1px solid #a2aec0;
+  padding: 10px;
+  background: #c0cbd8;
+  color: #131516;
+
+
+  &:before {
+    font-family: 'FontAwesome';
+    content: '\f107';
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    display: block;
+    transition: transform 300ms;
+  }
+ 
+  
+
+
+
+
+
+  /* &:after {
+    font-family: 'FontAwesome';
+    content: '\f107';
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    display: block;
+    transition: transform 300ms;
+  } */
+
+  &.is-open {
+    &:before {
+      transform: rotateZ(180deg);
+    }
+  }
+
+  &.is-disabled {
+    opacity: 0.5;
+    background-color: grey;
+  }
+}
+
+
+
+
+.Collapsible__custom-sibling {
+  padding: 5px;
+  font-size: 12px;
+  background-color: #CBB700;
+  color: black;
+}
