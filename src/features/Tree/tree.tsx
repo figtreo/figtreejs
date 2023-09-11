@@ -10,7 +10,7 @@ import { NormalizedTree } from './normalizedTree';
 import { Tips } from './tips';
 import { InternalNodes } from './nodes';
 const margins = {top:10,bottom:10,left:10,right:10};
-export function Tree(){
+export function Tree({suggestedWidth=600,baseHeight=400}){
 
     const dispatch = useAppDispatch();
     const tree = new NormalizedTree(useAppSelector(selectTree))
@@ -21,8 +21,6 @@ export function Tree(){
 
     const expansion = useAppSelector(selectLayout).expansion;
    
-
-
     //
     useEffect(() => {
       const handlePaste = (event: any) => {
@@ -34,15 +32,15 @@ export function Tree(){
       };
     })
 
-    const height = 400+(400*expansion);
+    const height = baseHeight+(baseHeight*expansion);
 
 
 
 // TODO animate svg changes
     if(nodes>0){
       return(
-        <svg width={600} height={height}> 
-        <FigTree   width={600-margins.left-margins.right} height={height-margins.bottom-margins.top} tree={tree} layout={"rectangular"} margins={margins}>
+        <svg width={suggestedWidth} height={height}> 
+        <FigTree   width={suggestedWidth-margins.left-margins.right} height={height-margins.bottom-margins.top} tree={tree} layout={"rectangular"} margins={margins}>
             <Branches.Rectangular attrs={{strokeWidth:lineWidth,stroke:branchColour}} />
             <Tips tree={tree}/>
             <InternalNodes tree={tree}/>

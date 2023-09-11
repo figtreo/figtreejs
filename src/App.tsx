@@ -1,5 +1,6 @@
 import './App.css';
 import { Tree } from './features/Tree/tree';
+import { TreePanel } from './features/Tree/treePanel';
 import { SideBar } from './features/settings/sideBar';
 
 
@@ -12,7 +13,7 @@ function App() {
     <div className="header">Finish header</div>
     <div className='app'>
       <SideBar/>
-      <Tree/>
+      <TreePanel/>
     </div>
     </div>
 
