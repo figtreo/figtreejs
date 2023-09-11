@@ -10,7 +10,7 @@ export function Layout() {
     const dispatch = useAppDispatch();
 
     return (
-        <SettingPanel title="Layout" >
+        <SettingPanel title="Layout" intialOpen={true} >
         
             <div>
 

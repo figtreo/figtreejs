@@ -15,9 +15,9 @@ On a panel that is checkable, clicking to the left of the title will open the pa
 to the right of the title will toggle the box. 
 */
 export function SettingPanel(props: {
-    children: ReactNode; title: string, checkable: boolean, onClick?: () => void, checked: boolean
+    children: ReactNode; title: string, checkable: boolean, onClick?: () => void, checked: boolean,intialOpen?:boolean
 }) {
-    const [isOpen, setOpen] = useState(false);
+    const [isOpen, setOpen] = useState(props.intialOpen);
 
     return (
         <div >
@@ -50,5 +50,6 @@ export function SettingPanel(props: {
             SettingPanel.defaultProps = {
                 onClick:null,
                 checkable: false,
-                checked: false
+                checked: false,
+                intialOpen:false
 }

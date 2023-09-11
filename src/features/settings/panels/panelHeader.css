@@ -13,9 +13,8 @@
 }
 
 .PanelHeader .opener{ /* This is the triangle */
-
     --a: 15px;
-    
+
     border-bottom: calc(0.866 * var(--a)) solid #6E737B;
     border-left: calc(var(--a) / 2) solid transparent;
     border-right: calc(var(--a) / 2) solid transparent;
@@ -25,7 +24,6 @@
     rotate: 90deg;
 }
 .PanelHeader .opener.open{ /* this is triangle when open */
-
     rotate: 180deg;
 }
 
