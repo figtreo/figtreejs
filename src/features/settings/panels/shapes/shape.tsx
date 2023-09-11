@@ -31,7 +31,7 @@ export function BaseShapes(props: { target: shapeTarget, }) {
                 <label htmlFor='display'>Shape: </label>
 
                 <select name="shape" id="shape" onChange={e => dispatch(setShape(e.target.value))} value={settings.shape} disabled={!settings.activated}>
-                    {options}
+                    {shapes}
                 </select>
             </div>
             <div>
