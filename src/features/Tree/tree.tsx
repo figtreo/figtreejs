@@ -4,7 +4,7 @@ import { selectNodeCount,parseNewick, selectTree, Node} from './treeSlice';
 
 import styles from './tree.module.css';
 import { Branches, FigTree, Nodes } from '../Figtree';
-import { selectLineWidth } from '../settings/panels/appearance/appearanceSlice';
+import { selectLineWidth, selectStroke} from '../settings/panels/appearance/appearanceSlice';
 import { selectLayout } from '../settings/panels/layout/layoutSlice';
 import { NormalizedTree } from './normalizedTree';
 import { Tips } from './tips';
@@ -17,6 +17,7 @@ export function Tree(){
     const nodes = useAppSelector(selectNodeCount);
 
     const lineWidth = useAppSelector(selectLineWidth);
+    const branchColour = useAppSelector(selectStroke);
 
     const expansion = useAppSelector(selectLayout).expansion;
    
@@ -42,7 +43,7 @@ export function Tree(){
       return(
         <svg width={600} height={height}> 
         <FigTree   width={600-margins.left-margins.right} height={height-margins.bottom-margins.top} tree={tree} layout={"rectangular"} margins={margins}>
-            <Branches.Rectangular attrs={{strokeWidth:lineWidth,stroke:"black"}} />
+            <Branches.Rectangular attrs={{strokeWidth:lineWidth,stroke:branchColour}} />
             <Tips tree={tree}/>
             <InternalNodes tree={tree}/>
 

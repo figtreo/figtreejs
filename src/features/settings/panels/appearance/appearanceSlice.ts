@@ -7,6 +7,7 @@ export interface AppearanceState {
     lineWidth:number,
     widthBy:string,
     minWidth:number,
+    colour: string,
 }
 
 //slice function with initial state and reducers using AppearanceState from above 
@@ -17,6 +18,7 @@ const initialState:AppearanceState = {
     lineWidth:2,
     widthBy:'No Attributes',
     minWidth:0,
+    colour:'#000000',
 }
 
 export const appearanceSlice = createSlice({
@@ -38,12 +40,16 @@ export const appearanceSlice = createSlice({
         setMinWidth: (state, action) => {
             state.minWidth = action.payload;
         },
+        setColour: (state, action) => {
+            state.colour = action.payload;
+        }
     }
 });
 
 //export actions from slice
-export const { setColourBy, setColourScheme, setLineWidth, setWidthBy, setMinWidth } = appearanceSlice.actions;
+export const { setColourBy,setColour, setColourScheme, setLineWidth, setWidthBy, setMinWidth } = appearanceSlice.actions;
 
 export const selectAppearance = (state:RootState) => state.settings.appearance;
 export const selectLineWidth = (state:RootState) => state.settings.appearance.lineWidth;
+export const selectStroke = (state:RootState) => state.settings.appearance.colour;
 export default appearanceSlice.reducer;
