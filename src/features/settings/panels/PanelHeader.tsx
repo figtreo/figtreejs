@@ -1,33 +1,45 @@
 import './panelHeader.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCoffee } from '@fortawesome/free-solid-svg-icons'
+import { faPlay } from '@fortawesome/free-solid-svg-icons'
 import { ReactNode, useState } from 'react'
+import './panelHeader.css'
+import { version } from 'punycode'
+
 //modeled after react-collapsible 
 
-// this need some state to allow it to open and close
+/*
+The panel header behaviour is modeled after figtree's setting panel.
+
+Clicking on a title of a panel that is not checkable will open the panel.
+On a panel that is checkable, clicking to the left of the title will open the panel
+to the right of the title will toggle the box. 
+*/
 export function SettingPanel(props: {
-    children: ReactNode; title: string, checkable: boolean, onClick: () => void, checked: boolean
+    children: ReactNode; title: string, checkable: boolean, onClick?: () => void, checked: boolean
 }) {
     const [isOpen, setOpen] = useState(false);
 
-
     return (
-        <div className="PanelHeader">
-            <div className="opener" onClick={() => setOpen(!isOpen)} >
-                <FontAwesomeIcon icon={faCoffee} />
+        <div >
+            <div className="PanelHeader">
+
+            <div className="openerContainer" onClick={() => setOpen(!isOpen)}>
+            <div className={`opener ${isOpen?'open':''}`}   />
+
             </div>
 
-            <div className="PanelTitle" onClick={props.onClick}>
+            <div className="PanelTitle" onClick={props.onClick?props.onClick:()=>setOpen(!isOpen)}>
                 {props.checkable ?
-                    <div className="PanelHeader__checkbox" >
+                    <div className="PanelTitle__checkbox" >
                         <input type="checkbox" checked={props.checked} onChange={()=>null} />
                     </div>
                     : ""}
-                <div className="PanelHeader__title"  >
-                    <p>{props.title}</p>
+                <div className="PanelTitle__title"  >
+                    {props.title}
                 </div>
             </div>
-            <div className="PanelHeader__content" style={{ display: isOpen ? "block" : "none" }}>
+            </div>
+            <div className="Panel__content" style={{ display: isOpen ? "block" : "none" }}>
                 {props.children}
             </div>
         </div>
@@ -36,7 +48,7 @@ export function SettingPanel(props: {
 }
 
             SettingPanel.defaultProps = {
-                onClick: ()=>true,
+                onClick:null,
                 checkable: false,
                 checked: false
 }
