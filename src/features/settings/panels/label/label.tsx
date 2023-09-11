@@ -31,32 +31,32 @@ export function BaseLabel(props: { target: labelTarget, }) {
             <div>
             <label htmlFor='display'>Display: </label>
 
-                <select name="display" id="display" onChange={e => dispatch(setDisplay(e.target.value))} value={settings.display}>
+                <select name="display" id="display" onChange={e => dispatch(setDisplay(e.target.value))} value={settings.display} disabled={!settings.activated}>
                     {options}
                 </select>
             </div>
             <div>
             <label htmlFor='colourBy'>Colour By:</label>
 
-                <select name="colourBy" id="colourBy" onChange={e => dispatch(setColourBy(e.target.value))} value={settings.colourBy}>
+                <select name="colourBy" id="colourBy" onChange={e => dispatch(setColourBy(e.target.value))} value={settings.colourBy} disabled={!settings.activated}>
                     {options}
                 </select>
             </div>
             <div>
             <label htmlFor='fontSize'>Font Size: </label>
 
-                <input name="fontSize" id="fontSize" min={1} type="number" value={settings.fontSize} onChange={e => dispatch(setFontSize(e.target.value))} />
+                <input name="fontSize" id="fontSize" min={1} type="number" value={settings.fontSize} onChange={e => dispatch(setFontSize(e.target.value))}  disabled={!settings.activated}/>
             </div>
             <div>
             <label htmlFor='format'>Format: </label>
 
-                <select name="format" id="format" onChange={e => dispatch(setFormat(e.target.value))} value={settings.format}>
+                <select name="format" id="format" onChange={e => dispatch(setFormat(e.target.value))} value={settings.format} disabled={!settings.activated}>
                     {formats}
                 </select>
             </div>
             <div>
             <label htmlFor='sigDigits'>Sig. Digits: </label>
-                <input name="sigDigits" id="sigDigits" type="number" value={settings.sigDigs} min={2} onChange={e => dispatch(setSigDigs(e.target.value))} />
+                <input name="sigDigits" id="sigDigits" type="number" value={settings.sigDigs} min={2} onChange={e => dispatch(setSigDigs(e.target.value))} disabled={!settings.activated} />
             </div>
         </div>
     )
