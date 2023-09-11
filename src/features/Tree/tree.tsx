@@ -7,6 +7,8 @@ import { Branches, FigTree, Nodes } from '../Figtree';
 import { selectLineWidth } from '../settings/panels/appearance/appearanceSlice';
 import { selectLayout } from '../settings/panels/layout/layoutSlice';
 import { NormalizedTree } from './normalizedTree';
+import { Tips } from './tips';
+import { InternalNodes } from './nodes';
 const margins = {top:10,bottom:10,left:10,right:10};
 export function Tree(){
 
@@ -18,6 +20,9 @@ export function Tree(){
 
     const expansion = useAppSelector(selectLayout).expansion;
    
+
+
+    //
     useEffect(() => {
       const handlePaste = (event: any) => {
         dispatch(parseNewick(event.clipboardData.getData('text')));
@@ -29,14 +34,18 @@ export function Tree(){
     })
 
     const height = 400+(400*expansion);
+
+
+
 // TODO animate svg changes
     if(nodes>0){
       return(
         <svg width={600} height={height}> 
         <FigTree   width={600-margins.left-margins.right} height={height-margins.bottom-margins.top} tree={tree} layout={"rectangular"} margins={margins}>
-              <Nodes.AnimatedCircleNodes filter={(n:Node)=>tree.getChildCount(n)===0} attrs={{r:5,fill:"black"}} hoveredAttrs={{r:10,fill:'#ae7e56',strokeWidth:2}} selectedAttrs={{fill:"#c0625e"}}/>
-              {/* <Nodes.Coalescent /> */}
             <Branches.Rectangular attrs={{strokeWidth:lineWidth,stroke:"black"}} />
+            <Tips tree={tree}/>
+            <InternalNodes tree={tree}/>
+
         </FigTree>
         </svg>
       )

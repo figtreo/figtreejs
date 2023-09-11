@@ -109,8 +109,6 @@ function hoverAction(dataEntry,key){
 // Assumes a certain structure to the data 
 // Todo this could be extracted and made available 
 function hoverPredicate({hovered},dataEntry){
-    console.log(hovered)
-    console.log(dataEntry)
     if(hovered.key==="id") {
         return dataEntry.id === hovered.value;
     }

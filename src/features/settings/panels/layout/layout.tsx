@@ -38,7 +38,7 @@ export function Layout() {
                     max="1"
                     step={0.01}
                     id="expansion"
-                    onChange={(e) => {console.log("got it");dispatch(setExpansion(parseFloat(e.target.value)))}}
+                    onChange={(e) => {dispatch(setExpansion(parseFloat(e.target.value)))}}
                     value={expansion}
                 />
                 <label htmlFor="expansion">Expansion</label>

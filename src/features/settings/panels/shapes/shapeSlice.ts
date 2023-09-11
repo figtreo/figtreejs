@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Slice } from '@reduxjs/toolkit';
 import { RootState } from '../../../../app/store';
 
-type shapes = "circle" | "rectangle" | "swoosh"
+type shapes = "Circle" | "Rectangle" | "Swoosh"
 
 interface ShapeState {
     shape: shapes
@@ -10,19 +10,21 @@ interface ShapeState {
     minSize: number,
     sizeBy: string,
     colourBy: string,
+    colour:string,
     outlineWidth: number,
     outlineColour: string,
     activated: boolean
 }
 //todo select color for all nodes
 const initialState: ShapeState = {
-    shape: "circle",
+    shape: "Circle",
     maxSize: 4,
     minSize: 4,
     sizeBy: "Fixed",
     colourBy: "Selection",
+    colour:"#000000",
     outlineWidth: 0,
-    outlineColour: "black",
+    outlineColour: "#000000",
     activated: false
 }
 
@@ -63,6 +65,7 @@ const shapeSliceGenerator = (target: shapeTarget): {
                 state.outlineWidth = action.payload
             },
             flipActivated: (state) => { state.activated = !state.activated },
+            setColour: (state, action) => { state.colour = action.payload }
 
         }
     }),

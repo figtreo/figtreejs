@@ -165,7 +165,7 @@ export function highlightedVertices(tree,squishFactor,highlightPredicate){
 
 
 export function makeEdges(vertices){
-    console.log(vertices);
+    
     return reduceIterator(vertices.keys(),(edges,node)=> {
         node.children &&
         node.children.map(child => makeEdge(vertices.get(node), vertices.get(child))).forEach(edge => edges.push(edge));

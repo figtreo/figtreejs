@@ -19,12 +19,19 @@ export function BaseShapes(props: { target: shapeTarget, }) {
     for (const key of attributeKeys) {
         options.push(<option key={key} value={key}>{key}</option>)
     }
-    const shapes = []
-    for (const key of ["Circle", "Rectangle", "Swoosh"]) {
-        shapes.push(<option key={key} value={key}>{key}</option>)
-    }
-    const { setShape, setMaxSize, setMinSize, setSizeBy, setColourBy, setFormat, setOutlineColour, setOutlineWidth } = shapeActions[props.target]
 
+    const shapes = []
+    if (props.target === "tip") {
+        for (const key of ["Circle", "Rectangle"]) {
+            shapes.push(<option key={key} value={key}>{key}</option>)
+        }
+    } else {
+        for (const key of ["Circle", "Rectangle", "Swoosh"]) {
+            shapes.push(<option key={key} value={key}>{key}</option>)
+        }
+    }
+    const { setShape, setMaxSize, setMinSize, setSizeBy, setColourBy, setColour, setOutlineColour, setOutlineWidth } = shapeActions[props.target]
+//TODO interactions
     return (
         <div>
             <div>
@@ -37,7 +44,7 @@ export function BaseShapes(props: { target: shapeTarget, }) {
             <div>
                 <label htmlFor='maxSize'>Max Size: </label>
 
-                <input name="maxSize" id="maxSize" min={0} type="number" value={settings.maxSize} onChange={e => dispatch(setMaxSize(e.target.value))} disabled={!settings.activated}/>
+                <input name="maxSize" id="maxSize" min={0} type="number" value={settings.maxSize} onChange={e => dispatch(setMaxSize(e.target.value))} disabled={!settings.activated} />
             </div>
             <div>
                 <label htmlFor='sizeBy'>Size By:</label>
@@ -49,7 +56,7 @@ export function BaseShapes(props: { target: shapeTarget, }) {
             <div>
                 <label htmlFor='minSize'>Min Size: </label>
 
-                <input name="minSize" id="minSize" min={0} type="number" value={settings.minSize} onChange={e => dispatch(setMinSize(e.target.value))} disabled={!settings.activated}/>
+                <input name="minSize" id="minSize" min={0} type="number" value={settings.minSize} onChange={e => dispatch(setMinSize(e.target.value))} disabled={!settings.activated} />
             </div>
             <div>
                 <label htmlFor='colourBy'>Colour By:</label>
@@ -59,6 +66,11 @@ export function BaseShapes(props: { target: shapeTarget, }) {
                 </select>
             </div>
             <div>
+                <label htmlFor='colour'> Colour: </label>
+
+                <input name="colour" id="colour"  type="color" value={settings.colour} onChange={e => dispatch(setColour(e.target.value))} disabled={!settings.activated} />
+            </div>
+            <div>
                 <label htmlFor='outlineWidth'>Outline Width: </label>
 
                 <input name="outlineWidth" id="outlineWidth" min={0} type="number" value={settings.outlineWidth} onChange={e => dispatch(setOutlineWidth(e.target.value))} disabled={!settings.activated} />
@@ -66,7 +78,7 @@ export function BaseShapes(props: { target: shapeTarget, }) {
             <div>
                 <label htmlFor='outlineColour'>Outline Colour: </label>
 
-                <input name="outlineColour" id="outlineColour" value={settings.outlineColour} onChange={e => dispatch(setOutlineColour(e.target.value))} disabled={!settings.activated}/>
+                <input name="outlineColour" id="outlineColour" type="color" value={settings.outlineColour} onChange={e => dispatch(setOutlineColour(e.target.value))} disabled={!settings.activated} />
             </div>
         </div>
     )
@@ -74,12 +86,12 @@ export function BaseShapes(props: { target: shapeTarget, }) {
 }
 
 
-export function Shapes(props:{target:shapeTarget}) {
+export function Shapes(props: { target: shapeTarget }) {
     const dispatch = useAppDispatch();
     const settings = useAppSelector(selectShapeState(props.target))
     const flipActivated = shapeActions[props.target].flipActivated
     return (
-        <SettingPanel title={`${props.target[0].toLocaleUpperCase()+props.target.slice(1)} Shapes`} checkable={true} onClick={()=>dispatch(flipActivated(false))} checked={settings.activated}>
+        <SettingPanel title={`${props.target[0].toLocaleUpperCase() + props.target.slice(1)} Shapes`} checkable={true} onClick={() => dispatch(flipActivated(false))} checked={settings.activated}>
             <BaseShapes target={props.target} />
         </SettingPanel>
     )

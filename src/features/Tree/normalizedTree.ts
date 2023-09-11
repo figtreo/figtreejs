@@ -137,3 +137,4 @@ function* postorderGenerator(tree:TreeState,node: Node): Generator<Node> {
     yield* traverse(node);
 
 }
+
