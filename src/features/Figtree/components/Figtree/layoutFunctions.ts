@@ -3,11 +3,13 @@ import { getHeight, postorderGenerator } from "../../../Tree/treeFunctions";
 import { TreeState } from "../../../Tree/treeSlice";
 
 export interface Vertices {
-        [id:string]:{
-            id:string
-            x:number,
-            y:number
-        }
+        [id:string]:Vertex
+    }
+
+    export interface Vertex{
+            id:string,
+           x:number,
+           y:number,
     }
 
 interface layoutFunction {

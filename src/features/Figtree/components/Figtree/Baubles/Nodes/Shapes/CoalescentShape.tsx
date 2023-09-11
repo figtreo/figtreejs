@@ -2,30 +2,51 @@ import React from "react"
 import {linkHorizontal} from "d3-shape";
 import {extent, max, min} from "d3-array";
 import withLinearGradient from "../../../../HOC/WithLinearGradient";
-import {getTips} from "../../../../../utils/Tree/treeSettersandGetters"
-import { useLayout, useScales} from "../../../../../hooks";
+import { useLayout, useScales,useTree} from "../../../../../hooks";
+import { Vertex, Vertices } from "../../../layoutFunctions";
+import {Node} from "../../../../../../Tree/treeSlice";
 //TODO extract out fill => gradient function
 
-const pathComponent=({attrs,interactions})=><path pointerEvents={"visiblePoint"} {...attrs} {...interactions}/>;
+type genericAttr = {[key:string]:any};
+
+const pathComponent=({attrs,interactions}:{attrs:genericAttr,interactions:genericAttr})=><path pointerEvents={"visiblePoint"} {...attrs} {...interactions}/>;
 
 export const FadedPath=withLinearGradient(pathComponent);
 
-export default function CoalescentShape (props){
-    const {vertices} =  useLayout();
-    const {scales} = useScales();
+export default function CoalescentShape (props:CoalescentProps){
+    const vertices =  useLayout();
+    const tree = useTree();
 
     const {vertex,attrs,interactions,startWidth,FadeEndpoint,curveSlope} =props;
 
-    const targets = getTips(vertex.node).map(decedent=>vertices.get(decedent))
-        .concat(vertex.node.children.map(child=>vertices.get(child)));
+    const targets:Vertex[] = [...tree.getTips(tree.getNode(vertex.id))].map( (decedent:Node) => vertices[decedent.id])
+        .concat(tree.getChildren(tree.getNode(vertex.id)).map( (decedent:Node) => vertices[decedent.id]));
+
 
     const slope =calcSlope(targets,curveSlope);
 
-    const d=makeCoalescent(vertex,targets,scales,slope,startWidth);
+    const d=makeCoalescent(vertex,targets,slope,startWidth);
     const endingX= FadeEndpoint==="min"?100/slope:FadeEndpoint==="max"?100:parseFloat(FadeEndpoint)?parseFloat(FadeEndpoint):100/slope;
 
-    return  <FadedPath attrs={{...attrs,d:d}} interactions={interactions} endingX={`${endingX}%`} colorRamper={i=>attrs.fill} opacityRamper={i=>1-i*1} />
+    return  <FadedPath attrs={{...attrs,d:d}} interactions={interactions} endingX={`${endingX}%`} colorRamper={()=>attrs.fill} opacityRamper={(i:number)=>1-i*1} />
 };
+
+
+
+//TODO extract vertex type
+interface CoalescentProps{
+    attrs:{
+        fill:string,
+        strokeWidth:number,
+        stoke:string,
+        [key:string]:any
+    }
+    startWidth:number,
+    FadeEndpoint:string,
+    curveSlope:"min"    |"max" |number,
+    vertex:Vertex
+    interactions?:any
+}
 
 CoalescentShape.defaultProps= {
     attrs: {
@@ -37,10 +58,10 @@ CoalescentShape.defaultProps= {
     FadeEndpoint:"min",
     curveSlope:"min"
 };
-
-const link = linkHorizontal()
-    .x(function(d) { return d.x; })
-    .y(function(d) { return d.y; });
+type linkData = {source:point,target:point};
+const link = linkHorizontal<linkData,point>()
+    .x((d:point) => d.x )
+    .y((d:point) =>  d.y );
 
 /**
  * A helper function that takes a source and target object (with x, and y positions each) It calculates a symmetric
@@ -53,7 +74,7 @@ const link = linkHorizontal()
  */
 
 // need max x for top and bottom, diff y
-export function coalescentPath(source,topTarget,bottomTarget,slope=1,startWidth=2){
+export function coalescentPath(source:point,topTarget:point,bottomTarget:point,slope=1,startWidth=2){
     const adjustedTopTarget={y:topTarget.y,x:topTarget.x/slope};
    const adjustedBottomTarget = {x:bottomTarget.x/slope,y:bottomTarget.y};
 
@@ -66,6 +87,7 @@ export function coalescentPath(source,topTarget,bottomTarget,slope=1,startWidth=
 
    return topD+linker+bottomD+`L${start.x},${start.y}`;
 }
+type point = {x:number,y:number}
 
 /**
  * This function takes a source vertex and target vertices. It calculates the target
@@ -76,12 +98,12 @@ export function coalescentPath(source,topTarget,bottomTarget,slope=1,startWidth=
  * @param slope
  * @return string
  */
-export function makeCoalescent(vertex,targets,scales,slope=1,startWidth=2){
-    const xStart = scales.x(vertex.x);
-    const xEnd=scales.x(max(targets,d=>d.x));
-    const yStart = scales.y(vertex.y);
-    const yTop=scales.y((min(targets,d=>d.y)-0.4));
-    const yBottom =scales.y((max(targets,d=>d.y)+0.4));
+export function makeCoalescent(vertex:Vertex,targets:Vertex[],slope:number=1,startWidth:number=2){
+    const xStart = vertex.x;
+    const xEnd=max(targets,d=>d.x)!;
+    const yStart = vertex.y;
+    const yTop= min(targets,d=>d.y)! -0.4;
+    const yBottom =max(targets,d=>d.y)!+0.4;
     return coalescentPath({x:xStart,y:yStart},{x:xEnd,y:yTop},{x:xEnd,y:yBottom},slope,startWidth)
 }
 
@@ -92,20 +114,21 @@ export function makeCoalescent(vertex,targets,scales,slope=1,startWidth=2){
 
  * @param targets
  */
-export function calcSlope(targets,option){
+export function calcSlope(targets:Vertex[],option:"min"|"max"|number){
     const [min,max]=extent(targets,d=>d.x);
 
+    if(min===undefined || max===undefined){
+        throw new Error("cannot find min or max of targets in coalescent shape");}
     switch (option) {
         case "min":
             return max/min;
         case "max":
             return 1;
-        case parseFloat(option):
-            return max/(min+ (max-min)*parseFloat(option))
+        case option:
+            return max/(min+ (max-min)*(option as number))
         default:
             return max/min;
     }
-    return max / min;
 }
 
 

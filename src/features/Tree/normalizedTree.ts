@@ -23,7 +23,7 @@ export class NormalizedTree  {
         return this._data.nodes.byId[node.id].children.length
        
     }
-    private getNode(id:string):Node{
+    getNode(id:string):Node{
         return this._data.nodes.byId[id]
     }
     getChild(node: Node, index: number): Node {
@@ -36,6 +36,9 @@ export class NormalizedTree  {
         }else{
             return parentId
         }
+    }
+    getChildren(node: Node): Node[] {
+        return this._data.nodes.byId[node.id].children.map((id)=>this._data.nodes.byId[id])
     }
 
     getAnnotation(node: Node, name: string): any | null {
@@ -111,6 +114,9 @@ export class NormalizedTree  {
     get root(): Node | null {
         return this.getNode(this._data.rootNode!)
     }
+    getTips(node:Node = this.root!): Generator<Node> {
+        return tipGenerator(this._data,node)
+    }
     getPostorderNodes(node:Node = this.root!):Generator<Node>{
         return postorderGenerator(this._data,node)
     }
@@ -121,7 +127,20 @@ export class NormalizedTree  {
 
 }
 
-
+function *tipGenerator(tree:TreeState,node: Node): Generator<Node> {
+    const traverse = function* (node: Node): Generator<Node> {
+        const childCount = node.children.length;
+        if (childCount>0) {
+            for (let i=0;i<childCount;i++) {
+                const child = tree.nodes.byId[node.children[i]];
+                yield* traverse(child);
+            }
+        }else{
+            yield node;
+        }
+    };
+    yield* traverse(node);
+}
 function* postorderGenerator(tree:TreeState,node: Node): Generator<Node> {
 
     const traverse = function* (node: Node): Generator<Node> {
@@ -137,4 +156,5 @@ function* postorderGenerator(tree:TreeState,node: Node): Generator<Node> {
     yield* traverse(node);
 
 }
+
 
