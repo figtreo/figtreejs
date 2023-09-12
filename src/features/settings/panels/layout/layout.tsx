@@ -1,49 +1,69 @@
 import React, { useState } from 'react';
 import { useAppSelector, useAppDispatch } from '../../../../app/hooks';
-import { selectLayout, setCurvature, setExpansion, setFisheye, setLayout, setRootLength, flipAlignTipLabels } from './layoutSlice';
-import Collapsible from 'react-collapsible';
+import { selectLayout, setExpansion, setFisheye, setLayout, setZoom } from './layoutSlice';
 import { SettingPanel } from '../PanelHeader';
-
+import './layout.css'
+import { RectangularOptions } from './rectangularOptions';
+import { PolarOptions } from './polarOptions';
+import { RadialOptions } from './radialOptions';
 export function Layout() {
-    const { layout, expansion, fisheye, curvature, rootLength, alignTipLabels } = useAppSelector(selectLayout);
-
+    const { layout,zoom,expansion,fisheye } = useAppSelector(selectLayout);
     const dispatch = useAppDispatch();
-
     return (
         <SettingPanel title="Layout" intialOpen={true} >
-        
+
             <div>
-
-
-                <div>
-                    <input type="radio" id="rectangular" name="layout" value="Rectangular" checked={layout === "rectangular"}
-                        onChange={e => dispatch(setLayout("rectangular"))} />
-                    <label htmlFor="rectangular">Rectangular</label>
-                </div>
-                <div>
-                    <input type="radio" id="circular" name="layout" value="Circular" checked={layout === "circular"}
-                        onChange={e => dispatch(setLayout("circular"))} />
-                    <label htmlFor="circular">Circular</label>
-                </div>
-                <div>
-                    <input type="radio" id="equalangle" name="layout" value="EqualAngle" checked={layout === "equalangle"}
-                        onChange={e => dispatch(setLayout("equalangle"))} />
-                    <label htmlFor="equalangle">Equal Angle</label>
+                <div className="layoutImages">
+                    <div className="layoutSpacer" />
+                    <div className='imageContainer'>
+                        <div className={`image  ${layout === "rectangular" ? "selected" : ''}`} onClick={() => dispatch(setLayout("rectangular"))} title="rectangle layout">
+                            <img src={require("../../../../figtreeGraphics/rectangularTree.png")} alt="" />
+                        </div>
+                        <div className={`image  ${layout === "circular" ? "selected" : ''}`} onClick={() => dispatch(setLayout("circular"))} title="polar layout">
+                            <img src={require("../../../../figtreeGraphics/polarTree.png")} alt="" />
+                        </div>
+                        <div className={`image ${layout === "equalangle" ? "selected" : ''}`} onClick={() => dispatch(setLayout("equalangle"))} title="radial layout">
+                            <img src={require("../../../../figtreeGraphics/radialTree.png")} alt="" />
+                        </div>
+                    </div>
+                    <div className="layoutSpacer" />
                 </div>
             </div>
-            <div>
+
+            <div className='option range'>
+
+
+                <label htmlFor="zoom">Zoom: </label>
+
+                <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step={0.01}
+                    id="zoom"
+                    onChange={(e) => { dispatch(setZoom(parseFloat(e.target.value))) }}
+                    value={zoom}
+                />
+            </div>
+            <div  className='option range'>
+
+
+                <label htmlFor="expansion">Expansion: </label>
+
                 <input
                     type="range"
                     min="0"
                     max="1"
                     step={0.01}
                     id="expansion"
-                    onChange={(e) => {dispatch(setExpansion(parseFloat(e.target.value)))}}
+                    onChange={(e) => { dispatch(setExpansion(parseFloat(e.target.value))) }}
                     value={expansion}
+                    disabled={layout!=="rectangular"}
                 />
-                <label htmlFor="expansion">Expansion</label>
             </div>
-            <div>
+            <div className='option range'>
+                <label htmlFor="fisheye">Fisheye: </label>
+
                 <input
                     type="range"
                     min="0"
@@ -52,44 +72,17 @@ export function Layout() {
 
                     onChange={(e) => dispatch(setFisheye(parseFloat(e.target.value)))}
                     value={fisheye}
+                    disabled={layout==="equalangle"}
+
                 />
-                <label htmlFor="fisheye">Fisheye</label>
             </div>
-            <div>
-                <input
-                    type="range"
-                    min="0"
-                    max="1"
-                    step={0.01}
-                    id="rootLength"
-                    onChange={(e) => dispatch(setRootLength(parseFloat(e.target.value)))}
-                    value={rootLength}
-                />
-                <label htmlFor="rootLength">Root Length</label>
-            </div>
-            <div>
-                <input
-                    type="range"
-                    min="0"
-                    max="1"
-                    step={0.01}
-                    id="curvature"
-                    onChange={(e) => dispatch(setCurvature(parseFloat(e.target.value)))}
-                    value={curvature}
-                />
-                <label htmlFor="curvature">Curvature</label>
+            <div className="layoutOptions">
+            {layout === "rectangular" ? <RectangularOptions /> :
+                layout === "circular" ? <PolarOptions /> :
+                    layout === "equalangle" ? <RadialOptions /> : null}
             </div>
 
-            <div>
-                <input
-                    type="checkbox"
-                    checked={alignTipLabels}
-                    onChange={() => dispatch(flipAlignTipLabels())}
-                    id="alignLabels"
-                />
-                <label htmlFor='alignlabels'>Align Tip Labels</label>
-            </div>
-         </SettingPanel>
+        </SettingPanel>
 
     )
 

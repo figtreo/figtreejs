@@ -39,3 +39,7 @@
 .PanelTitle__title{
     display: inline-block;
 }
+
+.Panel__content{
+    margin-left:10px;
+}

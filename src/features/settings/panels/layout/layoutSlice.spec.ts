@@ -2,12 +2,17 @@ import layoutReducer, { LayoutState} from "./layoutSlice"
 
 describe('layoutSlice',()=>{
     const initialState: LayoutState = {
-        layout:'rectangular',
-        expansion:0,
-        fisheye:0,
-        rootLength:0,
-        curvature:0,
-        alignTipLabels:false,
+        layout: 'rectangular',
+        expansion: 0,
+        fisheye: 0,
+        rootLength: 0,
+        curvature: 0,
+        alignTipLabels: false,
+        zoom: 0,
+        rootAngle: 0,
+        angleRange: 0,
+        showRoot: false,
+        spread:0
     };
     it('should handle initial state', () => {
         expect(layoutReducer(undefined, { type: 'unknown' })).toEqual(initialState)
