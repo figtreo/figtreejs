@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { selectNodeCount,parseNewick, selectTree, Node} from './treeSlice';
 
@@ -10,7 +10,66 @@ import { NormalizedTree } from './normalizedTree';
 import { Tips } from './tips';
 import { InternalNodes } from './nodes';
 const margins = {top:10,bottom:10,left:10,right:10};
-export function Tree({suggestedWidth=600,baseHeight=400}){
+export function Tree({panelRef}:any){
+
+  // resizing work
+
+ // a little magic here to make the panel resize and pass the size to the tree
+    //min width and height for svg
+    const minWidth = 400;
+    const minHeight = 400;
+    const padding = 10; //svg a little smaller 
+
+    
+    const [isResizing, setIsResizing] = useState(true);
+
+    const [treeSize, setTreeSize] = useState({width:minWidth,baseHeight:minHeight});
+
+    const startResizing = useCallback((mouseDownEvent: any) => {
+        setIsResizing(true);
+    }, []);
+
+    const stopResizing = useCallback(() => {
+        setIsResizing(false);
+    }, []);
+
+    const resize = useCallback(
+        (mouseMoveEvent: any) => {
+            if (isResizing && panelRef.current != null) {
+                
+                const height = Math.max(minHeight,panelRef.current.getBoundingClientRect().height-padding)
+                const width = Math.max(minWidth,panelRef.current.getBoundingClientRect().width-padding)
+                setTreeSize(
+                    {baseHeight:height,width:width}
+                );
+            }
+        },
+        [isResizing]
+    );
+
+    
+
+    useEffect(() => {
+        window.addEventListener("resize", resize);
+        window.addEventListener("resize", startResizing);
+        return () => {
+            window.removeEventListener("resize", resize);
+            window.removeEventListener("resize", stopResizing);
+        };
+    }, [resize, stopResizing]);
+
+
+ useEffect(() => {
+  const height = Math.max(minHeight,panelRef.current.getBoundingClientRect().height-padding)
+                const width = Math.max(minWidth,panelRef.current.getBoundingClientRect().width-padding)
+                setTreeSize(
+                    {baseHeight:height,width:width}
+                );
+       
+    }, []);
+
+
+
 
     const dispatch = useAppDispatch();
     const tree = new NormalizedTree(useAppSelector(selectTree))
@@ -32,15 +91,15 @@ export function Tree({suggestedWidth=600,baseHeight=400}){
       };
     })
 
-    const height = baseHeight+(baseHeight*expansion);
+    const height = treeSize.baseHeight+(treeSize.baseHeight*expansion*5);
 
 
 
 // TODO animate svg changes
     if(nodes>0){
       return(
-        <svg width={suggestedWidth} height={height}> 
-        <FigTree   width={suggestedWidth-margins.left-margins.right} height={height-margins.bottom-margins.top} tree={tree} layout={"rectangular"} margins={margins}>
+        <svg width={treeSize.width} height={height} > 
+        <FigTree   width={treeSize.width-margins.left-margins.right} height={height-margins.bottom-margins.top} tree={tree} layout={"rectangular"} margins={margins}>
             <Branches.Rectangular attrs={{strokeWidth:lineWidth,stroke:branchColour}} />
             <Tips tree={tree}/>
             <InternalNodes tree={tree}/>
