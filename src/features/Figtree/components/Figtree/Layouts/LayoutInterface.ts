@@ -48,7 +48,8 @@ export type layoutOptions = {
     rootAngle: number,
     angleRange: number,
     tipSpace: (tip1: NodeRef, tip2: NodeRef) => number, //Todo make arguements nodeRefs
-    curvature: number
+    curvature: number,
+    showRoot: boolean,
 }
 
 export abstract class AbstractLayout {

@@ -10,13 +10,13 @@ export class RectangularLayout extends AbstractLayout {
         return this.finalizeArbitraryLayout(arbitraryLayout, layoutOptions);
     }
 
-    static getArbitraryLayout(tree: NormalizedTree, {rootLengthProportion = 0, tipSpace = (tip1: NodeRef, tip2: NodeRef) => 1}): ArbitraryVertices {
+    static getArbitraryLayout(tree: NormalizedTree, {rootLength = 0, tipSpace = (tip1: NodeRef, tip2: NodeRef) => 1}): ArbitraryVertices {
         let currentY = 0;
         const vertices: ArbitraryVertices = { byId: {}, allIds: [], extent: { x: [0, 0], y: [0, 0] } };
         let maxY = 0;
         let maxX = 0;
 
-        const rootLength = rootLengthProportion * max([...tree.getTips()].map((tip: NodeRef) => tree.getNodeDivergence(tip)!))!
+        const adjustedRootLength = rootLength * max([...tree.getTips()].map((tip: NodeRef) => tree.getNodeDivergence(tip)!))!
 
         let lastTip: null | NodeRef = null;
         //visits children first so we can get the y position of the parents. 
@@ -30,7 +30,7 @@ export class RectangularLayout extends AbstractLayout {
             //internal node
             if (tree.getChildCount(node) > 0) {
                 const children: ArbitraryVertex[] = tree.getChildren(node).map((child: NodeRef) => vertices.byId[child.id]);
-                const x = tree.getNodeDivergence(node)! + rootLength;
+                const x = tree.getNodeDivergence(node)! + adjustedRootLength;
                 const y = children.reduce((acc, child) => acc + child.y, 0) / children.length;
                 vertices.byId[node.id] = {
                     x,
@@ -46,7 +46,7 @@ export class RectangularLayout extends AbstractLayout {
                 vertices.allIds.push(node.id);
             } else {
                 //tip
-                const x = tree.getNodeDivergence(node)! + rootLength
+                const x = tree.getNodeDivergence(node)! + adjustedRootLength
                 const y = currentY;
                 vertices.byId[node.id] = {
                     x,

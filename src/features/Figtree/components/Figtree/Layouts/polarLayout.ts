@@ -8,8 +8,13 @@ import path from "path";
 
 export class PolarLayout extends AbstractLayout {
 
-    static getArbitraryLayout(tree: NormalizedTree, {rootLengthProportion = 0, tipSpace = (tip1: NodeRef, tip2: NodeRef) => 1}): ArbitraryVertices {
-        return RectangularLayout.getArbitraryLayout(tree,{rootLengthProportion,tipSpace});
+    static getArbitraryLayout(tree: NormalizedTree, {rootLength = 0, tipSpace = (tip1: NodeRef, tip2: NodeRef) => 1,showRoot=true}): ArbitraryVertices {
+        const rectangularLayout = RectangularLayout.getArbitraryLayout(tree,{rootLength,tipSpace});
+        //remove root path if needed
+        if(!showRoot){
+            rectangularLayout.byId[tree.root!.id].pathPoints = [];
+        }
+        return rectangularLayout;
     }
 
     static finalizeArbitraryLayout(arbitraryLayout: ArbitraryVertices, opts: layoutOptions):Vertices {
@@ -38,12 +43,17 @@ export class PolarLayout extends AbstractLayout {
 
             //this ends up converting points that have been converted previously. maybe just pass 
             // parent id as source and fetch when needed?
+            let pathPoints:{x:number,y:number,r:number,theta:number}[] = [];
+            // ingores root which might have an empty path;
+            if(vertex.pathPoints.length==2){
             const [tip,parent] = vertex.pathPoints;
             const stepPointR = rScale(parent.x);
             const stepPointTheta = thetaScale(tip.y);
             const [stepPointX,stepPointY]  = polarToCartesian(stepPointR,stepPointTheta);
 
-            const pathPoints:{x:number,y:number,r:number,theta:number}[] = vertex.pathPoints.map((point)=>{
+            
+
+            pathPoints = vertex.pathPoints.map((point)=>{
                 const r = rScale(point.x);
                 const theta = thetaScale(point.y);
                 const [x,y] = polarToCartesian(r,theta);
@@ -55,6 +65,7 @@ export class PolarLayout extends AbstractLayout {
 
             
             pathPoints.push({x:stepPointX,y:stepPointY,r:stepPointR,theta:stepPointTheta});
+        }
             polarVertices.push({id:vertex.id,r,theta,x,y,pathPoints,level})
         };
         
@@ -110,9 +121,8 @@ export class PolarLayout extends AbstractLayout {
                 const arcBit = source.theta===target.theta ||source.r===0?"":`A${source.r},${source.r} 0 0 ${source.theta<target.theta ?1:0} ${step.x},${step.y}`; // the end point of the arc is wrong
                 return `M${source.x},${source.y} ${arcBit} L${target.x},${target.y}`;
 
-            } case 3: {
-                console.log("cartoon implemented")
-                throw new Error("path generator not implemented for this number of points")
+            } case 0: {
+               return "";
             } default: {
                 throw new Error("path generator not implemented for this number of points")
             }

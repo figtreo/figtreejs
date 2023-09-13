@@ -2,7 +2,7 @@ import { useAppDispatch, useAppSelector } from '../../../../app/hooks';
 import { selectLayout, setRootAngle, setAngleRange, flipShowRoot, setRootLength, flipAlignTipLabels } from './layoutSlice';
 
 export function PolarOptions() {
-    const { rootAngle, showRoot, rootLength, alignTipLabels } = useAppSelector(selectLayout);
+    const { rootAngle, showRoot, rootLength, alignTipLabels,angleRange} = useAppSelector(selectLayout);
     const dispatch = useAppDispatch();
 
 
@@ -33,7 +33,7 @@ export function PolarOptions() {
                     step={0.1}
                     id="angleRange"
                     onChange={(e) => dispatch(setAngleRange(parseFloat(e.target.value)))}
-                    value={rootLength}
+                    value={angleRange}
                 />
             </div>
             <div className='option range'>
@@ -42,7 +42,7 @@ export function PolarOptions() {
                 <input
                     type="range"
                     min="0"
-                    max="1"
+                    max="0.5"
                     step={0.01}
                     id="rootLength"
                     onChange={(e) => dispatch(setRootLength(parseFloat(e.target.value)))}
