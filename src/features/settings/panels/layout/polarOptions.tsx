@@ -16,7 +16,7 @@ export function PolarOptions() {
                     type="range"
                     min="0"
                     max={`${2*Math.PI}`}
-                    step={1}
+                    step={0.1}
                     id="rootAngle"
                     onChange={(e) => dispatch(setRootAngle(parseFloat(e.target.value)))}
                     value={rootAngle}
@@ -30,7 +30,7 @@ export function PolarOptions() {
                     type="range"
                     min="0"
                     max={`${2*Math.PI}`}
-                    step={-1}
+                    step={0.1}
                     id="angleRange"
                     onChange={(e) => dispatch(setAngleRange(parseFloat(e.target.value)))}
                     value={rootLength}

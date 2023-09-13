@@ -6,7 +6,7 @@ import { extent, max, min } from "d3-array";
 
 const padding=20;
 
-function scalePolarLayout(baseLayout:BaseLayout,width:number,height:number,angleRange:number,rootAngle:number){
+function scalePolarLayout(baseLayout:BaseLayout,width:number,height:number,rootAngle:number,angleRange:number,){
     // padding
     //x is divergence
     //y is height
@@ -18,7 +18,7 @@ function scalePolarLayout(baseLayout:BaseLayout,width:number,height:number,angle
 
     const thetaScale = scaleLinear()
         .domain(baseLayout.extent.y)
-        .range([0,angleRange]);
+        .range([0,2*Math.PI]);
 
     const polarVertices = Object.values(baseLayout.vertices).map((vertex)=>{
         const r = rScale(vertex.x);
@@ -51,8 +51,8 @@ export function polarToCartesian(r:number,theta:number){
     return [r*Math.cos(theta),r*Math.sin(theta)];
 }
 
-export function polarLayout(tree:NormalizedTree,width:number,height:number,rootLength:number,rootAngle:number,angleRange:number):Vertices {
+export function polarLayout(tree:NormalizedTree,width:number,height:number,rootLength:number,rootAngle:number,angleRange:number,):Vertices {
     const baseLayout = rectangularInitialLayout(tree,rootLength);
 
-    return scalePolarLayout(baseLayout,width,height,angleRange,rootAngle);
+    return scalePolarLayout(baseLayout,width,height,rootAngle,angleRange);
 }
