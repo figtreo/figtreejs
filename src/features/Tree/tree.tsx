@@ -69,8 +69,6 @@ export function Tree({panelRef}:any){
     }, []);
 
 
-
-
     const dispatch = useAppDispatch();
     const tree = new NormalizedTree(useAppSelector(selectTree))
     const nodes = useAppSelector(selectNodeCount);
@@ -78,7 +76,7 @@ export function Tree({panelRef}:any){
     const lineWidth = useAppSelector(selectLineWidth);
     const branchColour = useAppSelector(selectStroke);
 
-    const expansion = useAppSelector(selectLayout).expansion;
+    const {expansion,curvature,layout}= useAppSelector(selectLayout);
    
     //
     useEffect(() => {
@@ -94,13 +92,15 @@ export function Tree({panelRef}:any){
     const height = treeSize.baseHeight+(treeSize.baseHeight*expansion*5);
 
 
+//TODO allow to specify a generic Branches with attrs etc. that gets populated by Figtree.
 
 // TODO animate svg changes
     if(nodes>0){
       return(
         <svg width={treeSize.width} height={height} > 
-        <FigTree   width={treeSize.width-margins.left-margins.right} height={height-margins.bottom-margins.top} tree={tree} layout={"rectangular"} margins={margins}>
-            <Branches.Rectangular attrs={{strokeWidth:lineWidth,stroke:branchColour}} />
+        <FigTree   width={treeSize.width-margins.left-margins.right} height={height-margins.bottom-margins.top} tree={tree} layout={layout} margins={margins}>
+            {layout!=="circular"? <Branches.Rectangular curvature={curvature} attrs={{strokeWidth:lineWidth,stroke:branchColour}} />:
+             <Branches.Polar  attrs={{strokeWidth:lineWidth,stroke:branchColour}} />}
             <Tips tree={tree}/>
             <InternalNodes tree={tree}/>
 

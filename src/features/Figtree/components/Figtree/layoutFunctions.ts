@@ -1,6 +1,17 @@
+import { scaleLinear } from "d3-scale";
 import { NormalizedTree } from "../../../Tree/normalizedTree";
 import { getHeight, postorderGenerator } from "../../../Tree/treeFunctions";
 import { TreeState } from "../../../Tree/treeSlice";
+import { rectangularLayout } from "./rectangularLayout";
+import { polarLayout } from "./polarLayout";
+
+export interface BaseLayout {
+        vertices:{[id:string]:Vertex},
+        extent:{
+            x:[number,number],
+            y:[number,number],
+        }
+    }
 
 export interface Vertices {
         [id:string]:Vertex
@@ -10,38 +21,20 @@ export interface Vertices {
             id:string,
            x:number,
            y:number,
+           r?:number
+           theta?:number
     }
 
 interface layoutFunction {
-    (tree:NormalizedTree):Vertices
+    (tree:NormalizedTree,width:number,height:number,rootLength:number,rootAngle:number,angleRange:number):Vertices
 }
-//TODO cache
-function rectangularLayout (tree:NormalizedTree):Vertices {
-    
-    let currentY=0;
-    const vertices:Vertices = {};
-    for(const node of tree.getPostorderNodes()) {
 
-        if(node.children.length>0) {
-            const children = node.children.map((childId) => vertices[childId]);
-            const y = 
-            vertices[node.id] = {
-                x:node.divergence!, //TODO add height or function to get height
-                y:children.reduce((acc,child) => acc + child.y,0)/children.length,
-                id:node.id
-            }
-        }else{
-            vertices[node.id] = {
-                x:node.divergence!, //TODO add height or function to get height
-                y:currentY,
-                id:node.id
-            }
-        }
-        currentY++;
-    }
-    return vertices;
-}
+
+
+
 
 export const layoutFunctions:{[key:string]:layoutFunction} = {
     "rectangular":rectangularLayout,
+    "circular":polarLayout
 }
+

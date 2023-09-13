@@ -3,29 +3,29 @@ import RectangularBranchPath from "./Shapes/RectangularBranchPath";
 import CoalescentBranch from "./Shapes/CoalescentBranchPath";
 import {mapAttrsToProps} from "../../../../utils/baubleHelpers";
 import {useLayout, useTree} from "../../../../hooks";
+import PolarBranchPath from "./Shapes/CircularBranchPath";
 
 function BranchesHOC(PathComponent) {
     return function Branches(props){
         const tree = useTree();
         const vertices = useLayout();
-        const {attrs, filter} = props;
+        const {attrs, filter,curvature} = props;
         const attrMapper = useMemo(() => mapAttrsToProps(attrs), [attrs]);
-        function getPosition(v){
+        function getEdge(v){
             const parent = tree.getParent(v.id);
             return {
-                x0: vertices[parent].x,
-                y0: vertices[parent].y,
-                x1: v.x,
-                y1: v.y
+                source: vertices[parent],
+                target: v
             }
             
         };
 
         return (<g className={"branch-layer"}>
-            {[...Object.values(vertices)].filter(hasParent(tree)).filter(v=>filter(tree.getNode(v.id))).map(e => {
-                return (<PathComponent  key={`branch-${e.id}`} {...getPosition(e)}
-                                       attrs={attrMapper(e)}
-                                       edge={e}/>)
+            {[...Object.values(vertices)].filter(hasParent(tree)).filter(v=>filter(tree.getNode(v.id))).map(v => {
+                return (<PathComponent  key={`branch-${v.id}`} edge={getEdge(v)}
+                                       attrs={attrMapper(v)}
+                                       vertex={v}
+                                       curvature={curvature}/>)
             })
             }
         </g>)
@@ -40,8 +40,16 @@ const RectangularBranches=BranchesHOC(RectangularBranchPath);
 RectangularBranches.defaultProps={
     filter:e=>true
 };
+
 const CoalescentBranches = BranchesHOC(CoalescentBranch);
 
+const PolarBranches = BranchesHOC(PolarBranchPath);
+
+PolarBranches.defaultProps={
+    filter:e=>true
+};
+
 const Branches={Rectangular:RectangularBranches,
-    Coalescent:CoalescentBranches};
+    Coalescent:CoalescentBranches,
+    Polar:PolarBranches};
 export default Branches;

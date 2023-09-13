@@ -15,7 +15,7 @@ export function PolarOptions() {
                 <input
                     type="range"
                     min="0"
-                    max="360"
+                    max={`${2*Math.PI}`}
                     step={1}
                     id="rootAngle"
                     onChange={(e) => dispatch(setRootAngle(parseFloat(e.target.value)))}
@@ -28,8 +28,8 @@ export function PolarOptions() {
 
                 <input
                     type="range"
-                    min="360"
-                    max="0"
+                    min="0"
+                    max={`${2*Math.PI}`}
                     step={-1}
                     id="angleRange"
                     onChange={(e) => dispatch(setAngleRange(parseFloat(e.target.value)))}

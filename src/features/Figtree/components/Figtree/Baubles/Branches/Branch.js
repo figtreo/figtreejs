@@ -13,7 +13,7 @@ const basicBranch = (props) =>{
     )
 };
 
-const Branch = React.memo(basicBranch,samesies);
+const Branch = React.memo(basicBranch);
 
 export default Branch;
 
