@@ -1,6 +1,6 @@
 import react from 'react';
 import { linkPolar } from './curve';
-import { Vertex } from '../../../layoutFunctions';
+import { Vertex } from '../../../Layouts/layoutFunctions';
 import { animated } from '@react-spring/web';
 import React from 'react';
 

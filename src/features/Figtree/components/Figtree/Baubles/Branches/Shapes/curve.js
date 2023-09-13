@@ -14,7 +14,7 @@ TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
 THIS SOFTWARE.
 */
 
-import { polarToCartesian } from "../../../polarLayout";
+import { polarToCartesian } from "../../../Layouts/polarLayout";
 import { link } from "d3-shape";
 //adjusted to allow for smooth curves and straight lines in rectangular layout.
 

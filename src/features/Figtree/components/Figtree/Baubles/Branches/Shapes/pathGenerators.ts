@@ -1,4 +1,4 @@
-import { Vertex } from "../../../layoutFunctions"
+import { Vertex } from "../../../Layouts/LayoutInterface";
 
 interface Edge{
     source:Vertex,

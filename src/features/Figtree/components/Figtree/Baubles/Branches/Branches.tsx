@@ -3,10 +3,9 @@ import { animated } from "@react-spring/web";
 import { mapAttrsToProps } from "../../../../utils/baubleHelpers";
 import { useLayout, useTree } from "../../../../hooks";
 import { BranchPathGenerator, RectangularBranchPath } from "./Shapes/pathGenerators";
-import { type } from "os";
-import { PassThrough } from "stream";
-import { Path } from "typescript";
-import { Vertex } from "../../layoutFunctions";
+
+import { NodeRef } from "../../../../../Tree/normalizedTree";
+import { Vertex } from "../../Layouts/LayoutInterface";
 
 interface BranchProps {
     curvature?: number,
@@ -28,31 +27,21 @@ interface attrGetter {
 //todo pull out defaults
 export default function Branches({
     curvature= 0.5,
-     filter= (n:any) => true, 
+     filter= (n:NodeRef) => true, 
      pathGenerator= RectangularBranchPath, 
      attrs= { stroke: "black", strokeWidth: 2 }
 }) {
     const tree = useTree();
     const vertices = useLayout();
     const attrMapper: attrGetter = useMemo(() => mapAttrsToProps(attrs), [attrs]);
-    function getEdge(v: Vertex) {
-        const parent = tree.getParent(v.id);
-        return {
-            source: vertices[parent!],
-            target: v
-        }
-    }
-
+    
 
     return (
         <g className={"branch-layer"}>
-            {[...Object.values(vertices)].filter(v => tree.getParent(v.id)).filter(v => filter(tree.getNode(v.id))).map(v => {
-
-                const edge = getEdge(v)
-
-                const path = { d: pathGenerator(edge, curvature) }
-
-                return (<animated.path key={`branch-${v.id}`} {...attrMapper(v)}  {...path}  fill={"none"} />)
+            {
+            vertices.allIds.filter(id => vertices.byId[id].d).filter(id => filter(tree.getNode(id))).map(id => {
+                const v = vertices.byId[id];
+                return (<animated.path key={`branch-${id}`} {...attrMapper(v)}  d={v.d}  fill={"none"} />)
             })
             }
         </g>

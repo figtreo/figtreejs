@@ -1,15 +1,14 @@
 import React,{useMemo,useReducer} from 'react';
 import {scaleLinear} from "d3-scale";
-import { Vertices, layoutFunctions } from './layoutFunctions';
-
-import { LayoutContext, ScaleContext, TreeContext } from '../../Context/context';
-import { extent } from 'd3-array';
+import { LayoutContext, TreeContext } from '../../Context/context';
 import Branches from './Baubles/Branches/Branches';
-import { TreeState } from '../../../Tree/treeSlice';
 import withConditionalInteractionProvider from '../HOC/withConditionalInteractionProvider';
-import { NormalizedTree } from '../../../Tree/normalizedTree';
+import { NodeRef, NormalizedTree } from '../../../Tree/normalizedTree';
 import { useAppSelector } from '../../../../app/hooks';
 import { selectLayout } from '../../../settings/panels/layout/layoutSlice';
+import { AbstractLayout } from './Layouts/LayoutInterface';
+import { RectangularLayout } from './Layouts/rectangularLayout';
+import { PolarLayout } from './Layouts/polarLayout';
 
 /**
  * The FigTree component
@@ -24,16 +23,15 @@ interface Margins{
     right:number,
 }
 
-function FigTree(props:{width:number,height:number,layout:"rectangular"|"circular"|"equalAngle",tree:NormalizedTree,margins:Margins,children:React.ReactNode}){
-    const {width,height,margins,tree} = props;
+function FigTree(props:{width:number,height:number,layout:typeof AbstractLayout,tree:NormalizedTree,margins:Margins,children:React.ReactNode}){
+    const {width,height,margins,tree,layout} = props;
     
-    const {rootAngle,rootLength,angleRange} = useAppSelector(selectLayout)
+    const {rootAngle,rootLength,angleRange,curvature} = useAppSelector(selectLayout)
    
-    const layout = layoutFunctions[props.layout]
 
     const w = width - margins.left - margins.right;
     const h = height - margins.top - margins.bottom;
-    const vertices = layout(tree,w,h,rootLength,rootAngle,angleRange);
+    const vertices = layout.layout(tree,{width:w,height:h,rootLength,rootAngle,angleRange,curvature,tipSpace:(tip1:NodeRef,tip2:NodeRef)=>1});
         
     //context gives us a nicer api where the data don't need to be passed to the subcomponents of the figure and the subcomponents can be added by user with JSX
     return (

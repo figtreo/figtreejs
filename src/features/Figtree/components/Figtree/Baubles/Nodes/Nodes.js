@@ -20,9 +20,10 @@ function NodesHOC(ShapeComponent) {
         const shapeProps = useAttributeMappers(props,hoverKey,selectionKey);
         return (
             <g className={"node-layer"}>
-                {[...Object.values(vertices)].sort((a,b)=>sortFactor*(a.x-b.x)).reduce( (all, v) => {
-                    if (filter(tree.getNode(v.id))) {//filter needs to us tree api
-                        const element = <ShapeComponent key={v.id} {...rest}    {...shapeProps(v)} vertex={v}  x={v.x} y={v.y}/> //scales above?
+                {vertices.allIds.sort((a,b)=>sortFactor*(vertices.byId[a].x-vertices.byId[b].x)).reduce( (all, id) => {
+                    if (filter(tree.getNode(id))) {//filter needs to us tree api
+                        const v = vertices.byId[id];
+                        const element = <ShapeComponent key={id} {...rest}    {...shapeProps(v)} vertex={v}  x={v.x} y={v.y}/> //scales above?
                         // const element = <ShapeComponent key={v.id} {...rest}  {...shapeProps(v)}   vertex={v}  x={scales.x(v.x)} y={scales.y(v.y)}/> //scales above?
                             all.push(element)
                     }

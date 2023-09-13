@@ -3,8 +3,9 @@ import {linkHorizontal} from "d3-shape";
 import {extent, max, min} from "d3-array";
 import withLinearGradient from "../../../../HOC/WithLinearGradient";
 import { useLayout, useScales,useTree} from "../../../../../hooks";
-import { Vertex, Vertices } from "../../../layoutFunctions";
 import {Node} from "../../../../../../Tree/treeSlice";
+import { Vertex } from "../../../Layouts/LayoutInterface";
+import { NodeRef } from "../../../../../../Tree/normalizedTree";
 //TODO extract out fill => gradient function
 
 type genericAttr = {[key:string]:any};
@@ -19,8 +20,8 @@ export default function CoalescentShape (props:CoalescentProps){
 
     const {vertex,attrs,interactions,startWidth,FadeEndpoint,curveSlope} =props;
 
-    const targets:Vertex[] = [...tree.getTips(tree.getNode(vertex.id))].map( (decedent:Node) => vertices[decedent.id])
-        .concat(tree.getChildren(tree.getNode(vertex.id)).map( (decedent:Node) => vertices[decedent.id]));
+    const targets:Vertex[] = [...tree.getTips(tree.getNode(vertex.id))].map( (decedent:NodeRef) => vertices.byId[decedent.id])
+        .concat(tree.getChildren(tree.getNode(vertex.id)).map( (decedent:NodeRef) => vertices.byId[decedent.id]));
 
 
     const slope =calcSlope(targets,curveSlope);

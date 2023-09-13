@@ -10,6 +10,8 @@ import { NormalizedTree } from './normalizedTree';
 import { Tips } from './tips';
 import { InternalNodes } from './nodes';
 import { PolarBranchPath, RectangularBranchPath } from '../Figtree/components/Figtree/Baubles/Branches/Shapes/pathGenerators';
+import { RectangularLayout } from '../Figtree/components/Figtree/Layouts/rectangularLayout';
+import { PolarLayout } from '../Figtree/components/Figtree/Layouts/polarLayout';
 const margins = {top:10,bottom:10,left:10,right:10};
 export function Tree({panelRef}:any){
 
@@ -79,6 +81,7 @@ export function Tree({panelRef}:any){
 
     const {expansion,curvature,layout}= useAppSelector(selectLayout);
    
+    const treeLayout = layout==="rectangular"?RectangularLayout:PolarLayout;
     //
     useEffect(() => {
       const handlePaste = (event: any) => {
@@ -99,8 +102,8 @@ export function Tree({panelRef}:any){
     if(nodes>0){
       return(
         <svg width={treeSize.width} height={height} > 
-        <FigTree   width={treeSize.width-margins.left-margins.right} height={height-margins.bottom-margins.top} tree={tree} layout={layout} margins={margins}>
-           <Branches curvature={curvature} attrs={{strokeWidth:lineWidth,stroke:branchColour}} pathGenerator={layout==="circular"?PolarBranchPath:RectangularBranchPath}/>
+        <FigTree   width={treeSize.width-margins.left-margins.right} height={height-margins.bottom-margins.top} tree={tree} layout={treeLayout} margins={margins}>
+           <Branches curvature={curvature} attrs={{strokeWidth:lineWidth,stroke:branchColour}} />
             <Tips tree={tree}/>
             <InternalNodes tree={tree}/>
         </FigTree>

@@ -4,6 +4,10 @@ import { TreeState,Node } from "./treeSlice"
 //Trying something here 
 // Can we use a tree class to make getters etc easier.
 
+//cache in tree to avoid recalculating
+export interface NodeRef{
+    id:string
+}
 
 export class NormalizedTree  {
     _data:TreeState
@@ -14,19 +18,18 @@ export class NormalizedTree  {
         return this._data
     }
 
-
-    getNodeDivergence(node: Node): number {
+    getNode(id: string): NodeRef {
+        return this._data.nodes.byId[id]
+    }
+    getNodeDivergence(node: NodeRef): number {
         return this._data.nodes.byId[node.id].divergence!
     }
 
-    getChildCount(node: Node): number {
+    getChildCount(node: NodeRef): number {
         return this._data.nodes.byId[node.id].children.length
        
     }
-    getNode(id:string):Node{
-        return this._data.nodes.byId[id]
-    }
-    getChild(node: Node, index: number): Node {
+    getChild(node: NodeRef, index: number): NodeRef {
         return this._data.nodes.byId[this._data.nodes.byId[node.id].children[index]];
     }
     getParent(id: string): string | null {
@@ -37,14 +40,14 @@ export class NormalizedTree  {
             return parentId
         }
     }
-    getChildren(node: Node): Node[] {
+    getChildren(node: NodeRef): NodeRef[] {
         return this._data.nodes.byId[node.id].children.map((id)=>this._data.nodes.byId[id])
     }
 
-    getAnnotation(node: Node, name: string): any | null {
+    getAnnotation(node: NodeRef, name: string): any | null {
         return this._data.annotations[node.id][name]
     }
-    getLabel(node: Node): string | null {
+    getLabel(node: NodeRef): string | null {
         return this._data.nodes.byId[node.id].label
     }
 
@@ -105,20 +108,20 @@ export class NormalizedTree  {
     get InternalNodeCount(): number {
         return  this._data.nodes.allIds.filter(n=>this.getChildCount(this.getNode(n))>0).length
     }
-    get externalNodes(): Node[] {
+    get externalNodes(): NodeRef[] {
         throw new Error("Method not implemented.")
     }
-    get internalNodes(): Node[] {
+    get internalNodes(): NodeRef[] {
         throw new Error("Method not implemented.")
     }
-    get root(): Node | null {
+    get root(): NodeRef | null {
         return this.getNode(this._data.rootNode!)
     }
-    getTips(node:Node = this.root!): Generator<Node> {
-        return tipGenerator(this._data,node)
+    getTips(node:NodeRef = this.root!): Generator<NodeRef> {
+        return tipGenerator(this,node)
     }
-    getPostorderNodes(node:Node = this.root!):Generator<Node>{
-        return postorderGenerator(this._data,node)
+    getPostorderNodes(node:NodeRef = this.root!):Generator<NodeRef>{
+        return postorderGenerator(this,node)
     }
     // set root(node: Node | null) {
     //     throw new Error("Method not implemented.")
@@ -127,12 +130,12 @@ export class NormalizedTree  {
 
 }
 
-function *tipGenerator(tree:TreeState,node: Node): Generator<Node> {
-    const traverse = function* (node: Node): Generator<Node> {
-        const childCount = node.children.length;
+function *tipGenerator(tree:NormalizedTree,node: NodeRef): Generator<NodeRef> {
+    const traverse = function* (node: NodeRef): Generator<NodeRef> {
+        const childCount = tree.getChildCount(node);;
         if (childCount>0) {
             for (let i=0;i<childCount;i++) {
-                const child = tree.nodes.byId[node.children[i]];
+                const child = tree.getChild(node,i);
                 yield* traverse(child);
             }
         }else{
@@ -141,13 +144,13 @@ function *tipGenerator(tree:TreeState,node: Node): Generator<Node> {
     };
     yield* traverse(node);
 }
-function* postorderGenerator(tree:TreeState,node: Node): Generator<Node> {
+function* postorderGenerator(tree:NormalizedTree,node: NodeRef): Generator<NodeRef> {
 
-    const traverse = function* (node: Node): Generator<Node> {
-        const childCount = node.children.length;
+    const traverse = function* (node: NodeRef): Generator<NodeRef> {
+        const childCount = tree.getChildCount(node);
         if (childCount>0) {
             for (let i=0;i<childCount;i++) {
-                const child = tree.nodes.byId[node.children[i]];
+                const child = tree.getChild(node,i);
                 yield* traverse(child);
             }
         }
