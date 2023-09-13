@@ -51,15 +51,27 @@ export class PolarLayout extends AbstractLayout {
             })
 
             //add step point so we can scale it later
+
+
             
             pathPoints.push({x:stepPointX,y:stepPointY,r:stepPointR,theta:stepPointTheta});
             polarVertices.push({id:vertex.id,r,theta,x,y,pathPoints,level})
         };
-        console.log(polarVertices);
         
-    
-        const x = scaleLinear().domain(extent(polarVertices,(d)=>d.x) as [number, number]).range([this.padding,maxRadius*2-this.padding]);
-        const y = scaleLinear().domain(extent(polarVertices,(d)=>d.y) as [number, number]).range([this.padding,maxRadius*2-this.padding]);
+    // update so centered on svg
+        const smallRange = [this.padding,maxRadius*2-this.padding];
+        const shiftFactor = Math.abs(opts.width-opts.height)/2;
+        let heightRange, widthRange;
+        if(opts.width>opts.height){
+            heightRange = smallRange;
+            widthRange = [this.padding+shiftFactor,maxRadius*2-this.padding+shiftFactor];
+        }else{
+            widthRange = smallRange;
+            heightRange = [this.padding+shiftFactor,maxRadius*2-this.padding+shiftFactor];
+        }
+
+        const x = scaleLinear().domain(extent(polarVertices,(d)=>d.x) as [number, number]).range(widthRange);
+        const y = scaleLinear().domain(extent(polarVertices,(d)=>d.y) as [number, number]).range(heightRange);
         
         const scaledVertices: Vertices = {
             byId: {},
@@ -78,7 +90,6 @@ export class PolarLayout extends AbstractLayout {
             };
             scaledVertices.allIds.push(vertex.id);
         }
-        console.log(scaledVertices);
         return scaledVertices;
     }
    
