@@ -9,6 +9,7 @@ import { selectLayout } from '../settings/panels/layout/layoutSlice';
 import { NormalizedTree } from './normalizedTree';
 import { Tips } from './tips';
 import { InternalNodes } from './nodes';
+import { PolarBranchPath, RectangularBranchPath } from '../Figtree/components/Figtree/Baubles/Branches/Shapes/pathGenerators';
 const margins = {top:10,bottom:10,left:10,right:10};
 export function Tree({panelRef}:any){
 
@@ -99,11 +100,9 @@ export function Tree({panelRef}:any){
       return(
         <svg width={treeSize.width} height={height} > 
         <FigTree   width={treeSize.width-margins.left-margins.right} height={height-margins.bottom-margins.top} tree={tree} layout={layout} margins={margins}>
-            {layout!=="circular"? <Branches.Rectangular curvature={curvature} attrs={{strokeWidth:lineWidth,stroke:branchColour}} />:
-             <Branches.Polar  attrs={{strokeWidth:lineWidth,stroke:branchColour}} />}
+           <Branches curvature={curvature} attrs={{strokeWidth:lineWidth,stroke:branchColour}} pathGenerator={layout==="circular"?PolarBranchPath:RectangularBranchPath}/>
             <Tips tree={tree}/>
             <InternalNodes tree={tree}/>
-
         </FigTree>
         </svg>
       )
