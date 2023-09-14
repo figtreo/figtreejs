@@ -26,6 +26,7 @@ export interface ArbitraryVertex {
     x: number,
     y: number,
     level: number,
+    theta?: number, //angle
     pathPoints: { x: number, y: number }[]
 }
 

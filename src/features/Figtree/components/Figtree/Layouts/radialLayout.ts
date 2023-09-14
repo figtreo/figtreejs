@@ -53,7 +53,7 @@ export class RadialLayout extends AbstractLayout {
             const {angleStart,angleEnd,xpos,ypos,level,id} = dataStack.pop()!
 
             if (id!==node.id){
-            throw new Error("something went wrong with the stack")
+            throw new Error("something went wrong with the stack") //todo remove this and the id in the stack. 
             }
             const branchAngle = (angleStart + angleEnd) / 2.0;
 
@@ -64,7 +64,10 @@ export class RadialLayout extends AbstractLayout {
             const x = xpos + (length * directionX);
             const y = ypos + (length* directionY);
 
-            vertices.byId[node.id] = {x,y,id:node.id,level,pathPoints:[{x:xpos,y:ypos},{x,y}]}; // i think xpos and ypos come from parent.
+
+            const theta = Math.tan((x-xpos)/(y-ypos))
+
+            vertices.byId[node.id] = {x,y,id:node.id,level,theta:theta,pathPoints:[{x:xpos,y:ypos},{x,y}]}; // i think xpos and ypos come from parent.
             vertices.allIds.push(node.id);
 
             // The rest of the work is to set the data that is passed to the children
@@ -131,6 +134,7 @@ export class RadialLayout extends AbstractLayout {
                 x: x(vertex.x),
                 y: y(vertex.y),
                 level: vertex.level,
+                theta: vertex.theta,
                 d: this.pathGenerator(vertex.pathPoints.map(d=>({x:x(d.x),y:y(d.y)})), opts) // scale the points
             };
             scaledVertices.allIds.push(vertex.id);

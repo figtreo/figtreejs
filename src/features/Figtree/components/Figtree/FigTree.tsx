@@ -59,22 +59,6 @@ function FigTree(props:{width:number,height:number,layout:typeof AbstractLayout,
 export default withConditionalInteractionProvider(FigTree);
 // export default FigTree;
 
-function setUpScales(width:number,height:number,margins:Margins,xdomain:[number,number],ydomain:[number,number]){
-
-
-    // padding
-    ydomain[0]-=1;
-    ydomain[1]+=1;
-
-    const x = scaleLinear()
-        .domain(xdomain)
-        .range([0, width - margins.left -margins.right]);
-
-    const y = scaleLinear()
-        .domain(ydomain)
-        .range([0,height - margins.top-margins.bottom]);
-    return {x,y};
-}
 
 FigTree.defaultProps= {
     width: undefined, /** Width of component */
