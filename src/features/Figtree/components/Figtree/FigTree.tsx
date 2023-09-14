@@ -25,12 +25,12 @@ interface Margins{
 function FigTree(props:{width:number,height:number,layout:typeof AbstractLayout,tree:NormalizedTree,margins:Margins,children:React.ReactNode}){
     const {width,height,margins,tree,layout} = props;
     
-    const {rootAngle,rootLength,angleRange,curvature,showRoot} = useAppSelector(selectLayout) // TODO move this to the app not lib.
+    const {rootAngle,rootLength,angleRange,curvature,showRoot,spread} = useAppSelector(selectLayout) // TODO move this to the app not lib.
    
 
     const w = width - margins.left - margins.right;
     const h = height - margins.top - margins.bottom;
-    const vertices = layout.layout(tree,{showRoot,width:w,height:h,rootLength,rootAngle,angleRange,curvature,tipSpace:(tip1:NodeRef,tip2:NodeRef)=>1});
+    const vertices = layout.layout(tree,{showRoot,width:w,height:h,rootLength,rootAngle,angleRange,curvature,spread,tipSpace:(tip1:NodeRef,tip2:NodeRef)=>1});
         
     //context gives us a nicer api where the data don't need to be passed to the subcomponents of the figure and the subcomponents can be added by user with JSX
     return (

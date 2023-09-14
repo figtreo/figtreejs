@@ -50,6 +50,7 @@ export type layoutOptions = {
     tipSpace: (tip1: NodeRef, tip2: NodeRef) => number, //Todo make arguements nodeRefs
     curvature: number,
     showRoot: boolean,
+    spread: number
 }
 
 export abstract class AbstractLayout {

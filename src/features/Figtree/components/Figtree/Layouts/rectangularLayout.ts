@@ -5,10 +5,6 @@ import { NormalizedTree, NodeRef } from "../../../../Tree/normalizedTree";
 
 
 export class RectangularLayout extends AbstractLayout {
-    static layout(tree: NormalizedTree, layoutOptions: layoutOptions): Vertices {
-        const arbitraryLayout = this.getArbitraryLayout(tree, layoutOptions);
-        return this.finalizeArbitraryLayout(arbitraryLayout, layoutOptions);
-    }
 
     static getArbitraryLayout(tree: NormalizedTree, {rootLength = 0, tipSpace = (tip1: NodeRef, tip2: NodeRef) => 1}): ArbitraryVertices {
         let currentY = 0;

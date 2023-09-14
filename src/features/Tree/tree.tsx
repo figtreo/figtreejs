@@ -12,6 +12,7 @@ import { InternalNodes } from './nodes';
 import { PolarBranchPath, RectangularBranchPath } from '../Figtree/components/Figtree/Baubles/Branches/Shapes/pathGenerators';
 import { RectangularLayout } from '../Figtree/components/Figtree/Layouts/rectangularLayout';
 import { PolarLayout } from '../Figtree/components/Figtree/Layouts/polarLayout';
+import { RadialLayout } from '../Figtree/components/Figtree/Layouts/radialLayout';
 const margins = {top:10,bottom:10,left:10,right:10};
 export function Tree({panelRef}:any){
 
@@ -81,7 +82,7 @@ export function Tree({panelRef}:any){
 
     const {expansion,curvature,layout}= useAppSelector(selectLayout);
    
-    const treeLayout = layout==="rectangular"?RectangularLayout:PolarLayout;
+    const treeLayout = layout==="rectangular"?RectangularLayout:layout==="circular"?PolarLayout:RadialLayout;
     //
     useEffect(() => {
       const handlePaste = (event: any) => {

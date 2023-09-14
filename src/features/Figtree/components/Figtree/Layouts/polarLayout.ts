@@ -21,14 +21,16 @@ export class PolarLayout extends AbstractLayout {
 
         const maxRadius = min([opts.width,opts.height])!/2;
 
+        const angleRange = normalizeAngle(opts.angleRange);
         // These scales adjust the x and y values from arbitrary layout to polar coordinates with r within the svg and theta between 0 and 2pi
 
         const rScale = scaleLinear()
             .domain(arbitraryLayout.extent.x)
             .range([0, maxRadius ]);
+
     
-            const startAngle = opts.rootAngle+(2*3.14 - opts.angleRange)/2; //2pi - angle range  is what we ignore and we want to center this on the root angle
-            const endAngle = startAngle+opts.angleRange;
+            const startAngle = opts.rootAngle+(2*3.14 - angleRange)/2; //2pi - angle range  is what we ignore and we want to center this on the root angle
+            const endAngle = startAngle+angleRange;
             const thetaScale = scaleLinear()
             .domain(arbitraryLayout.extent.y)
             .range([startAngle,endAngle]); // rotated to match figtree orientation
@@ -78,7 +80,7 @@ export class PolarLayout extends AbstractLayout {
         // Also need every pi/2 point we pass through.
         //assumes range is <=2pi
         const normlizedStart = normalizeAngle(startAngle);
-        const normlizedEnd = normalizeAngle(normlizedStart+opts.angleRange); 
+        const normlizedEnd = normalizeAngle(normlizedStart+angleRange); 
 
         if(normlizedEnd>normlizedStart){
             for (const theta of [Math.PI/2,Math.PI,3*Math.PI/2].filter(d=>d>normlizedStart && d<normlizedEnd)){

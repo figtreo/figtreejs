@@ -25,6 +25,9 @@ export class NormalizedTree  {
         return this._data.nodes.byId[node.id].divergence!
     }
 
+    getLength(node: NodeRef): number {
+        return this._data.nodes.byId[node.id].length!
+    }
     getChildCount(node: NodeRef): number {
         return this._data.nodes.byId[node.id].children.length
        
@@ -123,6 +126,9 @@ export class NormalizedTree  {
     getPostorderNodes(node:NodeRef = this.root!):Generator<NodeRef>{
         return postorderGenerator(this,node)
     }
+    getPreorderNodes(node:NodeRef = this.root!):Generator<NodeRef>{
+        return preorderGenerator(this,node);
+    }
     // set root(node: Node | null) {
     //     throw new Error("Method not implemented.")
     // }
@@ -159,5 +165,19 @@ function* postorderGenerator(tree:NormalizedTree,node: NodeRef): Generator<NodeR
     yield* traverse(node);
 
 }
+function* preorderGenerator(tree:NormalizedTree,node: NodeRef): Generator<NodeRef> {
 
+    const traverse = function* (node: NodeRef): Generator<NodeRef> {
+        yield node;
+        const childCount = tree.getChildCount(node);
+        if (childCount>0) {
+            for (let i=0;i<childCount;i++) {
+                const child = tree.getChild(node,i);
+                yield* traverse(child);
+            }
+        }
+    };
+    yield* traverse(node);
+
+}
 

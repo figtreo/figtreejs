@@ -9,7 +9,7 @@ export function RadialOptions() {
     return(
     <div className='option range'>
         <label htmlFor="spread">Spread: </label>
-        <input id="spread" name="spread" type="number" min="0" value={spread} onChange={(e)=>setSpread(parseFloat(e.target.value))}/>
+        <input id="spread" name="spread" type="number" min="0" value={spread} onChange={(e)=>dispatch(setSpread(parseFloat(e.target.value)))}/>
     </div>)
 
 }
