@@ -32,7 +32,7 @@ export class PolarLayout extends AbstractLayout {
             const thetaScale = scaleLinear()
             .domain(arbitraryLayout.extent.y)
             .range([startAngle,endAngle]); // rotated to match figtree orientation
-        console.log([startAngle,endAngle])
+       
 
         const polarVertices = [];
         
@@ -62,7 +62,7 @@ export class PolarLayout extends AbstractLayout {
                 return ({x,y,r,theta});
             })
 
-            //add step point so we can scale it later
+            //add step point so we can scale it later 
 
 
             
@@ -71,20 +71,55 @@ export class PolarLayout extends AbstractLayout {
             polarVertices.push({id:vertex.id,r,theta,x,y,pathPoints,level})
         };
         
-    // update so centered on svg
-        const smallRange = [this.padding,maxRadius*2-this.padding];
-        const shiftFactor = Math.abs(opts.width-opts.height)/2;
-        let heightRange, widthRange;
-        if(opts.width>opts.height){
-            heightRange = smallRange;
-            widthRange = [this.padding+shiftFactor,maxRadius*2-this.padding+shiftFactor];
-        }else{
-            widthRange = smallRange;
-            heightRange = [this.padding+shiftFactor,maxRadius*2-this.padding+shiftFactor];
+
+        // center (0,0) polartoCartesian(maxRadius,startAngle) is top left of svg
+        const extremes = [[0,0],polarToCartesian(maxRadius,startAngle),polarToCartesian(maxRadius,endAngle)]; 
+
+        // Also need every pi/2 point we pass through.
+        //assumes range is <=2pi
+        const normlizedStart = normalizeAngle(startAngle);
+        const normlizedEnd = normalizeAngle(normlizedStart+opts.angleRange); 
+
+        if(normlizedEnd>normlizedStart){
+            for (const theta of [Math.PI/2,Math.PI,3*Math.PI/2].filter(d=>d>normlizedStart && d<normlizedEnd)){
+                const [x,y] = polarToCartesian(maxRadius,theta);
+                extremes.push([x,y]);
+            }
+        }else{//we've crossed 0
+
+            for (const theta of [0,Math.PI/2,Math.PI,3*Math.PI/2].filter(d=>d>normlizedStart || d<normlizedEnd)){
+                const [x,y] = polarToCartesian(maxRadius,theta);
+                extremes.push([x,y]);
+            }
+
         }
 
-        const x = scaleLinear().domain(extent(polarVertices,(d)=>d.x) as [number, number]).range(widthRange);
-        const y = scaleLinear().domain(extent(polarVertices,(d)=>d.y) as [number, number]).range(heightRange);
+
+
+        
+
+
+        const xDomain = extent(extremes,(d)=>d[0]) as [number, number];
+        const yDomain = extent(extremes,(d)=>d[1]) as [number, number];
+
+        const ratio = (xDomain[1]-xDomain[0])/(yDomain[1]-yDomain[0]);
+
+        const scaler = Math.min(opts.width,opts.height*ratio)
+        const width = scaler;
+        const height = scaler/ratio;
+
+        const xShift = (opts.width-width)/2;
+        const yShift = (opts.height-height)/2;
+
+
+
+        const yRange = [yShift,opts.height-yShift];
+        const xRange = [xShift,opts.width-xShift];
+        
+
+
+        const x = scaleLinear().domain(xDomain).range(xRange);
+        const y = scaleLinear().domain(yDomain).range(yRange);
         
         const scaledVertices: Vertices = {
             byId: {},
@@ -144,3 +179,8 @@ export function polarToCartesian(r:number,theta:number){
     return [r*Math.cos(theta),r*Math.sin(theta)];
 }
 
+function normalizeAngle(theta:number){
+    while(theta>2*Math.PI ){
+    theta-=2*Math.PI}
+    return theta;
+}

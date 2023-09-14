@@ -7,8 +7,7 @@ import { NodeRef, NormalizedTree } from '../../../Tree/normalizedTree';
 import { useAppSelector } from '../../../../app/hooks';
 import { selectLayout } from '../../../settings/panels/layout/layoutSlice';
 import { AbstractLayout } from './Layouts/LayoutInterface';
-import { RectangularLayout } from './Layouts/rectangularLayout';
-import { PolarLayout } from './Layouts/polarLayout';
+
 
 /**
  * The FigTree component
@@ -26,7 +25,7 @@ interface Margins{
 function FigTree(props:{width:number,height:number,layout:typeof AbstractLayout,tree:NormalizedTree,margins:Margins,children:React.ReactNode}){
     const {width,height,margins,tree,layout} = props;
     
-    const {rootAngle,rootLength,angleRange,curvature,showRoot} = useAppSelector(selectLayout)
+    const {rootAngle,rootLength,angleRange,curvature,showRoot} = useAppSelector(selectLayout) // TODO move this to the app not lib.
    
 
     const w = width - margins.left - margins.right;
