@@ -24,8 +24,8 @@ const initialState: LayoutState = {
     curvature: 0,
     alignTipLabels: false,
     zoom: 0,
-    rootAngle: 0,
-    angleRange: 360,
+    rootAngle: 3.14,
+    angleRange: 2*3.14,
     showRoot: true,
     spread:0
 }

@@ -27,10 +27,12 @@ export class PolarLayout extends AbstractLayout {
             .domain(arbitraryLayout.extent.x)
             .range([0, maxRadius ]);
     
-        const thetaScale = scaleLinear()
+            const startAngle = opts.rootAngle+(2*3.14 - opts.angleRange)/2; //2pi - angle range  is what we ignore and we want to center this on the root angle
+            const endAngle = startAngle+opts.angleRange;
+            const thetaScale = scaleLinear()
             .domain(arbitraryLayout.extent.y)
-            .range([0,2*Math.PI]);
-    
+            .range([startAngle,endAngle]); // rotated to match figtree orientation
+        console.log([startAngle,endAngle])
 
         const polarVertices = [];
         

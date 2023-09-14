@@ -1,6 +1,7 @@
 import { useAppDispatch, useAppSelector } from '../../../../app/hooks';
 import { selectLayout, setRootAngle, setAngleRange, flipShowRoot, setRootLength, flipAlignTipLabels } from './layoutSlice';
 
+const roundPI= 3.14;//inputs can't get to 0
 export function PolarOptions() {
     const { rootAngle, showRoot, rootLength, alignTipLabels,angleRange} = useAppSelector(selectLayout);
     const dispatch = useAppDispatch();
@@ -14,11 +15,11 @@ export function PolarOptions() {
 
                 <input
                     type="range"
-                    min="0"
-                    max={`${2*Math.PI}`}
-                    step={0.1}
+                    min={roundPI} // we start here so the layout matches figtree
+                    max={3*roundPI}
+                    step={0.02}
                     id="rootAngle"
-                    onChange={(e) => dispatch(setRootAngle(parseFloat(e.target.value)))}
+                    onChange={(e) => dispatch(setRootAngle(parseFloat(e.target.value)))} // starts 
                     value={rootAngle}
                 />
             </div>
@@ -28,12 +29,12 @@ export function PolarOptions() {
 
                 <input
                     type="range"
-                    min="0"
-                    max={`${2*Math.PI}`}
-                    step={0.1}
+                    min={0}
+                    max={2*roundPI}
+                    step={0.01}
                     id="angleRange"
-                    onChange={(e) => dispatch(setAngleRange(parseFloat(e.target.value)))}
-                    value={angleRange}
+                    onChange={(e) => dispatch(setAngleRange(2*roundPI-parseFloat(e.target.value)))} //invert the value
+                    value={2*roundPI-angleRange}
                 />
             </div>
             <div className='option range'>
