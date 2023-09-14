@@ -1,6 +1,6 @@
 import { extent, max, min } from "d3-array";
 import { scaleLinear } from "d3-scale";
-import { AbstractLayout, ArbitraryVertex, ArbitraryVertices, layoutOptions,Vertices} from "./LayoutInterface";
+import { AbstractLayout, ArbitraryVertex, ArbitraryVertices, internalLayoutOptions,Vertices} from "./LayoutInterface";
 import { NormalizedTree, NodeRef } from "../../../../Tree/normalizedTree";
 import { RectangularLayout } from "./rectangularLayout";
 import path from "path";
@@ -17,7 +17,7 @@ export class PolarLayout extends AbstractLayout {
         return rectangularLayout;
     }
 
-    static finalizeArbitraryLayout(arbitraryLayout: ArbitraryVertices, opts: layoutOptions):Vertices {
+    static finalizeArbitraryLayout(arbitraryLayout: ArbitraryVertices, opts: internalLayoutOptions):Vertices {
 
         const maxRadius = min([opts.width,opts.height])!/2;
 
@@ -149,7 +149,7 @@ export class PolarLayout extends AbstractLayout {
         
 
 
-    static pathGenerator(points: { x: number, y: number,r:number,theta:number }[], opts: layoutOptions): string {
+    static pathGenerator(points: { x: number, y: number,r:number,theta:number }[], opts: internalLayoutOptions): string {
         const positions = points.length;
 
         switch (positions) {

@@ -22,7 +22,7 @@
 
 import { max } from "d3-array";
 import { scaleLinear } from "d3-scale";
-import { AbstractLayout, ArbitraryVertex, ArbitraryVertices, layoutOptions,Vertices} from "./LayoutInterface";
+import { AbstractLayout, ArbitraryVertex, ArbitraryVertices, internalLayoutOptions,Vertices} from "./LayoutInterface";
 import { NormalizedTree, NodeRef } from "../../../../Tree/normalizedTree";
 
 type data = {
@@ -111,7 +111,7 @@ export class RadialLayout extends AbstractLayout {
         return vertices;
     }
 
-    static finalizeArbitraryLayout(arbitraryLayout: ArbitraryVertices, opts: layoutOptions):Vertices {
+    static finalizeArbitraryLayout(arbitraryLayout: ArbitraryVertices, opts: internalLayoutOptions):Vertices {
         const x = scaleLinear()
             .domain(arbitraryLayout.extent.x)
             .range([this.padding, opts.width - this.padding]);
@@ -139,7 +139,7 @@ export class RadialLayout extends AbstractLayout {
     }
 
 
-    static pathGenerator(points: { x: number, y: number }[], opts: layoutOptions): string {
+    static pathGenerator(points: { x: number, y: number }[], opts: internalLayoutOptions): string {
         const positions = points.length;
 
         switch (positions) {

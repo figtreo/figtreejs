@@ -4,9 +4,19 @@ import { LayoutContext, TreeContext } from '../../Context/context';
 import Branches from './Baubles/Branches/Branches';
 import withConditionalInteractionProvider from '../HOC/withConditionalInteractionProvider';
 import { NodeRef, NormalizedTree } from '../../../Tree/normalizedTree';
-import { useAppSelector } from '../../../../app/hooks';
-import { selectLayout } from '../../../settings/panels/layout/layoutSlice';
-import { AbstractLayout } from './Layouts/LayoutInterface';
+
+import { AbstractLayout, internalLayoutOptions } from './Layouts/LayoutInterface';
+
+interface layoutOptions{
+
+    rootLength: number,
+    rootAngle: number,
+    angleRange: number,
+    tipSpace: (tip1: NodeRef, tip2: NodeRef) => number, //Todo make arguements nodeRefs
+    curvature: number,
+    showRoot: boolean,
+    spread: number
+}
 
 
 /**
@@ -22,10 +32,10 @@ interface Margins{
     right:number,
 }
 
-function FigTree(props:{width:number,height:number,layout:typeof AbstractLayout,tree:NormalizedTree,margins:Margins,children:React.ReactNode}){
+function FigTree(props:{width:number,height:number,layout:typeof AbstractLayout,tree:NormalizedTree,margins:Margins,children:React.ReactNode,opts:layoutOptions}){
     const {width,height,margins,tree,layout} = props;
     
-    const {rootAngle,rootLength,angleRange,curvature,showRoot,spread} = useAppSelector(selectLayout) // TODO move this to the app not lib.
+    const {rootAngle,rootLength,angleRange,curvature,showRoot,spread} = props.opts; //useAppSelector(selectLayout) // TODO move this to the app not lib.
    
 
     const w = width - margins.left - margins.right;

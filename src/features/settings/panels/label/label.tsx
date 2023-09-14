@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from "../../../../app/hooks";
 import { selectAnnotationTypes } from "../../../Tree/treeSlice";
 import { SettingPanel } from "../PanelHeader";
 
-
+const defaultOptions = ["User selection","Node Heights","Branch Lengths"]
 
 export function BaseLabel(props: { target: labelTarget, }) {
 
@@ -14,7 +14,7 @@ export function BaseLabel(props: { target: labelTarget, }) {
     //duplicate code
     const attributeTypes = useAppSelector(selectAnnotationTypes);
     //TODO add defaults like height/length/ etc.
-    const attributeKeys = Object.keys(attributeTypes).length > 0 ? ["Selection", ...Object.keys(attributeTypes)] : ["No attributes"]
+    const attributeKeys = [...defaultOptions, ...Object.keys(attributeTypes)] 
 
     const options = []
     for (const key of attributeKeys) {

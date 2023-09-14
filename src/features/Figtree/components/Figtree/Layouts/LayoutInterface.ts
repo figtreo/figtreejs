@@ -41,7 +41,7 @@ export interface ArbitraryVertices {
     extent: { x: [number, number], y: [number, number] }
 }
 
-export type layoutOptions = {
+export type internalLayoutOptions = { // all layout options plus width and height of drawable area
     width: number,
     height: number,
     rootLength: number,
@@ -55,15 +55,15 @@ export type layoutOptions = {
 
 export abstract class AbstractLayout {
     static readonly padding = 20;
-    static  layout(tree: NormalizedTree, layoutOptions: layoutOptions): Vertices {
+    static  layout(tree: NormalizedTree, layoutOptions: internalLayoutOptions): Vertices {
         const arbitraryLayout = this.getArbitraryLayout(tree, layoutOptions);
         return this.finalizeArbitraryLayout(arbitraryLayout, layoutOptions);
     }
 
-    static getArbitraryLayout(tree: NormalizedTree,opts:layoutOptions): ArbitraryVertices{
+    static getArbitraryLayout(tree: NormalizedTree,opts:internalLayoutOptions): ArbitraryVertices{
         throw new Error("Method not implemented.")
     }
-    static finalizeArbitraryLayout(arbitraryVertices:ArbitraryVertices, opts: layoutOptions): Vertices{
+    static finalizeArbitraryLayout(arbitraryVertices:ArbitraryVertices, opts: internalLayoutOptions): Vertices{
         throw new Error("Method not implemented.")
     }
     //  cartoonGenerator(tree:NormalizedTree,vertices:Vertices,):string

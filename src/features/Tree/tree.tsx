@@ -80,7 +80,11 @@ export function Tree({panelRef}:any){
     const lineWidth = useAppSelector(selectLineWidth);
     const branchColour = useAppSelector(selectStroke);
 
-    const {expansion,curvature,layout}= useAppSelector(selectLayout);
+    const {expansion,layout,rootAngle,rootLength,angleRange,showRoot,spread,curvature}= useAppSelector(selectLayout);
+
+    const layoutOpts = {
+      rootAngle,rootLength,angleRange,showRoot,spread,curvature
+    }
    
     const treeLayout = layout==="rectangular"?RectangularLayout:layout==="circular"?PolarLayout:RadialLayout;
     //
@@ -97,14 +101,16 @@ export function Tree({panelRef}:any){
     const height = treeSize.baseHeight+(treeSize.baseHeight*expansion*5);
 
 
+
+
 //TODO allow to specify a generic Branches with attrs etc. that gets populated by Figtree.
 
 // TODO animate svg changes
     if(nodes>0){
       return(
         <svg width={treeSize.width} height={height} > 
-        <FigTree   width={treeSize.width-margins.left-margins.right} height={height-margins.bottom-margins.top} tree={tree} layout={treeLayout} margins={margins}>
-           <Branches curvature={curvature} attrs={{strokeWidth:lineWidth,stroke:branchColour}} />
+        <FigTree   width={treeSize.width} height={height} tree={tree} layout={treeLayout} margins={margins} opts={layoutOpts}>
+           <Branches attrs={{strokeWidth:lineWidth,stroke:branchColour}} />
             <Tips tree={tree}/>
             <InternalNodes tree={tree}/>
         </FigTree>
