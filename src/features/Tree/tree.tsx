@@ -14,6 +14,8 @@ import { RectangularLayout } from '../Figtree/components/Figtree/Layouts/rectang
 import { PolarLayout } from '../Figtree/components/Figtree/Layouts/polarLayout';
 import { RadialLayout } from '../Figtree/components/Figtree/Layouts/radialLayout';
 const margins = {top:10,bottom:10,left:10,right:10};
+
+const zoomFactor = 5;
 export function Tree({panelRef}:any){
 
   // resizing work
@@ -98,8 +100,11 @@ export function Tree({panelRef}:any){
       };
     })
 
-    const height = treeSize.baseHeight+(treeSize.baseHeight*expansion*5)+treeSize.baseHeight*zoom*5;
-    const width = treeSize.baseWidth + (treeSize.baseWidth*expansion*5)+treeSize.baseWidth*zoom*5;
+
+    const zoomed = [treeSize.baseWidth*zoom*zoomFactor,treeSize.baseHeight*zoom*zoomFactor]
+
+    const height = treeSize.baseHeight+(treeSize.baseHeight*expansion*zoomFactor)+zoomed[1]*2;
+    const width = treeSize.baseWidth+zoomed[0]*2
 
 
 
@@ -109,7 +114,7 @@ export function Tree({panelRef}:any){
 // TODO animate svg changes
     if(nodes>0){
       return(
-        <svg width={width} height={height} > 
+        <svg viewBox= {`${zoomed[0]} ${zoomed[1]} ${treeSize.baseWidth} ${treeSize.baseHeight+(treeSize.baseHeight*expansion*zoomFactor)}`} width={width} height={height} > 
         <FigTree   width={width} height={height} tree={tree} layout={treeLayout} margins={margins} opts={layoutOpts}>
            <Branches attrs={{strokeWidth:lineWidth,stroke:branchColour}} />
             <Tips tree={tree}/>
