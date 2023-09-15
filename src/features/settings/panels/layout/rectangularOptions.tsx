@@ -2,7 +2,7 @@ import { useAppDispatch, useAppSelector } from '../../../../app/hooks';
 import { setZoom, selectLayout, setCurvature, setExpansion, setFisheye, setRootLength, flipAlignTipLabels } from './layoutSlice';
 
 export function RectangularOptions() {
-    const { zoom, expansion, fisheye, curvature, rootLength, alignTipLabels } = useAppSelector(selectLayout);
+    const { zoom, expansion, fishEye, curvature, rootLength, alignTipLabels } = useAppSelector(selectLayout);
     const dispatch = useAppDispatch();
 
 

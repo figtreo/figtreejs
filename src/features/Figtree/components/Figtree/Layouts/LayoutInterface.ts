@@ -51,20 +51,27 @@ export type internalLayoutOptions = { // all layout options plus width and heigh
     tipSpace: (tip1: NodeRef, tip2: NodeRef) => number, //Todo make arguements nodeRefs
     curvature: number,
     showRoot: boolean,
-    spread: number
+    spread: number,
+    pointOfInterest: { x: number; y: number; }; 
+    fishEye: number;
 }
 
 export abstract class AbstractLayout {
     static readonly padding = 20;
-    static  layout(tree: NormalizedTree, layoutOptions: internalLayoutOptions): Vertices {
+    static layout(tree: NormalizedTree, layoutOptions: internalLayoutOptions): Vertices {
         const arbitraryLayout = this.getArbitraryLayout(tree, layoutOptions);
-        return this.finalizeArbitraryLayout(arbitraryLayout, layoutOptions);
+        const treeStats = { tipCount: [...tree.getTips()].length } //todo cache this count
+        const transformedLayout = this.transformArbitraryLayout(arbitraryLayout, treeStats, layoutOptions);
+        return this.scaleArbitraryLayout(transformedLayout, layoutOptions);
+    }
+    static transformArbitraryLayout(arbitraryVertices: ArbitraryVertices, treeStats: { tipCount: number }, layoutOptions: internalLayoutOptions): ArbitraryVertices {
+        return arbitraryVertices;
     }
 
-    static getArbitraryLayout(tree: NormalizedTree,opts:internalLayoutOptions): ArbitraryVertices{
+    static getArbitraryLayout(tree: NormalizedTree, opts: internalLayoutOptions): ArbitraryVertices {
         throw new Error("Method not implemented.")
     }
-    static finalizeArbitraryLayout(arbitraryVertices:ArbitraryVertices, opts: internalLayoutOptions): Vertices{
+    static scaleArbitraryLayout(arbitraryVertices: ArbitraryVertices, opts: internalLayoutOptions): Vertices {
         throw new Error("Method not implemented.")
     }
     //  cartoonGenerator(tree:NormalizedTree,vertices:Vertices,):string

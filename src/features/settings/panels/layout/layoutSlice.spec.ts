@@ -4,7 +4,7 @@ describe('layoutSlice',()=>{
     const initialState: LayoutState = {
         layout: 'rectangular',
         expansion: 0,
-        fisheye: 0,
+        fishEye: 0,
         rootLength: 0,
         curvature: 0,
         alignTipLabels: false,
@@ -12,7 +12,8 @@ describe('layoutSlice',()=>{
         rootAngle: 0,
         angleRange: 0,
         showRoot: false,
-        spread:0
+        spread: 0,
+        pointOfInterest: null,
     };
     it('should handle initial state', () => {
         expect(layoutReducer(undefined, { type: 'unknown' })).toEqual(initialState)
@@ -27,7 +28,7 @@ describe('layoutSlice',()=>{
     });
     it('should handle setFisheye', () => {
         const actual = layoutReducer(initialState, {type:'layout/setFisheye',payload:1});
-        expect(actual.fisheye).toEqual(1);
+        expect(actual.fishEye).toEqual(1);
     });
     it('should handle setRootLength', () => {
         const actual = layoutReducer(initialState, {type:'layout/setRootLength',payload:1});

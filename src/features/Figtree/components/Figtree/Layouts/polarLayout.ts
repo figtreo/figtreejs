@@ -17,7 +17,7 @@ export class PolarLayout extends AbstractLayout {
         return rectangularLayout;
     }
 
-    static finalizeArbitraryLayout(arbitraryLayout: ArbitraryVertices, opts: internalLayoutOptions):Vertices {
+    static scaleArbitraryLayout(arbitraryLayout: ArbitraryVertices, opts: internalLayoutOptions):Vertices {
 
         const maxRadius = min([opts.width,opts.height])!/2;
 

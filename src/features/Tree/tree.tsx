@@ -80,10 +80,10 @@ export function Tree({panelRef}:any){
     const lineWidth = useAppSelector(selectLineWidth);
     const branchColour = useAppSelector(selectStroke);
 
-    const {expansion,layout,rootAngle,rootLength,angleRange,showRoot,spread,curvature}= useAppSelector(selectLayout);
+    const {expansion,layout,rootAngle,rootLength,angleRange,showRoot,spread,curvature,fishEye}= useAppSelector(selectLayout);
 
     const layoutOpts = {
-      rootAngle,rootLength,angleRange,showRoot,spread,curvature
+      rootAngle,rootLength,angleRange,showRoot,spread,curvature,fishEye
     }
    
     const treeLayout = layout==="rectangular"?RectangularLayout:layout==="circular"?PolarLayout:RadialLayout;

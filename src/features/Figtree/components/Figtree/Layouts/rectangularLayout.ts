@@ -74,7 +74,34 @@ export class RectangularLayout extends AbstractLayout {
         return vertices;
     }
 
-    static finalizeArbitraryLayout(arbitraryLayout: ArbitraryVertices, opts: internalLayoutOptions):Vertices {
+    static transformArbitraryLayout(arbitraryLayout: ArbitraryVertices, treeStats:{tipCount:number},opts: {pointOfInterest:{x:number,y:number},fishEye:number}): ArbitraryVertices {
+        console.log(opts.fishEye)
+        if(opts.fishEye === 0) return arbitraryLayout;
+        const vertices: ArbitraryVertices = { byId: {}, allIds: [], extent: { x: arbitraryLayout.extent.x, y: [0, 0] } };
+        const transform = fishEyeTransform(opts.fishEye,treeStats.tipCount,opts.pointOfInterest.y); //1000 to match figtree
+        let minY=Number.POSITIVE_INFINITY;
+        let maxY=Number.NEGATIVE_INFINITY;
+        for(const id of arbitraryLayout.allIds){
+            const vertex = arbitraryLayout.byId[id];
+            const y = transform(vertex.y);
+            console.log({ty:y,y0:vertex.y})
+            vertices.byId[id] = {
+                ...vertex,
+                y,
+                pathPoints: vertex.pathPoints.map(d=>({x:d.x,y:transform(d.y)}))
+            }
+            if(y<minY) minY=y;
+            if(y>maxY) maxY=y;
+            vertices.allIds.push(id);
+        }
+        vertices.extent.y = [minY,maxY];
+
+        return vertices
+    }
+
+
+
+    static scaleArbitraryLayout(arbitraryLayout: ArbitraryVertices, opts: internalLayoutOptions):Vertices {
         const x = scaleLinear()
             .domain(arbitraryLayout.extent.x)
             .range([this.padding, opts.width - this.padding]);
@@ -132,4 +159,16 @@ export class RectangularLayout extends AbstractLayout {
     //     throw new Error("Method not implemented.")
     // }
 
+}
+
+// figtree 
+const fishEyeTransform=(fishEye:number,tipCount:number,pointOfInterestY:number)=>(y:number)=>{
+     const scale = 1.0 / (fishEye * tipCount);
+     const dist = pointOfInterestY - y;
+     const min =  1.0 - (pointOfInterestY / (scale + pointOfInterestY));
+     const max =  1.0 - ((pointOfInterestY - 1.0) / (scale - (pointOfInterestY - 1.0)));
+
+     const c =  1.0 - (dist < 0 ? (dist / (scale - dist)) : (dist / (scale + dist)));
+
+    return (c - min) / (max - min);
 }

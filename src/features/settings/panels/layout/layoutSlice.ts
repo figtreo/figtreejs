@@ -5,7 +5,6 @@ import { RootState } from '../../../../app/store';
 export interface LayoutState {
     layout: "rectangular" | "circular" | "equalangle",
     expansion: number,
-    fisheye: number,
     rootLength: number,
     curvature: number,
     alignTipLabels: boolean
@@ -14,12 +13,13 @@ export interface LayoutState {
     angleRange: number,
     showRoot: boolean,
     spread:number
+    pointOfInterest: { x: number; y: number; } | null;
+    fishEye: number;
 }
 
 const initialState: LayoutState = {
     layout: 'rectangular',
     expansion: 0,
-    fisheye: 0,
     rootLength: 0,
     curvature: 0,
     alignTipLabels: false,
@@ -27,7 +27,9 @@ const initialState: LayoutState = {
     rootAngle: 3.14,
     angleRange: 2*3.14,
     showRoot: true,
-    spread:0
+    spread:0,
+    pointOfInterest:null,
+    fishEye:0,
 }
 
 export const layoutSlice = createSlice({
@@ -39,9 +41,6 @@ export const layoutSlice = createSlice({
         },
         setExpansion: (state, action: PayloadAction<number>) => {
             state.expansion = action.payload;
-        },
-        setFisheye: (state, action: PayloadAction<number>) => {
-            state.fisheye = action.payload;
         },
         setRootLength: (state, action: PayloadAction<number>) => {
             state.rootLength = action.payload;
@@ -66,12 +65,18 @@ export const layoutSlice = createSlice({
         },
         setSpread: (state, action: PayloadAction<number>) => {
             state.spread = action.payload;
+        },
+        setFisheye: (state, action: PayloadAction<number>) => {
+            state.fishEye = action.payload;
+        },
+        setPointOfInterest(state, action: PayloadAction<{ x: number; y: number; }>) {
+            state.pointOfInterest = action.payload;
         }
     }
 }
 )
 
-export const { setSpread, setZoom, setLayout, setExpansion, setFisheye, setRootLength, setCurvature, flipAlignTipLabels,setRootAngle,flipShowRoot,setAngleRange} = layoutSlice.actions;
+export const { setSpread, setZoom, setLayout, setExpansion, setFisheye, setRootLength, setCurvature, flipAlignTipLabels,setRootAngle,flipShowRoot,setAngleRange,setPointOfInterest} = layoutSlice.actions;
 
 export const selectLayout = (state: RootState) => state.settings.layout
 

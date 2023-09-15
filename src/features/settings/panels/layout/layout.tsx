@@ -7,7 +7,7 @@ import { RectangularOptions } from './rectangularOptions';
 import { PolarOptions } from './polarOptions';
 import { RadialOptions } from './radialOptions';
 export function Layout() {
-    const { layout,zoom,expansion,fisheye } = useAppSelector(selectLayout);
+    const { layout,zoom,expansion,fishEye } = useAppSelector(selectLayout);
     const dispatch = useAppDispatch();
     return (
         <SettingPanel title="Layout" intialOpen={true} >
@@ -62,16 +62,16 @@ export function Layout() {
                 />
             </div>
             <div className='option range'>
-                <label htmlFor="fisheye">Fisheye: </label>
+                <label htmlFor="fishEye">Fisheye: </label>
 
                 <input
                     type="range"
                     min="0"
                     max="1"
-                    id="fisheye" step={0.01}
+                    id="fishEye" step={0.01}
 
                     onChange={(e) => dispatch(setFisheye(parseFloat(e.target.value)))}
-                    value={fisheye}
+                    value={fishEye}
                     disabled={layout==="equalangle"}
 
                 />

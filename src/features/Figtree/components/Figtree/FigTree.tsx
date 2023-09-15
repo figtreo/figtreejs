@@ -16,6 +16,8 @@ interface layoutOptions{
     curvature: number,
     showRoot: boolean,
     spread: number
+    pointOfInterest: { x: number; y: number; }|null ,
+    fishEye: number;
 }
 
 
@@ -35,12 +37,13 @@ interface Margins{
 function FigTree(props:{width:number,height:number,layout:typeof AbstractLayout,tree:NormalizedTree,margins:Margins,children:React.ReactNode,opts:layoutOptions}){
     const {width,height,margins,tree,layout} = props;
     
-    const {rootAngle,rootLength,angleRange,curvature,showRoot,spread} = props.opts; //useAppSelector(selectLayout) // TODO move this to the app not lib.
+    const {rootAngle,rootLength,angleRange,curvature,showRoot,spread,pointOfInterest,fishEye} = props.opts; //useAppSelector(selectLayout) // TODO move this to the app not lib.
    
-
     const w = width - margins.left - margins.right;
     const h = height - margins.top - margins.bottom;
-    const vertices = layout.layout(tree,{showRoot,width:w,height:h,rootLength,rootAngle,angleRange,curvature,spread,tipSpace:(tip1:NodeRef,tip2:NodeRef)=>1});
+    const point = pointOfInterest?pointOfInterest: {x:margins.left+w/2,y:margins.top+height/2};
+
+    const vertices = layout.layout(tree,{showRoot,width:w,height:h,rootLength,rootAngle,angleRange,curvature,spread,tipSpace:(tip1:NodeRef,tip2:NodeRef)=>1,fishEye,pointOfInterest:point});
         
     //context gives us a nicer api where the data don't need to be passed to the subcomponents of the figure and the subcomponents can be added by user with JSX
     return (
