@@ -27,7 +27,7 @@ export function Tree({panelRef}:any){
     
     const [isResizing, setIsResizing] = useState(true);
 
-    const [treeSize, setTreeSize] = useState({width:minWidth,baseHeight:minHeight});
+    const [treeSize, setTreeSize] = useState({baseWidth:minWidth,baseHeight:minHeight});
 
     const startResizing = useCallback((mouseDownEvent: any) => {
         setIsResizing(true);
@@ -44,7 +44,7 @@ export function Tree({panelRef}:any){
                 const height = Math.max(minHeight,panelRef.current.getBoundingClientRect().height-padding)
                 const width = Math.max(minWidth,panelRef.current.getBoundingClientRect().width-padding)
                 setTreeSize(
-                    {baseHeight:height,width:width}
+                    {baseHeight:height,baseWidth:width}
                 );
             }
         },
@@ -67,7 +67,7 @@ export function Tree({panelRef}:any){
   const height = Math.max(minHeight,panelRef.current.getBoundingClientRect().height-padding)
                 const width = Math.max(minWidth,panelRef.current.getBoundingClientRect().width-padding)
                 setTreeSize(
-                    {baseHeight:height,width:width}
+                    {baseHeight:height,baseWidth:width}
                 );
        
     }, []);
@@ -80,7 +80,7 @@ export function Tree({panelRef}:any){
     const lineWidth = useAppSelector(selectLineWidth);
     const branchColour = useAppSelector(selectStroke);
 
-    const {expansion,layout,rootAngle,rootLength,angleRange,showRoot,spread,curvature,fishEye}= useAppSelector(selectLayout);
+    const {expansion,zoom,layout,rootAngle,rootLength,angleRange,showRoot,spread,curvature,fishEye}= useAppSelector(selectLayout);
 
     const layoutOpts = {
       rootAngle,rootLength,angleRange,showRoot,spread,curvature,fishEye
@@ -98,7 +98,8 @@ export function Tree({panelRef}:any){
       };
     })
 
-    const height = treeSize.baseHeight+(treeSize.baseHeight*expansion*5);
+    const height = treeSize.baseHeight+(treeSize.baseHeight*expansion*5)+treeSize.baseHeight*zoom*5;
+    const width = treeSize.baseWidth + (treeSize.baseWidth*expansion*5)+treeSize.baseWidth*zoom*5;
 
 
 
@@ -108,8 +109,8 @@ export function Tree({panelRef}:any){
 // TODO animate svg changes
     if(nodes>0){
       return(
-        <svg width={treeSize.width} height={height} > 
-        <FigTree   width={treeSize.width} height={height} tree={tree} layout={treeLayout} margins={margins} opts={layoutOpts}>
+        <svg width={width} height={height} > 
+        <FigTree   width={width} height={height} tree={tree} layout={treeLayout} margins={margins} opts={layoutOpts}>
            <Branches attrs={{strokeWidth:lineWidth,stroke:branchColour}} />
             <Tips tree={tree}/>
             <InternalNodes tree={tree}/>

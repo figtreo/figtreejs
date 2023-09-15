@@ -114,7 +114,7 @@ export class RadialLayout extends AbstractLayout {
         return vertices;
     }
 
-    static finalizeArbitraryLayout(arbitraryLayout: ArbitraryVertices, opts: internalLayoutOptions):Vertices {
+    static finalizeArbitraryLayout(arbitraryLayout: ArbitraryVertices, treeStats:{tipCount:number},opts: internalLayoutOptions):Vertices {
         const x = scaleLinear()
             .domain(arbitraryLayout.extent.x)
             .range([this.padding, opts.width - this.padding]);

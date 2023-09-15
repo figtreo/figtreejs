@@ -61,17 +61,13 @@ export abstract class AbstractLayout {
     static layout(tree: NormalizedTree, layoutOptions: internalLayoutOptions): Vertices {
         const arbitraryLayout = this.getArbitraryLayout(tree, layoutOptions);
         const treeStats = { tipCount: [...tree.getTips()].length } //todo cache this count
-        const transformedLayout = this.transformArbitraryLayout(arbitraryLayout, treeStats, layoutOptions);
-        return this.scaleArbitraryLayout(transformedLayout, layoutOptions);
-    }
-    static transformArbitraryLayout(arbitraryVertices: ArbitraryVertices, treeStats: { tipCount: number }, layoutOptions: internalLayoutOptions): ArbitraryVertices {
-        return arbitraryVertices;
+        return this.finalizeArbitraryLayout(arbitraryLayout, treeStats, layoutOptions);
     }
 
     static getArbitraryLayout(tree: NormalizedTree, opts: internalLayoutOptions): ArbitraryVertices {
         throw new Error("Method not implemented.")
     }
-    static scaleArbitraryLayout(arbitraryVertices: ArbitraryVertices, opts: internalLayoutOptions): Vertices {
+    static finalizeArbitraryLayout(arbitraryVertices: ArbitraryVertices, treeStats:{tipCount:number},opts: internalLayoutOptions): Vertices {
         throw new Error("Method not implemented.")
     }
     //  cartoonGenerator(tree:NormalizedTree,vertices:Vertices,):string
