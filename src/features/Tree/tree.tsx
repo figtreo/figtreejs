@@ -1,20 +1,18 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
-import { selectNodeCount,parseNewick, selectTree, Node} from './treeSlice';
+import { selectNodeCount,parseNewick, selectTree} from './treeSlice';
 
-import styles from './tree.module.css';
-import { Branches, FigTree, Nodes } from '../Figtree';
+import { Branches, FigTree } from '../Figtree';
 import { selectLineWidth, selectStroke} from '../settings/panels/appearance/appearanceSlice';
 import { selectLayout } from '../settings/panels/layout/layoutSlice';
 import { NormalizedTree } from './normalizedTree';
 import { Tips } from './tips';
 import { InternalNodes } from './nodes';
-import { PolarBranchPath, RectangularBranchPath } from '../Figtree/components/Figtree/Baubles/Branches/Shapes/pathGenerators';
 import { RectangularLayout } from '../Figtree/components/Figtree/Layouts/rectangularLayout';
 import { PolarLayout } from '../Figtree/components/Figtree/Layouts/polarLayout';
 import { RadialLayout } from '../Figtree/components/Figtree/Layouts/radialLayout';
-const margins = {top:10,bottom:10,left:10,right:10};
 
+const margins = {top:10,bottom:10,left:10,right:10};
 const zoomFactor = 5;
 export function Tree({panelRef}:any){
 
@@ -50,7 +48,7 @@ export function Tree({panelRef}:any){
                 );
             }
         },
-        [isResizing]
+        [isResizing,panelRef]
     );
 
     
@@ -62,7 +60,7 @@ export function Tree({panelRef}:any){
             window.removeEventListener("resize", resize);
             window.removeEventListener("resize", stopResizing);
         };
-    }, [resize, stopResizing]);
+    }, [resize, startResizing, stopResizing]);
 
 
  useEffect(() => {
@@ -72,7 +70,7 @@ export function Tree({panelRef}:any){
                     {baseHeight:height,baseWidth:width}
                 );
        
-    }, []);
+    }, [panelRef]);
 
 
     const dispatch = useAppDispatch();
@@ -106,21 +104,29 @@ export function Tree({panelRef}:any){
     const height = treeSize.baseHeight+(treeSize.baseHeight*expansion*zoomFactor)+zoomed[1]*2;
     const width = treeSize.baseWidth+zoomed[0]*2
 
+    //Need to scroll the panelRef to the center of the svg so that the tree is centered
+    
+    useEffect(() => {
+      if(panelRef.current){
+        panelRef.current.scrollLeft = (width-panelRef.current.getBoundingClientRect().width)/2;
+        panelRef.current.scrollTop = (height-panelRef.current.getBoundingClientRect().height)/2;
+      }})
 
 
-
-//TODO allow to specify a generic Branches with attrs etc. that gets populated by Figtree.
 
 // TODO animate svg changes
     if(nodes>0){
       return(
-        <svg viewBox= {`${zoomed[0]} ${zoomed[1]} ${treeSize.baseWidth} ${treeSize.baseHeight+(treeSize.baseHeight*expansion*zoomFactor)}`} width={width} height={height} > 
+
+
+        <svg width={width} height={height} > 
         <FigTree   width={width} height={height} tree={tree} layout={treeLayout} margins={margins} opts={layoutOpts}>
            <Branches attrs={{strokeWidth:lineWidth,stroke:branchColour}} />
             <Tips tree={tree}/>
             <InternalNodes tree={tree}/>
         </FigTree>
         </svg>
+
       )
     }else{
       return (

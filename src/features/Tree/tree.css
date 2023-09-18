@@ -1,0 +1,10 @@
+.overflow-center {
+    position: relative;
+    left: 50%;
+    /* move the image to right by 50% of container size */
+    transform: translateX(-50%);
+    /* pull back by 50% of the image or content size */
+    width: auto;
+    /* height: auto;
+    top:50%; */
+}
