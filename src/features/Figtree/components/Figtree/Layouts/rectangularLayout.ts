@@ -192,7 +192,7 @@ export class RectangularLayout extends AbstractLayout {
 
 // }
 // Figtree cc Andrew Rambaut
-const fishEyeTransform=(fishEye:number,tipCount:number,pointOfInterestY:number)=>(y:number)=>{ // point of interest is in layout scale.
+export const fishEyeTransform=(fishEye:number,tipCount:number,pointOfInterestY:number)=>(y:number)=>{ // point of interest is in layout scale.
 
     if (fishEye == 0.0) {
         return y;

@@ -2,7 +2,7 @@ import { extent, max, min } from "d3-array";
 import { scaleLinear } from "d3-scale";
 import { AbstractLayout, ArbitraryVertex, ArbitraryVertices, internalLayoutOptions,Vertices} from "./LayoutInterface";
 import { NormalizedTree, NodeRef } from "../../../../Tree/normalizedTree";
-import { RectangularLayout } from "./rectangularLayout";
+import { RectangularLayout, fishEyeTransform } from "./rectangularLayout";
 import path from "path";
 
 
@@ -19,6 +19,16 @@ export class PolarLayout extends AbstractLayout {
 
     static finalizeArbitraryLayout(arbitraryLayout: ArbitraryVertices, treeStats:{tipCount:number}, opts: internalLayoutOptions):Vertices {
 
+        // Do fisheye thing assuming we are using the rectangular layout
+
+        const y_og = scaleLinear()
+            .domain(arbitraryLayout.extent.y)
+            .range([this.padding, opts.height - this.padding]);
+        const pointOfInterestY = y_og.invert(opts.pointOfInterest.y)
+
+        const transform = fishEyeTransform(opts.fishEye/treeStats.tipCount,treeStats.tipCount,pointOfInterestY); //fish eye does  wierd things here when too big 10 m
+            
+
         const maxRadius = min([opts.width,opts.height])!/2;
 
         const angleRange = normalizeAngle(opts.angleRange);
@@ -32,7 +42,7 @@ export class PolarLayout extends AbstractLayout {
             const startAngle = opts.rootAngle+(2*3.14 - angleRange)/2; //2pi - angle range  is what we ignore and we want to center this on the root angle
             const endAngle = startAngle+angleRange;
             const thetaScale = scaleLinear()
-            .domain(arbitraryLayout.extent.y)
+            .domain(arbitraryLayout.extent.y.map(transform))
             .range([startAngle,endAngle]); // rotated to match figtree orientation
        
 
@@ -41,7 +51,7 @@ export class PolarLayout extends AbstractLayout {
         for(const id of arbitraryLayout.allIds){
             const vertex = arbitraryLayout.byId[id];
             const r = rScale(vertex.x);
-            const theta = thetaScale(vertex.y);
+            const theta = thetaScale(transform(vertex.y));
             const [x,y] = polarToCartesian(r,theta);// convert back to cartesian for x and y (will need to be scaled for svg coordinates)
             const level = vertex.level;
 
@@ -52,14 +62,14 @@ export class PolarLayout extends AbstractLayout {
             if(vertex.pathPoints.length==2){
             const [tip,parent] = vertex.pathPoints;
             const stepPointR = rScale(parent.x);
-            const stepPointTheta = thetaScale(tip.y);
+            const stepPointTheta = thetaScale(transform(tip.y));
             const [stepPointX,stepPointY]  = polarToCartesian(stepPointR,stepPointTheta);
 
             
 
             pathPoints = vertex.pathPoints.map((point)=>{
                 const r = rScale(point.x);
-                const theta = thetaScale(point.y);
+                const theta = thetaScale(transform(point.y));
                 const [x,y] = polarToCartesian(r,theta);
                 return ({x,y,r,theta});
             })
