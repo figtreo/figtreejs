@@ -11,6 +11,7 @@ import treeReducer, { TreeState, rotate } from './treeSlice';
                 label:'root',
                 height:0.1,
                 divergence:0,
+                name:null,
             length:null},
             node1:{
                 id:'node1',
@@ -20,6 +21,8 @@ import treeReducer, { TreeState, rotate } from './treeSlice';
                 length:0.1,
                 height:0,
                 divergence:0.1,
+                name:null
+
             },
             node2:{
                 id:'node2',
@@ -29,6 +32,8 @@ import treeReducer, { TreeState, rotate } from './treeSlice';
                 length:0.1,
                 height:0,
                 divergence:0.1,
+                name:null
+
             }
             },
             allIds:["node0"],

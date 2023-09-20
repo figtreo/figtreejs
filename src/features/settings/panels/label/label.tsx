@@ -6,7 +6,7 @@ import { SettingPanel } from "../PanelHeader";
 
 const defaultOptions = ["User selection","Node Heights","Branch Lengths"]
 
-export function BaseLabel(props: { target: labelTarget, }) {
+export function BaseLabel(props: { target: labelTarget,defaultOptions:string[], }) {
 
     const dispatch = useAppDispatch();
     const settings = useAppSelector(selectLabelState(props.target))
@@ -14,7 +14,7 @@ export function BaseLabel(props: { target: labelTarget, }) {
     //duplicate code
     const attributeTypes = useAppSelector(selectAnnotationTypes);
     //TODO add defaults like height/length/ etc.
-    const attributeKeys = [...defaultOptions, ...Object.keys(attributeTypes)] 
+    const attributeKeys = [...defaultOptions,...props.defaultOptions, ...Object.keys(attributeTypes)] 
 
     const options = []
     for (const key of attributeKeys) {
@@ -63,14 +63,14 @@ export function BaseLabel(props: { target: labelTarget, }) {
 
 }
 
-export function Labels(props:{target:labelTarget}){
+export function Labels(props:{target:labelTarget,defaultOptions:string[]}){
 
     const dispatch = useAppDispatch();
     const settings = useAppSelector(selectLabelState(props.target))
     const flipActivated = labelActions[props.target].flipActivated
     return (
         <SettingPanel title={`${props.target[0].toLocaleUpperCase()+props.target.slice(1)} Label`} checkable={true} onClick={()=>dispatch(flipActivated(false))} checked={settings.activated}>
-            <BaseLabel target={props.target} />
+            <BaseLabel target={props.target} defaultOptions={props.defaultOptions} />
         </SettingPanel>
     )
 }

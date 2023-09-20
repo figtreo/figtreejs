@@ -4,6 +4,7 @@ import { getTreeFromNewick } from './parsing/TreeParser';
 
 export interface Node {
         id:string,
+        name:string|null,
         label:string|null,
         children:string[],
         parent:string|null,

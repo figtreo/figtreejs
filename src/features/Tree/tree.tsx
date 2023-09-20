@@ -11,8 +11,9 @@ import { InternalNodes } from './nodes';
 import { RectangularLayout } from '../Figtree/components/Figtree/Layouts/rectangularLayout';
 import { PolarLayout } from '../Figtree/components/Figtree/Layouts/polarLayout';
 import { RadialLayout } from '../Figtree/components/Figtree/Layouts/radialLayout';
+import { TipLabels } from './tipLabel';
 
-const margins = {top:10,bottom:10,left:10,right:10};
+const margins = {top:10,bottom:10,left:10,right:100};
 //todo make zoom and expansion based on number of tips
 const zoomFactor = 5;
 
@@ -187,7 +188,8 @@ export function Tree({panelRef}:any){
         <svg width={width} height={height}  ref={svgRef}> 
         <FigTree   width={width} height={height} tree={tree} layout={treeLayout} margins={margins} opts={layoutOpts}>
            <Branches attrs={{strokeWidth:lineWidth,stroke:branchColour}} />
-            <Tips tree={tree}/>
+            <Tips tree={tree} />
+            <TipLabels tree={tree}/>
             <InternalNodes tree={tree}/>
         </FigTree>
         </svg>

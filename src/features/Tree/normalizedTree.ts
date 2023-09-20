@@ -10,6 +10,9 @@ export interface NodeRef{
 }
 
 export class NormalizedTree  {
+    getName(node: NodeRef):string|null {
+        return this._data.nodes.byId[node.id].name
+    }
     _data:TreeState
     constructor(data:TreeState){
         this._data = data

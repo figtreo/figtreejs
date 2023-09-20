@@ -1,4 +1,3 @@
-import Collapsible from "react-collapsible";
 import { Appearance } from "./panels/appearance/appearance";
 import { Labels } from "./panels/label/label";
 import { Layout } from "./panels/layout/layout";
@@ -13,11 +12,11 @@ export function Settings() {
             <Layout />
             <Appearance/>
             <TimeScale/>
-            <Labels target='tip'/>
+            <Labels target='tip' defaultOptions={['Name']}/>
             <Shapes target="tip" />
-            <Labels target='node'/>
+            <Labels target='node' defaultOptions={[]}/>
             <Shapes target="node"/>
-            <Labels target='branch'/>
+            <Labels target='branch' defaultOptions={[]}/>
             <Axis />
         </div>
     )

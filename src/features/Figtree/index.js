@@ -15,7 +15,7 @@ import Features from "./components/Map/Features";
 import GreatCircleArc,{GreatCircleArcMissal} from "./components/Map/GreatCircleArc";
 import Timeline from "./components/Timeline";
 // import InteractionContainer from "../src/components/InteractionContainer"
-import Label from "./components/Figtree/Baubles/Label"
+import Label from "./components/Figtree/Baubles/Nodes/Shapes/Label"
 import PlotLayer from "./components/Plots/PlotLayer"
 import Element from "./components/Plots/Elements/Element"
 import {useFigtreeContext} from "./hooks"

@@ -7,6 +7,7 @@ import { Node } from "./treeSlice";
 export function Tips(props: { tree: NormalizedTree }) {
     const tree = props.tree;
     const settings = useAppSelector(selectShapeState("tip"));
+
     const filter = (n: Node) => tree.getChildCount(n) === 0;
 
 
@@ -15,11 +16,13 @@ export function Tips(props: { tree: NormalizedTree }) {
     const fill = settings.colour;
     const stroke = settings.outlineColour;;
     const strokeWidth = settings.outlineWidth;
+
     
     if(settings.activated){
         if (settings.shape === "Circle") {
             return (
                 <Nodes.Circle filter={filter} attrs={{ r: radius, fill, stroke, strokeWidth }} />
+
             )
         } else if (settings.shape === "Rectangle") {
             return (

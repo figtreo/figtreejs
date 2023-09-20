@@ -1,9 +1,8 @@
-import React, {useMemo, useContext} from "react"
 import {Circle,AnimatedCircle} from "./Shapes/Circle";
 import CoalescentShape from "./Shapes/CoalescentShape";
 import {useAttributeMappers, useLayout, useTree} from "../../../../hooks";
 import Rectangle from "./Shapes/Rectangle";
-
+import Label from "./Shapes/Label";
 /**
  * This HOC takes a node shape and returns a shape for each vertex. It also handles converting
  * attributes that can be functions into display attributes that are passed to the shape.
@@ -23,7 +22,7 @@ function NodesHOC(ShapeComponent) {
                 {vertices.allIds.sort((a,b)=>sortFactor*(vertices.byId[a].x-vertices.byId[b].x)).reduce( (all, id) => {
                     if (filter(tree.getNode(id))) {//filter needs to us tree api
                         const v = vertices.byId[id];
-                        const element = <ShapeComponent key={id} {...rest}    {...shapeProps(v)} vertex={v}  x={v.x} y={v.y}/> //scales above?
+                        const element = <ShapeComponent key={id} {...rest}  node={tree.getNode(v.id)}   vertex={v}  x={v.x} y={v.y} {...shapeProps(v)}/> //scales above?
                         // const element = <ShapeComponent key={v.id} {...rest}  {...shapeProps(v)}   vertex={v}  x={scales.x(v.x)} y={scales.y(v.y)}/> //scales above?
                             all.push(element)
                     }
@@ -34,6 +33,8 @@ function NodesHOC(ShapeComponent) {
         )
     }
 }
+
+const NodeLabels = NodesHOC(Label);
 
 const CircleNodes = NodesHOC(Circle);
 CircleNodes.defaultProps={
@@ -78,7 +79,10 @@ CoalescentNodes.defualtProps={
     filter:(v)=>true,
     sortFactor:1,
 };
-const Nodes={Circle:CircleNodes,Coalescent:CoalescentNodes,AnimatedCircleNodes:AnimatedCircleNodes,Rectangle:RectangularNodes};
+
+
+
+const Nodes={Circle:CircleNodes,Coalescent:CoalescentNodes,AnimatedCircleNodes:AnimatedCircleNodes,Rectangle:RectangularNodes,Label:NodeLabels};
 export default Nodes;
 
 
