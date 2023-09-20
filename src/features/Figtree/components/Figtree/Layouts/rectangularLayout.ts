@@ -74,30 +74,30 @@ export class RectangularLayout extends AbstractLayout {
         return vertices;
     }
 
-    static transformArbitraryLayout(arbitraryLayout: ArbitraryVertices, treeStats:{tipCount:number},opts: {pointOfInterest:{x:number,y:number},fishEye:number}): ArbitraryVertices {
-        console.log(opts.fishEye)
-        if(opts.fishEye === 0) return arbitraryLayout;
-        const vertices: ArbitraryVertices = { byId: {}, allIds: [], extent: { x: arbitraryLayout.extent.x, y: [0, 0] } };
-        const transform = fishEyeTransform(opts.fishEye,treeStats.tipCount,opts.pointOfInterest.y); //1000 to match figtree
-        let minY=Number.POSITIVE_INFINITY;
-        let maxY=Number.NEGATIVE_INFINITY;
-        for(const id of arbitraryLayout.allIds){
-            const vertex = arbitraryLayout.byId[id];
-            const y = transform(vertex.y);
-            console.log({ty:y,y0:vertex.y})
-            vertices.byId[id] = {
-                ...vertex,
-                y,
-                pathPoints: vertex.pathPoints.map(d=>({x:d.x,y:transform(d.y)}))
-            }
-            if(y<minY) minY=y;
-            if(y>maxY) maxY=y;
-            vertices.allIds.push(id);
-        }
-        vertices.extent.y = [minY,maxY];
+    // static transfromLayout(layout: Vertices, treeStats:{tipCount:number},opts: {pointOfInterest:{x:number,y:number},fishEye:number}): Vertices {
+    //     console.log(opts.fishEye)
+    //     if(opts.fishEye === 0) return arbitraryLayout;
+    //     const vertices: ArbitraryVertices = { byId: {}, allIds: [], extent: { x: arbitraryLayout.extent.x, y: [0, 0] } };
+    //     const transform = fishEyeTransform(opts.fishEye,treeStats.tipCount,opts.pointOfInterest.y); //1000 to match figtree
+    //     let minY=Number.POSITIVE_INFINITY;
+    //     let maxY=Number.NEGATIVE_INFINITY;
+    //     for(const id of arbitraryLayout.allIds){
+    //         const vertex = arbitraryLayout.byId[id];
+    //         const y = transform(vertex.y);
+    //         console.log({ty:y,y0:vertex.y})
+    //         vertices.byId[id] = {
+    //             ...vertex,
+    //             y,
+    //             pathPoints: vertex.pathPoints.map(d=>({x:d.x,y:transform(d.y)}))
+    //         }
+    //         if(y<minY) minY=y;
+    //         if(y>maxY) maxY=y;
+    //         vertices.allIds.push(id);
+    //     }
+    //     vertices.extent.y = [minY,maxY];
 
-        return vertices
-    }
+    //     return vertices
+    // }
 
 
 
@@ -109,22 +109,35 @@ export class RectangularLayout extends AbstractLayout {
         const y = scaleLinear()
             .domain(arbitraryLayout.extent.y)
             .range([this.padding, opts.height - this.padding]);
+        
+        const pointOfInterestY = y.invert(opts.pointOfInterest.y)
+
+        console.log({pointOfInterestY,treeStats,maxY:arbitraryLayout.extent.y[1]});
+        
+        const transform = fishEyeTransform(opts.fishEye,treeStats.tipCount,pointOfInterestY); //1000 to match figtree
+
 
         const scaledVertices: Vertices = {
             byId: {},
             allIds: []
         };
+
         for (const id of arbitraryLayout.allIds) {
             const vertex = arbitraryLayout.byId[id];
             scaledVertices.byId[vertex.id] = {
                 id: vertex.id,
                 x: x(vertex.x),
-                y: y(vertex.y),
+                y: y(transform(vertex.y)),
                 level: vertex.level,
-                d: this.pathGenerator(vertex.pathPoints.map(d=>({x:x(d.x),y:y(d.y)})), opts) // scale the points
+                d: this.pathGenerator(vertex.pathPoints.map(d=>({x:x(d.x),y:y(transform(d.y))})), opts) // scale the points
             };
             scaledVertices.allIds.push(vertex.id);
         }
+
+
+
+
+
         return scaledVertices;
     }
 
@@ -162,13 +175,17 @@ export class RectangularLayout extends AbstractLayout {
 }
 
 // figtree 
-const fishEyeTransform=(fishEye:number,tipCount:number,pointOfInterestY:number)=>(y:number)=>{
-     const scale = 1.0 / (fishEye * tipCount);
-     const dist = pointOfInterestY - y;
-     const min =  1.0 - (pointOfInterestY / (scale + pointOfInterestY));
-     const max =  1.0 - ((pointOfInterestY - 1.0) / (scale - (pointOfInterestY - 1.0)));
+const fishEyeTransform=(fishEye:number,tipCount:number,pointOfInterestY:number)=>(y:number)=>{ // point of interest is in layout scale.
+    
+    const dist = pointOfInterestY - y;
+    const fromEdge = dist>0? y: tipCount-y;
+    const maxD = Math.max(pointOfInterestY,Math.abs(tipCount-pointOfInterestY))
 
-     const c =  1.0 - (dist < 0 ? (dist / (scale - dist)) : (dist / (scale + dist)));
+    const availableBump = Math.min(fromEdge,fishEye);
+    const bump = (availableBump - Math.abs((dist/maxD)))
+    const newY = dist>0? y-bump: y+bump;
+    
+    return newY;
+    
 
-    return (c - min) / (max - min);
 }

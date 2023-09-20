@@ -41,7 +41,7 @@ function FigTree(props:{width:number,height:number,layout:typeof AbstractLayout,
    
     const w = width - margins.left - margins.right;
     const h = height - margins.top - margins.bottom;
-    const point = pointOfInterest?pointOfInterest: {x:margins.left+w/2,y:margins.top+height/2};
+    const point = pointOfInterest?pointOfInterest: {x:(margins.left+w)/2,y:(margins.top+height)/2};
 
     const vertices = layout.layout(tree,{showRoot,width:w,height:h,rootLength,rootAngle,angleRange,curvature,spread,tipSpace:(tip1:NodeRef,tip2:NodeRef)=>1,fishEye,pointOfInterest:point});
         

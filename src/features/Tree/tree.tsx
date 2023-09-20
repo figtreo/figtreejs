@@ -13,7 +13,17 @@ import { PolarLayout } from '../Figtree/components/Figtree/Layouts/polarLayout';
 import { RadialLayout } from '../Figtree/components/Figtree/Layouts/radialLayout';
 
 const margins = {top:10,bottom:10,left:10,right:10};
+//todo make zoom and expansion based on number of tips
 const zoomFactor = 5;
+
+function scrollReducer(state:{top:number,left:number}, action:"scroll") {
+  switch (action) {
+    case "scroll":
+      default:
+        throw new Error("unknown action in tree component");
+  }
+
+}
 export function Tree({panelRef}:any){
 
   // resizing work
@@ -28,6 +38,7 @@ export function Tree({panelRef}:any){
     const [isResizing, setIsResizing] = useState(true);
 
     const [treeSize, setTreeSize] = useState({baseWidth:minWidth,baseHeight:minHeight});
+    const [scrolled, setScrolled] = useState({top:0.5,left:0.5});
 
     const startResizing = useCallback((mouseDownEvent: any) => {
         setIsResizing(true);
@@ -104,13 +115,31 @@ export function Tree({panelRef}:any){
     const height = treeSize.baseHeight+(treeSize.baseHeight*expansion*zoomFactor)+zoomed[1]*2;
     const width = treeSize.baseWidth+zoomed[0]*2
 
-    //Need to scroll the panelRef to the center of the svg so that the tree is centered
-    
+//TODO fix zooming to always respect the center of the svg as displayed.
+    const  handleScroll =    useCallback(()=> {
+
+       const maxLeftScroll = width-panelRef.current.getBoundingClientRect().width;
+        const maxTopScroll = height-panelRef.current.getBoundingClientRect().height;
+
+
+        setScrolled({top:panelRef.current.scrollTop/maxTopScroll,left:panelRef.current.scrollLeft/maxLeftScroll})}
+      ,[width,height,panelRef])
+
     useEffect(() => {
+      let panel:any;
       if(panelRef.current){
-        panelRef.current.scrollLeft = (width-panelRef.current.getBoundingClientRect().width)/2;
-        panelRef.current.scrollTop = (height-panelRef.current.getBoundingClientRect().height)/2;
-      }})
+        panelRef.current.addEventListener('scroll',handleScroll)
+        panel = panelRef.current;
+      }
+      return ()=>{panel.removeEventListener('scroll',handleScroll)}
+    })
+
+    useEffect(() => {
+      if(panelRef.current){ // set scroll to middle of svg when left and top is 0.5
+        panelRef.current.scrollLeft = (width-panelRef.current.getBoundingClientRect().width)*scrolled.left; //if changed set to scrollLeft/(panelRef.current.getBoundingClientRect().width)
+        panelRef.current.scrollTop = (height-panelRef.current.getBoundingClientRect().height)*scrolled.top;
+      }
+    },[zoom,expansion])
 
 
 
