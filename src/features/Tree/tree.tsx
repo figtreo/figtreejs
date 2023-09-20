@@ -1,10 +1,10 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { selectNodeCount,parseNewick, selectTree} from './treeSlice';
 
 import { Branches, FigTree } from '../Figtree';
 import { selectLineWidth, selectStroke} from '../settings/panels/appearance/appearanceSlice';
-import { selectLayout } from '../settings/panels/layout/layoutSlice';
+import { selectLayout, setPointOfInterest } from '../settings/panels/layout/layoutSlice';
 import { NormalizedTree } from './normalizedTree';
 import { Tips } from './tips';
 import { InternalNodes } from './nodes';
@@ -25,6 +25,9 @@ function scrollReducer(state:{top:number,left:number}, action:"scroll") {
 
 }
 export function Tree({panelRef}:any){
+
+  const svgRef = useRef<SVGSVGElement>(null);;
+  
 
   // resizing work
 
@@ -91,10 +94,10 @@ export function Tree({panelRef}:any){
     const lineWidth = useAppSelector(selectLineWidth);
     const branchColour = useAppSelector(selectStroke);
 
-    const {expansion,zoom,layout,rootAngle,rootLength,angleRange,showRoot,spread,curvature,fishEye}= useAppSelector(selectLayout);
+    const {expansion,zoom,layout,rootAngle,rootLength,angleRange,showRoot,spread,curvature,fishEye,pointOfInterest}= useAppSelector(selectLayout);
 
     const layoutOpts = {
-      rootAngle,rootLength,angleRange,showRoot,spread,curvature,fishEye
+      rootAngle,rootLength,angleRange,showRoot,spread,curvature,fishEye,pointOfInterest
     }
    
     const treeLayout = layout==="rectangular"?RectangularLayout:layout==="circular"?PolarLayout:RadialLayout;
@@ -141,6 +144,30 @@ export function Tree({panelRef}:any){
       }
     },[zoom,expansion])
 
+   const handlePointOfInterest = useCallback((e:any)=> {
+    if(svgRef.current!==null&&e.metaKey){
+      let point = svgRef.current.createSVGPoint();
+      point.x = e.clientX; 
+      point.y = e.clientY; 
+      const ctm = svgRef.current.getScreenCTM();
+      if(ctm!==null){
+        point = point.matrixTransform(ctm.inverse());
+        dispatch(setPointOfInterest({x:point.x,y:point.y}))
+    }
+  }
+
+    },[svgRef])
+
+
+    useEffect(() => {
+      if(svgRef.current){
+        svgRef.current.addEventListener('mousemove',handlePointOfInterest)
+      }
+      return ()=> svgRef.current?.removeEventListener('mousemove',handlePointOfInterest)
+
+    })
+
+ 
 
 
 // TODO animate svg changes
@@ -148,7 +175,7 @@ export function Tree({panelRef}:any){
       return(
 
 
-        <svg width={width} height={height} > 
+        <svg width={width} height={height}  ref={svgRef}> 
         <FigTree   width={width} height={height} tree={tree} layout={treeLayout} margins={margins} opts={layoutOpts}>
            <Branches attrs={{strokeWidth:lineWidth,stroke:branchColour}} />
             <Tips tree={tree}/>
