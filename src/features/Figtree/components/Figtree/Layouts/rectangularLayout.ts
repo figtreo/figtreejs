@@ -2,7 +2,6 @@ import { max } from "d3-array";
 import { scaleLinear } from "d3-scale";
 import { AbstractLayout, ArbitraryVertex, ArbitraryVertices, internalLayoutOptions,Vertices} from "./LayoutInterface";
 import { NormalizedTree, NodeRef } from "../../../../Tree/normalizedTree";
-import { a } from "@react-spring/web";
 
 
 export class RectangularLayout extends AbstractLayout {
@@ -194,7 +193,7 @@ export class RectangularLayout extends AbstractLayout {
 // Figtree cc Andrew Rambaut
 export const fishEyeTransform=(fishEye:number,tipCount:number,pointOfInterestY:number)=>(y:number)=>{ // point of interest is in layout scale.
 
-    if (fishEye == 0.0) {
+    if (fishEye === 0.0) {
         return y;
     }
 

@@ -1,9 +1,8 @@
-import { extent, max, min } from "d3-array";
+import { extent,  min } from "d3-array";
 import { scaleLinear } from "d3-scale";
-import { AbstractLayout, ArbitraryVertex, ArbitraryVertices, internalLayoutOptions,Vertices} from "./LayoutInterface";
+import { AbstractLayout, ArbitraryVertices, internalLayoutOptions,Vertices} from "./LayoutInterface";
 import { NormalizedTree, NodeRef } from "../../../../Tree/normalizedTree";
 import { RectangularLayout, fishEyeTransform } from "./rectangularLayout";
-import path from "path";
 
 
 export class PolarLayout extends AbstractLayout {
@@ -59,7 +58,7 @@ export class PolarLayout extends AbstractLayout {
             // parent id as source and fetch when needed?
             let pathPoints:{x:number,y:number,r:number,theta:number}[] = [];
             // ingores root which might have an empty path;
-            if(vertex.pathPoints.length==2){
+            if(vertex.pathPoints.length===2){
             const [tip,parent] = vertex.pathPoints;
             const stepPointR = rScale(parent.x);
             const stepPointTheta = thetaScale(transform(tip.y));

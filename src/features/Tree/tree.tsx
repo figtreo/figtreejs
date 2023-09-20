@@ -16,14 +16,7 @@ const margins = {top:10,bottom:10,left:10,right:10};
 //todo make zoom and expansion based on number of tips
 const zoomFactor = 5;
 
-function scrollReducer(state:{top:number,left:number}, action:"scroll") {
-  switch (action) {
-    case "scroll":
-      default:
-        throw new Error("unknown action in tree component");
-  }
 
-}
 export function Tree({panelRef}:any){
 
   const svgRef = useRef<SVGSVGElement>(null);;
@@ -99,7 +92,8 @@ export function Tree({panelRef}:any){
     const layoutOpts = {
       rootAngle,rootLength,angleRange,showRoot,spread,curvature,fishEye,pointOfInterest
     }
-   
+
+
     const treeLayout = layout==="rectangular"?RectangularLayout:layout==="circular"?PolarLayout:RadialLayout;
     //
     useEffect(() => {
@@ -120,12 +114,23 @@ export function Tree({panelRef}:any){
 
 //TODO fix zooming to always respect the center of the svg as displayed.
     const  handleScroll =    useCallback(()=> {
+      let left=0;
+      let top=0;
+      if(width<=panelRef.current.getBoundingClientRect().width){
+        left=0.5;
+      }else{
+        const maxLeftScroll = width-panelRef.current.getBoundingClientRect().width;
+        left =panelRef.current.scrollLeft/maxLeftScroll
+      }
 
-       const maxLeftScroll = width-panelRef.current.getBoundingClientRect().width;
+      if(height<=panelRef.current.getBoundingClientRect().height){
+        top=0.5;
+      }else{
         const maxTopScroll = height-panelRef.current.getBoundingClientRect().height;
-
-
-        setScrolled({top:panelRef.current.scrollTop/maxTopScroll,left:panelRef.current.scrollLeft/maxLeftScroll})}
+        top =panelRef.current.scrollTop/maxTopScroll
+      }      
+      setScrolled({top,left})
+    }
       ,[width,height,panelRef])
 
     useEffect(() => {
@@ -138,11 +143,12 @@ export function Tree({panelRef}:any){
     })
 
     useEffect(() => {
+
       if(panelRef.current){ // set scroll to middle of svg when left and top is 0.5
         panelRef.current.scrollLeft = (width-panelRef.current.getBoundingClientRect().width)*scrolled.left; //if changed set to scrollLeft/(panelRef.current.getBoundingClientRect().width)
         panelRef.current.scrollTop = (height-panelRef.current.getBoundingClientRect().height)*scrolled.top;
       }
-    },[zoom,expansion])
+    })
 
    const handlePointOfInterest = useCallback((e:any)=> {
     if(svgRef.current!==null&&e.metaKey){
@@ -156,14 +162,17 @@ export function Tree({panelRef}:any){
     }
   }
 
-    },[svgRef])
+    },[svgRef,dispatch])
 
 
     useEffect(() => {
+      let svg:any;
+
       if(svgRef.current){
+        svg=svgRef.current;
         svgRef.current.addEventListener('mousemove',handlePointOfInterest)
       }
-      return ()=> svgRef.current?.removeEventListener('mousemove',handlePointOfInterest)
+      return ()=> svg?.removeEventListener('mousemove',handlePointOfInterest)
 
     })
 

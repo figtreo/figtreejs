@@ -1,11 +1,10 @@
-import React,{useMemo,useReducer} from 'react';
-import {scaleLinear} from "d3-scale";
+import React from 'react';
 import { LayoutContext, TreeContext } from '../../Context/context';
 import Branches from './Baubles/Branches/Branches';
 import withConditionalInteractionProvider from '../HOC/withConditionalInteractionProvider';
 import { NodeRef, NormalizedTree } from '../../../Tree/normalizedTree';
 
-import { AbstractLayout, internalLayoutOptions } from './Layouts/LayoutInterface';
+import { AbstractLayout } from './Layouts/LayoutInterface';
 
 interface layoutOptions{
 
