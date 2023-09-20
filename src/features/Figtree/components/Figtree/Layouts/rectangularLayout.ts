@@ -2,6 +2,7 @@ import { max } from "d3-array";
 import { scaleLinear } from "d3-scale";
 import { AbstractLayout, ArbitraryVertex, ArbitraryVertices, internalLayoutOptions,Vertices} from "./LayoutInterface";
 import { NormalizedTree, NodeRef } from "../../../../Tree/normalizedTree";
+import { a } from "@react-spring/web";
 
 
 export class RectangularLayout extends AbstractLayout {
@@ -106,16 +107,17 @@ export class RectangularLayout extends AbstractLayout {
             .domain(arbitraryLayout.extent.x)
             .range([this.padding, opts.width - this.padding]);
 
-        const y = scaleLinear()
+        const y_og = scaleLinear()
             .domain(arbitraryLayout.extent.y)
             .range([this.padding, opts.height - this.padding]);
         
-        const pointOfInterestY = y.invert(opts.pointOfInterest.y)
+        const pointOfInterestY = y_og.invert(opts.pointOfInterest.y)
 
-        console.log({pointOfInterestY,treeStats,maxY:arbitraryLayout.extent.y[1]});
-        
         const transform = fishEyeTransform(opts.fishEye,treeStats.tipCount,pointOfInterestY); //1000 to match figtree
-
+        
+        const y = scaleLinear()
+        .domain(arbitraryLayout.extent.y.map(transform))
+        .range([this.padding, opts.height - this.padding]);
 
         const scaledVertices: Vertices = {
             byId: {},
@@ -175,17 +177,33 @@ export class RectangularLayout extends AbstractLayout {
 }
 
 // figtree 
+// const fishEyeTransform=(fishEye:number,tipCount:number,pointOfInterestY:number)=>(y:number)=>{ // point of interest is in layout scale.
+    
+//     const dist = pointOfInterestY - y;
+//     const fromEdge = dist>0? y: tipCount-y;
+//     const maxD = Math.max(pointOfInterestY,Math.abs(tipCount-pointOfInterestY))
+
+//     const availableBump = Math.min(fromEdge,fishEye);
+//     const bump = (availableBump - Math.abs((dist/maxD)))
+//     const newY = dist>0? y-bump: y+bump;
+    
+//     return newY;
+    
+
+// }
+// Figtree cc Andrew Rambaut
 const fishEyeTransform=(fishEye:number,tipCount:number,pointOfInterestY:number)=>(y:number)=>{ // point of interest is in layout scale.
-    
+
+    if (fishEye == 0.0) {
+        return y;
+    }
+
+    const scale = 1.0 / (fishEye * tipCount);
     const dist = pointOfInterestY - y;
-    const fromEdge = dist>0? y: tipCount-y;
-    const maxD = Math.max(pointOfInterestY,Math.abs(tipCount-pointOfInterestY))
+    const min =  1.0 - (pointOfInterestY / (scale + pointOfInterestY));
+    const max =  1.0 - ((pointOfInterestY - 1.0) / (scale - (pointOfInterestY - 1.0)));
 
-    const availableBump = Math.min(fromEdge,fishEye);
-    const bump = (availableBump - Math.abs((dist/maxD)))
-    const newY = dist>0? y-bump: y+bump;
-    
-    return newY;
-    
+    const c =  1.0 - (dist < 0 ? (dist / (scale - dist)) : (dist / (scale + dist)));
 
+    return (c - min) / (max - min);
 }
