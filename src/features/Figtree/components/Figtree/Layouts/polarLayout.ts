@@ -4,7 +4,9 @@ import { AbstractLayout, ArbitraryVertices, internalLayoutOptions,Vertices} from
 import { NormalizedTree, NodeRef } from "../../../../Tree/normalizedTree";
 import { RectangularLayout, fishEyeTransform } from "./rectangularLayout";
 
-
+//TODO extract tip dx dy as constants
+//TODO normalize once
+//TODO update margins for layouts
 export class PolarLayout extends AbstractLayout {
 
     static getArbitraryLayout(tree: NormalizedTree, {rootLength = 0, tipSpace = (tip1: NodeRef, tip2: NodeRef) => 1,showRoot=true}): ArbitraryVertices {
@@ -50,7 +52,7 @@ export class PolarLayout extends AbstractLayout {
         for(const id of arbitraryLayout.allIds){
             const vertex = arbitraryLayout.byId[id];
             const r = rScale(vertex.x);
-            const theta = thetaScale(transform(vertex.y));
+            const theta =  thetaScale(transform(vertex.y));
             const [x,y] = polarToCartesian(r,theta);// convert back to cartesian for x and y (will need to be scaled for svg coordinates)
             const level = vertex.level;
 
@@ -141,6 +143,33 @@ export class PolarLayout extends AbstractLayout {
             const xpos = x(vertex.x);
             const ypos = y(vertex.y);
 
+            //hypothenuse is 12 (tip label gap) or -6 node label gap
+            let dx,dy;
+           if(vertex.nodeLabel.dx===12){
+                dx = Math.cos(vertex.theta)*12;
+                dy = Math.sin(vertex.theta)*12;
+            }else{
+                dx = Math.cos(vertex.theta)*6;
+                dy = Math.sin(vertex.theta)*6;
+            }
+
+            //branch lable dx dy;
+            let branchDx,branchDy;
+            const normalizedTheta = normalizeAngle(vertex.theta);
+            if(normalizedTheta>0 && normalizedTheta<Math.PI/2){//good
+                branchDx = Math.sin((Math.PI/2) -normalizedTheta)*6;
+                branchDy = -Math.cos((Math.PI/2) -normalizedTheta)*6;
+            }else if(normalizedTheta>Math.PI/2 && normalizedTheta<Math.PI){ //good
+                branchDx = -Math.cos((Math.PI/2) - (Math.PI-normalizedTheta))*6;
+                branchDy = -Math.sin((Math.PI/2) - (Math.PI-normalizedTheta))*6;
+            }else if (normalizedTheta>Math.PI && normalizedTheta<3*Math.PI/2){ // good
+                branchDx = Math.cos((Math.PI/2) - (normalizedTheta-Math.PI))*6;
+                branchDy = -Math.sin((Math.PI/2) - (normalizedTheta-Math.PI))*6;
+            }else{
+                branchDx = -Math.cos((Math.PI/2) - (2*Math.PI-normalizedTheta))*6;
+                branchDy = -Math.sin((Math.PI/2) - (2*Math.PI-normalizedTheta))*6;
+            }
+
 
             const [alignedX,alignedY] = polarToCartesian(maxRadius,vertex.theta);
             scaledVertices.byId[vertex.id] = {
@@ -151,18 +180,18 @@ export class PolarLayout extends AbstractLayout {
                 r:vertex.r,
                 theta:vertex.theta,
                 nodeLabel: {
-                    x: xpos+vertex.nodeLabel.dx,
-                    y: ypos+vertex.nodeLabel.dy,
-                    alignmentBaseline: vertex.nodeLabel.alignmentBaseline,
-                    textAnchor: vertex.theta>Math.PI/2 && vertex.theta<3*Math.PI/2?"end":"start",
+                    x: xpos+dx,//+vertex.nodeLabel.dx,
+                    y: ypos+dy,//+vertex.nodeLabel.dy,
+                    alignmentBaseline: "middle",
+                    textAnchor: normalizedTheta>Math.PI/2 && normalizedTheta<3*Math.PI/2?"end":"start",
                     rotation:degrees(vertex.theta),
                     alignedPos:{x:vertex.nodeLabel.dx+alignedX,y:vertex.nodeLabel.dx+alignedY}
                 },
                 branch:{
                     d: this.pathGenerator(vertex.pathPoints.map(d=>({...d,x:x(d.x),y:y(d.y)})), opts),
                     label:{
-                        x:mean([xpos,x(vertex.pathPoints[2].x)])!, // want mean of step and final point
-                        y: mean([ypos,y(vertex.pathPoints[2].y)])!,
+                        x:mean([xpos,x(vertex.pathPoints[2].x)])!+branchDx, // want mean of step and final point
+                        y: mean([ypos,y(vertex.pathPoints[2].y)])!+branchDy,
                         alignmentBaseline: "bottom",
                         textAnchor:"middle",
                         rotation:degrees(vertex.theta)
@@ -185,6 +214,7 @@ export class PolarLayout extends AbstractLayout {
             case 3: {
 
                 const [target,source,step] = points;
+
 
                 const arcBit = source.theta===target.theta ||source.r===0?"":`A${source.r},${source.r} 0 0 ${source.theta<target.theta ?1:0} ${step.x},${step.y}`; // the end point of the arc is wrong
                 return `M${source.x},${source.y} ${arcBit} L${target.x},${target.y}`;
