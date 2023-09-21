@@ -191,8 +191,8 @@ export class PolarLayout extends AbstractLayout {
                 branch:{
                     d: this.pathGenerator(vertex.pathPoints.map(d=>({...d,x:x(d.x),y:y(d.y)})), opts),
                     label:{
-                        x:mean([xpos,x(vertex.pathPoints[2].x)])!+branchDx, // want mean of step and final point
-                        y: mean([ypos,y(vertex.pathPoints[2].y)])!+branchDy,
+                        x: vertex.pathPoints.length>0? mean([xpos,x(vertex.pathPoints[2].x)])!+branchDx:xpos, // no path on root sometimes put this at the position  // want mean of step and final point
+                        y: vertex.pathPoints.length>0?mean([ypos,y(vertex.pathPoints[2].y)])!+branchDy:ypos,
                         alignmentBaseline: "bottom",
                         textAnchor:"middle",
                         rotation:degrees(vertex.theta)
