@@ -19,6 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+//TODO clean up angle work here. Only needs to be done in initial or final layout. 
+// it is split between both right now. Branch angle is angle above  horizontal  to convert to usual need to subtract from 2pi.
 
 import { max, mean } from "d3-array";
 import { scaleLinear } from "d3-scale";
@@ -66,24 +68,30 @@ export class RadialLayout extends AbstractLayout {
             const y = ypos + (length * directionY);
 
 
-            const theta = Math.tan((x - xpos) / (y - ypos))
 
             const leftLabel = tree.getChildCount(node) > 0;
             const labelBelow = (tree.getChildCount(node) > 0 && (tree.getParent(node) === null || tree.getChild(tree.getParent(node)!, 0) !== node));
-
             
+            let dx,dy;
+           if(!leftLabel){
+                dx = Math.cos(branchAngle)*12;
+                dy = -Math.sin(branchAngle)*12;
+            }else{
+                dx = Math.cos(branchAngle)*6;
+                dy = -Math.sin(branchAngle)*6;
+            }
 
             vertices.byId[node.id] = {
                 x,
                 y,
                 id: node.id, level,
-                theta: theta,
+                theta: branchAngle,
                 pathPoints: [{ x: xpos, y: ypos },{ x, y }],
                 nodeLabel:{
-                    dx: leftLabel ? -6 : 12,
-                    dy: leftLabel ? (labelBelow ? -8 : 8) : 0,
-                    alignmentBaseline: leftLabel ? (labelBelow ? "bottom" : "hanging") : "middle",
-                    textAnchor: leftLabel ? "end" : "start",
+                    dx: dx,
+                    dy: dy,
+                    alignmentBaseline: "middle",
+                    textAnchor: branchAngle>Math.PI/2 && branchAngle<3*Math.PI/2?"end":"start",
                     rotation:branchAngle
                 }
             }; // i think xpos and ypos come from parent.
@@ -150,6 +158,26 @@ export class RadialLayout extends AbstractLayout {
             const vertex = arbitraryLayout.byId[id];
             const xpos = x(vertex.x);
             const ypos = y(vertex.y);
+
+
+            let branchDx,branchDy;
+            const normalizedTheta = 2*Math.PI - vertex.theta!;
+            if(normalizedTheta>0 && normalizedTheta<Math.PI/2){//good
+                branchDx = Math.sin((Math.PI/2) -normalizedTheta)*6;
+                branchDy = -Math.cos((Math.PI/2) -normalizedTheta)*6;
+            }else if(normalizedTheta>Math.PI/2 && normalizedTheta<Math.PI){ //good
+                branchDx = -Math.cos((Math.PI/2) - (Math.PI-normalizedTheta))*6;
+                branchDy = -Math.sin((Math.PI/2) - (Math.PI-normalizedTheta))*6;
+            }else if (normalizedTheta>Math.PI && normalizedTheta<3*Math.PI/2){ // good
+                branchDx = Math.cos((Math.PI/2) - (normalizedTheta-Math.PI))*6;
+                branchDy = -Math.sin((Math.PI/2) - (normalizedTheta-Math.PI))*6;
+            }else{
+                branchDx = -Math.cos((Math.PI/2) - (2*Math.PI-normalizedTheta))*6;
+                branchDy = -Math.sin((Math.PI/2) - (2*Math.PI-normalizedTheta))*6;
+            }
+
+
+
             scaledVertices.byId[vertex.id] = {
                 id: vertex.id,
                 x: x(vertex.x),
@@ -161,16 +189,16 @@ export class RadialLayout extends AbstractLayout {
                     y: ypos+vertex.nodeLabel.dy,
                     alignmentBaseline: vertex.nodeLabel.alignmentBaseline,
                     textAnchor: vertex.nodeLabel.rotation!>Math.PI/2 && vertex.nodeLabel.rotation!<3*Math.PI/2?"end":"start",
-                    rotation:degrees(vertex.nodeLabel.rotation!),
+                    rotation:-degrees(vertex.nodeLabel.rotation!),
                 },
                 branch:{
                 d: this.pathGenerator(vertex.pathPoints.map(d => ({ x: x(d.x), y: y(d.y) })), opts), // scale the points
                     label:{
-                        x:mean([xpos,x(vertex.pathPoints[1].x)])!, //parent is at the end of the array
-                        y:mean([ypos,y(vertex.pathPoints[1].y)])!,
+                        x:mean([xpos,x(vertex.pathPoints[0].x)])!+branchDx, //parent is at the end of the array
+                        y:mean([ypos,y(vertex.pathPoints[0].y)])!+branchDy,
                         alignmentBaseline:vertex.nodeLabel.alignmentBaseline,
                         textAnchor:vertex.nodeLabel.textAnchor,
-                        rotation:degrees(vertex.nodeLabel.rotation!),
+                        rotation:-degrees(vertex.nodeLabel.rotation!),
                     }
             }
             };
