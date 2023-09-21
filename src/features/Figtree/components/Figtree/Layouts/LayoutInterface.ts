@@ -10,14 +10,27 @@ import { scaleLinear } from "d3-scale"
 // TODO caching
 
 //
+export interface Label {
+    x: number,
+    y: number,
+    alignmentBaseline: string,
+    textAnchor: string,
+    rotation: number,
+    alignedPos?: { x: number, y: number }
+}
 export interface Vertex {
     id: string,
     x: number,
     y: number,
     level: number,
+    branch?: {
+        d: string,
+        label: Label
+    },
     d?: string, //path
     theta?: number, //angle
     r?: number, //radius
+    nodeLabel: Label
 }
 
 
@@ -28,6 +41,7 @@ export interface ArbitraryVertex {
     level: number,
     theta?: number, //angle
     pathPoints: { x: number, y: number }[]
+    nodeLabel:{dx:number,dy:number,alignmentBaseline:string,textAnchor:string,rotation?:number}
 }
 
 //ids match node ids
@@ -52,7 +66,7 @@ export type internalLayoutOptions = { // all layout options plus width and heigh
     curvature: number,
     showRoot: boolean,
     spread: number,
-    pointOfInterest: { x: number; y: number; }; 
+    pointOfInterest: { x: number; y: number; };
     fishEye: number;
 }
 
@@ -67,7 +81,7 @@ export abstract class AbstractLayout {
     static getArbitraryLayout(tree: NormalizedTree, opts: internalLayoutOptions): ArbitraryVertices {
         throw new Error("Method not implemented.")
     }
-    static finalizeArbitraryLayout(arbitraryVertices: ArbitraryVertices, treeStats:{tipCount:number},opts: internalLayoutOptions): Vertices {
+    static finalizeArbitraryLayout(arbitraryVertices: ArbitraryVertices, treeStats: { tipCount: number }, opts: internalLayoutOptions): Vertices {
         throw new Error("Method not implemented.")
     }
     //  cartoonGenerator(tree:NormalizedTree,vertices:Vertices,):string

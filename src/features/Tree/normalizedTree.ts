@@ -24,8 +24,11 @@ export class NormalizedTree  {
     getNode(id: string): NodeRef {
         return this._data.nodes.byId[id]
     }
-    getNodeDivergence(node: NodeRef): number {
+    getDivergence(node: NodeRef): number {
         return this._data.nodes.byId[node.id].divergence!
+    }
+    getHeight(node:NodeRef):number {
+        return this._data.nodes.byId[node.id].height!
     }
 
     getLength(node: NodeRef): number {
@@ -38,12 +41,12 @@ export class NormalizedTree  {
     getChild(node: NodeRef, index: number): NodeRef {
         return this._data.nodes.byId[this._data.nodes.byId[node.id].children[index]];
     }
-    getParent(id: string): string | null {
-        const parentId = this._data.nodes.byId[id].parent;
+    getParent(node: NodeRef): NodeRef | null {
+        const parentId = this._data.nodes.byId[node.id].parent;
         if(parentId===null){
             return null
         }else{
-            return parentId
+            return this._data.nodes.byId[node.id]
         }
     }
     getChildren(node: NodeRef): NodeRef[] {

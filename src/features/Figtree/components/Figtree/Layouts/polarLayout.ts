@@ -1,4 +1,4 @@
-import { extent,  min } from "d3-array";
+import { extent,  mean,  min } from "d3-array";
 import { scaleLinear } from "d3-scale";
 import { AbstractLayout, ArbitraryVertices, internalLayoutOptions,Vertices} from "./LayoutInterface";
 import { NormalizedTree, NodeRef } from "../../../../Tree/normalizedTree";
@@ -64,7 +64,6 @@ export class PolarLayout extends AbstractLayout {
             const stepPointTheta = thetaScale(transform(tip.y));
             const [stepPointX,stepPointY]  = polarToCartesian(stepPointR,stepPointTheta);
 
-            
 
             pathPoints = vertex.pathPoints.map((point)=>{
                 const r = rScale(point.x);
@@ -79,7 +78,7 @@ export class PolarLayout extends AbstractLayout {
             
             pathPoints.push({x:stepPointX,y:stepPointY,r:stepPointR,theta:stepPointTheta});
         }
-            polarVertices.push({id:vertex.id,r,theta,x,y,pathPoints,level})
+            polarVertices.push({id:vertex.id,r,theta,x,y,pathPoints,level,nodeLabel:vertex.nodeLabel})
         };
         
 
@@ -131,21 +130,45 @@ export class PolarLayout extends AbstractLayout {
 
         const x = scaleLinear().domain(xDomain).range(xRange);
         const y = scaleLinear().domain(yDomain).range(yRange);
+
+    
         
         const scaledVertices: Vertices = {
             byId: {},
             allIds: []
         };
         for (const vertex of polarVertices) {
+            const xpos = x(vertex.x);
+            const ypos = y(vertex.y);
 
+
+            const [alignedX,alignedY] = polarToCartesian(maxRadius,vertex.theta);
             scaledVertices.byId[vertex.id] = {
                 id: vertex.id,
-                x: x(vertex.x),
-                y: y(vertex.y),
+                x: xpos,
+                y: ypos,
                 level: vertex.level,
                 r:vertex.r,
                 theta:vertex.theta,
-                d: this.pathGenerator(vertex.pathPoints.map(d=>({...d,x:x(d.x),y:y(d.y)})), opts)
+                nodeLabel: {
+                    x: xpos+vertex.nodeLabel.dx,
+                    y: ypos+vertex.nodeLabel.dy,
+                    alignmentBaseline: vertex.nodeLabel.alignmentBaseline,
+                    textAnchor: vertex.theta>Math.PI/2 && vertex.theta<3*Math.PI/2?"end":"start",
+                    rotation:degrees(vertex.theta),
+                    alignedPos:{x:vertex.nodeLabel.dx+alignedX,y:vertex.nodeLabel.dx+alignedY}
+                },
+                branch:{
+                    d: this.pathGenerator(vertex.pathPoints.map(d=>({...d,x:x(d.x),y:y(d.y)})), opts),
+                    label:{
+                        x:mean([xpos,x(vertex.pathPoints[2].x)])!, // want mean of step and final point
+                        y: mean([ypos,y(vertex.pathPoints[2].y)])!,
+                        alignmentBaseline: "bottom",
+                        textAnchor:"middle",
+                        rotation:degrees(vertex.theta)
+
+                    }
+                }
             };
             scaledVertices.allIds.push(vertex.id);
         }
@@ -153,9 +176,6 @@ export class PolarLayout extends AbstractLayout {
     }
    
 
-
-
-        
 
 
     static pathGenerator(points: { x: number, y: number,r:number,theta:number }[], opts: internalLayoutOptions): string {
@@ -194,4 +214,16 @@ function normalizeAngle(theta:number){
     while(theta>2*Math.PI ){
     theta-=2*Math.PI}
     return theta;
+}
+
+//this function converts radians to degrees and adjusts degrees 
+// so the text is not fliped
+export function degrees(radians:number){
+    const degrees =  normalizeAngle(radians)*180/Math.PI;
+
+    if(degrees>90 && degrees<270){
+        return degrees-180;
+    }else{
+        return degrees
+    }
 }

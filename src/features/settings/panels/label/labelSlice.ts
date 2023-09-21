@@ -12,21 +12,48 @@ interface LabelState {
     sigDigs: number,
     activated:boolean
 }
+export type labelTarget = "node" | "tip" | "branch"
 
 const initialState: LabelState = {
     display: "No Attributes",
-    colourBy: "No Attributes",
+    colourBy: "User Selection",
     fontSize: 12,
     format: "Decimal",
     sigDigs: 2,
     activated:false
 }
 
+const initialStates:{[key:string]:LabelState} = {
+    tip:{
+        display: "Name",
+        colourBy: "User Selection",
+        fontSize: 12,
+        format: "Decimal",
+        sigDigs: 2,
+        activated:true
+    },
+    node:{
+        display: "Branch Lengths",
+        colourBy: "User Selection",
+        fontSize: 12,
+        format: "Decimal",
+        sigDigs: 2,
+        activated:false
+    },
+    branch:{
+        display: "Branch Lengths",
+        colourBy: "User Selection",
+        fontSize: 12,
+        format: "Decimal",
+        sigDigs: 2,
+        activated:false
+    }
+}
+
 type selector = {
     (state: RootState): any;
 }
 
-export type labelTarget = "node" | "tip" | "branch"
 
 const labelSliceGenerator = (target: labelTarget): {
     slice: Slice<LabelState>,
@@ -35,7 +62,7 @@ const labelSliceGenerator = (target: labelTarget): {
 ({
     slice: createSlice({
         name: `${target}Labels`,
-        initialState,
+        initialState: initialStates[target],
         reducers: {
             setDisplay: (state, action) => {
                 state.display = action.payload;

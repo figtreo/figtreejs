@@ -28,7 +28,6 @@ interface attrGetter {
 export default function Branches({
     curvature= 0.5,
      filter= (n:NodeRef) => true, 
-     pathGenerator= RectangularBranchPath, 
      attrs= { stroke: "black", strokeWidth: 2 }
 }) {
     const tree = useTree();
@@ -39,9 +38,9 @@ export default function Branches({
     return (
         <g className={"branch-layer"}>
             {
-            vertices.allIds.filter(id => vertices.byId[id].d).filter(id => filter(tree.getNode(id))).map(id => {
+            vertices.allIds.filter(id => vertices.byId[id].branch).filter(id => filter(tree.getNode(id))).map(id => {
                 const v = vertices.byId[id];
-                return (<animated.path key={`branch-${id}`} {...attrMapper(v)}  d={v.d}  fill={"none"} />)
+                return (<animated.path key={`branch-${id}`} {...attrMapper(v)}  d={v.branch!.d}  fill={"none"} />)
             })
             }
         </g>
