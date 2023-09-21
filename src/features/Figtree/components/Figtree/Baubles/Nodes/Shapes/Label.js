@@ -1,4 +1,4 @@
-export default function Label(props){
+export default function NodeLabel(props){
     const {attrs,text,node,vertex,aligned} = props;
     const {alignmentBaseline,textAnchor,rotation} = vertex.nodeLabel;
     const {x,y} = aligned? vertex.nodeLabel.alignedPos:vertex.nodeLabel;
@@ -9,7 +9,7 @@ export default function Label(props){
         </g>
     )
 }
-Label.defaultProps={
+NodeLabel.defaultProps={
     attrs:(v)=>v.textLabel,
     text:(v)=>v.id,
     css:'',

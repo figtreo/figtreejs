@@ -1,4 +1,5 @@
 import Branches from "./components/Figtree/Baubles/Branches/Branches";
+import  BranchLabels  from "./components/Figtree/Baubles/Branches/BranchLabels";
 import Nodes from "./components/Figtree/Baubles/Nodes/Nodes"
 import Axis from "./components/decorations/Axis/Axis";
 import FigTree from "./components/Figtree/FigTree";
@@ -15,18 +16,17 @@ import Features from "./components/Map/Features";
 import GreatCircleArc,{GreatCircleArcMissal} from "./components/Map/GreatCircleArc";
 import Timeline from "./components/Timeline";
 // import InteractionContainer from "../src/components/InteractionContainer"
-import Label from "./components/Figtree/Baubles/Nodes/Shapes/Label"
+import NodeLabel from "./components/Figtree/Baubles/Nodes/Shapes/Label"
 import PlotLayer from "./components/Plots/PlotLayer"
 import Element from "./components/Plots/Elements/Element"
 import {useFigtreeContext} from "./hooks"
 import {figtree,nodes,branches,nodeBackgrounds} from "./jsxFreeAPI"
 import {parseNewick} from "./utils/Tree/parsing/parseNewick";
 import {parseNexus} from "./utils/Tree/parsing/parseNexus";
-
-export {Branches,Nodes,customDateFormater,dateToDecimal,decimalToDate,Axis,AxisBars,Legend,
+export {Branches,BranchLabels,Nodes,customDateFormater,dateToDecimal,decimalToDate,Axis,AxisBars,Legend,
     FigTree,rectangularVertices,highlightedVertices,edgeFactory,KDE,getParent,getNode,getDivergence,getNodes,getTips,
     orderByNodeDensity,parseNewick,parseNexus,getRootToTipLengths,annotateNode,
     collapseNodes,NodeBackgrounds,Map,Features,GreatCircleArc,GreatCircleArcMissal,Timeline,getDateRange,
     // InteractionContainer,
-    Label,PlotLayer,Element,useFigtreeContext,figtree,nodes,branches,nodeBackgrounds
+    NodeLabel as Label,PlotLayer,Element,useFigtreeContext,figtree,nodes,branches,nodeBackgrounds
 }

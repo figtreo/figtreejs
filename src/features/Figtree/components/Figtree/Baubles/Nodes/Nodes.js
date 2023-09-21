@@ -2,7 +2,7 @@ import {Circle,AnimatedCircle} from "./Shapes/Circle";
 import CoalescentShape from "./Shapes/CoalescentShape";
 import {useAttributeMappers, useLayout, useTree} from "../../../../hooks";
 import Rectangle from "./Shapes/Rectangle";
-import Label from "./Shapes/Label";
+import NodeLabel from "./Shapes/Label";
 /**
  * This HOC takes a node shape and returns a shape for each vertex. It also handles converting
  * attributes that can be functions into display attributes that are passed to the shape.
@@ -34,7 +34,7 @@ function NodesHOC(ShapeComponent) {
     }
 }
 
-const NodeLabels = NodesHOC(Label);
+const NodeLabels = NodesHOC(NodeLabel);
 
 const CircleNodes = NodesHOC(Circle);
 CircleNodes.defaultProps={
