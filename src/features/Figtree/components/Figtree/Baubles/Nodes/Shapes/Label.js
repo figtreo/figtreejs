@@ -5,7 +5,7 @@ export default function NodeLabel(props){
     return (
         <g>
         <text alignmentBaseline={alignmentBaseline} textAnchor={textAnchor}   transform={`translate(${x},${y}) rotate(${rotation})`} {...attrs}>{text(node)}</text>
-        {aligned?<path strokeWidth={1} stroke='grey' stroke-dasharray="2" d={`M${vertex.nodeLabel.x} ${vertex.nodeLabel.y}L${x-6} ${y}`}/>:null}
+        {aligned?<path strokeWidth={1} stroke='grey' stroke-dasharray="2" d={`M${vertex.x} ${vertex.y}L${x} ${y}`}/>:null}
         </g>
     )
 }

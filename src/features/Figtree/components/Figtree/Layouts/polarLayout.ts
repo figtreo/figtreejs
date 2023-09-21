@@ -172,6 +172,7 @@ export class PolarLayout extends AbstractLayout {
 
 
             const [alignedX,alignedY] = polarToCartesian(maxRadius,vertex.theta);
+
             scaledVertices.byId[vertex.id] = {
                 id: vertex.id,
                 x: xpos,
@@ -185,7 +186,7 @@ export class PolarLayout extends AbstractLayout {
                     alignmentBaseline: "middle",
                     textAnchor: normalizedTheta>Math.PI/2 && normalizedTheta<3*Math.PI/2?"end":"start",
                     rotation:degrees(vertex.theta),
-                    alignedPos:{x:vertex.nodeLabel.dx+alignedX,y:vertex.nodeLabel.dx+alignedY}
+                    alignedPos:{x:x(alignedX)+dx,y:y(alignedY)+dy}
                 },
                 branch:{
                     d: this.pathGenerator(vertex.pathPoints.map(d=>({...d,x:x(d.x),y:y(d.y)})), opts),
