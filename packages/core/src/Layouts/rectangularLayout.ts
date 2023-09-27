@@ -13,7 +13,6 @@ export class RectangularLayout extends AbstractLayout {
         const vertices: ArbitraryVertices = { byId: {}, allIds: [], extent: { x: [0, 0], y: [0, 0] } };
         let maxY = 0;
         let maxX = 0;
-
         const adjustedRootLength = rootLength * max([...tree.getTips()].map((tip: NodeRef) => tree.getDivergence(tip)!))!
 
         let lastTip: null | NodeRef = null;
