@@ -1,0 +1,47 @@
+import { AbstractTree } from "../AbtractTree";
+import { AnnotationType, NodeRef, Tree, newickParsingOptions } from "../Tree.types";
+import { NormalizedTreeData } from "./normalizedTree.types";
+export declare class NormalizedTree extends AbstractTree {
+    isExternal(node: NodeRef): boolean;
+    isInternal(node: NodeRef): boolean;
+    isRoot(node: NodeRef): boolean;
+    sortChildren(node: NodeRef, compare: (a: NodeRef, b: NodeRef) => number): void;
+    getNodeByName(name: string): NodeRef | null;
+    getNodeByLabel(label: string): NodeRef | null;
+    static fromNewick(newick: string, options?: newickParsingOptions | undefined): Tree;
+    addChild(parent: NodeRef, child: NodeRef): void;
+    setParent(child: NodeRef, parent: NodeRef): void;
+    setName(node: NodeRef, name: string): void;
+    setLabel(node: NodeRef, label: string): void;
+    setHeight(node: NodeRef, height: number): void;
+    setDivergence(node: NodeRef, divergence: number): void;
+    setLength(node: NodeRef, length: number): void;
+    setRoot(node: NodeRef): void;
+    annotateNode(node: NodeRef, annotation: {
+        name: string;
+        value: any;
+        type: AnnotationType;
+    }): void;
+    _data: NormalizedTreeData;
+    constructor(data?: NormalizedTreeData);
+    get data(): NormalizedTreeData;
+    getNode(id: string): NodeRef;
+    getDivergence(node: NodeRef): number;
+    getHeight(node: NodeRef): number;
+    getLength(node: NodeRef): number;
+    getChildCount(node: NodeRef): number;
+    getChild(node: NodeRef, index: number): NodeRef;
+    getParent(node: NodeRef): NodeRef | null;
+    getChildren(node: NodeRef): NodeRef[];
+    getAnnotation(node: NodeRef, name: string): any | null;
+    getLabel(node: NodeRef): string | null;
+    getAnnotationType(name: string): string;
+    addNode(): NodeRef;
+    get nodeCount(): number;
+    get externalNodeCount(): number;
+    get InternalNodeCount(): number;
+    get externalNodes(): NodeRef[];
+    get internalNodes(): NodeRef[];
+    get root(): NodeRef | null;
+    getName(node: NodeRef): string | null;
+}

@@ -2,7 +2,7 @@ import { format } from "d3-format";
 import { useAppSelector } from "../../app/hooks";
 import { selectLabelState } from "../settings/panels/label/labelSlice";
 import { selectLayout } from "../settings/panels/layout/layoutSlice";
-import { NodeRef, NormalizedTree,Nodes } from "figtree.js";
+import { NodeRef, NormalizedTree,Nodes } from "@figtreejs/core";
 import { Node } from "./treeSlice";
 
 export function TipLabels(props: { tree: NormalizedTree, }) {

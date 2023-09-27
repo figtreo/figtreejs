@@ -1,7 +1,7 @@
 import { format } from "d3-format";
 import { useAppSelector } from "../../app/hooks";
 import { selectLabelState } from "../settings/panels/label/labelSlice";
-import { NormalizedTree, NodeRef, BranchLabels as BL} from "figtree.js";
+import { NormalizedTree, NodeRef, BranchLabels as BL} from "@figtreejs/core";
 
 export function BranchLabels(props: { tree: NormalizedTree, }) {
     const { tree } = props;

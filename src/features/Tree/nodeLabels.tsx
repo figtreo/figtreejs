@@ -3,7 +3,7 @@ import { useAppSelector } from "../../app/hooks";
 import { selectLabelState } from "../settings/panels/label/labelSlice";
 import { selectLayout } from "../settings/panels/layout/layoutSlice";
 import { Node } from "./treeSlice";
-import {NormalizedTree, Nodes,NodeRef} from "figtree.js";
+import {NormalizedTree, Nodes,NodeRef} from "@figtreejs/core";
 
 export function NodeLabels(props: { tree: NormalizedTree, }) {
     const { tree } = props;

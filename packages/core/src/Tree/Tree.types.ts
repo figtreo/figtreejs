@@ -1,0 +1,122 @@
+
+export interface NodeRef{
+    id:string
+}
+export enum AnnotationType {
+    DISCRETE = "DISCRETE",
+    BOOLEAN = "BOOLEAN",
+    INTEGER = "INTEGER",
+    CONTINUOUS = "CONTINUOUS",
+    PROBABILITIES = "PROBABILITIES",
+    MARKOV_JUMP = "MARKOV_JUMP",
+
+}
+
+export interface newickParsingOptions  {
+     labelName?: string,  parseAnnotations: boolean , tipNameMap?: Map<string, string>
+}
+export interface Tree  {
+    getNodeByName(name: string): NodeRef|null
+    getNodeByLabel(label: string): NodeRef|null
+    getName(node: NodeRef):string|null
+   
+   
+    getNode(id: string): NodeRef 
+    getDivergence(node: NodeRef): number 
+    getHeight(node:NodeRef):number 
+
+    getLength(node: NodeRef): number 
+    getChildCount(node: NodeRef): number 
+    
+    getChild(node: NodeRef, index: number): NodeRef 
+    getParent(node: NodeRef): NodeRef | null
+    getChildren(node: NodeRef): NodeRef[] 
+
+    getAnnotation(node: NodeRef, name: string): any | null 
+    getLabel(node: NodeRef): string | null 
+
+    getAnnotationType(name: string): string |null
+
+    addNode(): NodeRef
+
+    setHeight(node:NodeRef,height:number):void
+    setDivergence(node:NodeRef,divergence:number):void
+    setLength(node:NodeRef,length:number):void
+    setName(node:NodeRef,name:string):void
+    setLabel(node:NodeRef,label:string):void
+    annotateNodeUnknownType(node:NodeRef,annotations:{[key:string]:any}):void //types annotations as they come from Beast
+    annotateNode(node:NodeRef,annotation:{name:string,value:any,type:AnnotationType}):void
+
+    addChild(parent: NodeRef, child: NodeRef): void
+    setParent(node: NodeRef, parent: NodeRef): void
+    setRoot(node: NodeRef): void
+    toNewick(node?:NodeRef,options?:{includeAnnotations:boolean}): string;
+    orderNodesByDensity(increasing:boolean):void
+    sortChildren(node:NodeRef,compare:(a:NodeRef,b:NodeRef)=>number):void
+    isRoot(node:NodeRef):boolean;
+    // addChild(parent: Node, child: Node): void {
+    //     throw new Error("Method not implemented.")
+    // }
+    // setParent(node: Node, parent: Node): void {
+    //     throw new Error("Method not implemented.")
+    // }
+    // removeChild(parent: Node, child: Node): void {
+    //     throw new Error("Method not implemented.")
+    // }
+    // removeParent(node: Node): void {
+    //     throw new Error("Method not implemented.")
+    // }
+    // getNodeHeight(node: Node): number {
+    //     throw new Error("Method not implemented.")
+    // }
+    // getBranchLength(node: Node): number {
+    //     throw new Error("Method not implemented.")
+    // }
+    // setBranchLength(node: Node, length: number): void {
+    //     throw new Error("Method not implemented.")
+    // }
+    // setNodeHeight(node: Node, height: number): void {
+    //     throw new Error("Method not implemented.")
+    // }
+    // setNodeDivergence(node: Node, divergence: number): void {
+    //     throw new Error("Method not implemented.")
+    // }
+    // setLabel(node: Node, label: string): void {
+    //     throw new Error("Method not implemented.")
+    // }
+    // setTaxon(node: Node, taxon: Taxon): void {
+    //     throw new Error("Method not implemented.")
+    // }
+    // annotateNode(node: Node, annotations: { [key: string]: any }): void
+    // annotateNode(node: Node, annotations: Annotation[]): void
+    // annotateNode(node: Node, annotation: Annotation): void
+    // annotateNode(node: unknown, annotation: unknown): void {
+    //     throw new Error("Method not implemented.")
+    // }
+
+    // toNewick(): string {
+    //     throw new Error("Method not implemented.")
+    // }
+    get nodeCount(): number 
+    get externalNodeCount(): number
+    get InternalNodeCount(): number
+    get externalNodes(): NodeRef[] 
+    get internalNodes(): NodeRef[] 
+    get root(): NodeRef | null 
+    getTips(node:NodeRef ): Generator<NodeRef> 
+    getTips( ): Generator<NodeRef> 
+    isExternal(node:NodeRef):boolean
+    isInternal(node:NodeRef):boolean
+
+    getPostorderNodes(node:NodeRef):Generator<NodeRef>
+    getPostorderNodes():Generator<NodeRef>
+
+    getPreorderNodes(node:NodeRef ):Generator<NodeRef>
+    getPreorderNodes( ):Generator<NodeRef>
+
+   
+
+}
+
+
+//TODO abstact Tree with parsing implementations

@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
-import { NormalizedTree, NormalizedTreeData } from 'figtree.js';
+import { NormalizedTree, NormalizedTreeData } from '@figtreejs/core';
 
 export interface Node {
     id: string,

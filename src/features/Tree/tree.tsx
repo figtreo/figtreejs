@@ -11,7 +11,7 @@ import { TipLabels } from './tipLabel';
 import { NodeLabels } from './nodeLabels';
 import { BranchLabels } from './branchLabels';
 
-import { FigTree,NormalizedTree,Branches,RectangularLayout,PolarLayout,RadialLayout, NodeRef} from 'figtree.js'
+import { FigTree,NormalizedTree,Branches,RectangularLayout,PolarLayout,RadialLayout, NodeRef} from '@figtreejs/core'
 const margins = {top:10,bottom:10,left:10,right:100};
 //todo make zoom and expansion based on number of tips
 const zoomFactor = 5;

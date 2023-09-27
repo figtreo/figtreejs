@@ -1,4 +1,4 @@
-import { AnnotationType } from 'figtree.js';
+import { AnnotationType } from '@figtreejs/core';
 import treeReducer, { TreeState, rotate } from './treeSlice';
   
   describe('tree reducer', () => {
