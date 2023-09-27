@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import { useAppSelector, useAppDispatch } from '../../../../app/hooks';
 import { selectLayout, setExpansion, setFisheye, setLayout, setZoom } from './layoutSlice';
 import { SettingPanel } from '../PanelHeader';
@@ -6,6 +5,9 @@ import './layout.css'
 import { RectangularOptions } from './rectangularOptions';
 import { PolarOptions } from './polarOptions';
 import { RadialOptions } from './radialOptions';
+import rectTreeImage from '../../../../figtreeGraphics/rectangularTree.png'
+import polarTreeImage from '../../../../figtreeGraphics/polarTree.png'
+import radialTreeImage from '../../../../figtreeGraphics/radialTree.png'
 export function Layout() {
     const { layout,zoom,expansion,fishEye } = useAppSelector(selectLayout);
     const dispatch = useAppDispatch();
@@ -17,13 +19,13 @@ export function Layout() {
                     <div className="layoutSpacer" />
                     <div className='imageContainer'>
                         <div className={`image  ${layout === "rectangular" ? "selected" : ''}`} onClick={() => dispatch(setLayout("rectangular"))} title="rectangle layout">
-                            <img src={require("../../../../figtreeGraphics/rectangularTree.png")} alt="" />
+                            <img src={rectTreeImage} alt="" />
                         </div>
                         <div className={`image  ${layout === "circular" ? "selected" : ''}`} onClick={() => dispatch(setLayout("circular"))} title="polar layout">
-                            <img src={require("../../../../figtreeGraphics/polarTree.png")} alt="" />
+                            <img src={polarTreeImage} alt="" />
                         </div>
                         <div className={`image ${layout === "equalangle" ? "selected" : ''}`} onClick={() => dispatch(setLayout("equalangle"))} title="radial layout">
-                            <img src={require("../../../../figtreeGraphics/radialTree.png")} alt="" />
+                            <img src={radialTreeImage} alt="" />
                         </div>
                     </div>
                     <div className="layoutSpacer" />

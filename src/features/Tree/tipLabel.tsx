@@ -1,10 +1,8 @@
 import { format } from "d3-format";
 import { useAppSelector } from "../../app/hooks";
-import { Nodes } from "../Figtree";
-import { Vertex } from "../Figtree/components/Figtree/Layouts/LayoutInterface";
 import { selectLabelState } from "../settings/panels/label/labelSlice";
 import { selectLayout } from "../settings/panels/layout/layoutSlice";
-import { NodeRef, NormalizedTree } from "./normalizedTree";
+import { NodeRef, NormalizedTree,Nodes } from "figtree.js";
 import { Node } from "./treeSlice";
 
 export function TipLabels(props: { tree: NormalizedTree, }) {

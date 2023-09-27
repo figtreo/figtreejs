@@ -1,9 +1,9 @@
-import { AnnotationType } from './parsing/TreeParser';
+import { AnnotationType } from 'figtree.js';
 import treeReducer, { TreeState, rotate } from './treeSlice';
   
   describe('tree reducer', () => {
     const initialState: TreeState = {
-        nodes:{
+        tree:{nodes:{
             byId:{node0:{
                 id:'node0',
                 children:['node1','node2'],
@@ -37,6 +37,8 @@ import treeReducer, { TreeState, rotate } from './treeSlice';
             }
             },
             allIds:["node0"],
+            byLabel:{root:'node0',A:'node1',B:'node2'},
+            byName:{}
         },
         rootNode:'node0',
         annotations:{
@@ -44,17 +46,22 @@ import treeReducer, { TreeState, rotate } from './treeSlice';
             'node2':{location:'B',rate:0.2}
         },
         annotationTypes:{location:AnnotationType.DISCRETE,rate:AnnotationType.CONTINUOUS},
+      },
       status: 'idle'
     };
 
     const realInitialState: TreeState = {
+      tree:{
         nodes:{
             byId:{},
-            allIds:[]
+            allIds:[],
+            byName:{},
+            byLabel:{}
         },
         rootNode:null,
         annotations:{},
         annotationTypes:{},
+      },
         status: 'idle',
     }
     it('should handle initial state', () => {
@@ -63,11 +70,11 @@ import treeReducer, { TreeState, rotate } from './treeSlice';
   
     it('should rotate', () => {
       const actual = treeReducer(initialState, rotate('node0'));
-      expect(actual.nodes.byId.node0.children).toEqual(['node2','node1']);
+      expect(actual.tree.nodes.byId.node0.children).toEqual(['node2','node1']);
     });
     it('should rotate with fake tree', () => {
         const actual = treeReducer(initialState, rotate('node0'));
-        expect(actual.nodes.byId.node0.children).toEqual(['node2','node1']);
+        expect(actual.tree.nodes.byId.node0.children).toEqual(['node2','node1']);
       });
   });
   

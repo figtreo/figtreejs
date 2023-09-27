@@ -1,11 +1,9 @@
 import { format } from "d3-format";
 import { useAppSelector } from "../../app/hooks";
-import { Nodes } from "../Figtree";
-import { Vertex } from "../Figtree/components/Figtree/Layouts/LayoutInterface";
 import { selectLabelState } from "../settings/panels/label/labelSlice";
 import { selectLayout } from "../settings/panels/layout/layoutSlice";
-import { NodeRef, NormalizedTree } from "./normalizedTree";
 import { Node } from "./treeSlice";
+import {NormalizedTree, Nodes,NodeRef} from "figtree.js";
 
 export function NodeLabels(props: { tree: NormalizedTree, }) {
     const { tree } = props;

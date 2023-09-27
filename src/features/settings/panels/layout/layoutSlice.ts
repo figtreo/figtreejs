@@ -13,7 +13,7 @@ export interface LayoutState {
     angleRange: number,
     showRoot: boolean,
     spread:number
-    pointOfInterest: { x: number; y: number; } | null;
+    pointOfInterest: { x: number; y: number; } | undefined;
     fishEye: number;
 }
 
@@ -28,7 +28,7 @@ const initialState: LayoutState = {
     angleRange: 2*3.14,
     showRoot: true,
     spread:0,
-    pointOfInterest:null,
+    pointOfInterest:undefined,
     fishEye:0,
 }
 

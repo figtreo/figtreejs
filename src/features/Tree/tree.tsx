@@ -2,19 +2,16 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { selectNodeCount,parseNewick, selectTree} from './treeSlice';
 
-import { Branches, FigTree } from '../Figtree';
 import { selectLineWidth, selectStroke} from '../settings/panels/appearance/appearanceSlice';
 import { selectLayout, setPointOfInterest } from '../settings/panels/layout/layoutSlice';
-import { NormalizedTree } from './normalizedTree';
 import { Tips } from './tips';
 import { InternalNodes } from './nodes';
-import { RectangularLayout } from '../Figtree/components/Figtree/Layouts/rectangularLayout';
-import { PolarLayout } from '../Figtree/components/Figtree/Layouts/polarLayout';
-import { RadialLayout } from '../Figtree/components/Figtree/Layouts/radialLayout';
+
 import { TipLabels } from './tipLabel';
 import { NodeLabels } from './nodeLabels';
 import { BranchLabels } from './branchLabels';
 
+import { FigTree,NormalizedTree,Branches,RectangularLayout,PolarLayout,RadialLayout, NodeRef} from 'figtree.js'
 const margins = {top:10,bottom:10,left:10,right:100};
 //todo make zoom and expansion based on number of tips
 const zoomFactor = 5;
@@ -84,7 +81,7 @@ export function Tree({panelRef}:any){
 
 
     const dispatch = useAppDispatch();
-    const tree = new NormalizedTree(useAppSelector(selectTree))
+    const tree = new NormalizedTree(useAppSelector(selectTree).tree)
     const nodes = useAppSelector(selectNodeCount);
 
     const lineWidth = useAppSelector(selectLineWidth);
@@ -182,14 +179,13 @@ export function Tree({panelRef}:any){
  
 
 
-// TODO animate svg changes
     if(nodes>0){
       return(
 
 
         <svg width={width} height={height}  ref={svgRef}> 
-        <FigTree   width={width} height={height} tree={tree} layout={treeLayout} margins={margins} opts={layoutOpts}>
-           <Branches attrs={{strokeWidth:lineWidth,stroke:branchColour}} />
+        <FigTree  animated={false} width={width} height={height} tree={tree} layout={treeLayout} margins={margins} opts={layoutOpts}>
+           <Branches attrs={{strokeWidth:lineWidth,stroke:branchColour}} filter={(n:NodeRef)=>true} />
            <BranchLabels tree={tree} />
             <Tips tree={tree} />
             <TipLabels tree={tree}/>

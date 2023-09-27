@@ -1,5 +1,4 @@
 import './App.css';
-import { Tree } from './features/Tree/tree';
 import { TreePanel } from './features/Tree/treePanel';
 import { SideBar } from './features/settings/sideBar';
 

@@ -1,45 +1,35 @@
-import {  createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
-import { getTreeFromNewick } from './parsing/TreeParser';
+import { NormalizedTree, NormalizedTreeData } from 'figtree.js';
 
 export interface Node {
-        id:string,
-        name:string|null,
-        label:string|null,
-        children:string[],
-        parent:string|null,
-        length:number|null, 
-        height:number|null,
-        divergence:number|null,//derive height and divergence from this for now
+    id: string,
+    name: string | null,
+    label: string | null,
+    children: string[],
+    parent: string | null,
+    length: number | null,
+    height: number | null,
+    divergence: number | null,//derive height and divergence from this for now
 }
 
 export interface TreeState {
-    nodes:{
-        byId:{
-            [id:string]:Node
-        },
-        allIds:string[]
-        },
-    rootNode:string|null,
-    annotations:{
-        [nodeId:string]:{
-            [annotation:string]:string|string[]|number|number[]
-        }
-    },
-    annotationTypes:{
-        [annotation:string]:string
-    }
+    tree: NormalizedTreeData,
     status: 'idle' | 'loading' | 'failed';
 }
 //fill initial state of tree with a single node and empty annotations
 const initialState: TreeState = {
-    nodes:{
-        byId:{},
-        allIds:[]
+    tree: {
+        nodes: {
+            byId: {},
+            allIds: [],
+            byName: {},
+            byLabel: {}
+        },
+        rootNode: null,
+        annotations: {},
+        annotationTypes: {},
     },
-    rootNode:null,
-    annotations:{},
-    annotationTypes:{},
     status: 'idle',
 }
 export const parseNewick = createAsyncThunk(
@@ -54,13 +44,13 @@ export const parseNewick = createAsyncThunk(
 export const treeSlice = createSlice({
     name: 'tree',
     initialState,
-    reducers: { 
+    reducers: {
 
-        rotate: (state, action: PayloadAction<string>) => {  
-            state.nodes.byId[action.payload].children = state.nodes.byId[action.payload].children.reverse();
+        rotate: (state, action: PayloadAction<string>) => {
+            state.tree.nodes.byId[action.payload].children = state.tree.nodes.byId[action.payload].children.reverse();
         },
         reroot: (state, action: PayloadAction<string>) => {
-            state.rootNode = action.payload;
+            state.tree.rootNode = action.payload;
             //TODO update all nodes
         }
         //orderDecreasing
@@ -70,22 +60,22 @@ export const treeSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-        .addCase(parseNewick.pending, (state) => {
-          state.status = 'loading';
-        })
-        .addCase(parseNewick.fulfilled, (state, action) => {
-          return action.payload;
-        })
-        .addCase(parseNewick.rejected, (state) => {
-          state.status = 'failed';
-        });
+            .addCase(parseNewick.pending, (state) => {
+                state.status = 'loading';
+            })
+            .addCase(parseNewick.fulfilled, (state, action) => {
+                return action.payload;
+            })
+            .addCase(parseNewick.rejected, (state) => {
+                state.status = 'failed';
+            });
     }
-    })
+})
 //This requires knowing about the root state. Can we refactor so that information can be provided?
 
-export const selectNodeCount= (state:RootState) => state.tree.nodes.allIds.length;
-export const selectAnnotationTypes = (state:RootState) => state.tree.annotationTypes;
-export const selectTree = (state:RootState) => state.tree;
+export const selectNodeCount = (state: RootState) => state.tree.tree.nodes.allIds.length;
+export const selectAnnotationTypes = (state: RootState) => state.tree.tree.annotationTypes;
+export const selectTree = (state: RootState) => state.tree;
 //TODO can we fake a tree class like this that use redux store underneath?
 
 // export const tree = {
@@ -98,5 +88,11 @@ export const { rotate, reroot } = treeSlice.actions;
 export default treeSlice.reducer;
 
 
+function getTreeFromNewick(newick: string, options?: { label: string, datePrefix: string | null, parseAnnotations: boolean }): Promise<{ data: TreeState }> {
 
+    return new Promise<{ data: TreeState }>((resolve) =>
+        resolve({ data: {tree:(NormalizedTree.fromNewick(newick, options) as NormalizedTree).data,status:'idle'} })
+    );
+
+}
 

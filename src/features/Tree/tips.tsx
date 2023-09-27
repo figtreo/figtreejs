@@ -1,7 +1,6 @@
 import { useAppSelector } from "../../app/hooks";
-import { Nodes } from "../Figtree";
 import { selectShapeState } from "../settings/panels/shapes/shapeSlice";
-import { NormalizedTree } from "./normalizedTree";
+import { NormalizedTree, Nodes} from "figtree.js";
 import { Node } from "./treeSlice";
 
 export function Tips(props: { tree: NormalizedTree }) {
