@@ -1,11 +1,9 @@
 import { RootState } from '../../app/store';
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 //TODO tree list or count to include multiple trees
-enum SelectionMode{
-    TAXA,
-    CLADE,
-    NODE
-}
+
+
+type SelectionMode = "Node"|"Clade"|"Taxa"
 interface HeaderData{
     selectionMode:SelectionMode,
     selectedNode:string|null,
@@ -16,7 +14,7 @@ interface HeaderData{
 }
 
 const initialState:HeaderData = {
-    selectionMode: SelectionMode.NODE,
+    selectionMode: "Node",
     selectedNode: null,
     cartoonedNodes: new Set<string>(),
     collapsedNodes: new Set<string>(),
@@ -63,13 +61,13 @@ export const HeaderSlice = createSlice({
 
 })
 export default HeaderSlice.reducer;
-
+export const {setSelectionMode} = HeaderSlice.actions;
 //Lets 
-export const selectHeader = {
-    SelectionMode:(state:RootState)=>state.header.selectionMode,
-    SelectedNode:(state:RootState)=>state.header.selectedNode,
-    CartoonedNodes:(state:RootState)=>state.header.cartoonedNodes,
-    CollapsedNodes:(state:RootState)=>state.header.collapsedNodes,
-    HilightedNodes:(state:RootState)=>state.header.hilightedNodes,
-    CustomColorMap:(state:RootState)=>state.header.customColorMap,
-}
+export const selectHeader = (state:RootState) => ({
+    SelectionMode:state.header.selectionMode,
+    SelectedNode:state.header.selectedNode,
+    CartoonedNodes:state.header.cartoonedNodes,
+    CollapsedNodes:state.header.collapsedNodes,
+    HilightedNodes:state.header.hilightedNodes,
+    CustomColorMap:state.header.customColorMap,
+})

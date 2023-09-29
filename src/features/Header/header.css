@@ -1,60 +1,120 @@
-.header{
-    height: 60px;
-    background-color: #EEEEEE;
-    text-align: center;
-    border-bottom: 1px solid #404040;
-    display:flex;
-  }
-
-.header .tool{
-    margin-top:5px;
-    margin-left:5px;
-    margin-right:5px;
-
+.header {
+  height: 60px;
+  background-color: #EEEEEE;
+  text-align: center;
+  border-bottom: 1px solid #404040;
+  display: flex;
+  align-items: center;
 }
 
-.header .tool p{
-        margin-top: 1px;
-        font-size:12px
+.header .tool {
+  margin-top: 5px;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.gray {
+  filter: grayscale(100%);
+  -moz-filter: grayscale(100%);
+  -ms-filter: grayscale(100%);
+  -o-filter: grayscale(100%);
+  filter: gray;
+  -webkit-filter: grayscale(100%);
+}
+
+.gray p {
+  color: gray
+}
+
+.header .tool p {
+  margin-top: 1px;
+  font-size: 12px
 }
 
 
-.selectionOptions{
-    display: flex;
-    /* border:1px solid #DBE1E9;
+.selectionOptions {
+  display: flex;
+  /* border:1px solid #DBE1E9;
     gap: 10px;
     padding:2px  */
-    margin-top: 10px ;
-    margin-left:30px;
-    margin-right:30px;
-  }
+  margin-top: 10px;
+  margin-left: 30px;
+  margin-right: 30px;
+}
 
-  .optionContainer{
-    display: flex;
-    /* flex-direction: column; */
-    align-items: center;
-    justify-content: center;
-    border:1px solid #DBE1E9;
-    /* width: 100px;
+.optionContainer {
+  display: flex;
+  /* flex-direction: column; */
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #DBE1E9;
+  /* width: 100px;
     height: 100px; */
-    border-radius: 5px;
-    /* cursor: pointer; */
-    flex:0;
-    /* column-gap: 20px; */
-    /* padding:1px 10px 1px 10px */
-  }
-  .optionSpacer{
-    flex:2  
-  }
-  .option{
-    padding-top:2px;
-    padding-right: 10px;
-    padding-left:10px;
-    
-  }
-  .option p{
-    margin-bottom:1px;
-  }
-  .option + .option{
-    border-left: solid 1px #DBE1E9;
+  border-radius: 5px;
+  /* cursor: pointer; */
+  flex: 0;
+  /* column-gap: 20px; */
+  /* padding:1px 10px 1px 10px */
+}
+
+.optionSpacer {
+  flex: 2
+}
+
+.selectionOption {
+  padding-top: 2px;
+  padding-right: 10px;
+  padding-left: 10px;
+  cursor: pointer;
+
+}
+
+.selectionOption p {
+  margin-bottom: 1px;
+}
+
+.selectionOption+.selectionOption {
+  border-left: solid 1px #DBE1E9;
+}
+
+.header .tool p.selectionLabel{
+  margin-top:5px;
+}
+.selectionOption.selected {
+  background: #e2e2e2;
+}
+
+.arrow {
+  position: relative;
+  height: 0px;
+  width: 0px;
+  border: 5px solid;
+  border-color: #878787 #878787 transparent transparent;
+  transform: rotate(45deg);
+  margin-top:2px;
+  margin-bottom:2px
+}
+
+.arrow.left{
+  transform: rotate(225deg);
+}
+
+.arrow:before {
+  content: '';
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  display: block;
+  height: 6px;
+  width: 8px;
+  background-color: #878787;
+  transform: rotate(-45deg) translate(2px,1px);
+} 
+
+.header .pushInput{
+  flex:3
+}
+
+.header .filterer{
+  margin-right:10px
 }
