@@ -27,7 +27,7 @@ export default function CoalescentShape (props:CoalescentProps){
     const d=makeCoalescent(vertex,targets,slope,startWidth);
     const endingX= FadeEndpoint==="min"?100/slope:FadeEndpoint==="max"?100:parseFloat(FadeEndpoint)?parseFloat(FadeEndpoint):100/slope;
 
-    return  <FadedPath attrs={{...attrs,d:d}} interactions={interactions} endingX={`${endingX}%`} colorRamper={()=>attrs.fill} opacityRamper={(i:number)=>1-i*1} />
+    return  <FadedPath className="node-shape" attrs={{...attrs,d:d}} interactions={interactions} endingX={`${endingX}%`} colorRamper={()=>attrs.fill} opacityRamper={(i:number)=>1-i*1} />
 };
 
 

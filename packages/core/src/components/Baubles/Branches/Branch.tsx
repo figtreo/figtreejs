@@ -35,7 +35,7 @@ export function Branch(props:any){
      
 
     return (
-    <animated.path key={`branch-${id}`} {...visibleProperties} fill={"none"} />)
+    <animated.path className={"branch-path"} key={`branch-${id}`} {...visibleProperties} fill={"none"} node-id={props.node.id}/>)
     // <animated.path key={`branch-${vertex.id}`} {...attrs}  {...animatedAttrs} d={d} strokeWidth={pathX.x} fill={"none"} />)
     
 

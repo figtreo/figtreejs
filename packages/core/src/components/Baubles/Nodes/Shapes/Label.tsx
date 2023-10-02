@@ -19,8 +19,8 @@ export default function Label(props: any) {
     if (animation) {
         return (
             <g>
-                <animated.text alignmentBaseline={alignmentBaseline} textAnchor={textAnchor} transform={to([visibleProperties.x, visibleProperties.y, visibleProperties.rotation], (x, y, rotation) => `translate(${x},${y}) rotate(${rotation})`)} {...attrs}>{text(node)}</animated.text>
-                {d?<animated.path strokeWidth={1} stroke='grey' stroke-dasharray="2" d={visibleProperties.d.to((value:string)=>value as string)} />:null}
+                <animated.text className={"node-label"} alignmentBaseline={alignmentBaseline} textAnchor={textAnchor} transform={to([visibleProperties.x, visibleProperties.y, visibleProperties.rotation], (x, y, rotation) => `translate(${x},${y}) rotate(${rotation})`)} {...attrs}>{text(node)}</animated.text>
+                {d?<animated.path strokeWidth={1} stroke='grey' strokeDasharray="2" d={visibleProperties.d.to((value:string)=>value as string)} />:null}
             </g>
         )
     } else {
@@ -29,8 +29,8 @@ export default function Label(props: any) {
     return (
 
         <g>
-            <text alignmentBaseline={alignmentBaseline} textAnchor={textAnchor} transform={`translate(${visibleProperties.x},${visibleProperties.y}) rotate(${visibleProperties.rotation})`} {...attrs}>{text(node)}</text>
-            {d?<path strokeWidth={1} stroke='grey' stroke-dasharray="2" d={visibleProperties.d} />:null}
+            <text className={"node-label"} alignmentBaseline={alignmentBaseline} textAnchor={textAnchor} transform={`translate(${visibleProperties.x},${visibleProperties.y}) rotate(${visibleProperties.rotation})`} {...attrs}>{text(node)}</text>
+            {d?<path strokeWidth={1} stroke='grey' strokeDasharray="2" d={visibleProperties.d} />:null}
         </g>
     )
 }
