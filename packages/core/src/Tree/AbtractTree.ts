@@ -25,7 +25,7 @@ export abstract class AbstractTree implements Tree {
             return (countA - countB) * factor;
         });
     }
-
+    abstract getLevel(node:NodeRef):number;
     abstract sortChildren(node: NodeRef, compare: (a: NodeRef, b: NodeRef) => number): void;
     abstract getNodeByName(name: string): NodeRef | null;
     abstract getNodeByLabel(name: string): NodeRef | null;
@@ -94,6 +94,10 @@ export abstract class AbstractTree implements Tree {
         }
         return preorderGenerator(this, node)
     }
+
+    getPathToRoot(node:NodeRef):Generator<NodeRef>{
+        return toRootGenerator(this,node);
+    }
     //TODO annotations
     _toString(node: NodeRef): string {
         return (this.getChildCount(node) > 0 ? `(${this.getChildren(node).map(child => this._toString(child)).join(",")})${this.getLabel(node) ? "#" +this.getLabel(node) : ""}` : `${this.getName(node) ? this.getName(node) : ""}`) + (this.getLength(node) ? `:${this.getLength(node)}` : "");
@@ -112,9 +116,38 @@ export abstract class AbstractTree implements Tree {
         
         return this._toString(node) +";";
     }
+    getMRCA(nodes: NodeRef[]): NodeRef {
+        const ancestors = new Set()
+
+        let mrca;
+        for(const node of nodes){
+            for(const ancestor of this.getPathToRoot(node)){
+                if(ancestors.has(ancestor)){
+                    mrca = mrca===undefined?ancestor:this.getLevel(mrca)>this.getLevel(ancestor)?mrca:ancestor;
+                    mrca=ancestor;
+                    break;
+                }
+                ancestors.add(ancestor)
+            }
+        }
+
+        return mrca!;
+    
+    }
 }
 
+
    
+function* toRootGenerator(tree:Tree,node:NodeRef): Generator<NodeRef>{
+    const travel = function*(node:NodeRef):Generator<NodeRef>{
+        let n:NodeRef|null = node
+        while (n) {
+            yield n;
+            n = tree.getParent(n);
+        }
+    }
+    yield* travel(node);
+}
 
 
 function* tipGenerator(tree: Tree, node: NodeRef): Generator<NodeRef> {

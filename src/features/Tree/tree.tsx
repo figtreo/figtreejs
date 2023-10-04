@@ -14,8 +14,7 @@ import { BranchLabels } from './branchLabels';
 import { FigTree, NormalizedTree, Branches, RectangularLayout, PolarLayout, RadialLayout, NodeRef } from '@figtreejs/core'
 import { useAreaSelection } from '../../app/area-selection';
 import {select,selectAll} from "d3-selection"
-import { E } from 'vitest/dist/types-e3c9754d.js';
-const SelectionContext = createContext<DOMRect | null>(null);
+import { setSelectionMode, setSelectionRoot } from '../Header/headerSlice';
 
 const margins = { top: 10, bottom: 10, left: 10, right: 100 };
 //todo make zoom and expansion based on number of tips
@@ -23,16 +22,28 @@ const zoomFactor = 5;
 
 
 export function Tree({ panelRef }: any) {
+
+  const dispatch = useAppDispatch();
+  const tree = new NormalizedTree(useAppSelector(selectTree).tree)
   //selection Box work //https://codesandbox.io/s/billowing-lake-rzhid4?file=/src/App.tsx
   const svgRef = useRef<SVGSVGElement>(null);;
 //https://codesandbox.io/s/react-area-selection-hook-slggxd?file=/src/area-selection.ts
-const selection = useAreaSelection({ container: panelRef }); // maybe move this to library so it's possible to select data in little figs
-  
+  const selection = useAreaSelection({ container: panelRef }); // maybe move this to library so it's possible to select data in little figs
+  const [selectedNodeIds,setSelectedNodeIds] = useState<string[]>([]);
+//todo only fire on selection release
+//todo include taxa and nodes
+
+//get selection 
+
+
+
+
+// todo only run this on mouseup after selection
 useEffect(()=>{
 if(svgRef.current && selection){
     const branches = select(svgRef.current)
     .select('g')
-    selectAll(".branch-layer")
+    .selectAll(".branch-layer")
     .selectAll("path")
     .select(function(d,i,n){
       const el = this as Element;
@@ -45,14 +56,18 @@ if(svgRef.current && selection){
           a.x > b.x + b.width
         )
       return selected?this:null
-
     })
-    // .attr("id")
+
+    // // .attr("id")
     .attr("stroke", "blue")
     
-
-
-    console.log(branches)
+    const out:any[]=[]
+   branches.each(function(d,i,b){
+      const id =  select(this).attr("node-id")
+      out.push(id);
+      //todo tree get tmrca of nodes.
+    })
+    setSelectedNodeIds(out);
 }},[selection,svgRef])
 
 // resizing work
@@ -90,8 +105,22 @@ if(svgRef.current && selection){
     },
     [isResizing, panelRef]
   );
-
-
+  
+  const getSelectedRoot =()=>{
+    if(selectedNodeIds.length===0){
+      dispatch(setSelectionRoot(undefined))
+    }else{
+      const nodes = selectedNodeIds.map(id=>tree.getNode(id));
+      const mrca = tree.getMRCA(nodes);
+      dispatch(setSelectionRoot(mrca.id))
+    }
+  }
+  useEffect(()=>{
+    window.addEventListener('mouseup',getSelectedRoot)
+    return ()=>{
+      window.removeEventListener('mouseup',getSelectedRoot)
+    }
+  },[selectedNodeIds])
 
   useEffect(() => {
     window.addEventListener("resize", resize);
@@ -113,8 +142,7 @@ if(svgRef.current && selection){
   }, [panelRef]);
 
 
-  const dispatch = useAppDispatch();
-  const tree = new NormalizedTree(useAppSelector(selectTree).tree)
+
   const nodes = useAppSelector(selectNodeCount);
 
   const lineWidth = useAppSelector(selectLineWidth);
@@ -129,10 +157,11 @@ if(svgRef.current && selection){
 
   const treeLayout = layout === "rectangular" ? RectangularLayout : layout === "circular" ? PolarLayout : RadialLayout;
   //
+  const handlePaste = (event: any) => {
+    dispatch(parseNewick(event.clipboardData.getData('text')));
+  }
   useEffect(() => {
-    const handlePaste = (event: any) => {
-      dispatch(parseNewick(event.clipboardData.getData('text')));
-    }
+
     window.addEventListener('paste', handlePaste)
     return () => {
       window.removeEventListener('paste', handlePaste)
@@ -145,7 +174,6 @@ if(svgRef.current && selection){
   const height = treeSize.baseHeight + (treeSize.baseHeight * expansion * zoomFactor) + zoomed[1] * 2;
   const width = treeSize.baseWidth + zoomed[0] * 2
 
-  //TODO fix zooming to always respect the center of the svg as displayed.
   const handleScroll = useCallback(() => {
     let left = 0;
     let top = 0;

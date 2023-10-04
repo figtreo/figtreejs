@@ -4,9 +4,10 @@ export interface Node {
     label:string|null,
     children:string[],
     parent:string|null,
-    length:number|null, 
-    height:number|null,
-    divergence:number|null,//derive height and divergence from this for now
+    length:number|undefined, 
+    height:number|undefined,
+    divergence:number|undefined,//derive height and divergence from this for now
+    level:number|undefined
 }
 
 export interface NormalizedTreeData {

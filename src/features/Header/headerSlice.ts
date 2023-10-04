@@ -33,7 +33,7 @@ export const HeaderSlice = createSlice({
     name:"header",
     initialState,
     reducers:{
-        selectionRoot:(state, action: PayloadAction<string>) => {
+        setSelectionRoot:(state, action: PayloadAction<string|undefined>) => {
                 state.selectionRoot = action.payload;
         },
         clearSelection:(state,action)=>{
@@ -71,7 +71,7 @@ export const HeaderSlice = createSlice({
 
 })
 export default HeaderSlice.reducer;
-export const {setSelectionMode} = HeaderSlice.actions;
+export const {setSelectionMode,setSelectionRoot} = HeaderSlice.actions;
 //Lets 
 export const selectHeader = (state:RootState) => ({
     SelectionMode:state.header.selectionMode,

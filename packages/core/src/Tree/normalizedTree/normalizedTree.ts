@@ -4,6 +4,9 @@ import { parseNewick } from "../..";
 import { NormalizedTreeData } from "./normalizedTree.types"
 //todo clean up null vs undefined
 export class NormalizedTree extends AbstractTree {
+    getLevel(node: NodeRef): number {
+        return this._data.nodes.byId[node.id].level!;
+    }
     isExternal(node: NodeRef): boolean {
         return this._data.nodes.byId[node.id].children.length === 0
     }
@@ -147,10 +150,11 @@ export class NormalizedTree extends AbstractTree {
             children: [],
             parent: null,
             label: '',
-            length: null,
-            divergence: null,
-            height: null,
-            name: null
+            length: undefined,
+            divergence: undefined,
+            height: undefined,
+            name: null,
+            level:undefined
         }
         this._data.nodes.allIds.push(id)
         this._data.annotations[id] = {}

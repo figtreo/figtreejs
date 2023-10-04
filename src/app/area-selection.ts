@@ -67,6 +67,7 @@ export function useAreaSelection({
   };
 
   const handleMouseUp = (e: MouseEvent) => {
+
     document.body.style.userSelect = "initial";
     document.removeEventListener("mousemove", handleMouseMove);
     setMouseDown(false);

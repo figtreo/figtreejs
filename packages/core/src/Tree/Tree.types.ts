@@ -19,7 +19,7 @@ export interface Tree  {
     getNodeByName(name: string): NodeRef|null
     getNodeByLabel(label: string): NodeRef|null
     getName(node: NodeRef):string|null
-   
+    getLevel(node:NodeRef):number;
    
     getNode(id: string): NodeRef 
     getDivergence(node: NodeRef): number 
@@ -54,6 +54,7 @@ export interface Tree  {
     orderNodesByDensity(increasing:boolean):void
     sortChildren(node:NodeRef,compare:(a:NodeRef,b:NodeRef)=>number):void
     isRoot(node:NodeRef):boolean;
+    getMRCA(nodes:NodeRef[]):NodeRef;
     // addChild(parent: Node, child: Node): void {
     //     throw new Error("Method not implemented.")
     // }
