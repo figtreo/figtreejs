@@ -45,6 +45,7 @@ export declare abstract class AbstractTree implements Tree {
     abstract isRoot(node: NodeRef): boolean;
     abstract isExternal(node: NodeRef): boolean;
     abstract isInternal(node: NodeRef): boolean;
+    abstract removeAllChildren(node: NodeRef): void;
     getTips(node?: NodeRef): Generator<NodeRef>;
     getPostorderNodes(node?: NodeRef): Generator<NodeRef>;
     getPreorderNodes(node?: NodeRef): Generator<NodeRef>;
@@ -54,4 +55,5 @@ export declare abstract class AbstractTree implements Tree {
         includeAnnotations: boolean;
     }): string;
     getMRCA(nodes: NodeRef[]): NodeRef;
+    rotate(node: NodeRef, recursive: boolean): void;
 }

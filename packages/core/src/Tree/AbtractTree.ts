@@ -60,6 +60,7 @@ export abstract class AbstractTree implements Tree {
     abstract isRoot(node: NodeRef): boolean;
     abstract isExternal(node: NodeRef): boolean;
     abstract isInternal(node: NodeRef): boolean;
+    abstract removeAllChildren(node: NodeRef): void;
     getTips(node?: NodeRef): Generator<NodeRef> {
         if (node === undefined) {
             if (this.root !== null) {
@@ -133,6 +134,19 @@ export abstract class AbstractTree implements Tree {
 
         return mrca!;
     
+    }
+    rotate(node: NodeRef, recursive: boolean): void {
+        if (recursive) {
+            const children = this.getChildren(node);
+            for (const child of children) {
+                this.rotate(child, recursive);
+            }
+        }
+        const children = this.getChildren(node);
+        this.removeAllChildren(node);
+       for(let i=children.length-1;i>=0;i--){
+           this.addChild(node,children[i])
+       }
     }
 }
 

@@ -38,6 +38,7 @@ export interface Tree  {
     getAnnotationType(name: string): string |null
 
     addNode(): NodeRef
+    removeAllChildren(node:NodeRef):void
 
     setHeight(node:NodeRef,height:number):void
     setDivergence(node:NodeRef,divergence:number):void
@@ -55,6 +56,7 @@ export interface Tree  {
     sortChildren(node:NodeRef,compare:(a:NodeRef,b:NodeRef)=>number):void
     isRoot(node:NodeRef):boolean;
     getMRCA(nodes:NodeRef[]):NodeRef;
+    rotate(node:NodeRef,recursive:boolean):void;
     // addChild(parent: Node, child: Node): void {
     //     throw new Error("Method not implemented.")
     // }

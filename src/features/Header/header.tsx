@@ -4,7 +4,7 @@ import './header.css'
 import cartoon from "../../figtreeGraphics/CartoonTool.png"
 import collapse from "../../figtreeGraphics/CollapseTool.png"
 import rooting from "../../figtreeGraphics/rootingTool.png"
-import rotate from "../../figtreeGraphics/rotateTool.png"
+import rotatePic from "../../figtreeGraphics/rotateTool.png"
 import annotate from "../../figtreeGraphics/annotationTool.png"
 import colour from "../../figtreeGraphics/coloursTool.png"
 
@@ -12,6 +12,7 @@ import find from "../../figtreeGraphics/findTool.png"
 import highlight from "../../figtreeGraphics/HilightTool.png"
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { selectHeader, setSelectionMode } from "./headerSlice";
+import { rotate } from "../Tree/treeSlice";
 export function Header() {
 
     const dispatch = useAppDispatch();
@@ -34,7 +35,17 @@ export function Header() {
                 <p>Reroot</p>
             </div>
             <div className={optionClasses}>
-                <img src={rotate} />
+                <img src={rotatePic} onClick={() => {
+                    if (header.SelectionRoot) {
+                        if (header.SelectionMode === "Node") {
+                            dispatch(rotate({ node: header.SelectionRoot, recursive: false }))
+
+                        } else if (header.SelectionMode === "Clade") {
+                            dispatch(rotate({ node: header.SelectionRoot, recursive: true }))
+                        }
+                    }
+
+                }} />
                 <p>Rotate</p>
             </div>
             <div className={optionClasses}>
@@ -70,7 +81,7 @@ export function Header() {
                 </div>
                 <p className="selectionLabel">Selection Mode</p>
             </div>
-            <div className="pushInput"/>
+            <div className="pushInput" />
 
             <div className="tool">
                 <div className="selectionOptions">
@@ -86,10 +97,10 @@ export function Header() {
                 </div>
                 <p className="selectionLabel">Prev/Next</p>
             </div>
-            <div className="pushInput"/>
+            <div className="pushInput" />
 
             <div className="filterer">
-            <input type="text" placeholder="Filter"/>
+                <input type="text" placeholder="Filter" />
 
             </div>
         </div>

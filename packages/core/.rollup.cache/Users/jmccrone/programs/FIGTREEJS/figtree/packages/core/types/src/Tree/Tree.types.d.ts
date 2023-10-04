@@ -31,6 +31,7 @@ export interface Tree {
     getLabel(node: NodeRef): string | null;
     getAnnotationType(name: string): string | null;
     addNode(): NodeRef;
+    removeAllChildren(node: NodeRef): void;
     setHeight(node: NodeRef, height: number): void;
     setDivergence(node: NodeRef, divergence: number): void;
     setLength(node: NodeRef, length: number): void;
@@ -54,6 +55,7 @@ export interface Tree {
     sortChildren(node: NodeRef, compare: (a: NodeRef, b: NodeRef) => number): void;
     isRoot(node: NodeRef): boolean;
     getMRCA(nodes: NodeRef[]): NodeRef;
+    rotate(node: NodeRef, recursive: boolean): void;
     get nodeCount(): number;
     get externalNodeCount(): number;
     get InternalNodeCount(): number;

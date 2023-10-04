@@ -11,6 +11,7 @@ export declare class NormalizedTree extends AbstractTree {
     getNodeByLabel(label: string): NodeRef | null;
     static fromNewick(newick: string, options?: newickParsingOptions | undefined): Tree;
     addChild(parent: NodeRef, child: NodeRef): void;
+    removeAllChildren(node: NodeRef): void;
     setParent(child: NodeRef, parent: NodeRef): void;
     setName(node: NodeRef, name: string): void;
     setLabel(node: NodeRef, label: string): void;

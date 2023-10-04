@@ -46,8 +46,12 @@ export const treeSlice = createSlice({
     initialState,
     reducers: {
 
-        rotate: (state, action: PayloadAction<string>) => {
-            state.tree.nodes.byId[action.payload].children = state.tree.nodes.byId[action.payload].children.reverse();
+        rotate: (state, action: PayloadAction<{node:string,recursive:boolean}>) => {
+            const tree = new NormalizedTree(state.tree);
+            const node = tree.getNode(action.payload.node);
+            tree.rotate(node,action.payload.recursive);
+            state.tree = tree.data;
+            // state.tree.nodes.byId[action.payload].children = state.tree.nodes.byId[action.payload].children.reverse();
         },
         reroot: (state, action: PayloadAction<string>) => {
             state.tree.rootNode = action.payload;
