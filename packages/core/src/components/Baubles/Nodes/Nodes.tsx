@@ -43,7 +43,7 @@ function NodeLabels(props:any){
         ...rest} = props;
     const shapeProps = useAttributeMappers(props);
     return (
-        <g className={"node-label-ayer"}>
+        <g className={"node-label-layer"}>
             {vertices.allIds.sort((a,b)=>(vertices.byId[a].x-vertices.byId[b].x)).reduce<React.ReactNode[]>( (all, id) => {
                 if (filter(tree.getNode(id))) {//filter needs to us tree api
                     const v = vertices.byId[id];

@@ -18,8 +18,8 @@ export default function Label(props: any) {
     // radial layout do not provide an aligned Position
     if (animation) {
         return (
-            <g>
-                <animated.text className={"node-label"} alignmentBaseline={alignmentBaseline} textAnchor={textAnchor} transform={to([visibleProperties.x, visibleProperties.y, visibleProperties.rotation], (x, y, rotation) => `translate(${x},${y}) rotate(${rotation})`)} {...attrs}>{text(node)}</animated.text>
+            <g  className={"node-label"} node-id={node.id}>
+                <animated.text alignmentBaseline={alignmentBaseline} textAnchor={textAnchor} transform={to([visibleProperties.x, visibleProperties.y, visibleProperties.rotation], (x, y, rotation) => `translate(${x},${y}) rotate(${rotation})`)} {...attrs}>{text(node)}</animated.text>
                 {d?<animated.path strokeWidth={1} stroke='grey' strokeDasharray="2" d={visibleProperties.d.to((value:string)=>value as string)} />:null}
             </g>
         )
@@ -28,8 +28,8 @@ export default function Label(props: any) {
     }
     return (
 
-        <g>
-            <text className={"node-label"} alignmentBaseline={alignmentBaseline} textAnchor={textAnchor} transform={`translate(${visibleProperties.x},${visibleProperties.y}) rotate(${visibleProperties.rotation})`} {...attrs}>{text(node)}</text>
+        <g  className={"node-label"} node-id={node.id}>
+            <text  alignmentBaseline={alignmentBaseline} textAnchor={textAnchor} transform={`translate(${visibleProperties.x},${visibleProperties.y}) rotate(${visibleProperties.rotation})`} {...attrs}>{text(node)}</text>
             {d?<path strokeWidth={1} stroke='grey' strokeDasharray="2" d={visibleProperties.d} />:null}
         </g>
     )

@@ -61,13 +61,36 @@ if(svgRef.current && selection){
     // // .attr("id")
     .attr("stroke", "blue")
     
-    const out:any[]=[]
-   branches.each(function(d,i,b){
+  const taxa = select(svgRef.current)
+  .select('g')
+  .selectAll(".node-label-layer")
+  .selectAll(".node-label")
+  .select(function(d,i,n){
+    const el = this as Element;
+    const a = el.getBoundingClientRect()
+    const b= selection
+    const selected = !(
+        a.y + a.height < b.y ||
+        a.y > b.y + b.height ||
+        a.x + a.width < b.x ||
+        a.x > b.x + b.width
+      )
+    return selected?this:null
+  })
+  const out:Set<string>=new Set();
+  branches.each(function(d,i,b){
       const id =  select(this).attr("node-id")
-      out.push(id);
+      out.add(id);
       //todo tree get tmrca of nodes.
     })
-    setSelectedNodeIds(out);
+
+    taxa.each(function(d,i,b){
+      const id =  select(this).attr("node-id")
+      out.add(id);
+      //todo tree get tmrca of nodes.
+    })
+    
+    setSelectedNodeIds([...out]);
 }},[selection,svgRef])
 
 // resizing work
@@ -111,16 +134,34 @@ if(svgRef.current && selection){
       dispatch(setSelectionRoot(undefined))
     }else{
       const nodes = selectedNodeIds.map(id=>tree.getNode(id));
+      console.log(nodes)
+      if(nodes.length===1){
+        dispatch(setSelectionRoot(nodes[0].id))
+        return;
+      }
       const mrca = tree.getMRCA(nodes);
+      if(mrca===undefined){
+        console.log(nodes)
+        throw new Error("Could not find mrca")
+      }
       dispatch(setSelectionRoot(mrca.id))
     }
   }
+  const clearSelectionRoot = ()=>{
+    dispatch(setSelectionRoot(undefined));
+  }
   useEffect(()=>{
     window.addEventListener('mouseup',getSelectedRoot)
+    // window.addEventListener('mousedown',clearSelectionRoot)
     return ()=>{
       window.removeEventListener('mouseup',getSelectedRoot)
+      // window.removeEventListener('mousedown',clearSelectionRoot) //TODO maybe not on window? also add command to not clear
     }
   },[selectedNodeIds])
+
+  useEffect(()=>{
+
+  })
 
   useEffect(() => {
     window.addEventListener("resize", resize);
