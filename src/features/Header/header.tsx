@@ -18,7 +18,7 @@ export function Header() {
 
     const header = useAppSelector(selectHeader)
 
-    const optionClasses = header.SelectedNode ? "tool" : "tool gray"
+    const optionClasses = header.SelectionRoot ? "tool" : "tool gray"
     return (
         <div className="header">
             <div className={optionClasses}>

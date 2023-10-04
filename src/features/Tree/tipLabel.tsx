@@ -5,8 +5,8 @@ import { selectLayout } from "../settings/panels/layout/layoutSlice";
 import { NodeRef, NormalizedTree,Nodes } from "@figtreejs/core";
 import { Node } from "./treeSlice";
 
-export function TipLabels(props: { tree: NormalizedTree, }) {
-    const { tree } = props;
+export function TipLabels(props: { tree: NormalizedTree,attrs?:any }) {
+    const { tree,attrs } = props;
     const settings = useAppSelector(selectLabelState("tip"));
 
     const { alignTipLabels } = useAppSelector(selectLayout)
@@ -53,7 +53,7 @@ export function TipLabels(props: { tree: NormalizedTree, }) {
                 throw new Error(`Unknown tip label display type ${settings.display}}`);
         }
         return (
-            <Nodes.Label filter={filter} attrs={{ fontSize: settings.fontSize }} aligned={alignTipLabels} text={textFunction} />
+            <Nodes.Label filter={filter} attrs={{ fontSize: settings.fontSize,...attrs }} aligned={alignTipLabels} text={textFunction} />
         )
 
     } else {
