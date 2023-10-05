@@ -1,5 +1,6 @@
-import { NodeRef, Tree } from "./Tree.types";
+import { AnnotationType, NodeRef, Tree } from "./Tree.types";
 import { processAnnotationValue } from ".";
+import { extent } from "d3-array";
 
 export abstract class AbstractTree implements Tree {
     annotateNodeUnknownType(node: NodeRef, annotations: { value: any, id: string }[] | { value: any, id: string }): void {
@@ -64,6 +65,7 @@ export abstract class AbstractTree implements Tree {
     abstract removeAllChildren(node: NodeRef): void;
     abstract getSibling(node: NodeRef): NodeRef | null;
     abstract setLevel(node: NodeRef,level:number):void; 
+    abstract getAnnotationDomain(name: string): [number, number]|[boolean,boolean] | string[] | number[] | undefined ;
     getTips(node?: NodeRef): Generator<NodeRef> {
         if (node === undefined) {
             if (this.root !== null) {
@@ -255,6 +257,76 @@ export abstract class AbstractTree implements Tree {
         updateByLengths(this);
 
     }
+
+    protected checkAnnotation(input: { name: string, suggestedType: AnnotationType }): AnnotationType {
+        let annotationType = this.getAnnotationType(input.name);
+        let suggestedType = input.suggestedType
+    
+        if (!annotationType) {
+            return suggestedType;
+        } else if (annotationType === suggestedType) {
+            return annotationType;
+        }
+        else if (annotationType !== suggestedType) {
+            if ((suggestedType === AnnotationType.INTEGER && annotationType === AnnotationType.CONTINUOUS) ||
+                (suggestedType === AnnotationType.CONTINUOUS && annotationType === AnnotationType.INTEGER)) {
+                // upgrade to float
+                return AnnotationType.CONTINUOUS;
+            }
+        }
+        throw new Error(`Annotation ${input.name} has type ${suggestedType} but previously seen as ${annotationType}`)
+    }
+    
+    protected updateDomain( annotation: { id: string; value: any; }): [number, number] | string[] | number[]|[boolean,boolean]  {
+        const domain = this.getAnnotationDomain(annotation.id);
+        const type = this.getAnnotationType(annotation.id);
+        let newDomain = domain;
+        switch (type) {
+            case AnnotationType.CONTINUOUS: {
+                if (domain === undefined) {
+                    newDomain = [annotation.value, annotation.value]
+                } else {
+                    newDomain = extent([...domain, annotation.value]) as [number, number];
+                }
+                break;
+            }
+            case AnnotationType.INTEGER || AnnotationType.DISCRETE: {
+                if (domain === undefined) {
+                    newDomain = [annotation.value]
+                } else {
+                    newDomain = [...new Set([...domain, annotation.value])]
+                    newDomain.sort()
+                }
+                break;
+            }
+            case AnnotationType.BOOLEAN: {
+                newDomain = [true, false]
+                break;
+            }
+            case AnnotationType.PROBABILITIES: {
+                newDomain = [0, 1]
+                break;
+            }
+            case AnnotationType.MARKOV_JUMP:{
+                if (domain === undefined) {
+                    newDomain = [annotation.value.to, annotation.value.from]
+                } else {
+                    newDomain = [...new Set([...domain, annotation.value.to, annotation.value.from])]
+                    
+                }
+                newDomain.sort()
+                break;
+            }
+            default: {
+                throw new Error(`Unknown annotation type ${type}`)
+            }
+    
+    
+        }
+        return newDomain!;
+    
+    }
+
 }
 
 function updateDivergenceAndLevelsFromLengths(tree: Tree):number{

@@ -4,22 +4,22 @@ import { parseNewick } from "../..";
 import { NormalizedTreeData } from "./normalizedTree.types"
 //todo clean up null vs undefined
 export class NormalizedTree extends AbstractTree {
-    setLevel(node:NodeRef,level:number):void{
-         this._data.nodes.byId[node.id].level = level;
+    setLevel(node: NodeRef, level: number): void {
+        this._data.nodes.byId[node.id].level = level;
     }
     removeChild(parent: NodeRef, child: NodeRef): void {
         this._data.nodes.byId[parent.id].children = this._data.nodes.byId[parent.id].children.filter(id => id !== child.id)
     }
     getSibling(node: NodeRef): NodeRef | null {
         const index = this._data.nodes.byId[this._data.nodes.byId[node.id].parent!].children.indexOf(node.id);
-        if(this.getChildCount(this.getParent(node)!) === 1){
+        if (this.getChildCount(this.getParent(node)!) === 1) {
             console.warn(`Node ${node.id} has only no sibling`)
             return null
-        }else if(index === this.getChildCount(this.getParent(node)!)-1){
+        } else if (index === this.getChildCount(this.getParent(node)!) - 1) {
             return this.getChild(this.getParent(node)!, 0)
-        } else  {
+        } else {
             return this.getChild(this.getParent(node)!, index + 1)
-        } 
+        }
     }
 
 
@@ -90,13 +90,20 @@ export class NormalizedTree extends AbstractTree {
         this._data.rootNode = node.id
     }
 
+    getAnnotationDomain(name: string): [number, number]|[boolean,boolean] | string[] | number[] | undefined {
+        return this._data.annotations.byId[name].domain
+    }
 
 
     annotateNode(node: NodeRef, annotation: { name: string, value: any, type: AnnotationType }): void {
         //todo check annotation type 
-        let type = checkAnnotation(this, { name: annotation.name, suggestedType: annotation.type })
-        this._data.annotations[node.id][annotation.name] = annotation.value;
-        this._data.annotationTypes[annotation.name] = type
+        let checkedType = this.checkAnnotation({ name: annotation.name, suggestedType: annotation.type })
+        this._data.nodes.annotations[node.id][annotation.name] = annotation.value;
+        this._data.annotations.byId[annotation.name].type = checkedType;
+
+        const domain = this.updateDomain( { id:annotation.name, value:annotation.value })
+
+        this._data.annotations.byId[annotation.name].domain = domain;
     }
 
 
@@ -109,15 +116,19 @@ export class NormalizedTree extends AbstractTree {
                     byId: {},
                     allIds: [],
                     byName: {},
-                    byLabel: {}
+                    byLabel: {},
+                    annotations: {},
                 },
                 rootNode: null,
+
                 annotations: {
+                    byId: {},
+                    allIds: []
                 },
-                annotationTypes: {
-                }
             }
         }
+
+
         this._data = data
     }
     get data() {
@@ -156,15 +167,15 @@ export class NormalizedTree extends AbstractTree {
         return this._data.nodes.byId[node.id].children.map((id) => this._data.nodes.byId[id])
     }
 
-    getAnnotation(node: NodeRef, name: string): any | null {
-        return this._data.annotations[node.id][name]
+    getAnnotation(node: NodeRef, name: string): any | undefined {
+        return this._data.nodes.annotations[node.id][name]
     }
     getLabel(node: NodeRef): string | null {
         return this._data.nodes.byId[node.id].label
     }
 
-    getAnnotationType(name: string): string {
-        return this._data.annotationTypes[name]
+    getAnnotationType(name: string): AnnotationType {
+        return this._data.annotations.byId[name].type
     }
     addNode(): NodeRef {
         const id = `Node-${this._data.nodes.allIds.length}`
@@ -180,7 +191,7 @@ export class NormalizedTree extends AbstractTree {
             level: undefined
         }
         this._data.nodes.allIds.push(id)
-        this._data.annotations[id] = {}
+        this._data.nodes.annotations[id] = {}
         return this._data.nodes.byId[id]
     }
 
@@ -214,21 +225,4 @@ export class NormalizedTree extends AbstractTree {
 
 
 
-function checkAnnotation(tree: Tree, input: { name: string, suggestedType: AnnotationType }): AnnotationType {
-    let annotationType = tree.getAnnotationType(input.name);
-    let suggestedType = input.suggestedType
 
-    if (!annotationType) {
-        return suggestedType;
-    } else if (annotationType === suggestedType) {
-        return annotationType;
-    }
-    else if (annotationType !== suggestedType) {
-        if ((suggestedType === AnnotationType.INTEGER && annotationType === AnnotationType.CONTINUOUS) ||
-            (suggestedType === AnnotationType.CONTINUOUS && annotationType === AnnotationType.INTEGER)) {
-            // upgrade to float
-            return AnnotationType.CONTINUOUS;
-        }
-    }
-    throw new Error(`Annotation ${input.name} has type ${suggestedType} but previously seen as ${annotationType}`)
-}

@@ -61,6 +61,8 @@ export interface Tree  {
     rotate(node:NodeRef,recursive:boolean):void;
     reroot(node:NodeRef,proportion:number):void;
     setLevel(node:NodeRef,level:number):void;
+    //TODO decide if we want to keep integers different from continuous
+    getAnnotationDomain(name:string):[number,number]|[boolean,boolean]|string[]|number[]|undefined;
     // addChild(parent: Node, child: Node): void {
     //     throw new Error("Method not implemented.")
     // }
