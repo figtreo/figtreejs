@@ -12,13 +12,12 @@ export class PolarLayout extends AbstractLayout {
 
     static getArbitraryLayout(tree: Tree, opts:internalLayoutOptions): ArbitraryVertices {
         const safeOpts = { ...defaultInternalLayoutOptions, ...opts };
-
-        const rectangularLayout = RectangularLayout.getArbitraryLayout(tree,safeOpts);
+        const rectangularVerticies = RectangularLayout.getArbitraryLayout(tree,opts);
         //remove root path if needed
         if(!safeOpts.showRoot){
-            rectangularLayout.byId[tree.root!.id].pathPoints = [];
+            rectangularVerticies.byId[tree.root!.id].pathPoints = [];
         }
-        return rectangularLayout;
+        return rectangularVerticies;
     }
 
     static finalizeArbitraryLayout(arbitraryLayout: ArbitraryVertices, treeStats:{tipCount:number}, opts: internalLayoutOptions):Vertices {
@@ -64,8 +63,9 @@ export class PolarLayout extends AbstractLayout {
             // parent id as source and fetch when needed?
             let pathPoints:{x:number,y:number,r:number,theta:number}[] = [];
             // ingores root which might have an empty path;
-            if(vertex.pathPoints.length===2){
-            const [tip,parent] = vertex.pathPoints;
+            if(vertex.pathPoints.length>0){
+            const [tip,parent] = vertex.pathPoints.slice(-2);
+
             const stepPointR = rScale(parent.x);
             const stepPointTheta = thetaScale(transform(tip.y));
             const [stepPointX,stepPointY]  = polarToCartesian(stepPointR,stepPointTheta);
@@ -77,11 +77,7 @@ export class PolarLayout extends AbstractLayout {
                 const [x,y] = polarToCartesian(r,theta);
                 return ({x,y,r,theta});
             })
-
             //add step point so we can scale it later 
-
-
-            
             pathPoints.push({x:stepPointX,y:stepPointY,r:stepPointR,theta:stepPointTheta});
         }
             polarVertices.push({id:vertex.id,r,theta,x,y,pathPoints,level,nodeLabel:vertex.nodeLabel})
@@ -214,26 +210,27 @@ export class PolarLayout extends AbstractLayout {
 
     static pathGenerator(points: { x: number, y: number,r:number,theta:number }[], opts: internalLayoutOptions): string {
         const positions = points.length;
-
         switch (positions) {
             case 3: {
 
                 const [target,source,step] = points;
 
 
-                const arcBit = source.theta===target.theta ||source.r===0?"":`A${source.r},${source.r} 0 0 ${source.theta<target.theta ?1:0} ${step.x},${step.y}`; // the end point of the arc is wrong
+                const arcBit = source.theta===target.theta ||source.r===0?"":`A${source.r},${source.r} 0 0 ${source.theta<target.theta ?1:0} ${step.x},${step.y}`; 
                 return `M${source.x},${source.y} ${arcBit} L${target.x},${target.y}`;
 
             } case 0: {
                return "";
-            } default: {
-                throw new Error("path generator not implemented for this number of points")
-            }
+            } case 5: {
+                const initial = this.pathGenerator(points.slice(-3), opts); //[top,bottom,target,source,step]
+                const arcBit =  points[0].theta===points[1].theta||points[0].r===0?"": `A${points[0].r},${points[0].r} 0 0 ${points[0].theta<points[1].theta ?1:0} ${points[1].x},${points[1].y}`; 
+                const curvyBit = `M${points[2].x},${points[2].y}L${points[0].x},${points[0].y} ${arcBit} Z`
+                return `${initial}${curvyBit}`
+            }default: {
+                throw new Error(`Error in polar path generator. not expecting ${positions} points`)
         }
     }
-    // cartoonGenerator(tree: NormalizedTree, vertices: Vertices): string {
-    //     throw new Error("Method not implemented.")
-    // }
+}
 
 }
 

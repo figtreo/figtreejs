@@ -76,7 +76,7 @@ export class RectangularLayout extends AbstractLayout {
                     const newy = (maxY + minY) / 2;
                     vertices.byId[node.id].y = newy;;
 
-                    vertices.byId[node.id].pathPoints = [{ x: maxX, y: maxY }, { x: maxX, y: minY }, { x, y: newy }]
+                    vertices.byId[node.id].pathPoints = [{ x: maxX, y: minY }, { x: maxX, y: maxY }, { x, y: newy }]
 
                     currentY = maxY + 1
 
@@ -88,7 +88,6 @@ export class RectangularLayout extends AbstractLayout {
                 }
                 //update children paths
 
-                // vertices.allIds.push(node.id);
             } else {
                 //tip
                 const x = tree.getDivergence(node)! + adjustedRootLength
@@ -106,7 +105,6 @@ export class RectangularLayout extends AbstractLayout {
                         textAnchor: leftLabel ? "end" : "start"
                     }
                 }
-                // vertices.allIds.push(node.id);
 
                 if (lastTip !== null) {
                     currentY += tipSpace(lastTip, node);
@@ -218,8 +216,8 @@ export class RectangularLayout extends AbstractLayout {
 
                 }
             } case 4: {
-                const baseLine = this.pathGenerator(points.slice(2), { curvature })
-                const triangleBit = `M${points[0].x},${points[0].y}L${points[1].x},${points[1].y}L${points[2].x},${points[2].y}Z`
+                const baseLine = this.pathGenerator(points.slice(2), { curvature })//[top,bottom,target,source]
+                const triangleBit = `M${points[2].x},${points[2].y}L${points[0].x},${points[0].y}L${points[1].x},${points[1].y}Z`
                 return `${baseLine}${triangleBit}`
             } default: {
                 throw new Error(`path generator not implemented for this ${positions} of points`)
