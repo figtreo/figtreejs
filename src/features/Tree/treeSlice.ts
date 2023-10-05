@@ -54,7 +54,10 @@ export const treeSlice = createSlice({
             // state.tree.nodes.byId[action.payload].children = state.tree.nodes.byId[action.payload].children.reverse();
         },
         reroot: (state, action: PayloadAction<string>) => {
-            state.tree.rootNode = action.payload;
+            const tree = new NormalizedTree(state.tree);
+            const node = tree.getNode(action.payload);
+            tree.reroot(node,0.5);
+            state.tree = tree.data;
             //TODO update all nodes
         }
         //orderDecreasing

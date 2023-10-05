@@ -8,6 +8,7 @@ export declare abstract class AbstractTree implements Tree {
         id: string;
     }): void;
     orderNodesByDensity(increasing: boolean, node?: NodeRef): void;
+    abstract removeChild(parent: NodeRef, child: NodeRef): void;
     abstract getLevel(node: NodeRef): number;
     abstract sortChildren(node: NodeRef, compare: (a: NodeRef, b: NodeRef) => number): void;
     abstract getNodeByName(name: string): NodeRef | null;
@@ -46,6 +47,8 @@ export declare abstract class AbstractTree implements Tree {
     abstract isExternal(node: NodeRef): boolean;
     abstract isInternal(node: NodeRef): boolean;
     abstract removeAllChildren(node: NodeRef): void;
+    abstract getSibling(node: NodeRef): NodeRef | null;
+    abstract setLevel(node: NodeRef, level: number): void;
     getTips(node?: NodeRef): Generator<NodeRef>;
     getPostorderNodes(node?: NodeRef): Generator<NodeRef>;
     getPreorderNodes(node?: NodeRef): Generator<NodeRef>;
@@ -56,4 +59,5 @@ export declare abstract class AbstractTree implements Tree {
     }): string;
     getMRCA(nodes: NodeRef[]): NodeRef;
     rotate(node: NodeRef, recursive: boolean): void;
+    reroot(node: NodeRef, proportion: number): void;
 }

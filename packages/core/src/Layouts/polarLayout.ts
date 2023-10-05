@@ -4,10 +4,6 @@ import { AbstractLayout, ArbitraryVertices, defaultInternalLayoutOptions, intern
 import { RectangularLayout, fishEyeTransform } from "./rectangularLayout";
 import { Tree } from "..";
 
-
-//TODO extract tip dx dy as constants
-//TODO normalize once
-//TODO update margins for layouts
 export class PolarLayout extends AbstractLayout {
 
     static getArbitraryLayout(tree: Tree, opts:internalLayoutOptions): ArbitraryVertices {

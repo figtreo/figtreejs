@@ -1,37 +1,38 @@
 import { NodeRef, Tree } from "./Tree.types";
-import {  processAnnotationValue } from ".";
+import { processAnnotationValue } from ".";
 
 export abstract class AbstractTree implements Tree {
-    annotateNodeUnknownType(node: NodeRef, annotations: {value:any,id:string}[]|{value:any,id:string}): void {
-        if(!Array.isArray(annotations)){
+    annotateNodeUnknownType(node: NodeRef, annotations: { value: any, id: string }[] | { value: any, id: string }): void {
+        if (!Array.isArray(annotations)) {
             annotations = [annotations]
         }
-        for(const annotation of annotations){
+        for (const annotation of annotations) {
             let { type, value } = processAnnotationValue(annotation.value);
             this.annotateNode(node, { name: annotation.id, value, type })
         }
-       
+
     }
 
-    orderNodesByDensity(increasing: boolean,node?:NodeRef): void {
-        if(node===undefined){
-            if(this.root===null){
+    orderNodesByDensity(increasing: boolean, node?: NodeRef): void {
+        if (node === undefined) {
+            if (this.root === null) {
                 throw new Error("No root node and no node provided to density ordering")
             }
             node = this.root
         }
         const factor = increasing ? 1 : -1;
-        orderNodes(this,node, (nodeA, countA, nodeB, countB) => {
+        orderNodes(this, node, (nodeA, countA, nodeB, countB) => {
             return (countA - countB) * factor;
         });
     }
-    abstract getLevel(node:NodeRef):number;
+    abstract removeChild(parent: NodeRef, child: NodeRef): void;
+    abstract getLevel(node: NodeRef): number;
     abstract sortChildren(node: NodeRef, compare: (a: NodeRef, b: NodeRef) => number): void;
     abstract getNodeByName(name: string): NodeRef | null;
     abstract getNodeByLabel(name: string): NodeRef | null;
     abstract setRoot(node: NodeRef): void
-    abstract addChild(parent: NodeRef, child: NodeRef): void 
-    abstract setParent(node: NodeRef, parent: NodeRef): void 
+    abstract addChild(parent: NodeRef, child: NodeRef): void
+    abstract setParent(node: NodeRef, parent: NodeRef): void
     abstract getName(node: NodeRef): string | null
     abstract getNode(id: string): NodeRef
     abstract getDivergence(node: NodeRef): number
@@ -61,6 +62,8 @@ export abstract class AbstractTree implements Tree {
     abstract isExternal(node: NodeRef): boolean;
     abstract isInternal(node: NodeRef): boolean;
     abstract removeAllChildren(node: NodeRef): void;
+    abstract getSibling(node: NodeRef): NodeRef | null;
+    abstract setLevel(node: NodeRef,level:number):void; 
     getTips(node?: NodeRef): Generator<NodeRef> {
         if (node === undefined) {
             if (this.root !== null) {
@@ -96,36 +99,36 @@ export abstract class AbstractTree implements Tree {
         return preorderGenerator(this, node)
     }
 
-    getPathToRoot(node:NodeRef):Generator<NodeRef>{
-        return toRootGenerator(this,node);
+    getPathToRoot(node: NodeRef): Generator<NodeRef> {
+        return toRootGenerator(this, node);
     }
     //TODO annotations
     _toString(node: NodeRef): string {
-        return (this.getChildCount(node) > 0 ? `(${this.getChildren(node).map(child => this._toString(child)).join(",")})${this.getLabel(node) ? "#" +this.getLabel(node) : ""}` : `${this.getName(node) ? this.getName(node) : ""}`) + (this.getLength(node) ? `:${this.getLength(node)}` : "");
+        return (this.getChildCount(node) > 0 ? `(${this.getChildren(node).map(child => this._toString(child)).join(",")})${this.getLabel(node) ? "#" + this.getLabel(node) : ""}` : `${this.getName(node) ? this.getName(node) : ""}`) + (this.getLength(node) ? `:${this.getLength(node)}` : "");
     }
 
-    toNewick(node?:NodeRef,options?: { includeAnnotations: boolean; } ): string {
+    toNewick(node?: NodeRef, options?: { includeAnnotations: boolean; }): string {
         if (options === undefined) {
             options = { includeAnnotations: false }
         }
         if (node === undefined) {
-            if(this.root===null){
+            if (this.root === null) {
                 throw new Error("No root node and no node provided to newick generator")
             }
             node = this.root
         }
-        
-        return this._toString(node) +";";
+
+        return this._toString(node) + ";";
     }
     getMRCA(nodes: NodeRef[]): NodeRef {
         const ancestors = new Set()
 
         let mrca;
-        for(const node of nodes){
-            for(const ancestor of this.getPathToRoot(node)){
-                if(ancestors.has(ancestor)){
-                    mrca = mrca===undefined?ancestor:this.getLevel(mrca)>this.getLevel(ancestor)?mrca:ancestor;
-                    mrca=ancestor;
+        for (const node of nodes) {
+            for (const ancestor of this.getPathToRoot(node)) {
+                if (ancestors.has(ancestor)) {
+                    mrca = mrca === undefined ? ancestor : this.getLevel(mrca) > this.getLevel(ancestor) ? mrca : ancestor;
+                    mrca = ancestor;
                     break;
                 }
                 ancestors.add(ancestor)
@@ -133,7 +136,7 @@ export abstract class AbstractTree implements Tree {
         }
 
         return mrca!;
-    
+
     }
     rotate(node: NodeRef, recursive: boolean): void {
         if (recursive) {
@@ -144,17 +147,150 @@ export abstract class AbstractTree implements Tree {
         }
         const children = this.getChildren(node);
         this.removeAllChildren(node);
-       for(let i=children.length-1;i>=0;i--){
-           this.addChild(node,children[i])
-       }
+        for (let i = children.length - 1; i >= 0; i--) {
+            this.addChild(node, children[i])
+        }
+    }
+    reroot(node: NodeRef, proportion: number): void {
+        if (node === this.root) {
+            // the node is the root - nothing to do
+            return;
+        }
+        console.log(node)
+        if(!this.root){
+            throw new Error("No root node")
+        }
+
+        const rootLength = this.getLength(this.getChild(this.root!, 0)) + this.getLength(this.getChild(this.root!, 1))
+
+        if (this.getParent(node) !== this.root) {
+            // the node is not a child of the existing root so the root is actually changing
+
+            let node0 = node;
+            let parent = this.getParent(node)!;
+            console.log(parent)
+
+            if(!parent){
+                throw new Error("no parent")
+            }
+            let lineage: NodeRef[] = [];
+
+            // was the node the first child in the parent's children?
+            const nodeAtTop = this.getChild(parent, 0) === node;
+
+            const rootChild1 = node;
+            const rootChild2 = parent;
+
+            let oldLength = this.getLength(parent);
+
+            while (this.getParent(parent) !== null) {
+
+                // remove the node that will becoming the parent from the children
+                this.removeChild(parent, node0);
+
+                if (this.getParent(parent) === this.root) {
+                    const sibling = this.getSibling(parent)!;
+                    
+                    if(!sibling){
+                        console.log(parent.id)
+                        console.log(this.getChildren(this.getParent(parent)!).map(d=>d.id))
+                        throw new Error("no sibling")
+                    }
+                    this.addChild(parent, sibling)
+                    this.setLength(sibling, rootLength);
+
+                } else {
+                    // swap the parent and parent's parent's length around
+                    const nan = this.getParent(parent)!;
+                    if(!nan){
+                    throw new Error("no nan!")
+                    }
+                    const nanLength = this.getLength(nan);
+                    this.setLength(nan, oldLength);
+                    this.setLength(parent, nanLength);
+
+                    // add the new child
+                    // parent._children.push(parent.parent);
+                    this.addChild(parent, nan);
+                }
+
+                lineage = [parent, ...lineage];
+
+                node0 = parent;
+                parent = this.getParent(parent)!;
+            }
+
+            // Reuse the root node as root...
+
+            // Set the order of the children to be the same as for the original parent of the node.
+            // This makes for a more visually consistent rerooting graphically.
+            this.removeAllChildren(this.root!)
+            this.addChild(this.root!, rootChild1)
+            this.addChild(this.root!, rootChild2)
+            if (nodeAtTop) {
+                this.rotate(this.root!, false)
+            }
+            // connect all the children to their parents
+            this.internalNodes
+                .forEach((node) => {
+                    for (const child of this.getChildren(node)) {
+                        this.setParent(child, node)
+                    }
+
+                });
+
+            const l = this.getLength(rootChild1) * proportion;
+            this.setLength(rootChild2, l)
+            this.setLength(rootChild1, this.getLength(rootChild1) - l)
+
+        } else {
+            // the root is staying the same, just the position of the root changing
+            const l = this.getLength(node) * (1.0 - proportion);
+            this.setLength(node, l)
+            this.setLength(this.getSibling(node)!, rootLength - l)
+        }
+
+//update divergence and hights and levels
+
+        updateByLengths(this);
+
     }
 }
 
+function updateDivergenceAndLevelsFromLengths(tree: Tree):number{
+    let maxD = 0;
+    for(const node of tree.getPreorderNodes()){
+        const parent = tree.getParent(node);
+        if(parent){
+            const divergence = tree.getDivergence(parent) + tree.getLength(node);
+            const level = tree.getLevel(parent) + 1;
+            tree.setDivergence(node,divergence);
+            tree.setLevel(node,level);
+            if(divergence>maxD){
+                maxD = divergence;
+            }
+        }else{
+            tree.setDivergence(node,0);
+            tree.setLevel(node,0);
+        }
+    }
+    return maxD;
+}
+function updateHeightsFromDivergence(tree: Tree,maxD:number):void{
+    for(const node of tree.getPreorderNodes()){
+        const height = maxD - tree.getDivergence(node);
+        tree.setHeight(node,height);
+    }
+}
 
-   
-function* toRootGenerator(tree:Tree,node:NodeRef): Generator<NodeRef>{
-    const travel = function*(node:NodeRef):Generator<NodeRef>{
-        let n:NodeRef|null = node
+function updateByLengths(tree: Tree): void {
+    const maxD = updateDivergenceAndLevelsFromLengths(tree);
+    updateHeightsFromDivergence(tree,maxD);
+}
+
+function* toRootGenerator(tree: Tree, node: NodeRef): Generator<NodeRef> {
+    const travel = function* (node: NodeRef): Generator<NodeRef> {
+        let n: NodeRef | null = node
         while (n) {
             yield n;
             n = tree.getParent(n);
@@ -217,19 +353,19 @@ function* preorderGenerator(tree: Tree, node: NodeRef): Generator<NodeRef> {
  * @param callback an optional callback that is called each rotate
  * @returns {number}
  */
-function orderNodes(tree:Tree,node:NodeRef, ordering:(a:NodeRef,numberOfATips:number,b:NodeRef,numberOfBTips:number)=>number, callback?:Function)  {
+function orderNodes(tree: Tree, node: NodeRef, ordering: (a: NodeRef, numberOfATips: number, b: NodeRef, numberOfBTips: number) => number, callback?: Function) {
     let count = 0;
-    if (tree.getChildCount(node)>0) {
+    if (tree.getChildCount(node) > 0) {
         // count the number of descendents for each child
         const counts = new Map();
         for (const child of tree.getChildren(node)) {
-            const value = orderNodes(tree,child, ordering, callback);
+            const value = orderNodes(tree, child, ordering, callback);
             counts.set(child, value);
             count += value;
         }
 
         // sort the children using the provided function
-        tree.sortChildren(node,(a, b) => {
+        tree.sortChildren(node, (a, b) => {
             return ordering(a, counts.get(a), b, counts.get(b))
         });
 

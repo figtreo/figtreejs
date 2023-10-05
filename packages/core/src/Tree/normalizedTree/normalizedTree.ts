@@ -4,6 +4,23 @@ import { parseNewick } from "../..";
 import { NormalizedTreeData } from "./normalizedTree.types"
 //todo clean up null vs undefined
 export class NormalizedTree extends AbstractTree {
+    setLevel(node:NodeRef,level:number):void{
+         this._data.nodes.byId[node.id].level = level;
+    }
+    removeChild(parent: NodeRef, child: NodeRef): void {
+        this._data.nodes.byId[parent.id].children = this._data.nodes.byId[parent.id].children.filter(id => id !== child.id)
+    }
+    getSibling(node: NodeRef): NodeRef | null {
+        const index = this._data.nodes.byId[this._data.nodes.byId[node.id].parent!].children.indexOf(node.id);
+        if(this.getChildCount(this.getParent(node)!) === 1){
+            console.warn(`Node ${node.id} has only no sibling`)
+            return null
+        }else if(index === this.getChildCount(this.getParent(node)!)-1){
+            return this.getChild(this.getParent(node)!, 0)
+        } else  {
+            return this.getChild(this.getParent(node)!, index + 1)
+        } 
+    }
 
 
     getLevel(node: NodeRef): number {
@@ -15,11 +32,11 @@ export class NormalizedTree extends AbstractTree {
     isInternal(node: NodeRef): boolean {
         return this._data.nodes.byId[node.id].children.length > 0
     }
-    isRoot(node:NodeRef){
-        return this._data.rootNode===node.id
+    isRoot(node: NodeRef) {
+        return this._data.rootNode === node.id
     }
     sortChildren(node: NodeRef, compare: (a: NodeRef, b: NodeRef) => number): void {
-        this._data.nodes.byId[node.id].children = this._data.nodes.byId[node.id].children.map(node_id=>this.getNode(node_id)).sort(compare).map(node=>node.id)
+        this._data.nodes.byId[node.id].children = this._data.nodes.byId[node.id].children.map(node_id => this.getNode(node_id)).sort(compare).map(node => node.id)
     }
     getNodeByName(name: string): NodeRef | null {
         return this.getNode(this._data.nodes.byName[name])
@@ -35,6 +52,7 @@ export class NormalizedTree extends AbstractTree {
 
     }
     addChild(parent: NodeRef, child: NodeRef): void {
+
         this._data.nodes.byId[parent.id].children.push(child.id)
     }
     removeAllChildren(node: NodeRef): void {
@@ -159,7 +177,7 @@ export class NormalizedTree extends AbstractTree {
             divergence: undefined,
             height: undefined,
             name: null,
-            level:undefined
+            level: undefined
         }
         this._data.nodes.allIds.push(id)
         this._data.annotations[id] = {}
@@ -176,10 +194,10 @@ export class NormalizedTree extends AbstractTree {
         return this._data.nodes.allIds.filter(n => this.getChildCount(this.getNode(n)) > 0).length
     }
     get externalNodes(): NodeRef[] {
-        throw new Error("Method not implemented.")
+        return this._data.nodes.allIds.filter(n => this.getChildCount(this.getNode(n)) === 0).map(n => this.getNode(n))
     }
     get internalNodes(): NodeRef[] {
-        throw new Error("Method not implemented.")
+        return this._data.nodes.allIds.filter(n => this.getChildCount(this.getNode(n)) > 0).map(n => this.getNode(n))
     }
     get root(): NodeRef | null {
         return this.getNode(this._data.rootNode!)
@@ -202,15 +220,15 @@ function checkAnnotation(tree: Tree, input: { name: string, suggestedType: Annot
 
     if (!annotationType) {
         return suggestedType;
-    } else if (annotationType === suggestedType){
+    } else if (annotationType === suggestedType) {
         return annotationType;
     }
-    else if (annotationType  !== suggestedType) {
+    else if (annotationType !== suggestedType) {
         if ((suggestedType === AnnotationType.INTEGER && annotationType === AnnotationType.CONTINUOUS) ||
             (suggestedType === AnnotationType.CONTINUOUS && annotationType === AnnotationType.INTEGER)) {
             // upgrade to float
             return AnnotationType.CONTINUOUS;
-        } 
+        }
     }
     throw new Error(`Annotation ${input.name} has type ${suggestedType} but previously seen as ${annotationType}`)
 }

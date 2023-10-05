@@ -2,6 +2,9 @@ import { AbstractTree } from "../AbtractTree";
 import { AnnotationType, NodeRef, Tree, newickParsingOptions } from "../Tree.types";
 import { NormalizedTreeData } from "./normalizedTree.types";
 export declare class NormalizedTree extends AbstractTree {
+    setLevel(node: NodeRef, level: number): void;
+    removeChild(parent: NodeRef, child: NodeRef): void;
+    getSibling(node: NodeRef): NodeRef | null;
     getLevel(node: NodeRef): number;
     isExternal(node: NodeRef): boolean;
     isInternal(node: NodeRef): boolean;
