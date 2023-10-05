@@ -5,7 +5,8 @@ import {
     AnimationContext,
     InteractionDispatchContext,
     InteractionStateContext, LayoutContext,
-     TreeContext
+     TreeContext,
+     ScaleContext
 } from "../Context/context";
 
 /*
@@ -91,13 +92,17 @@ export function useTree(){
     return useContext(TreeContext);
 }
 
+
+
 export function useAnimation(){
     return useContext(AnimationContext);
 }
 export const useFigtreeContext={layout:useLayout,tree:useTree};
 
 
-
+export function useScale(){
+    return useContext(ScaleContext);
+}
 //Dispatch a hover action are we hovering by id (just this node) or by annotation all nodes with this annotation value?
 // function hoverAction(dataEntry,key){
 //     const value = key==="id"?dataEntry.id:dataEntry.annotations[key];

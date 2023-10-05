@@ -1,7 +1,8 @@
 import { format } from "d3-format";
 import { useAppSelector } from "../../app/hooks";
 import { selectLabelState } from "../settings/panels/label/labelSlice";
-import { NormalizedTree, NodeRef, BranchLabels as BL} from "@figtreejs/core";
+import { NormalizedTree, NodeRef, BranchLabels as BL, decimalToDate} from "@figtreejs/core";
+import { timeFormat } from "d3-time-format";
 
 export function BranchLabels(props: { tree: NormalizedTree, }) {
     const { tree } = props;
@@ -15,23 +16,7 @@ export function BranchLabels(props: { tree: NormalizedTree, }) {
 
     if (settings.activated) {
 
-        let numericalFormater: (n: number) => string;
-        switch (settings.format) {
-            case "Decimal":
-                numericalFormater = format(`.${settings.sigDigs}f`);
-                break;
-            case "Scientific":
-                numericalFormater = format(`.${settings.sigDigs}e`);
-                break;
-            case "Percent":
-                numericalFormater = format(`.${settings.sigDigs}%`);
-                break;
-            case "Roman":
-                numericalFormater = (n: number) => romanize(n);
-                break;
-            default:
-                throw new Error(`Unknown numerical format ${settings.format}`);
-        }
+        let numericalFormatter = getNumericalFormatter(settings.format,settings.sigDigs)
 
 
 
@@ -41,10 +26,10 @@ export function BranchLabels(props: { tree: NormalizedTree, }) {
                 textFunction = (node: NodeRef) => tree.getName(node);
                 break;
             case "Node Heights":
-                textFunction = (node: NodeRef) => numericalFormater(tree.getHeight(node));
+                textFunction = (node: NodeRef) => numericalFormatter(tree.getHeight(node));
                 break;
             case "Branch Lengths":
-                textFunction = (node: NodeRef) => numericalFormater(tree.getLength(node));
+                textFunction = (node: NodeRef) => numericalFormatter(tree.getLength(node));
                 break
             default:
                 throw new Error(`Unknown tip label display type ${settings.display}}`);
@@ -90,3 +75,21 @@ function romanize(num: number):string {
     
       return str;
     }
+
+    export function getNumericalFormatter(formatString:string,sigDigs:number): (n: number) => string {
+    switch (formatString) {
+        case "Decimal":
+            return format(`.${sigDigs}f`);
+        case "Scientific":
+           return format(`.${sigDigs}e`);
+        case "Percent":
+           return format(`.${sigDigs}%`);
+           
+        case "Roman":
+           return (n: number) => romanize(n);
+        case "Date":
+            return (n:number)=> timeFormat("%Y-%m-%d")(decimalToDate(n))
+        default:
+            throw new Error(`Unknown numerical format ${formatString}`);
+    }
+}

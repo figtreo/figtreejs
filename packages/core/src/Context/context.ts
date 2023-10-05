@@ -15,4 +15,5 @@ export const LayoutContext = React.createContext<Vertices>({
     allIds: []
 });
 
+export const ScaleContext = React.createContext<{width:number,height:number,maxDivergence:number}>({width:0,height:0,maxDivergence:0})
 export const AnimationContext = React.createContext<boolean>(false);

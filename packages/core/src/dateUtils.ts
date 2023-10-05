@@ -1,8 +1,5 @@
-// import { timeFormat } from "d3-time-format";
+import {timeParse, timeFormat} from "d3-time-format";
 
-// import {timeParse, timeFormat} from "d3-time-format";
-const timeParse = (sting:string)=>(string:string)=>new Date(); //tTODO remove
-const timeFormat = (sting:string)=>(date:Date)=>''; //tTODO remove
 //https://stackoverflow.com/questions/29400171/how-do-i-convert-a-decimal-year-value-into-a-date-in-javascript
 /**
  * Helper function to determine if the provided year is a leap year
@@ -18,11 +15,11 @@ export function leapYear(year:number) {
  * @param decimalDate
  * @return {Date}
  */
-export function decimalToDate(decimal:number){
+export function decimalToDate(decimal:number):Date{
     const year = Math.trunc(decimal);
     const totalNumberOfDays = leapYear(year)? 366:365;
     const day = Math.round(((decimal-year)*totalNumberOfDays));
-    return timeParse("%Y-%j")(`${year}-${day}`)
+    return timeParse("%Y-%j")(`${year}-${day}`)!
 
 }
 

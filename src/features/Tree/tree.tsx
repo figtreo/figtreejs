@@ -1,4 +1,4 @@
-import  { useCallback, useEffect, useRef, useState,createContext } from 'react';
+import { useCallback, useEffect, useRef, useState, createContext } from 'react';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { selectNodeCount, parseNewick, selectTree } from './treeSlice';
 
@@ -11,12 +11,14 @@ import { TipLabels } from './tipLabel';
 import { NodeLabels } from './nodeLabels';
 import { BranchLabels } from './branchLabels';
 
-import { FigTree, NormalizedTree, Branches, RectangularLayout, PolarLayout, RadialLayout, NodeRef } from '@figtreejs/core'
+import { FigTree, NormalizedTree, Branches, RectangularLayout, PolarLayout, RadialLayout, NodeRef, Axis } from '@figtreejs/core'
 import { useAreaSelection } from '../../app/area-selection';
-import {select,selectAll} from "d3-selection"
+import { select, selectAll } from "d3-selection"
 import { selectHeader, setSelectionMode, setSelectionRoot } from '../Header/headerSlice';
+import { selectAxis } from '../settings/panels/axis/axisSlice';
+import AxisElement from './AxisElement';
 
-const margins = { top: 10, bottom: 10, left: 10, right: 100 };
+const margins = { top: 10, bottom: 80, left: 50, right: 100 };
 //todo make zoom and expansion based on number of tips
 const zoomFactor = 5;
 
@@ -29,74 +31,76 @@ export function Tree({ panelRef }: any) {
 
   //selection Box work //https://codesandbox.io/s/billowing-lake-rzhid4?file=/src/App.tsx
   const svgRef = useRef<SVGSVGElement>(null);;
-//https://codesandbox.io/s/react-area-selection-hook-slggxd?file=/src/area-selection.ts
+  //https://codesandbox.io/s/react-area-selection-hook-slggxd?file=/src/area-selection.ts
   const selection = useAreaSelection({ container: panelRef }); // maybe move this to library so it's possible to select data in little figs
-  const [brushedNodeIds,setBrushedNodeIds] = useState<string[]>([]);
-//todo only fire on selection release
-//todo include taxa and nodes
+  const [brushedNodeIds, setBrushedNodeIds] = useState<string[]>([]);
 
-//get selection 
+  //todo only fire on selection release
+  //todo include taxa and nodes
+
+  //get selection 
 
 
 
 
-// todo only run this on mouseup after selection
-// TODO note that this counts a branch as selected if it's box is crossed not its path.
-useEffect(()=>{
-if(svgRef.current && selection){
-    const branches = select(svgRef.current)
-    .select('g')
-    .selectAll(".branch-layer")
-    .selectAll("path")
-    .select(function(d,i,n){
-      const el = this as Element;
-      const a = el.getBoundingClientRect()
-      const b= selection
-      const selected = !(
-          a.y + a.height < b.y ||
-          a.y > b.y + b.height ||
-          a.x + a.width < b.x ||
-          a.x > b.x + b.width
-        )
-      return selected?this:null
-    })
+  // todo only run this on mouseup after selection
+  // TODO note that this counts a branch as selected if it's box is crossed not its path.
+  useEffect(() => {
+    if (svgRef.current && selection) {
+      const branches = select(svgRef.current)
+        .select('g')
+        .selectAll(".branch-layer")
+        .selectAll("path")
+        .select(function (d, i, n) {
+          const el = this as Element;
+          const a = el.getBoundingClientRect()
+          const b = selection
+          const selected = !(
+            a.y + a.height < b.y ||
+            a.y > b.y + b.height ||
+            a.x + a.width < b.x ||
+            a.x > b.x + b.width
+          )
+          return selected ? this : null
+        })
 
-    // // .attr("id")
-    // .attr("stroke", "blue")
-    
-  const taxa = select(svgRef.current)
-  .select('g')
-  .selectAll(".node-label-layer")
-  .selectAll(".node-label")
-  .select(function(d,i,n){
-    const el = this as Element;
-    const a = el.getBoundingClientRect()
-    const b= selection
-    const selected = !(
-        a.y + a.height < b.y ||
-        a.y > b.y + b.height ||
-        a.x + a.width < b.x ||
-        a.x > b.x + b.width
-      )
-    return selected?this:null
-  })
-  const out:Set<string>=new Set();
-  branches.each(function(d,i,b){
-      const id =  select(this).attr("node-id")
-      out.add(id);
-      //todo tree get tmrca of nodes.
-    })
+      // // .attr("id")
+      // .attr("stroke", "blue")
 
-    taxa.each(function(d,i,b){
-      const id =  select(this).attr("node-id")
-      out.add(id);
-      //todo tree get tmrca of nodes.
-    })
-    
-    setBrushedNodeIds([...out]);
-}},[selection,svgRef])
+      const taxa = select(svgRef.current)
+        .select('g')
+        .selectAll(".node-label-layer")
+        .selectAll(".node-label")
+        .select(function (d, i, n) {
+          const el = this as Element;
+          const a = el.getBoundingClientRect()
+          const b = selection
+          const selected = !(
+            a.y + a.height < b.y ||
+            a.y > b.y + b.height ||
+            a.x + a.width < b.x ||
+            a.x > b.x + b.width
+          )
+          return selected ? this : null
+        })
+      const out: Set<string> = new Set();
+      branches.each(function (d, i, b) {
+        const id = select(this).attr("node-id")
+        out.add(id);
+        //todo tree get tmrca of nodes.
+      })
 
-// resizing work
+      taxa.each(function (d, i, b) {
+        const id = select(this).attr("node-id")
+        out.add(id);
+        //todo tree get tmrca of nodes.
+      })
+
+      setBrushedNodeIds([...out]);
+    }
+  }, [selection, svgRef])
+
+  // resizing work
 
   // a little magic here to make the panel resize and pass the size to the tree
   //min width and height for svg
@@ -131,36 +135,36 @@ if(svgRef.current && selection){
     },
     [isResizing, panelRef]
   );
-  
-  const getSelectedRoot =()=>{
-    if(brushedNodeIds.length===0){
+
+  const getSelectedRoot = () => {
+    if (brushedNodeIds.length === 0) {
       dispatch(setSelectionRoot(undefined))
-    }else{
-      const nodes = brushedNodeIds.map(id=>tree.getNode(id));
-      if(nodes.length===1){
+    } else {
+      const nodes = brushedNodeIds.map(id => tree.getNode(id));
+      if (nodes.length === 1) {
         dispatch(setSelectionRoot(nodes[0].id))
         return;
       }
       const mrca = tree.getMRCA(nodes);
-      if(mrca===undefined){
+      if (mrca === undefined) {
         throw new Error("Could not find mrca")
       }
       dispatch(setSelectionRoot(mrca.id))
     }
   }
-  const clearSelectionRoot = ()=>{
+  const clearSelectionRoot = () => {
     dispatch(setSelectionRoot(undefined));
   }
-  useEffect(()=>{
-    window.addEventListener('mouseup',getSelectedRoot)
+  useEffect(() => {
+    window.addEventListener('mouseup', getSelectedRoot)
     // window.addEventListener('mousedown',clearSelectionRoot)
-    return ()=>{
-      window.removeEventListener('mouseup',getSelectedRoot)
+    return () => {
+      window.removeEventListener('mouseup', getSelectedRoot)
       // window.removeEventListener('mousedown',clearSelectionRoot) //TODO maybe not on window? also add command to not clear
     }
-  },[brushedNodeIds])
+  }, [brushedNodeIds])
 
-  useEffect(()=>{
+  useEffect(() => {
 
   })
 
@@ -193,7 +197,7 @@ if(svgRef.current && selection){
   const { expansion, zoom, layout, rootAngle, rootLength, angleRange, showRoot, spread, curvature, fishEye, pointOfInterest } = useAppSelector(selectLayout);
 
   const layoutOpts = {
-    rootAngle, rootLength, angleRange, showRoot, spread, curvature, fishEye, pointOfInterest,nodeDecorations:header.SelectNodeDecorations
+    rootAngle, rootLength, angleRange, showRoot, spread, curvature, fishEye, pointOfInterest, nodeDecorations: header.SelectNodeDecorations
   }
 
 
@@ -282,22 +286,22 @@ if(svgRef.current && selection){
 
   const selectedNodes = new Set();
   const selectedTaxa = new Set();
-  if(header.SelectionRoot){
-    switch(header.SelectionMode){
+  if (header.SelectionRoot) {
+    switch (header.SelectionMode) {
       case 'Node':
         selectedNodes.add(header.SelectionRoot);
         break;
       case 'Taxa':
-        for(const node of tree.getTips(tree.getNode(header.SelectionRoot))){
+        for (const node of tree.getTips(tree.getNode(header.SelectionRoot))) {
           selectedTaxa.add(node.id);
         }
         break;
       case 'Clade':
-        for(const node of tree.getPostorderNodes(tree.getNode(header.SelectionRoot))){
+        for (const node of tree.getPostorderNodes(tree.getNode(header.SelectionRoot))) {
           selectedNodes.add(node.id);
         }
         break;
-    }  
+    }
   }
 
   if (nodes > 0) {
@@ -307,27 +311,27 @@ if(svgRef.current && selection){
 
 
         <svg id={"treeContainer"} width={width} height={height} ref={svgRef}>
-        <defs>
+          <defs>
             <filter x="0" y="0" width="1" height="1" id="solid">
               <feFlood flood-color="#959ABF" result="bg" />
               <feMerge>
-                <feMergeNode in="bg"/>
-                <feMergeNode in="SourceGraphic"/>
+                <feMergeNode in="bg" />
+                <feMergeNode in="SourceGraphic" />
               </feMerge>
             </filter>
           </defs>
 
           <FigTree animated={false} width={width} height={height} tree={tree} layout={treeLayout} margins={margins} opts={layoutOpts}>
-            <Branches attrs={{ strokeWidth: lineWidth+4, stroke: "#959ABF",strokeLinecap:"round", strokeLinejoin:"round" }} filter={(n: NodeRef) => selectedNodes.has(n.id)} />
+            <AxisElement />
+            <Branches attrs={{ strokeWidth: lineWidth + 4, stroke: "#959ABF", strokeLinecap: "round", strokeLinejoin: "round" }} filter={(n: NodeRef) => selectedNodes.has(n.id)} />
             <Branches attrs={{ strokeWidth: lineWidth, stroke: branchColour }} filter={(n: NodeRef) => true} />
             <BranchLabels tree={tree} />
             <Tips tree={tree} />
-            <TipLabels tree={tree} attrs={{filter:(n:NodeRef)=>selectedTaxa.has(n.id)?'url(#solid)':null}} />
+            <TipLabels tree={tree} attrs={{ filter: (n: NodeRef) => selectedTaxa.has(n.id) ? 'url(#solid)' : null }} />
             <InternalNodes tree={tree} />
             <NodeLabels tree={tree} />
           </FigTree>
         </svg>
-
 
       </div>
 

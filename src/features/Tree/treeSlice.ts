@@ -24,11 +24,14 @@ const initialState: TreeState = {
             byId: {},
             allIds: [],
             byName: {},
-            byLabel: {}
+            byLabel: {},
+            annotations: {}
         },
         rootNode: null,
-        annotations: {},
-        annotationTypes: {},
+        annotations: {
+            byId: {},
+            allIds: []
+        },
     },
     status: 'idle',
 }
@@ -81,7 +84,7 @@ export const treeSlice = createSlice({
 //This requires knowing about the root state. Can we refactor so that information can be provided?
 
 export const selectNodeCount = (state: RootState) => state.tree.tree.nodes.allIds.length;
-export const selectAnnotationTypes = (state: RootState) => state.tree.tree.annotationTypes;
+export const selectAnnotationTypes = (state: RootState) => state.tree.tree.annotations.allIds.map(id => state.tree.tree.annotations.byId[id].type);
 export const selectTree = (state: RootState) => state.tree;
 //TODO can we fake a tree class like this that use redux store underneath?
 

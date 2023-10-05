@@ -1,3 +1,4 @@
+import { AnnotationType } from "../Tree.types";
 export interface Node {
     id: string;
     name: string | null;
@@ -8,6 +9,11 @@ export interface Node {
     height: number | undefined;
     divergence: number | undefined;
     level: number | undefined;
+}
+export interface Annotation {
+    id: string;
+    type: AnnotationType;
+    domain: [number, number] | string[] | number[] | [boolean, boolean] | undefined;
 }
 export interface NormalizedTreeData {
     nodes: {
@@ -20,15 +26,18 @@ export interface NormalizedTreeData {
         byLabel: {
             [label: string]: string;
         };
+        annotations: {
+            [nodeId: string]: {
+                [annotation: string]: string | string[] | number | number[];
+            };
+        };
         allIds: string[];
     };
     rootNode: string | null;
     annotations: {
-        [nodeId: string]: {
-            [annotation: string]: string | string[] | number | number[];
+        byId: {
+            [annotation: string]: Annotation;
         };
-    };
-    annotationTypes: {
-        [annotation: string]: string;
+        allIds: string[];
     };
 }

@@ -60,6 +60,7 @@ export interface Tree {
     rotate(node: NodeRef, recursive: boolean): void;
     reroot(node: NodeRef, proportion: number): void;
     setLevel(node: NodeRef, level: number): void;
+    getAnnotationDomain(name: string): [number, number] | [boolean, boolean] | string[] | number[] | undefined;
     get nodeCount(): number;
     get externalNodeCount(): number;
     get InternalNodeCount(): number;

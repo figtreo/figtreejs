@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutContext, TreeContext,AnimationContext } from '../../Context/context';
+import { LayoutContext, TreeContext,AnimationContext,ScaleContext } from '../../Context/context';
 import { NodeRef } from '../../Tree/Tree.types';
 import { RectangularLayout } from '../../Layouts/rectangularLayout';
 import { FigtreeProps } from './Figtree.types';
@@ -65,16 +65,22 @@ function FigTree(props:FigtreeProps){
     const vertices = layout.layout(tree,{showRoot,width:w,height:h,rootLength,rootAngle,angleRange,curvature,spread,tipSpace:(tip1:NodeRef,tip2:NodeRef)=>1,fishEye,pointOfInterest:point,nodeDecorations});
         
     const children = props.children?props.children:defaultOpts.children;
+
+
+
+
     //context gives us a nicer api where the data don't need to be passed to the subcomponents of the figure and the subcomponents can be added by user with JSX
     return (
                 <TreeContext.Provider value={tree}>
                     <LayoutContext.Provider value={vertices}>
                     <AnimationContext.Provider value={animated}>
+                        <ScaleContext.Provider value={{width:w,height:h,maxDivergence:tree.getHeight(tree.root!)+rootLength!}}>
                        
                         {/*<rect x="0" y="0" width="100%" height="100%" fill="none" pointerEvents={"visible"} onClick={()=>nodeDispatch({type:"clearSelection"})}/>*/}
                         <g transform={`translate(${margins.left},${margins.top})`}>
                             {children}
                         </g>
+                        </ScaleContext.Provider>
                         </AnimationContext.Provider>
                     </LayoutContext.Provider>
                 </TreeContext.Provider>

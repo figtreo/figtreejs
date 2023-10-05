@@ -11,7 +11,7 @@ export function Settings() {
         <div className="Settings">
             <Layout />
             <Appearance/>
-            <TimeScale/>
+            {/* <TimeScale/> */}
             <Labels target='tip' defaultOptions={['Name']}/>
             <Shapes target="tip" />
             <Labels target='node' defaultOptions={[]}/>

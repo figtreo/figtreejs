@@ -22,6 +22,7 @@ export declare class NormalizedTree extends AbstractTree {
     setDivergence(node: NodeRef, divergence: number): void;
     setLength(node: NodeRef, length: number): void;
     setRoot(node: NodeRef): void;
+    getAnnotationDomain(name: string): [number, number] | [boolean, boolean] | string[] | number[] | undefined;
     annotateNode(node: NodeRef, annotation: {
         name: string;
         value: any;
@@ -38,9 +39,9 @@ export declare class NormalizedTree extends AbstractTree {
     getChild(node: NodeRef, index: number): NodeRef;
     getParent(node: NodeRef): NodeRef | null;
     getChildren(node: NodeRef): NodeRef[];
-    getAnnotation(node: NodeRef, name: string): any | null;
+    getAnnotation(node: NodeRef, name: string): any | undefined;
     getLabel(node: NodeRef): string | null;
-    getAnnotationType(name: string): string;
+    getAnnotationType(name: string): AnnotationType;
     addNode(): NodeRef;
     get nodeCount(): number;
     get externalNodeCount(): number;

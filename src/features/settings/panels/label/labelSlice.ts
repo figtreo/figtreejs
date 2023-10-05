@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Slice } from '@reduxjs/toolkit';
 import { RootState } from '../../../../app/store';
 
-type numericalFormat = "Decimal" | "Scientific" | "Percent" | "Roman"
+export type numericalFormat = "Decimal" | "Scientific" | "Percent" | "Roman"
 
 interface LabelState {
     display: string,

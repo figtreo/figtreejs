@@ -1,4 +1,4 @@
-import { NodeRef, Tree } from "./Tree.types";
+import { AnnotationType, NodeRef, Tree } from "./Tree.types";
 export declare abstract class AbstractTree implements Tree {
     annotateNodeUnknownType(node: NodeRef, annotations: {
         value: any;
@@ -49,6 +49,7 @@ export declare abstract class AbstractTree implements Tree {
     abstract removeAllChildren(node: NodeRef): void;
     abstract getSibling(node: NodeRef): NodeRef | null;
     abstract setLevel(node: NodeRef, level: number): void;
+    abstract getAnnotationDomain(name: string): [number, number] | [boolean, boolean] | string[] | number[] | undefined;
     getTips(node?: NodeRef): Generator<NodeRef>;
     getPostorderNodes(node?: NodeRef): Generator<NodeRef>;
     getPreorderNodes(node?: NodeRef): Generator<NodeRef>;
@@ -60,4 +61,12 @@ export declare abstract class AbstractTree implements Tree {
     getMRCA(nodes: NodeRef[]): NodeRef;
     rotate(node: NodeRef, recursive: boolean): void;
     reroot(node: NodeRef, proportion: number): void;
+    protected checkAnnotation(input: {
+        name: string;
+        suggestedType: AnnotationType;
+    }): AnnotationType;
+    protected updateDomain(annotation: {
+        id: string;
+        value: any;
+    }): [number, number] | string[] | number[] | [boolean, boolean];
 }
