@@ -1,4 +1,4 @@
-import { AbstractLayout } from "../../Layouts/LayoutInterface";
+import { AbstractLayout, NodeDecoration } from "../../Layouts/LayoutInterface";
 import { Tree,NodeRef } from "../../Tree/Tree.types";
 
 interface Margins{
@@ -19,6 +19,8 @@ export interface layoutOptions{
     spread?: number
     pointOfInterest?: { x: number; y: number; },
     fishEye?: number;
+    nodeDecorations:{[key:string]:NodeDecoration}
+
 }
 
 export interface FigtreeProps {

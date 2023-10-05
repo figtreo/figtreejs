@@ -25,6 +25,8 @@ export function Tree({ panelRef }: any) {
 
   const dispatch = useAppDispatch();
   const tree = new NormalizedTree(useAppSelector(selectTree).tree)
+  const header = useAppSelector(selectHeader);
+
   //selection Box work //https://codesandbox.io/s/billowing-lake-rzhid4?file=/src/App.tsx
   const svgRef = useRef<SVGSVGElement>(null);;
 //https://codesandbox.io/s/react-area-selection-hook-slggxd?file=/src/area-selection.ts
@@ -135,14 +137,12 @@ if(svgRef.current && selection){
       dispatch(setSelectionRoot(undefined))
     }else{
       const nodes = brushedNodeIds.map(id=>tree.getNode(id));
-      console.log(nodes)
       if(nodes.length===1){
         dispatch(setSelectionRoot(nodes[0].id))
         return;
       }
       const mrca = tree.getMRCA(nodes);
       if(mrca===undefined){
-        console.log(nodes)
         throw new Error("Could not find mrca")
       }
       dispatch(setSelectionRoot(mrca.id))
@@ -193,7 +193,7 @@ if(svgRef.current && selection){
   const { expansion, zoom, layout, rootAngle, rootLength, angleRange, showRoot, spread, curvature, fishEye, pointOfInterest } = useAppSelector(selectLayout);
 
   const layoutOpts = {
-    rootAngle, rootLength, angleRange, showRoot, spread, curvature, fishEye, pointOfInterest
+    rootAngle, rootLength, angleRange, showRoot, spread, curvature, fishEye, pointOfInterest,nodeDecorations:header.SelectNodeDecorations
   }
 
 
@@ -279,7 +279,6 @@ if(svgRef.current && selection){
 
   })
 
-  const header = useAppSelector(selectHeader);
 
   const selectedNodes = new Set();
   const selectedTaxa = new Set();
@@ -305,7 +304,6 @@ if(svgRef.current && selection){
     return (
       <div>
 
-      {/* <SelectionContext.Provider value={selection}> */}
 
 
         <svg id={"treeContainer"} width={width} height={height} ref={svgRef}>
@@ -329,7 +327,6 @@ if(svgRef.current && selection){
             <NodeLabels tree={tree} />
           </FigTree>
         </svg>
-        {/* </SelectionContext.Provider> */}
 
 
       </div>

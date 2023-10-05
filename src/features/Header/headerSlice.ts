@@ -1,18 +1,14 @@
 import { RootState } from '../../app/store';
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import counterSlice from '../counter/counterSlice';
+import { NodeDecoration } from '@figtreejs/core';
+import { stackOffsetNone } from 'd3-shape';
 //TODO tree list or count to include multiple trees
 
 
 type SelectionMode = "Node"|"Clade"|"Taxa"
 
-interface NodeDecoration{
-    cartooned:boolean,
-    collapsed:boolean,
-    hilighted:boolean,
-    customColor:string|undefined
-    taxaCustomColor:string|undefined
-}
+
 interface HeaderData{
     selectionMode:SelectionMode,
     selectionRoot:string|undefined,
@@ -43,17 +39,27 @@ export const HeaderSlice = createSlice({
             state.selectionMode = action.payload;
         },
         cartoonNode:(state,action:PayloadAction<string>)=>{
-            state.nodeDecorations[action.payload].cartooned = true;
-        },
-        uncartoonNode:(state,action:PayloadAction<string>)=>{
-            state.nodeDecorations[action.payload].cartooned = false;
-        },        
+            if(!state.nodeDecorations[action.payload]){ //false and undefined
+                state.nodeDecorations[action.payload] = {cartooned:true,collapseFactor:0,hilighted:false,customColor:undefined,taxaCustomColor:undefined};
+            }else{
+                state.nodeDecorations[action.payload].cartooned =  !state.nodeDecorations[action.payload].cartooned;
+            }
+        },      
         collapseNode:(state,action:PayloadAction<string>)=>{
-            state.nodeDecorations[action.payload].collapsed = true;
+            if(!state.nodeDecorations[action.payload]){
+                state.nodeDecorations[action.payload] = {cartooned:true,collapseFactor:0.25,hilighted:false,customColor:undefined,taxaCustomColor:undefined};
+            }else if(!state.nodeDecorations[action.payload].cartooned){
+                state.nodeDecorations[action.payload].cartooned = true;
+                state.nodeDecorations[action.payload].collapseFactor = 0.25;
+            }
+            else{
+                const currentCollapseFactor = state.nodeDecorations[action.payload].collapseFactor;
+                state.nodeDecorations[action.payload].collapseFactor = currentCollapseFactor>0.9?0:currentCollapseFactor+0.25;
+            }
         },
-        uncollapseNode:(state,action:PayloadAction<string>)=>{
-            state.nodeDecorations[action.payload].collapsed = false;
-        },        
+        // uncollapseNode:(state,action:PayloadAction<string>)=>{
+        //     state.nodeDecorations[action.payload].collapsed = false;
+        // },        
         hiLightNode:(state,action:PayloadAction<string>)=>{
             state.nodeDecorations[action.payload].hilighted = true;
         },
@@ -71,13 +77,12 @@ export const HeaderSlice = createSlice({
 
 })
 export default HeaderSlice.reducer;
-export const {setSelectionMode,setSelectionRoot} = HeaderSlice.actions;
+export const {setSelectionMode,setSelectionRoot,cartoonNode,collapseNode} = HeaderSlice.actions;
 //Lets 
 export const selectHeader = (state:RootState) => ({
     SelectionMode:state.header.selectionMode,
     SelectionRoot:state.header.selectionRoot,
-    isCollapsed:(id:string)=>state.header.nodeDecorations[id].collapsed,
-    isHighilited:(id:string)=>state.header.nodeDecorations[id].hilighted,
+    SelectNodeDecorations:state.header.nodeDecorations,
     iscartooned:(id:string)=>state.header.nodeDecorations[id].cartooned,
     getCustomColor:(id:string)=>state.header.nodeDecorations[id].customColor,
 

@@ -22,7 +22,7 @@ export default function Branches(props:BranchProps) {
     const shapeProps = useAttributeMappers({attrs}); //TODO no obvious why in an object
     return (
         <g className={"branch-layer"}>
-            {vertices.allIds.sort((a,b)=>(vertices.byId[a].x-vertices.byId[b].x)).filter((vid:string)=>vertices.byId[vid].branch && vertices.byId[vid].branch!.d).reduce<React.ReactNode[]>( (all, id) => {
+            {vertices.allIds.sort((a,b)=>(vertices.byId[a].x-vertices.byId[b].x)).filter((vid:string)=>vertices.byId[vid].branch).reduce<React.ReactNode[]>( (all, id) => {
                 if (filter(tree.getNode(id))) {//filter needs to us tree api
                     const v = vertices.byId[id];
                     const d = animated?normalizePath(v.branch!.d):v.branch!.d;

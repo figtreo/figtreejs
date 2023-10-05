@@ -26,7 +26,6 @@ export interface Vertex {
         d: string,
         label: Label
     },
-    d?: string, //path
     theta?: number, //angle
     r?: number, //radius
     nodeLabel: Label
@@ -60,7 +59,13 @@ export interface internalLayoutOptions extends layoutOptions { // all layout opt
     height: number,
 }
 
-
+export interface NodeDecoration{
+    cartooned:boolean,
+    collapseFactor:number,
+    hilighted:boolean,
+    customColor:string|undefined
+    taxaCustomColor:string|undefined
+}
 
 export const defaultInternalLayoutOptions = {
     width: 1000,
@@ -73,7 +78,8 @@ export const defaultInternalLayoutOptions = {
     showRoot: false,
     spread: 1,
     pointOfInterest: { x: 0, y: 0 },
-    fishEye: 0
+    fishEye: 0,
+    nodeDecorations:{}
 }
 
 export abstract class AbstractLayout {

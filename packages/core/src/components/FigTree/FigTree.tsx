@@ -24,7 +24,8 @@ export const defaultOpts:FigtreeProps = {
         showRoot:false,
         spread:0,
         pointOfInterest:{x:0,y:0},
-        fishEye:0
+        fishEye:0,
+        nodeDecorations:{}
     },
     width:100,
     height:100,
@@ -53,14 +54,15 @@ function FigTree(props:FigtreeProps){
         showRoot = defaultOpts.opts.showRoot,
         spread = defaultOpts.opts.spread,
         pointOfInterest = defaultOpts.opts.pointOfInterest,
-        fishEye = defaultOpts.opts.fishEye
+        fishEye = defaultOpts.opts.fishEye,
+        nodeDecorations = defaultOpts.opts.nodeDecorations,
     } = props.opts; 
 
     const w = width - margins.left - margins.right;
     const h = height - margins.top - margins.bottom;
     const point = pointOfInterest?pointOfInterest: {x:(margins.left+w)/2,y:(margins.top+height)/2};
 
-    const vertices = layout.layout(tree,{showRoot,width:w,height:h,rootLength,rootAngle,angleRange,curvature,spread,tipSpace:(tip1:NodeRef,tip2:NodeRef)=>1,fishEye,pointOfInterest:point});
+    const vertices = layout.layout(tree,{showRoot,width:w,height:h,rootLength,rootAngle,angleRange,curvature,spread,tipSpace:(tip1:NodeRef,tip2:NodeRef)=>1,fishEye,pointOfInterest:point,nodeDecorations});
         
     const children = props.children?props.children:defaultOpts.children;
     //context gives us a nicer api where the data don't need to be passed to the subcomponents of the figure and the subcomponents can be added by user with JSX

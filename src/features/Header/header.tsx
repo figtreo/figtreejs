@@ -11,7 +11,7 @@ import colour from "../../figtreeGraphics/coloursTool.png"
 import find from "../../figtreeGraphics/findTool.png"
 import highlight from "../../figtreeGraphics/HilightTool.png"
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { selectHeader, setSelectionMode } from "./headerSlice";
+import { cartoonNode, collapseNode, selectHeader, setSelectionMode } from "./headerSlice";
 import { rotate } from "../Tree/treeSlice";
 export function Header() {
 
@@ -23,11 +23,20 @@ export function Header() {
     return (
         <div className="header">
             <div className={optionClasses}>
-                <img src={cartoon} />
+                <img src={cartoon} onClick={() => {
+                    if (header.SelectionRoot && header.SelectionMode !== "Taxa") {
+                        dispatch(cartoonNode(header.SelectionRoot))
+                    }
+                }
+                } />
                 <p>Cartoon</p>
             </div>
             <div className={optionClasses}>
-                <img src={collapse} />
+                <img src={collapse} onClick={() => {
+                    if (header.SelectionRoot && header.SelectionMode !== "Taxa") {
+                        dispatch(collapseNode(header.SelectionRoot))
+                    }
+                }} />
                 <p>Collapse</p>
             </div>
             <div className={optionClasses}>
