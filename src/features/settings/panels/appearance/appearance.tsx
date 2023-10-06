@@ -37,7 +37,7 @@ export function Appearance() {
             </div>
             <div>
                 <label htmlFor='width'>Line Width</label>
-                <input name="width" id="width" type="number" value={lineWidth} onChange={e => dispatch(setLineWidth(e.target.value))} />
+                <input name="width" id="width" type="number" value={lineWidth} onChange={e => dispatch(setLineWidth(parseFloat(e.target.value)))} />
             </div>
             <div>
                 <label htmlFor='widthBy'>Width By:</label>
