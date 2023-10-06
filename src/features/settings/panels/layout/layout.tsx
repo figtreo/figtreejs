@@ -1,5 +1,5 @@
 import { useAppSelector, useAppDispatch } from '../../../../app/hooks';
-import { selectLayout, setExpansion, setFisheye, setLayout, setZoom } from './layoutSlice';
+import { flipAnimate, selectLayout, setExpansion, setFisheye, setLayout, setZoom } from './layoutSlice';
 import { SettingPanel } from '../PanelHeader';
 import './layout.css'
 import { RectangularOptions } from './rectangularOptions';
@@ -9,7 +9,7 @@ import rectTreeImage from '../../../../figtreeGraphics/rectangularTree.png'
 import polarTreeImage from '../../../../figtreeGraphics/polarTree.png'
 import radialTreeImage from '../../../../figtreeGraphics/radialTree.png'
 export function Layout() {
-    const { layout,zoom,expansion,fishEye } = useAppSelector(selectLayout);
+    const { layout,zoom,expansion,fishEye,animate } = useAppSelector(selectLayout);
     const dispatch = useAppDispatch();
     return (
         <SettingPanel title="Layout" intialOpen={true} >
@@ -77,6 +77,15 @@ export function Layout() {
                     disabled={layout==="equalangle"}
 
                 />
+            </div>
+            <div>
+            <input
+                    type="checkbox"
+                    checked={animate}
+                    onChange={() => dispatch(flipAnimate())}
+                    id="alignLabels"
+                />
+                <label htmlFor='alignlabels'>Animate</label>
             </div>
             <div className="layoutOptions">
             {layout === "rectangular" ? <RectangularOptions /> :

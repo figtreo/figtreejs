@@ -194,7 +194,7 @@ export function Tree({ panelRef }: any) {
   const lineWidth = useAppSelector(selectLineWidth);
   const branchColour = useAppSelector(selectStroke);
 
-  const { expansion, zoom, layout, rootAngle, rootLength, angleRange, showRoot, spread, curvature, fishEye, pointOfInterest } = useAppSelector(selectLayout);
+  const { expansion, zoom, layout, rootAngle, rootLength, angleRange, showRoot, spread, curvature, fishEye, pointOfInterest,animate } = useAppSelector(selectLayout);
 
   const layoutOpts = {
     rootAngle, rootLength, angleRange, showRoot, spread, curvature, fishEye, pointOfInterest, nodeDecorations: header.SelectNodeDecorations
@@ -321,7 +321,7 @@ export function Tree({ panelRef }: any) {
             </filter>
           </defs>
 
-          <FigTree animated={false} width={width} height={height} tree={tree} layout={treeLayout} margins={margins} opts={layoutOpts}>
+          <FigTree animated={animate} width={width} height={height} tree={tree} layout={treeLayout} margins={margins} opts={layoutOpts}>
             <AxisElement />
             <Branches attrs={{ strokeWidth: lineWidth + 4, stroke: "#959ABF", strokeLinecap: "round", strokeLinejoin: "round" }} filter={(n: NodeRef) => selectedNodes.has(n.id)} />
             <Branches attrs={{ strokeWidth: lineWidth, stroke: branchColour }} filter={(n: NodeRef) => true} />
