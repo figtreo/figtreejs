@@ -18,7 +18,7 @@ import { selectHeader, setSelectionMode, setSelectionRoot } from '../Header/head
 import { selectAxis } from '../settings/panels/axis/axisSlice';
 import AxisElement from './AxisElement';
 
-const margins = { top: 10, bottom: 80, left: 50, right: 100 };
+const margins = { top: 80, bottom: 80, left: 50, right: 100 };
 //todo make zoom and expansion based on number of tips
 const zoomFactor = 5;
 

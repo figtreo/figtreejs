@@ -206,7 +206,7 @@ export class PolarLayout extends AbstractLayout {
             };
             if(vertex.id===treeStats.rootId){
                 if(scalePathPoints.length>0){
-                    scaledVertices.origin = {x:scalePathPoints[0].x,y:scalePathPoints[0].y}
+                    scaledVertices.origin = {x:scalePathPoints[1].x,y:scalePathPoints[1].y}
             }else{
                 scaledVertices.origin = {x:xpos,y:ypos}
             }
@@ -258,7 +258,7 @@ export function polarToCartesian(r:number,theta:number){
     return [r*Math.cos(theta),r*Math.sin(theta)];
 }
 
-function normalizeAngle(theta:number){
+export function normalizeAngle(theta:number){
     while(theta>2*Math.PI ){
     theta-=2*Math.PI
     }

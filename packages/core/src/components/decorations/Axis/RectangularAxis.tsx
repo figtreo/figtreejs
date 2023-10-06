@@ -120,7 +120,7 @@ function makeAxisScale(props: any, { width, height, maxDivergence }: AxisScaleCo
             axisScale.domain(domain);
         }
     }
-    return axisScale
+    return axisScale.nice();
 
 }
 

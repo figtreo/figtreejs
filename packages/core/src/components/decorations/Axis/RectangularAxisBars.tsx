@@ -35,4 +35,4 @@ export  default function AxisBars(props:AxisBarsProps):JSX.Element {
         </g>
     )
 }
-
+    

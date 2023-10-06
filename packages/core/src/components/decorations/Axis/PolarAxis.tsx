@@ -35,9 +35,11 @@ export default function PolarAxis(props: AxisProps) {
     const origin = verticies.origin!;
     const theta = verticies.theta!;
 
-    const transform =  `translate(${origin.x},${origin.y}), rotate(${degrees(theta[1]+0.1)})` 
+    const transform =  `translate(${origin.x},${origin.y})` 
 
     // update scale to account for changing range 
+    //move rotation off bars so we can calculate the angles better
+    //TODO fix magic number 0.1 here and in bars
     return (
         <g className={"axis"} transform={transform} >
             {/*This is for Bars*/}
@@ -45,7 +47,7 @@ export default function PolarAxis(props: AxisProps) {
                 {props.children}
             </AxisContext.Provider>
           
-            
+            <g transform={`rotate(${degrees(theta[1]+0.1)})`}> 
             <path d={getPath(scale, direction)} stroke={"black"} strokeWidth={strokeWidth} />
             <g>
                 {tickValues.map((t, i) => {
@@ -61,6 +63,7 @@ export default function PolarAxis(props: AxisProps) {
                 <g transform={`translate(${ mean(scale.range()) },${ title.padding})`}>
                     <text textAnchor={"middle"}>{title.text}</text>
                 </g>
+            </g>
             </g>
 
         </g>
@@ -123,7 +126,7 @@ function makeAxisScale(props: any, { domain ,range }: {domain:number,range:numbe
             axisScale.domain(domain);
         }
     }
-    return axisScale
+    return axisScale.nice();
 
 }
 

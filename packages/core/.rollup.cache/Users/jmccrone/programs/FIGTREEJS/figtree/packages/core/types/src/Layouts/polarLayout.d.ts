@@ -14,5 +14,6 @@ export declare class PolarLayout extends AbstractLayout {
     }[], opts: internalLayoutOptions): string;
 }
 export declare function polarToCartesian(r: number, theta: number): number[];
+export declare function normalizeAngle(theta: number): number;
 export declare function degrees(theta: number): number;
 export declare function textSafeDegrees(radians: number): number;
