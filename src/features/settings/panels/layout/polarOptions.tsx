@@ -29,7 +29,7 @@ export function PolarOptions() {
 
                 <input
                     type="range"
-                    min={0}
+                    min={0.2}
                     max={2*roundPI}
                     step={0.01}
                     id="angleRange"

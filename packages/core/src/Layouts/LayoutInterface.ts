@@ -44,9 +44,13 @@ export interface ArbitraryVertex {
 
 //ids match node ids
 export interface Vertices {
+    type: "Rectangular" | "Polar" |"Radial"
     byId: { [id: string]: Vertex },
     allIds: string[]
-}
+    origin?: { x: number, y: number } // used by polar layout to denote the position of the root (or stem) which can change
+    theta?: [number, number] // used by polar layout to denote the range of angles
+    axisLength?:number // provided by layouts that support axis
+}   
 
 export interface ArbitraryVertices {
     byId: { [id: string]: ArbitraryVertex },
@@ -86,7 +90,7 @@ export abstract class AbstractLayout {
     static readonly padding = 20;
     static layout(tree: Tree, layoutOptions: internalLayoutOptions): Vertices {
         const arbitraryLayout = this.getArbitraryLayout(tree, layoutOptions);
-        const treeStats = { tipCount: [...tree.getTips()].length } //todo cache this count
+        const treeStats = { tipCount: [...tree.getTips()].length,rootId:tree.root!.id } //todo cache this count
         return this.finalizeArbitraryLayout(arbitraryLayout, treeStats, layoutOptions);
     }
 

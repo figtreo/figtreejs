@@ -99,7 +99,7 @@ export function useAnimation(){
 }
 export const useFigtreeContext={layout:useLayout,tree:useTree};
 
-
+//TODO remove and add this to layout
 export function useScale(){
     return useContext(ScaleContext);
 }

@@ -12,8 +12,10 @@ export const DataContext = React.createContext<{x:number,y:number}[]>([{x:1,y:1}
 export const TreeContext = React.createContext<Tree>( NormalizedTree.fromNewick('(A:1,B:1,(C:1,D:1):1)F;'));
 export const LayoutContext = React.createContext<Vertices>({
     byId: {},
-    allIds: []
+    allIds: [],
+    type: "Rectangular"
 });
-
-export const ScaleContext = React.createContext<{width:number,height:number,maxDivergence:number}>({width:0,height:0,maxDivergence:0})
+export type scaleContextType= {width:number,height:number,maxDivergence:number,maxR?:number,theta?:[number,number]}
+//Do we need this context? We could caclulte it from the tree and we already have that.
+export const ScaleContext = React.createContext<scaleContextType>({width:0,height:0,maxDivergence:0})
 export const AnimationContext = React.createContext<boolean>(false);

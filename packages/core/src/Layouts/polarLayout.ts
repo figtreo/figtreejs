@@ -1,8 +1,9 @@
-import { extent,  mean,  min } from "d3-array";
+import { extent,  maxIndex,  mean,  min } from "d3-array";
 import { scaleLinear } from "d3-scale";
 import { AbstractLayout, ArbitraryVertices, defaultInternalLayoutOptions, internalLayoutOptions,Vertices} from "./LayoutInterface";
 import { RectangularLayout, fishEyeTransform } from "./rectangularLayout";
 import { Tree } from "..";
+
 
 export class PolarLayout extends AbstractLayout {
 
@@ -16,7 +17,7 @@ export class PolarLayout extends AbstractLayout {
         return rectangularVerticies;
     }
 
-    static finalizeArbitraryLayout(arbitraryLayout: ArbitraryVertices, treeStats:{tipCount:number}, opts: internalLayoutOptions):Vertices {
+    static finalizeArbitraryLayout(arbitraryLayout: ArbitraryVertices, treeStats:{tipCount:number,rootId:string}, opts: internalLayoutOptions):Vertices {
         const safeOpts = { ...defaultInternalLayoutOptions, ...opts };
 
         // Do fisheye thing assuming we are using the rectangular layout
@@ -45,7 +46,7 @@ export class PolarLayout extends AbstractLayout {
             .domain(arbitraryLayout.extent.y.map(transform))
             .range([startAngle,endAngle]); // rotated to match figtree orientation
        
-
+        console.log(angleRange)
         const polarVertices = [];
         
         for(const id of arbitraryLayout.allIds){
@@ -80,6 +81,9 @@ export class PolarLayout extends AbstractLayout {
         };
         
 
+        // Once we have the polar coordinates we will convert back to cartesian coordinates
+        // But we need to adjust the aspect ratio to fit the circle
+
         // center (0,0) polartoCartesian(maxRadius,startAngle) is top left of svg
         const extremes = [[0,0],polarToCartesian(maxRadius,startAngle),polarToCartesian(maxRadius,endAngle)]; 
 
@@ -87,6 +91,8 @@ export class PolarLayout extends AbstractLayout {
         //assumes range is <=2pi
         const normlizedStart = normalizeAngle(startAngle);
         const normlizedEnd = normalizeAngle(normlizedStart+angleRange); 
+
+        
 
         if(normlizedEnd>normlizedStart){
             for (const theta of [Math.PI/2,Math.PI,3*Math.PI/2].filter(d=>d>normlizedStart && d<normlizedEnd)){
@@ -133,7 +139,8 @@ export class PolarLayout extends AbstractLayout {
         
         const scaledVertices: Vertices = {
             byId: {},
-            allIds: []
+            allIds: [],
+            type: "Polar",
         };
         for (const vertex of polarVertices) {
             const xpos = x(vertex.x);
@@ -169,35 +176,48 @@ export class PolarLayout extends AbstractLayout {
 
             const [alignedX,alignedY] = polarToCartesian(maxRadius,vertex.theta);
 
+            const scalePathPoints = vertex.pathPoints.map(d=>({...d,x:x(d.x),y:y(d.y)}));
             scaledVertices.byId[vertex.id] = {
                 id: vertex.id,
                 x: xpos,
                 y: ypos,
                 level: vertex.level,
                 r:vertex.r,
-                theta:vertex.theta,
+                theta:normalizedTheta,
                 nodeLabel: {
                     x: xpos+dx,//+vertex.nodeLabel.dx,
                     y: ypos+dy,//+vertex.nodeLabel.dy,
                     alignmentBaseline: "middle",
                     textAnchor: normalizedTheta>Math.PI/2 && normalizedTheta<3*Math.PI/2?"end":"start",
-                    rotation:degrees(vertex.theta),
+                    rotation:textSafeDegrees(vertex.theta),
                     alignedPos:{x:x(alignedX)+dx,y:y(alignedY)+dy}
                 },
                 branch:{
-                    d: this.pathGenerator(vertex.pathPoints.map(d=>({...d,x:x(d.x),y:y(d.y)})), opts),
+                    d: this.pathGenerator(scalePathPoints, opts), //transformes x and y
                     label:{
                         x: vertex.pathPoints.length>0? mean([xpos,x(vertex.pathPoints[2].x)])!+branchDx:xpos, // no path on root sometimes put this at the position  // want mean of step and final point
                         y: vertex.pathPoints.length>0?mean([ypos,y(vertex.pathPoints[2].y)])!+branchDy:ypos,
                         alignmentBaseline: "bottom",
                         textAnchor:"middle",
-                        rotation:degrees(vertex.theta)
+                        rotation:textSafeDegrees(vertex.theta)
 
                     }
                 }
             };
-            scaledVertices.allIds.push(vertex.id);
+            if(vertex.id===treeStats.rootId){
+                if(scalePathPoints.length>0){
+                    scaledVertices.origin = {x:scalePathPoints[0].x,y:scalePathPoints[0].y}
+            }else{
+                scaledVertices.origin = {x:xpos,y:ypos}
+            }
         }
+            scaledVertices.allIds.push(vertex.id);
+
+        }      
+        const furthestNode = scaledVertices.byId[scaledVertices.allIds[maxIndex(scaledVertices.allIds.map(id=>scaledVertices.byId[id].r))]];
+        scaledVertices.axisLength= distance (scaledVertices.origin!, furthestNode)
+
+        scaledVertices.theta = [normlizedStart,normlizedEnd];
         return scaledVertices;
     }
    
@@ -240,18 +260,27 @@ export function polarToCartesian(r:number,theta:number){
 
 function normalizeAngle(theta:number){
     while(theta>2*Math.PI ){
-    theta-=2*Math.PI}
+    theta-=2*Math.PI
+    }
     return theta;
+}
+
+export function degrees(theta:number){
+    return normalizeAngle(theta)*180/Math.PI;
 }
 
 //this function converts radians to degrees and adjusts degrees 
 // so the text is not fliped
-export function degrees(radians:number){
-    const degrees =  normalizeAngle(radians)*180/Math.PI;
+export function textSafeDegrees(radians:number){
+    const d =  degrees(radians)
 
-    if(degrees>90 && degrees<270){
-        return degrees-180;
+    if(d>90 && d<270){
+        return d-180;
     }else{
-        return degrees
+        return d
     }
+}
+
+function distance(point1:{x:number,y:number}, point2:{x:number,y:number}):number{
+    return Math.sqrt((point1.x-point2.x)**2+(point1.y-point2.y)**2)
 }

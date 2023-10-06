@@ -27,6 +27,8 @@ export interface AxisScaleContext {
     width: number;
     height: number;
     maxDivergence: number;
+    maxR?: number;
+    theta?: [number, number];
 }
 export declare const defaultAxisProps: AxisProps;
 export declare const defaultAxisBarsProps: {

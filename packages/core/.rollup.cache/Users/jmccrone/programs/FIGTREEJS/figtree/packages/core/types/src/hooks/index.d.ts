@@ -18,8 +18,4 @@ export declare const useFigtreeContext: {
     layout: typeof useLayout;
     tree: typeof useTree;
 };
-export declare function useScale(): {
-    width: number;
-    height: number;
-    maxDivergence: number;
-};
+export declare function useScale(): import("../Context/context").scaleContextType;

@@ -117,7 +117,7 @@ export class RectangularLayout extends AbstractLayout {
             }
         }
 
-        vertices.extent = { x: [0, maxX], y: [0, maxY] }
+        vertices.extent = { x: [0, maxX], y: [0, currentY-1] }
 
         if (tree.root) {
             const rootVertex = vertices.byId[tree.root.id];
@@ -151,7 +151,8 @@ export class RectangularLayout extends AbstractLayout {
 
         const scaledVertices: Vertices = {
             byId: {},
-            allIds: []
+            allIds: [],
+            type:"Rectangular"
         };
         for (const id of arbitraryLayout.allIds) {
             const vertex = arbitraryLayout.byId[id];
@@ -189,7 +190,7 @@ export class RectangularLayout extends AbstractLayout {
             };
             scaledVertices.allIds.push(vertex.id);
         }
-
+        scaledVertices.axisLength = x.range()[1] - x.range()[0];
         return scaledVertices;
     }
 

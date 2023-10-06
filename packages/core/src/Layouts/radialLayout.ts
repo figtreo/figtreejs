@@ -25,7 +25,7 @@
 import { max, mean } from "d3-array";
 import { scaleLinear } from "d3-scale";
 import { AbstractLayout, ArbitraryVertex, ArbitraryVertices, defaultInternalLayoutOptions, internalLayoutOptions, Vertices } from "./LayoutInterface";
-import { degrees } from "./polarLayout";
+import { textSafeDegrees } from "./polarLayout";
 import { NodeRef, Tree } from "../Tree";
 
 type data = {
@@ -153,7 +153,8 @@ export class RadialLayout extends AbstractLayout {
 
         const scaledVertices: Vertices = {
             byId: {},
-            allIds: []
+            allIds: [],
+            type: "Radial"
         };
         for (const id of arbitraryLayout.allIds) {
             const vertex = arbitraryLayout.byId[id];
@@ -190,7 +191,7 @@ export class RadialLayout extends AbstractLayout {
                     y: ypos+vertex.nodeLabel.dy,
                     alignmentBaseline: vertex.nodeLabel.alignmentBaseline,
                     textAnchor: vertex.nodeLabel.rotation!>Math.PI/2 && vertex.nodeLabel.rotation!<3*Math.PI/2?"end":"start",
-                    rotation:-degrees(vertex.nodeLabel.rotation!),
+                    rotation:-textSafeDegrees(vertex.nodeLabel.rotation!),
                 },
                 branch:{
                 d: this.pathGenerator(vertex.pathPoints.map(d => ({ x: x(d.x), y: y(d.y) })), opts), // scale the points
@@ -199,7 +200,7 @@ export class RadialLayout extends AbstractLayout {
                         y:mean([ypos,y(vertex.pathPoints[0].y)])!+branchDy,
                         alignmentBaseline:vertex.nodeLabel.alignmentBaseline,
                         textAnchor:vertex.nodeLabel.textAnchor,
-                        rotation:-degrees(vertex.nodeLabel.rotation!),
+                        rotation:-textSafeDegrees(vertex.nodeLabel.rotation!),
                     }
             }
             };

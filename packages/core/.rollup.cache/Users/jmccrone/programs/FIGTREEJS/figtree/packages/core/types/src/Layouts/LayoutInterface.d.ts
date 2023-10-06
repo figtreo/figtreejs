@@ -43,10 +43,17 @@ export interface ArbitraryVertex {
     };
 }
 export interface Vertices {
+    type: "Rectangular" | "Polar" | "Radial";
     byId: {
         [id: string]: Vertex;
     };
     allIds: string[];
+    origin?: {
+        x: number;
+        y: number;
+    };
+    theta?: [number, number];
+    axisLength?: number;
 }
 export interface ArbitraryVertices {
     byId: {

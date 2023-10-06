@@ -26,7 +26,7 @@ const initialState: LayoutState = {
     alignTipLabels: false,
     zoom: 0,
     rootAngle: 3.14,
-    angleRange: 2*3.14,
+    angleRange: 2*3.14-0.5,
     showRoot: true,
     spread:0,
     pointOfInterest:undefined,

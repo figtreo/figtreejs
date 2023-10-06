@@ -9,9 +9,12 @@ export declare const DataContext: React.Context<{
 }[]>;
 export declare const TreeContext: React.Context<Tree>;
 export declare const LayoutContext: React.Context<Vertices>;
-export declare const ScaleContext: React.Context<{
+export type scaleContextType = {
     width: number;
     height: number;
     maxDivergence: number;
-}>;
+    maxR?: number;
+    theta?: [number, number];
+};
+export declare const ScaleContext: React.Context<scaleContextType>;
 export declare const AnimationContext: React.Context<boolean>;

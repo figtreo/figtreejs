@@ -14,6 +14,7 @@ describe('layoutSlice',()=>{
         showRoot: false,
         spread: 0,
         pointOfInterest: undefined,
+        animate: false,
     };
     it('should handle initial state', () => {
         expect(layoutReducer(undefined, { type: 'unknown' })).toEqual(initialState)
