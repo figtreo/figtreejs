@@ -18,8 +18,8 @@ interface ShapeState {
 //todo select color for all nodes
 const initialState: ShapeState = {
     shape: "Circle",
-    maxSize: 4,
-    minSize: 4,
+    maxSize: 12,
+    minSize: 12,
     sizeBy: "Fixed",
     colourBy: "Selection",
     colour:"#000000",
