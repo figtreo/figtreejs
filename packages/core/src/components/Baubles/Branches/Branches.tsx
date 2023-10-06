@@ -26,6 +26,7 @@ export default function Branches(props:BranchProps) {
                 if (filter(tree.getNode(id))) {//filter needs to us tree api
                     const v = vertices.byId[id];
                     const d = animated?normalizePath(v.branch!.d):v.branch!.d;
+                    // const d = normalizePath(v.branch!.d);
                     const element = <Branch key={id} {...rest}  node={tree.getNode(v.id)}   vertex={v}   {...shapeProps(v)} d={d}/> 
                     // const element = <ShapeComponent key={v.id} {...rest}  {...shapeProps(v)}   vertex={v}  x={scales.x(v.x)} y={scales.y(v.y)}/> 
                         all.push(element)
