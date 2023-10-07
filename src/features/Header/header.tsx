@@ -21,12 +21,8 @@ export function Header() {
     const header = useAppSelector(selectHeader)
     const tree = new NormalizedTree(useAppSelector(selectTree).tree)
 
-    const optionClasses = header.SelectionRoot ? "tool" : "tool gray"
+    const optionClasses = header.SelectionRoot ? "tool" : "tool deactivated"
 
-    const [customColor,setCustomColor] = useState("blue")// todo make this selectable through options / picker
-    function colorTaxa(colours: { id: string; colour: string; }[]): any {
-        throw new Error("Function not implemented.");
-    }
 
     return (
         <div className="header">
@@ -74,7 +70,10 @@ export function Header() {
                 <p>Annotate</p>
             </div>
             <div className={optionClasses}>
-                <img src={colour} onClick={()=>{
+                <label>
+                <img src={colour} />
+                <input style={{display:"none"}} type='color' onChange={(e)=>{
+                    const customColor=e.target.value;
                      if (header.SelectionRoot) {
                         if (header.SelectionMode === "Node") {
                             dispatch(colorNode({ id: header.SelectionRoot, colour: customColor }))
@@ -95,6 +94,8 @@ export function Header() {
                         }
                     }
                 }}/>
+                </label>
+               
                 <p>Colour</p>
             </div>
             <div className={optionClasses}>

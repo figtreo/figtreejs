@@ -195,7 +195,7 @@ export function Tree({ panelRef }: any) {
   const branchSettings = useAppSelector(selectAppearance)
   const branchColour = branchSettings.colourBy === "User selection" ? (n: NodeRef) => {
 
-    const custom = header.SelectNodeDecorations[n.id] ? header.SelectNodeDecorations[n.id].customColor : branchSettings.colour
+    const custom = header.SelectNodeDecorations[n.id] && header.SelectNodeDecorations[n.id].customColor ? header.SelectNodeDecorations[n.id].customColor : branchSettings.colour
     return custom!
   } : branchSettings.colour;;
 
