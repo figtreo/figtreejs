@@ -3,6 +3,7 @@ import branchLabelRender from "./BranchLabelRender";
 import branchesRender from "./BranchesRender";
 import figtreeRender from "./FigtreeRender";
 import { CircleNodeRender,RectNodeRender,CoalNodeRender,NodeLabelRender } from "./NodeRenders";
+import AxisRender from "./AxisRender";
 
 export const ft ={
     figtree: figtreeRender,
@@ -12,6 +13,7 @@ export const ft ={
     RectNodes:RectNodeRender,
     CoalNodes:CoalNodeRender,
     NodeLabels:NodeLabelRender,
+    Axis:AxisRender,
     rectangularLayout:RectangularLayout,
     polarLayout:PolarLayout,
     radialLayout:RadialLayout

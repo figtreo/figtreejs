@@ -29,7 +29,7 @@ export interface Tree {
     getChildren(node: NodeRef): NodeRef[];
     getAnnotation(node: NodeRef, name: string): any | null;
     getLabel(node: NodeRef): string | null;
-    getAnnotationType(name: string): string | null;
+    getAnnotationType(name: string): string | undefined;
     addNode(): NodeRef;
     removeAllChildren(node: NodeRef): void;
     removeChild(parent: NodeRef, child: NodeRef): void;

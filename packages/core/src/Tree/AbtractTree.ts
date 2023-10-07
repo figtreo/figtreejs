@@ -43,9 +43,9 @@ export abstract class AbstractTree implements Tree {
     abstract getChild(node: NodeRef, index: number): NodeRef
     abstract getParent(node: NodeRef): NodeRef | null
     abstract getChildren(node: NodeRef): NodeRef[]
-    abstract getAnnotation(node: NodeRef, name: string): any | null
+    abstract getAnnotation(node: NodeRef, name: string): any | undefined
     abstract getLabel(node: NodeRef): string | null
-    abstract getAnnotationType(name: string): string
+    abstract getAnnotationType(name: string): string|undefined
     abstract get nodeCount(): number
     abstract get externalNodeCount(): number
     abstract get InternalNodeCount(): number
@@ -277,11 +277,11 @@ export abstract class AbstractTree implements Tree {
         throw new Error(`Annotation ${input.name} has type ${suggestedType} but previously seen as ${annotationType}`)
     }
     
-    protected updateDomain( annotation: { id: string; value: any; }): [number, number] | string[] | number[]|[boolean,boolean]  {
+    protected updateDomain( annotation: { id: string; value: any;type:AnnotationType }): [number, number] | string[] | number[]|[boolean,boolean]  {
         const domain = this.getAnnotationDomain(annotation.id);
-        const type = this.getAnnotationType(annotation.id);
+        // const type = this.getAnnotationType(annotation.id);
         let newDomain = domain;
-        switch (type) {
+        switch (annotation.type) {
             case AnnotationType.CONTINUOUS: {
                 if (domain === undefined) {
                     newDomain = [annotation.value, annotation.value]
@@ -318,7 +318,7 @@ export abstract class AbstractTree implements Tree {
                 break;
             }
             default: {
-                throw new Error(`Unknown annotation type ${type}`)
+                throw new Error(`Unknown annotation type ${annotation.type}`)
             }
     
     

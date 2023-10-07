@@ -159,6 +159,7 @@
             margins,
             animated:true,
             baubles: [
+            ft.Axis({bars:{}}),
             ft.Branches({ attrs: { stroke: "black", strokeWidth: 2 } }),
             ft.NodeLabels({filter:(n)=>tree.isExternal(n), attrs: { fill: "black", fontSize: 12, fontWeight: 300 }, text: (n) => tree.getName(n),aligned:true  }),
             ft.CircleNodes({ attrs: { r: 7, fill: (n) => tree.getChildCount(n) > "#005C68" } }),

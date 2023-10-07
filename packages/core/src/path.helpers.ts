@@ -24,10 +24,7 @@ export function normalizePath(path:string):string{ //TODO this might remove the 
     const parsedPath = parse(path)
     const absPath = abs(parsedPath)
     const normalizedPath = normalize(absPath) // normalized path is [M, x,y ] [C, x1,y1, x2,y2, x,y]....
-    // console.group()
-    // console.log(path)
-    // console.log(normalizedPath)
-    // console.groupEnd()
+
     let newPath = `${normalizedPath[0][0]} ${normalizedPath[0][1]} ${normalizedPath[0][2]} `
     let curves = normalizedPath.filter((d:any[])=>d[0]==="C").map((curve:curveArray)=>{return [new point(curve[1], curve[2]),new point(curve[3], curve[4]),new point(curve[5], curve[6])]})
 
@@ -37,6 +34,7 @@ export function normalizePath(path:string):string{ //TODO this might remove the 
     if(curves.length==0){
         throw new Error('Path must have at least 1 node (excluding start point) update layout or path.helpers' )
     }
+
     while(curves.length<NUMBER_OF_POINTS){
         const toSplit = curves.pop();
         const {left,right} = splitCubicB(toSplit!,0.5);

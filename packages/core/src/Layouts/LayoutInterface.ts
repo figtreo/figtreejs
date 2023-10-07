@@ -76,7 +76,7 @@ export const defaultInternalLayoutOptions = {
     height: 1000,
     rootLength: 0,
     rootAngle: 0,
-    angleRange: 2 * Math.PI,
+    angleRange:( 2 * Math.PI )-0.3,
     tipSpace: (tip1:NodeRef, tip2:NodeRef) => 1,
     curvature: 0,
     showRoot: false,
@@ -85,6 +85,10 @@ export const defaultInternalLayoutOptions = {
     fishEye: 0,
     nodeDecorations:{}
 }
+
+
+
+
 
 export abstract class AbstractLayout {
     static readonly padding = 20;

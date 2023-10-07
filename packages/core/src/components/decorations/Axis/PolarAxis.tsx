@@ -37,6 +37,7 @@ export default function PolarAxis(props: AxisProps) {
 
     const transform =  `translate(${origin.x},${origin.y})` 
 
+
     // update scale to account for changing range 
     //move rotation off bars so we can calculate the angles better
     //TODO fix magic number 0.1 here and in bars

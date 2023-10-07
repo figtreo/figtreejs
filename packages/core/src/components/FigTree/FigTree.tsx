@@ -4,7 +4,7 @@ import { NodeRef } from '../../Tree/Tree.types';
 import { RectangularLayout } from '../../Layouts/rectangularLayout';
 import { FigtreeProps } from './Figtree.types';
 import { NormalizedTree } from '../../Tree/normalizedTree';
-import {Branches, PolarLayout} from '../../index';
+import {Branches, PolarLayout, defaultInternalLayoutOptions} from '../../index';
 import { extent, max } from 'd3-array';
 
 
@@ -15,19 +15,9 @@ import { extent, max } from 'd3-array';
  * It also passes it's scales to it's children props as well as the edges to the branches and the nodes to the nodes.
  */
 //TODO extract these from state to props?
-
+//TODO this is different than defualt 
 export const defaultOpts:FigtreeProps = {
-    opts:{
-        rootAngle:0,
-        rootLength:0,
-        angleRange:2*Math.PI,
-        curvature:0,
-        showRoot:false,
-        spread:0,
-        pointOfInterest:{x:0,y:0},
-        fishEye:0,
-        nodeDecorations:{}
-    },
+    opts:defaultInternalLayoutOptions,
     width:100,
     height:100,
     layout:RectangularLayout,
@@ -57,7 +47,7 @@ function FigTree(props:FigtreeProps){
         pointOfInterest = defaultOpts.opts.pointOfInterest,
         fishEye = defaultOpts.opts.fishEye,
         nodeDecorations = defaultOpts.opts.nodeDecorations,
-    } = props.opts; 
+    } = props.opts; //todo this requires opts to not be undefined even though all the values are optional.
 
     const w = width - margins.left - margins.right;
     const h = height - margins.top - margins.bottom;

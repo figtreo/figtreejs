@@ -164,6 +164,7 @@ export class RectangularLayout extends AbstractLayout {
                 console.log(vertex)
             }
 
+
             scaledVertices.byId[vertex.id] = {
                 id: vertex.id,
                 x: xpos,

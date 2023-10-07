@@ -15,8 +15,11 @@ export default function Axis(props: AxisProps) {
  
     if(type === "Polar"){
         return <PolarAxis {...props}/>
-    }else{
+    }else if (type === "Rectangular"){
         return <RectangularAxis {...props}/>
+    }else{
+        console.warn(`Axis not supported for ${type}`);
+        return null;
     }
     
 }

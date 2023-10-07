@@ -25,9 +25,9 @@ export declare abstract class AbstractTree implements Tree {
     abstract getChild(node: NodeRef, index: number): NodeRef;
     abstract getParent(node: NodeRef): NodeRef | null;
     abstract getChildren(node: NodeRef): NodeRef[];
-    abstract getAnnotation(node: NodeRef, name: string): any | null;
+    abstract getAnnotation(node: NodeRef, name: string): any | undefined;
     abstract getLabel(node: NodeRef): string | null;
-    abstract getAnnotationType(name: string): string;
+    abstract getAnnotationType(name: string): string | undefined;
     abstract get nodeCount(): number;
     abstract get externalNodeCount(): number;
     abstract get InternalNodeCount(): number;
@@ -68,5 +68,6 @@ export declare abstract class AbstractTree implements Tree {
     protected updateDomain(annotation: {
         id: string;
         value: any;
+        type: AnnotationType;
     }): [number, number] | string[] | number[] | [boolean, boolean];
 }

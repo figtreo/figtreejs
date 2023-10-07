@@ -19,7 +19,9 @@ export class PolarLayout extends AbstractLayout {
 
     static finalizeArbitraryLayout(arbitraryLayout: ArbitraryVertices, treeStats:{tipCount:number,rootId:string}, opts: internalLayoutOptions):Vertices {
         const safeOpts = { ...defaultInternalLayoutOptions, ...opts };
-
+        console.log(defaultInternalLayoutOptions)
+        console.log(opts)
+        console.log(safeOpts)
         // Do fisheye thing assuming we are using the rectangular layout
 
         const y_og = scaleLinear()
@@ -177,6 +179,8 @@ export class PolarLayout extends AbstractLayout {
             const [alignedX,alignedY] = polarToCartesian(maxRadius,vertex.theta);
 
             const scalePathPoints = vertex.pathPoints.map(d=>({...d,x:x(d.x),y:y(d.y)}));
+
+
             scaledVertices.byId[vertex.id] = {
                 id: vertex.id,
                 x: xpos,
@@ -192,7 +196,7 @@ export class PolarLayout extends AbstractLayout {
                     rotation:textSafeDegrees(vertex.theta),
                     alignedPos:{x:x(alignedX)+dx,y:y(alignedY)+dy}
                 },
-                branch:{
+                branch:scalePathPoints.length>0?{
                     d: this.pathGenerator(scalePathPoints, opts), //transformes x and y
                     label:{
                         x: vertex.pathPoints.length>0? mean([xpos,x(vertex.pathPoints[2].x)])!+branchDx:xpos, // no path on root sometimes put this at the position  // want mean of step and final point
@@ -200,9 +204,8 @@ export class PolarLayout extends AbstractLayout {
                         alignmentBaseline: "bottom",
                         textAnchor:"middle",
                         rotation:textSafeDegrees(vertex.theta)
-
-                    }
-                }
+                    }}:undefined,
+                
             };
             if(vertex.id===treeStats.rootId){
                 if(scalePathPoints.length>0){

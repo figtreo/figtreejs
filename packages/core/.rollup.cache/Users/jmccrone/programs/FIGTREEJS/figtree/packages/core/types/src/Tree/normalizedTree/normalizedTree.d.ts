@@ -41,7 +41,7 @@ export declare class NormalizedTree extends AbstractTree {
     getChildren(node: NodeRef): NodeRef[];
     getAnnotation(node: NodeRef, name: string): any | undefined;
     getLabel(node: NodeRef): string | null;
-    getAnnotationType(name: string): AnnotationType;
+    getAnnotationType(name: string): AnnotationType | undefined;
     addNode(): NodeRef;
     get nodeCount(): number;
     get externalNodeCount(): number;

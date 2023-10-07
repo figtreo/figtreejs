@@ -31,12 +31,12 @@ export  default function PolarAxisBars(props:AxisBarsProps):JSX.Element {
 
         const startAngle = theta![0]+Math.PI/2 ;
         const endAngle = angleRange+startAngle;
-        console.log(startAngle,endAngle)
 
         
     return(
         <g className={"axisBars"}>
                 {tickValues.reduce((acc:JSX.Element[],curr,i)=>{
+
                     const shape = arc(
                         {
                             innerRadius:scale(tickValues[i]),
@@ -45,6 +45,7 @@ export  default function PolarAxisBars(props:AxisBarsProps):JSX.Element {
                             endAngle:endAngle 
                         }
                     )!
+                    
                     const fill = i%2===0?evenFill:oddFill;
                     acc.push(<path key={i} d={shape} fill={fill} {...attrs} />);
                                  

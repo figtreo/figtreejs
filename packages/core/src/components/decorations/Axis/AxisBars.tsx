@@ -10,8 +10,10 @@ export default function AxisBars(props: AxisBarsProps) {
  
     if(type === "Polar"){
         return <PolarAxisBars {...props}/>
-    }else{
+    }else if(type === "Rectangular"){
         return <RectangularAxisBars {...props}/>
+    }else{
+        return null;
     }
     
 }

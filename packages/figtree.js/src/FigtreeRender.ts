@@ -8,6 +8,7 @@ import { FigTree } from '@figtreejs/core'
 
 //TODO update children to be called Baubles
 export default function figtreeRender(options:FigTreeOptions){
+    
     const svg = options.svg;
     ReactDOM.render(
         React.createElement(FigTree, options,...options.baubles) ,svg)
