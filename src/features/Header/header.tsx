@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import './header.css'
 
 import cartoon from "../../figtreeGraphics/CartoonTool.png"
@@ -11,15 +11,23 @@ import colour from "../../figtreeGraphics/coloursTool.png"
 import find from "../../figtreeGraphics/findTool.png"
 import highlight from "../../figtreeGraphics/HilightTool.png"
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { cartoonNode, collapseNode, selectHeader, setSelectionMode } from "./headerSlice";
-import { rotate, reroot } from "../Tree/treeSlice";
+import { cartoonNode, collapseNode, colorClade, colorNode, selectHeader, setSelectionMode } from "./headerSlice";
+import { rotate, reroot, selectTree } from "../Tree/treeSlice";
+import { NormalizedTree } from "@figtreejs/core";
 export function Header() {
 
     const dispatch = useAppDispatch();
 
     const header = useAppSelector(selectHeader)
+    const tree = new NormalizedTree(useAppSelector(selectTree).tree)
 
     const optionClasses = header.SelectionRoot ? "tool" : "tool gray"
+
+    const [customColor,setCustomColor] = useState("blue")// todo make this selectable through options / picker
+    function colorTaxa(colours: { id: string; colour: string; }[]): any {
+        throw new Error("Function not implemented.");
+    }
+
     return (
         <div className="header">
             <div className={optionClasses}>
@@ -66,7 +74,27 @@ export function Header() {
                 <p>Annotate</p>
             </div>
             <div className={optionClasses}>
-                <img src={colour} />
+                <img src={colour} onClick={()=>{
+                     if (header.SelectionRoot) {
+                        if (header.SelectionMode === "Node") {
+                            dispatch(colorNode({ id: header.SelectionRoot, colour: customColor }))
+
+                        } else if (header.SelectionMode === "Clade") {
+                            const colours = [];
+                            for(const node of tree.getPostorderNodes(tree.getNode(header.SelectionRoot))){
+                                colours.push({id:node.id,colour:customColor})
+                            }
+                            dispatch(colorClade(colours))
+                        } else if (header.SelectionMode ==="Taxa"){
+                            const colours = [];
+                            for(const node of tree.getPostorderNodes(tree.getNode(header.SelectionRoot))){
+                                colours.push({id:node.id,colour:customColor})
+                            }
+
+                            dispatch(colorTaxa(colours))
+                        }
+                    }
+                }}/>
                 <p>Colour</p>
             </div>
             <div className={optionClasses}>

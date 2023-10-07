@@ -54,7 +54,7 @@ export const HeaderSlice = createSlice({
             }
             else{
                 const currentCollapseFactor = state.nodeDecorations[action.payload].collapseFactor;
-                state.nodeDecorations[action.payload].collapseFactor = currentCollapseFactor>0.9?0:currentCollapseFactor+0.25;
+                state.nodeDecorations[action.payload].collapseFactor = currentCollapseFactor!>0.9?0:currentCollapseFactor!+0.25;
             }
         },
         // uncollapseNode:(state,action:PayloadAction<string>)=>{
@@ -67,23 +67,38 @@ export const HeaderSlice = createSlice({
             state.nodeDecorations[action.payload].hilighted = false;
         },
         colorNode:(state,action:PayloadAction<{id:string,colour:string}>)=>{
+            if(!state.nodeDecorations[action.payload.id]){
+                state.nodeDecorations[action.payload.id]={} as NodeDecoration;
+            }
             state.nodeDecorations[action.payload.id].customColor = action.payload.colour;
 
         },
-        colourTaxa:(state,action:PayloadAction<{id:string,colour:string}>)=>{
-            state.nodeDecorations[action.payload.id].taxaCustomColor = action.payload.colour;
-        }
+        colorClade:(state,action:PayloadAction<{id:string,colour:string}[]>)=>{
+            for(const node of action.payload){
+                if(!state.nodeDecorations[node.id]){
+                    state.nodeDecorations[node.id]={} as NodeDecoration;
+                }
+                state.nodeDecorations[node.id].customColor = node.colour
+            }
+        },
+        colourTaxa:(state,action:PayloadAction<{id:string,colour:string}[]>)=>{
+            for(const node of action.payload){
+                if(!state.nodeDecorations[node.id]){
+                    state.nodeDecorations[node.id]={} as NodeDecoration;
+                }
+                state.nodeDecorations[node.id].taxaCustomColor = node.colour
+            }        }
     }
 
 })
 export default HeaderSlice.reducer;
-export const {setSelectionMode,setSelectionRoot,cartoonNode,collapseNode} = HeaderSlice.actions;
+export const {setSelectionMode,setSelectionRoot,cartoonNode,collapseNode,colorNode,colorClade,colourTaxa} = HeaderSlice.actions;
 //Lets 
 export const selectHeader = (state:RootState) => ({
     SelectionMode:state.header.selectionMode,
     SelectionRoot:state.header.selectionRoot,
     SelectNodeDecorations:state.header.nodeDecorations,
-    iscartooned:(id:string)=>state.header.nodeDecorations[id].cartooned,
-    getCustomColor:(id:string)=>state.header.nodeDecorations[id].customColor,
+    getCustomColor:(id:string)=>state.header.nodeDecorations[id]?state.header.nodeDecorations[id].customColor:undefined,
+    getCustomTaxaColor:(id:string)=>state.header.nodeDecorations[id]?state.header.nodeDecorations[id].taxaCustomColor:undefined,
 
 })

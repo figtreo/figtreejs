@@ -11,7 +11,7 @@ export function Appearance() {
         colour
     } = useAppSelector(selectAppearance)
     const attributeTypes = useAppSelector(selectAnnotationTypes);
-    const attributeKeys = Object.keys(attributeTypes).length > 0 ? ["Selection", ...Object.keys(attributeTypes)] : ["No attributes"]
+    const attributeKeys = Object.keys(attributeTypes).length > 0 ? ["User selection", ...Object.keys(attributeTypes)] : ["User selection"]
 
     const options = []
     for (const key of attributeKeys) {

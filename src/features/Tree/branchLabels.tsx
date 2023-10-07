@@ -3,15 +3,19 @@ import { useAppSelector } from "../../app/hooks";
 import { selectLabelState } from "../settings/panels/label/labelSlice";
 import { NormalizedTree, NodeRef, BranchLabels as BL, decimalToDate} from "@figtreejs/core";
 import { timeFormat } from "d3-time-format";
+import { selectHeader } from "../Header/headerSlice";
 
-export function BranchLabels(props: { tree: NormalizedTree, }) {
-    const { tree } = props;
+export function BranchLabels(props:{ tree: NormalizedTree,attrs?:{[key:string]:any} }) {
+    const { tree,attrs={} } = props;
     const settings = useAppSelector(selectLabelState("branch"));
 
-
+    const header = useAppSelector(selectHeader)
     const filter = (n: NodeRef) => true;
 
-
+    attrs.fill =  settings.colourBy==="User Selection"?(n:NodeRef)=>{
+        const custom = header.getCustomTaxaColor(n.id);
+        return custom?custom:settings.colour
+    }:settings.colour;
 
 
     if (settings.activated) {
@@ -36,7 +40,7 @@ export function BranchLabels(props: { tree: NormalizedTree, }) {
         }
         
         return (
-            <BL filter={filter} attrs={{ fontSize: settings.fontSize }}  text={textFunction} /> 
+            <BL filter={filter} attrs={{ fontSize: settings.fontSize,...attrs }}  text={textFunction} /> 
         )
 
     } else {

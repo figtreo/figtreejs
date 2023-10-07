@@ -4,16 +4,20 @@ import { selectLabelState } from "../settings/panels/label/labelSlice";
 import { selectLayout } from "../settings/panels/layout/layoutSlice";
 import { Node } from "./treeSlice";
 import {NormalizedTree, Nodes,NodeRef} from "@figtreejs/core";
+import { selectHeader } from "../Header/headerSlice";
 
-export function NodeLabels(props: { tree: NormalizedTree, }) {
-    const { tree } = props;
+export function NodeLabels(props:{ tree: NormalizedTree,attrs?:{[key:string]:any} }) {
+    const { tree,attrs={} } = props;
     const settings = useAppSelector(selectLabelState("node"));
+    const header = useAppSelector(selectHeader)
 
-    const { alignTipLabels } = useAppSelector(selectLayout)
 
     const filter = (n: Node) => tree.getChildCount(n) > 0;
 
-
+    attrs.fill =  settings.colourBy==="User Selection"?(n:NodeRef)=>{
+        const custom = header.getCustomTaxaColor(n.id);
+        return custom?custom:settings.colour
+    }:settings.colour;
 
 
     if (settings.activated) {
@@ -54,7 +58,7 @@ export function NodeLabels(props: { tree: NormalizedTree, }) {
         }
 
         return (
-            <Nodes.Label filter={filter} attrs={{ fontSize: settings.fontSize }}  text={textFunction} />
+            <Nodes.Label filter={filter} attrs={{ fontSize: settings.fontSize,...attrs }}  text={textFunction} />
         )
 
     } else {

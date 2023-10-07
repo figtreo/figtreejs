@@ -4,16 +4,21 @@ import { selectLabelState } from "../settings/panels/label/labelSlice";
 import { selectLayout } from "../settings/panels/layout/layoutSlice";
 import { NodeRef, NormalizedTree,Nodes } from "@figtreejs/core";
 import { Node } from "./treeSlice";
+import { selectHeader } from "../Header/headerSlice";
 
-export function TipLabels(props: { tree: NormalizedTree,attrs?:any }) {
-    const { tree,attrs } = props;
+export function TipLabels(props: { tree: NormalizedTree,attrs?:{[key:string]:any} }) {
+    const { tree,attrs={} } = props;
     const settings = useAppSelector(selectLabelState("tip"));
+    const header = useAppSelector(selectHeader);
 
     const { alignTipLabels } = useAppSelector(selectLayout)
 
     const filter = (n: Node) => tree.getChildCount(n) === 0;
 
-
+    attrs.fill =  settings.colourBy==="User Selection"?(n:NodeRef)=>{
+        const custom = header.getCustomTaxaColor(n.id);
+        return custom?custom:settings.colour
+    }:settings.colour;
 
 
     if (settings.activated) {

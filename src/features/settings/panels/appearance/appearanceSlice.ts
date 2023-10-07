@@ -13,10 +13,10 @@ export interface AppearanceState {
 //slice function with initial state and reducers using AppearanceState from above 
 
 const initialState:AppearanceState = {
-    colourBy:'No attributes',
+    colourBy:'User selection',
     colourScheme:'set1',
     lineWidth:2,
-    widthBy:'No Attributes',
+    widthBy:'Fixed',
     minWidth:0,
     colour:'#000000',
 }

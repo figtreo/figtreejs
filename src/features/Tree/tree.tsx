@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState, createContext } from 'react';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { selectNodeCount, parseNewick, selectTree } from './treeSlice';
 
-import { selectLineWidth, selectStroke } from '../settings/panels/appearance/appearanceSlice';
+import { selectAppearance, selectLineWidth, selectStroke } from '../settings/panels/appearance/appearanceSlice';
 import { selectLayout, setPointOfInterest } from '../settings/panels/layout/layoutSlice';
 import { Tips } from './tips';
 import { InternalNodes } from './nodes';
@@ -192,9 +192,14 @@ export function Tree({ panelRef }: any) {
   const nodes = useAppSelector(selectNodeCount);
 
   const lineWidth = useAppSelector(selectLineWidth);
-  const branchColour = useAppSelector(selectStroke);
+  const branchSettings = useAppSelector(selectAppearance)
+  const branchColour = branchSettings.colourBy === "User selection" ? (n: NodeRef) => {
 
-  const { expansion, zoom, layout, rootAngle, rootLength, angleRange, showRoot, spread, curvature, fishEye, pointOfInterest,animate } = useAppSelector(selectLayout);
+    const custom = header.SelectNodeDecorations[n.id] ? header.SelectNodeDecorations[n.id].customColor : branchSettings.colour
+    return custom!
+  } : branchSettings.colour;;
+
+  const { expansion, zoom, layout, rootAngle, rootLength, angleRange, showRoot, spread, curvature, fishEye, pointOfInterest, animate } = useAppSelector(selectLayout);
 
   const layoutOpts = {
     rootAngle, rootLength, angleRange, showRoot, spread, curvature, fishEye, pointOfInterest, nodeDecorations: header.SelectNodeDecorations
