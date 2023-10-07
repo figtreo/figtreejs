@@ -32,7 +32,7 @@ function CladeHighlight(props:{attrs:{[key:string]:any},node:NodeRef}){
             lastY=v.y;
 
         }
-        const width = maxX-minX;
+        const width = maxX-minX+5; //padding
         const height = maxY-minY;
 
         return (<rect {...attrs} height={height+2*padding} width={width} x={minX} y={minY-padding} />)
@@ -64,7 +64,7 @@ function CladeHighlight(props:{attrs:{[key:string]:any},node:NodeRef}){
 
         const shape = arc( {
             innerRadius:minR,
-            outerRadius:maxR,
+            outerRadius:maxR+5,
             startAngle: startAngle,
             endAngle: endAngle
         }

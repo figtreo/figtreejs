@@ -68,6 +68,7 @@ export class RectangularLayout extends AbstractLayout {
                             const descendentVertex = vertices.byId[descendent.id];
                             if (descendentVertex.x > maxX) maxX = descendentVertex.x;
                             const y = descendentVertex.y - i * nodeDecorations[node.id].collapseFactor;
+                            descendentVertex.y = y; // update for labeling etc
                             if (y > maxY) maxY = y;
                             if (y < minY) minY = y;
                             i++;
