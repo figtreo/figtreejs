@@ -21,9 +21,7 @@ function NodesHOC(ShapeComponent:React.ComponentType<any>) {
                 {vertices.allIds.sort((a,b)=>(vertices.byId[a].x-vertices.byId[b].x)).reduce<React.ReactNode[]>( (all, id) => {
                     if (filter(tree.getNode(id))) {//filter needs to us tree api
                         const v = vertices.byId[id];
-
-                
-                        const element = <ShapeComponent key={id} {...rest}  node={tree.getNode(v.id)}   x={v.x} y={v.y} {...shapeProps(v)}/> 
+                        const element = <ShapeComponent key={id} {...rest}  node={tree.getNode(v.id)}  theta={v.theta} x={v.x} y={v.y} {...shapeProps(v)}/> 
                         // const element = <ShapeComponent key={v.id} {...rest}  {...shapeProps(v)}   vertex={v}  x={scales.x(v.x)} y={scales.y(v.y)}/> 
                             all.push(element)
                     }

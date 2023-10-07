@@ -2,12 +2,12 @@ import React, {useContext,useMemo} from "react"
 import {sameAttributes} from "./Circle";
 import { a } from "@react-spring/web";
 import { Vertex } from "../../../../Layouts/LayoutInterface";
+import { degrees, textSafeDegrees } from "../../../../Layouts/polarLayout";
 const Rectangle = React.memo<RectangleProps>( (props)=>{
-    const {attrs,interactions,tooltip,x,y,vertex,...rest} = props;
+    const {attrs,interactions,tooltip,x,y,theta,...rest} = props;
     const centeredX = x-attrs.width/2;  
     const centeredY= y-attrs.height/2;
-
-	const rotate = vertex.theta?`rotate(${vertex.theta*180/Math.PI} ${x} ${y})`:"";	
+	const rotate =theta?`rotate(${degrees(theta)} ${x} ${y})`:undefined;	 //todo may textSafeDegrees?
     return (
         <rect {...tooltip}   className={"node-shape"} {...attrs}  {...rest} {...interactions} x={centeredX} y={centeredY} transform={rotate} />
     );
@@ -23,6 +23,7 @@ export interface RectangleProps{
 		stroke:string,
 		[key:string]:any
 	}
+	theta?:number,
 	x:number,
 	y:number,
 	interactions?:any,
