@@ -1,8 +1,9 @@
 import { NodeRef } from "../../../Tree";
-import { useLayout, useTree } from "../../../hooks";
+import { useLayout, useScale, useTree } from "../../../hooks";
 import React from "react";
 import { NodesHOC } from "../../Baubles/Nodes/Nodes";
 import {arc as arcgen} from "d3-shape"
+import { scaleLinear } from "d3-scale";
 const arc = arcgen();
 
 function CladeHighlight(props:{attrs:{[key:string]:any},node:NodeRef}){
@@ -38,7 +39,8 @@ function CladeHighlight(props:{attrs:{[key:string]:any},node:NodeRef}){
         return (<rect {...attrs} height={height+2*padding} width={width} x={minX} y={minY-padding} />)
     }else if(verticies.type==="Polar"){
         const transform =  `translate(${verticies.origin!.x},${verticies.origin!.y})` 
-
+        const scaleContext = useScale();
+        const scaleR = scaleLinear().domain([0,scaleContext.maxR!]).range([0,verticies.axisLength!])
         const minR = tree.getParent(node)? (verticies.byId[node.id].r! +verticies.byId[tree.getParent(node)!.id].r!)/2:0;
         let maxR = -Infinity;
         let maxTheta=-Infinity;
@@ -63,8 +65,8 @@ function CladeHighlight(props:{attrs:{[key:string]:any},node:NodeRef}){
         const endAngle = startAngle+angleRange +(padding*2)
 
         const shape = arc( {
-            innerRadius:minR,
-            outerRadius:maxR+5,
+            innerRadius:scaleR(minR),
+            outerRadius:scaleR(maxR+5),
             startAngle: startAngle,
             endAngle: endAngle
         }
