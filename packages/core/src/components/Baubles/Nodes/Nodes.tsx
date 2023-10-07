@@ -8,8 +8,8 @@ import { AnimatedCircle, Circle } from "./Shapes/Circle";
 import Rectangle from "./Shapes/Rectangle";
 import CoalescentShape from "./Shapes/CoalescentShape";
 
-
-function NodesHOC(ShapeComponent:React.ComponentType<any>) {
+// todo don't expose in index
+export function NodesHOC(ShapeComponent:React.ComponentType<any>) {
     return function Nodes(props:any) {
         const vertices =useLayout();
         const tree = useTree();

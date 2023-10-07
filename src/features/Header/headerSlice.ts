@@ -37,15 +37,15 @@ export const HeaderSlice = createSlice({
             state.selectionMode = action.payload;
         },
         cartoonNode:(state,action:PayloadAction<string>)=>{
-            if(!state.nodeDecorations[action.payload]){ //false and undefined
-                state.nodeDecorations[action.payload] = {cartooned:true,collapseFactor:0,hilighted:false,customColor:undefined,taxaCustomColor:undefined};
+            if(!state.nodeDecorations[action.payload]){ //TODO unify this and the below line that casts the empty object
+                state.nodeDecorations[action.payload] = {cartooned:true,collapseFactor:0,hilighted:undefined,customColor:undefined,taxaCustomColor:undefined};
             }else{
                 state.nodeDecorations[action.payload].cartooned =  !state.nodeDecorations[action.payload].cartooned;
             }
         },      
         collapseNode:(state,action:PayloadAction<string>)=>{
             if(!state.nodeDecorations[action.payload]){
-                state.nodeDecorations[action.payload] = {cartooned:true,collapseFactor:0.25,hilighted:false,customColor:undefined,taxaCustomColor:undefined};
+                state.nodeDecorations[action.payload] = {cartooned:true,collapseFactor:0.25,hilighted:undefined,customColor:undefined,taxaCustomColor:undefined};
             }else if(!state.nodeDecorations[action.payload].cartooned){
                 state.nodeDecorations[action.payload].cartooned = true;
                 state.nodeDecorations[action.payload].collapseFactor = 0.25;
@@ -58,11 +58,11 @@ export const HeaderSlice = createSlice({
         // uncollapseNode:(state,action:PayloadAction<string>)=>{
         //     state.nodeDecorations[action.payload].collapsed = false;
         // },        
-        hiLightNode:(state,action:PayloadAction<string>)=>{
-            state.nodeDecorations[action.payload].hilighted = true;
-        },
-        unhightNode:(state,action:PayloadAction<string>)=>{
-            state.nodeDecorations[action.payload].hilighted = false;
+        hiLightNode:(state,action:PayloadAction<{id:string,colour:string}>)=>{
+            if(!state.nodeDecorations[action.payload.id]){
+                state.nodeDecorations[action.payload.id]={} as NodeDecoration;
+            }
+            state.nodeDecorations[action.payload.id].hilighted = action.payload.colour;
         },
         colorNode:(state,action:PayloadAction<{id:string,colour:string}>)=>{
             if(!state.nodeDecorations[action.payload.id]){
@@ -90,7 +90,7 @@ export const HeaderSlice = createSlice({
 
 })
 export default HeaderSlice.reducer;
-export const {setSelectionMode,setSelectionRoot,cartoonNode,collapseNode,colorNode,colorClade,colourTaxa} = HeaderSlice.actions;
+export const {setSelectionMode,setSelectionRoot,cartoonNode,collapseNode,colorNode,colorClade,colourTaxa,hiLightNode} = HeaderSlice.actions;
 //Lets 
 export const selectHeader = (state:RootState) => ({
     SelectionMode:state.header.selectionMode,

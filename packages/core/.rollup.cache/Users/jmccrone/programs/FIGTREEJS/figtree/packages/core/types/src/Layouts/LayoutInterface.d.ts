@@ -72,7 +72,7 @@ export interface internalLayoutOptions extends layoutOptions {
 export interface NodeDecoration {
     cartooned: boolean;
     collapseFactor: number;
-    hilighted: boolean;
+    hilighted: string | undefined;
     customColor: string | undefined;
     taxaCustomColor: string | undefined;
 }

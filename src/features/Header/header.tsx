@@ -11,7 +11,7 @@ import colour from "../../figtreeGraphics/coloursTool.png"
 import find from "../../figtreeGraphics/findTool.png"
 import highlight from "../../figtreeGraphics/HilightTool.png"
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { cartoonNode, collapseNode, colorClade, colorNode, colourTaxa, selectHeader, setSelectionMode } from "./headerSlice";
+import { cartoonNode, collapseNode, colorClade, colorNode, colourTaxa, hiLightNode, selectHeader, setSelectionMode } from "./headerSlice";
 import { rotate, reroot, selectTree } from "../Tree/treeSlice";
 import { NormalizedTree } from "@figtreejs/core";
 export function Header() {
@@ -99,7 +99,18 @@ export function Header() {
                 <p>Colour</p>
             </div>
             <div className={optionClasses}>
+                
+            <label>
                 <img src={highlight} />
+                <input style={{display:"none"}} type='color' onChange={(e)=>{
+                    const customColor=e.target.value;
+                     if (header.SelectionRoot) {
+                        if (header.SelectionMode === "Node" || header.SelectionMode==="Clade") {
+                            dispatch(hiLightNode({ id: header.SelectionRoot, colour: customColor }))
+                        } 
+                    }
+                }}/>
+                </label>  
                 <p>Highlight</p>
             </div>
             <div className="tool">
