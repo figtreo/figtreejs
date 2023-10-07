@@ -15,6 +15,8 @@ export interface Vertex {
     id: string;
     x: number;
     y: number;
+    hidden: boolean | undefined;
+    labelHidden: boolean | undefined;
     level: number;
     branch?: {
         d: string;
@@ -25,6 +27,8 @@ export interface Vertex {
     nodeLabel: Label;
 }
 export interface ArbitraryVertex {
+    hidden: boolean;
+    labelHidden: boolean;
     id: string;
     x: number;
     y: number;

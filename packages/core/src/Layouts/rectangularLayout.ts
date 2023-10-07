@@ -39,6 +39,8 @@ export class RectangularLayout extends AbstractLayout {
 
 
                 vertices.byId[node.id] = {
+                    hidden:false,
+                    labelHidden:false,
                     x,
                     y,
                     level: tree.getLevel(node), //max(children, (child: ArbitraryVertex) => child.level)! + 1,
@@ -70,7 +72,8 @@ export class RectangularLayout extends AbstractLayout {
                             if (y < minY) minY = y;
                             i++;
                         }
-                        delete vertices.byId[descendent.id];
+                        vertices.byId[descendent.id].hidden=true;
+                        vertices.byId[descendent.id].labelHidden= nodeDecorations[node.id].collapseFactor===0;
                     }
 
                     const newy = (maxY + minY) / 2;
@@ -93,6 +96,8 @@ export class RectangularLayout extends AbstractLayout {
                 const x = tree.getDivergence(node)! + adjustedRootLength
                 const y = currentY;
                 vertices.byId[node.id] = {
+                    hidden:false,
+                    labelHidden:false,
                     x,
                     y,
                     id: node.id,
@@ -170,6 +175,8 @@ export class RectangularLayout extends AbstractLayout {
                 x: xpos,
                 y: ypos,
                 level: vertex.level,
+                hidden:vertex.hidden,
+                labelHidden:vertex.labelHidden,
                 nodeLabel: {
                     x: xpos + vertex.nodeLabel.dx,
                     y: ypos + vertex.nodeLabel.dy,
@@ -178,7 +185,7 @@ export class RectangularLayout extends AbstractLayout {
                     rotation: 0,
                     alignedPos: { x: x.range()[1] + 24, y: ypos + vertex.nodeLabel.dy }
                 },
-                branch: vertex.pathPoints.length > 0 ? {
+                branch: vertex.pathPoints.length > 1 ? {
                     d: this.pathGenerator(vertex.pathPoints.map(d => ({ x: x(d.x), y: y(transform(d.y)) })), safeOpts),
                     label: {
                         x: mean([xpos, x(vertex.pathPoints[1].x)])!, //parent is at the end of the array

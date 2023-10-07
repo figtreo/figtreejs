@@ -58,11 +58,12 @@ export class PolarLayout extends AbstractLayout {
             const [x,y] = polarToCartesian(r,theta);// convert back to cartesian for x and y (will need to be scaled for svg coordinates)
             const level = vertex.level;
 
+            console.log(vertex)
             //this ends up converting points that have been converted previously. maybe just pass 
             // parent id as source and fetch when needed?
             let pathPoints:{x:number,y:number,r:number,theta:number}[] = [];
             // ingores root which might have an empty path;
-            if(vertex.pathPoints.length>0){
+            if(vertex.pathPoints.length>0 && !vertex.hidden){ 
             const [tip,parent] = vertex.pathPoints.slice(-2);
 
             const stepPointR = rScale(parent.x);
@@ -179,9 +180,11 @@ export class PolarLayout extends AbstractLayout {
             const [alignedX,alignedY] = polarToCartesian(maxRadius,vertex.theta);
 
             const scalePathPoints = vertex.pathPoints.map(d=>({...d,x:x(d.x),y:y(d.y)}));
-
+            console.log(vertex,scalePathPoints)
 
             scaledVertices.byId[vertex.id] = {
+                hidden:arbitraryLayout.byId[vertex.id].hidden,
+                labelHidden:arbitraryLayout.byId[vertex.id].labelHidden,
                 id: vertex.id,
                 x: xpos,
                 y: ypos,
@@ -196,7 +199,7 @@ export class PolarLayout extends AbstractLayout {
                     rotation:textSafeDegrees(vertex.theta),
                     alignedPos:{x:x(alignedX)+dx,y:y(alignedY)+dy}
                 },
-                branch:scalePathPoints.length>0?{
+                branch:scalePathPoints.length>0 && ! arbitraryLayout.byId[vertex.id].hidden?{
                     d: this.pathGenerator(scalePathPoints, opts), //transformes x and y
                     label:{
                         x: vertex.pathPoints.length>0? mean([xpos,x(vertex.pathPoints[2].x)])!+branchDx:xpos, // no path on root sometimes put this at the position  // want mean of step and final point

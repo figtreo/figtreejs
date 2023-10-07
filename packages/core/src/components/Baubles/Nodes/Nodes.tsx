@@ -18,7 +18,7 @@ export function NodesHOC(ShapeComponent:React.ComponentType<any>) {
         const shapeProps = useAttributeMappers(props);
         return (
             <g className={"node-layer"}>
-                {vertices.allIds.sort((a,b)=>(vertices.byId[a].x-vertices.byId[b].x)).reduce<React.ReactNode[]>( (all, id) => {
+                {vertices.allIds.filter(a=>!vertices.byId[a].hidden).sort((a,b)=>(vertices.byId[a].x-vertices.byId[b].x)).reduce<React.ReactNode[]>( (all, id) => {
                     if (filter(tree.getNode(id))) {//filter needs to us tree api
                         const v = vertices.byId[id];
                         const element = <ShapeComponent key={id} {...rest}  node={tree.getNode(v.id)}  theta={v.theta} x={v.x} y={v.y} {...shapeProps(v)}/> 
@@ -42,7 +42,7 @@ function NodeLabels(props:any){
     const shapeProps = useAttributeMappers(props);
     return (
         <g className={"node-label-layer"}>
-            {vertices.allIds.sort((a,b)=>(vertices.byId[a].x-vertices.byId[b].x)).reduce<React.ReactNode[]>( (all, id) => {
+            {vertices.allIds.filter(a=>!vertices.byId[a].hidden).sort((a,b)=>(vertices.byId[a].x-vertices.byId[b].x)).reduce<React.ReactNode[]>( (all, id) => {
                 if (filter(tree.getNode(id))) {//filter needs to us tree api
                     const v = vertices.byId[id];
                     const {alignmentBaseline,textAnchor,rotation} = v.nodeLabel;
