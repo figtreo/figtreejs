@@ -11,7 +11,7 @@ import colour from "../../figtreeGraphics/coloursTool.png"
 import find from "../../figtreeGraphics/findTool.png"
 import highlight from "../../figtreeGraphics/HilightTool.png"
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { cartoonNode, collapseNode, colorClade, colorNode, selectHeader, setSelectionMode } from "./headerSlice";
+import { cartoonNode, collapseNode, colorClade, colorNode, colourTaxa, selectHeader, setSelectionMode } from "./headerSlice";
 import { rotate, reroot, selectTree } from "../Tree/treeSlice";
 import { NormalizedTree } from "@figtreejs/core";
 export function Header() {
@@ -87,11 +87,11 @@ export function Header() {
                             dispatch(colorClade(colours))
                         } else if (header.SelectionMode ==="Taxa"){
                             const colours = [];
-                            for(const node of tree.getPostorderNodes(tree.getNode(header.SelectionRoot))){
+                            for(const node of tree.getTips(tree.getNode(header.SelectionRoot))){
                                 colours.push({id:node.id,colour:customColor})
                             }
 
-                            dispatch(colorTaxa(colours))
+                            dispatch(colourTaxa(colours))
                         }
                     }
                 }}/>

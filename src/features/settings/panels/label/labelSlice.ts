@@ -16,7 +16,7 @@ export type labelTarget = "node" | "tip" | "branch"
 
 const initialState: LabelState = {
     display: "No Attributes",
-    colourBy: "User Selection",
+    colourBy: "User selection",
     fontSize: 12,
     format: "Decimal",
     sigDigs: 2,
@@ -26,23 +26,23 @@ const initialState: LabelState = {
 const initialStates:{[key:string]:LabelState} = {
     tip:{
         display: "Name",
-        colourBy: "User Selection",
+        colourBy: "User selection",
         fontSize: 12,
         format: "Decimal",
         sigDigs: 2,
         activated:true
     },
     node:{
-        display: "Branch Lengths",
-        colourBy: "User Selection",
+        display: "Branch lengths",
+        colourBy: "User selection",
         fontSize: 12,
         format: "Decimal",
         sigDigs: 2,
         activated:false
     },
     branch:{
-        display: "Branch Lengths",
-        colourBy: "User Selection",
+        display: "Branch lengths",
+        colourBy: "User selection",
         fontSize: 12,
         format: "Decimal",
         sigDigs: 2,

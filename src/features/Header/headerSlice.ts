@@ -1,8 +1,6 @@
 import { RootState } from '../../app/store';
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
-import counterSlice from '../counter/counterSlice';
 import { NodeDecoration } from '@figtreejs/core';
-import { stackOffsetNone } from 'd3-shape';
 //TODO tree list or count to include multiple trees
 
 
@@ -98,7 +96,5 @@ export const selectHeader = (state:RootState) => ({
     SelectionMode:state.header.selectionMode,
     SelectionRoot:state.header.selectionRoot,
     SelectNodeDecorations:state.header.nodeDecorations,
-    getCustomColor:(id:string)=>state.header.nodeDecorations[id]?state.header.nodeDecorations[id].customColor:undefined,
-    getCustomTaxaColor:(id:string)=>state.header.nodeDecorations[id]?state.header.nodeDecorations[id].taxaCustomColor:undefined,
 
 })

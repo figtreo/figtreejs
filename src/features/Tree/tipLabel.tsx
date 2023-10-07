@@ -15,11 +15,11 @@ export function TipLabels(props: { tree: NormalizedTree,attrs?:{[key:string]:any
 
     const filter = (n: Node) => tree.getChildCount(n) === 0;
 
-    attrs.fill =  settings.colourBy==="User Selection"?(n:NodeRef)=>{
-        const custom = header.getCustomTaxaColor(n.id);
-        return custom?custom:settings.colour
-    }:settings.colour;
-
+    attrs.fill =  settings.colourBy === "User selection" ?
+    (n: NodeRef) => {
+        const custom = header.SelectNodeDecorations[n.id] ? header.SelectNodeDecorations[n.id].taxaCustomColor : settings.colour
+        return custom!
+    } : settings.colour;
 
     if (settings.activated) {
 
@@ -51,7 +51,7 @@ export function TipLabels(props: { tree: NormalizedTree,attrs?:{[key:string]:any
             case "Node Heights":
                 textFunction = (node: NodeRef) => numericalFormater(tree.getHeight(node));
                 break;
-            case "Branch Lengths":
+            case "Branch lengths":
                 textFunction = (node: NodeRef) => numericalFormater(tree.getLength(node));
                 break
             default:

@@ -12,10 +12,11 @@ export function InternalNodes(props: { tree: NormalizedTree }) {
 
     // check if sizing by an attribute or by a constant
     const radius = settings.maxSize / 2;
-    const fill = settings.colourBy === "User Selection" ? (n: NodeRef) => {
-        const custom = header.getCustomColor(n.id);
-        return custom ? custom : settings.colour
-    } : settings.colour;
+    const fill = settings.colourBy === "User selection" ?
+        (n: NodeRef) => {
+            const custom = header.SelectNodeDecorations[n.id] ? header.SelectNodeDecorations[n.id].customColor : settings.colour
+            return custom!
+        } : settings.colour;
     const stroke = settings.outlineColour;;
     const strokeWidth = settings.outlineWidth;
 

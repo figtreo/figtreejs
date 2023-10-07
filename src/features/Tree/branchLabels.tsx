@@ -32,7 +32,7 @@ export function BranchLabels(props:{ tree: NormalizedTree,attrs?:{[key:string]:a
             case "Node Heights":
                 textFunction = (node: NodeRef) => numericalFormatter(tree.getHeight(node));
                 break;
-            case "Branch Lengths":
+            case "Branch lengths":
                 textFunction = (node: NodeRef) => numericalFormatter(tree.getLength(node));
                 break
             default:

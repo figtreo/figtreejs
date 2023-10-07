@@ -13,7 +13,7 @@ export function BaseShapes(props: { target: shapeTarget, }) {
     //duplicate code
     const attributeTypes = useAppSelector(selectAnnotationTypes);
     //TODO add defaults like height/length/ etc.
-    const attributeKeys = Object.keys(attributeTypes).length > 0 ? ["Selection", ...Object.keys(attributeTypes)] : ["No attributes"]
+    const attributeKeys = Object.keys(attributeTypes).length > 0 ? ["Fixed","User selection", ...Object.keys(attributeTypes)] : ["Fixed","User selection"]
 
     const options = []
     for (const key of attributeKeys) {

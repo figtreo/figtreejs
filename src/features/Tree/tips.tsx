@@ -1,6 +1,6 @@
 import { useAppSelector } from "../../app/hooks";
 import { selectShapeState } from "../settings/panels/shapes/shapeSlice";
-import { NormalizedTree, Nodes, NodeRef} from "@figtreejs/core";
+import { NormalizedTree, Nodes, NodeRef } from "@figtreejs/core";
 import { Node } from "./treeSlice";
 import { selectHeader } from "../Header/headerSlice";
 
@@ -14,15 +14,17 @@ export function Tips(props: { tree: NormalizedTree }) {
 
     // check if sizing by an attribute or by a constant
     const radius = settings.maxSize / 2;
-    const fill = settings.colourBy==="User Selection"?(n:NodeRef)=>{
-        const custom = header.getCustomColor(n.id);
-        return custom?custom:settings.colour
-    }:settings.colour; //todo add scale
+    const fill = settings.colourBy === "User selection" ?
+        (n: NodeRef) => {
+            const custom = header.SelectNodeDecorations[n.id] ? header.SelectNodeDecorations[n.id].customColor : settings.colour
+            return custom!
+        } : settings.colour;
+
     const stroke = settings.outlineColour;;
     const strokeWidth = settings.outlineWidth;
 
-    
-    if(settings.activated){
+
+    if (settings.activated) {
         if (settings.shape === "Circle") {
             return (
                 <Nodes.Circle filter={filter} attrs={{ r: radius, fill, stroke, strokeWidth }} />
@@ -33,13 +35,13 @@ export function Tips(props: { tree: NormalizedTree }) {
                 <Nodes.Rectangle filter={filter} attrs={{ width: settings.maxSize, height: settings.maxSize, fill, stroke, strokeWidth }} />
             )
         }
-        else{
+        else {
             throw new Error("Invalid tip shape")
         }
-    }else{
+    } else {
         return <g></g>;
     }
-    
+
 
 
 }

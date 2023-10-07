@@ -21,7 +21,7 @@ const initialState: ShapeState = {
     maxSize: 12,
     minSize: 12,
     sizeBy: "Fixed",
-    colourBy: "user Selection",
+    colourBy: "User selection",
     colour:"#000000",
     outlineWidth: 0,
     outlineColour: "#000000",
