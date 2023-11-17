@@ -85,6 +85,8 @@ export class RadialLayout extends AbstractLayout {
             vertices.byId[node.id] = {
                 x,
                 y,
+                labelHidden:false, // TODO make radial decorations
+                hidden:false,
                 id: node.id, level,
                 theta: branchAngle,
                 pathPoints: [{ x: xpos, y: ypos },{ x, y }],
@@ -184,6 +186,8 @@ export class RadialLayout extends AbstractLayout {
                 id: vertex.id,
                 x: x(vertex.x),
                 y: y(vertex.y),
+                labelHidden:vertex.labelHidden,
+                hidden:vertex.hidden,
                 level: vertex.level,
                 theta: vertex.theta,
                 nodeLabel: {

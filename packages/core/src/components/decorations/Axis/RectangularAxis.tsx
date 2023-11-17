@@ -110,16 +110,24 @@ function makeAxisScale(props: any, { width, height, maxDivergence }: AxisScaleCo
 
     const axisScale = (scale === undefined ? (direction === "horizontal" ? scaleLinear().domain([0, maxDivergence]).range([0, width]) : scaleLinear().domain([0, maxDivergence]).range([0, height])) : scale).copy();
     if (scale === undefined) {
+        // behaviour if not reversed 0 is at root and scale increases
+        // if reversed 0 at tips and scale still increases left to right
+       
+
+        const domain = axisScale.domain().map((d: number,i:number) => (d + offsetBy)) // shifts by offset.
+        const span = (domain[1]-domain[0])*scaleBy;
+        const newDomain = [domain[0],domain[0]+span]
+            
+        axisScale.domain(newDomain);
+        
         if (reverse) {
             const newMax = axisScale.domain()[0];
-            const newMin = axisScale.domain()[0]-axisScale.domain()[1];
+            const newMin = axisScale.domain()[0]-span;
             axisScale.domain([newMin,newMax]);
         }
-        if (offsetBy !== 0 || scaleBy !== 1) {
-            const domain = axisScale.domain().map((d: number) => (d + offsetBy) * scaleBy)
-            axisScale.domain(domain);
-        }
     }
+
+
     return axisScale.nice();
 
 }

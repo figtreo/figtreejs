@@ -1,6 +1,5 @@
 import React, {useContext,useMemo} from "react"
 import {sameAttributes} from "./Circle";
-import { a } from "@react-spring/web";
 import { Vertex } from "../../../../Layouts/LayoutInterface";
 import { degrees, textSafeDegrees } from "../../../../Layouts/polarLayout";
 const Rectangle = React.memo<RectangleProps>( (props)=>{
