@@ -244,7 +244,10 @@ export function Tree({ panelRef }: any) {
   }
     , [width, height, panelRef])
 
-  useEffect(() => {
+  
+  
+  
+   useEffect(() => {
     let panel: any;
     if (panelRef.current) {
       panelRef.current.addEventListener('scroll', handleScroll)
@@ -253,13 +256,17 @@ export function Tree({ panelRef }: any) {
     return () => { panel.removeEventListener('scroll', handleScroll) }
   })
 
+
+
   useEffect(() => {
 
     if (panelRef.current) { // set scroll to middle of svg when left and top is 0.5
       panelRef.current.scrollLeft = (width - panelRef.current.getBoundingClientRect().width) * scrolled.left; //if changed set to scrollLeft/(panelRef.current.getBoundingClientRect().width)
       panelRef.current.scrollTop = (height - panelRef.current.getBoundingClientRect().height) * scrolled.top;
     }
-  })
+  },[width,height])
+
+
 
   const handlePointOfInterest = useCallback((e: any) => {
     if (svgRef.current !== null && e.metaKey) {
