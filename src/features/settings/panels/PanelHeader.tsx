@@ -1,6 +1,5 @@
-import './panelHeader.css'
+import './panel.css'
 import { ReactNode, useState } from 'react'
-import './panelHeader.css'
 
 //modeled after react-collapsible 
 
