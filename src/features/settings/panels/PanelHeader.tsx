@@ -1,9 +1,6 @@
 import './panelHeader.css'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPlay } from '@fortawesome/free-solid-svg-icons'
 import { ReactNode, useState } from 'react'
 import './panelHeader.css'
-import { version } from 'punycode'
 
 //modeled after react-collapsible 
 
@@ -35,7 +32,7 @@ export function SettingPanel(props: {
                     </div>
                     : ""}
                 <div className="PanelTitle__title"  >
-                    {props.title}
+                   {props.title}
                 </div>
             </div>
             </div>

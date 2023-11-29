@@ -1,6 +1,7 @@
 .PanelHeader {
     border-bottom: 1px solid #a2aec0;
-    background: #c0cbd8;
+    /* background: #c0cbd8; */
+    background-image: linear-gradient(to bottom, #D0D8E2,#BCC8D5);
     display:flex;
     gap: 0px    ;
     align-items: center;
@@ -13,7 +14,7 @@
 }
 
 .PanelHeader .opener{ /* This is the triangle */
-    --a: 15px;
+    --a: 10px;
 
     border-bottom: calc(0.866 * var(--a)) solid #6E737B;
     border-left: calc(var(--a) / 2) solid transparent;
@@ -38,6 +39,8 @@
 }
 .PanelTitle__title{
     display: inline-block;
+    font-weight: 300;
+    font-size: 16px;
 }
 
 .Panel__content{
