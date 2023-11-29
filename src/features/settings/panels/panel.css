@@ -31,6 +31,7 @@
 .PanelTitle{ /* This is the title container and may hold the check box 8*/
     flex:1 1;
     
+    
 }
 .PanelTitle__checkbox{
     display: inline-block;
@@ -60,11 +61,17 @@ input{
     margin-top: 5px;
     margin-bottom: 5px;
 }
+/***** number input styles *****/
+input[type="number"] {
+    margin-right: 10px;
+    margin-left: 5px;
+    width: 50px;
+}
 /********** Checkbox Styles **********/
 
 input[type="checkbox"] {
     margin-right: 10px;
-    margin-left: 10px;
+    margin-left: 5px;
 }
 /********** Range Input Styles **********/
 
@@ -74,7 +81,7 @@ input[type="checkbox"] {
     -webkit-appearance: none;
     appearance: none;
     background: transparent;
-    width: 15rem;
+    width: 50px;
 }
 
 

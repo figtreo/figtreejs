@@ -2,11 +2,11 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { Settings } from "./settings";
 import './settings.css';
 //https://codesandbox.io/s/react-resizable-sidebar-kz9de?file=/src/App.js:0-1430
-const minWidth = 200;
+const minWidth = 250
 export function SideBar() {
     const sidebarRef = useRef<HTMLInputElement>(null);
     const [isResizing, setIsResizing] = useState(false);
-    const [sidebarWidth, setSidebarWidth] = useState(268);
+    const [sidebarWidth, setSidebarWidth] = useState(250);
 
     const startResizing = useCallback((mouseDownEvent: any) => {
         setIsResizing(true);
@@ -43,18 +43,14 @@ export function SideBar() {
     // {/* <span className="dot"></span> */}
     //     </div>
     return (
-        <div className="sidebar">
+        <div className="sidebar" ref={sidebarRef}
+        style={{ width: sidebarWidth }}>
 
-            <div
-                ref={sidebarRef}
-                style={{ width: sidebarWidth }}
-
-            >
+            
                 <div className="sidebar-content">
                     <Settings />
                 </div>
 
-            </div>
             <div className="sidebar-spacer" />
 
             <div className="sidebar-resizer" onMouseDown={startResizing}>
