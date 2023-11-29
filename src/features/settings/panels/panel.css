@@ -1,0 +1,149 @@
+.PanelHeader {
+    border-bottom: 1px solid #a2aec0;
+    /* background: #c0cbd8; */
+    background-image: linear-gradient(to bottom, #D0D8E2,#BCC8D5);
+    display:flex;
+    gap: 0px    ;
+    align-items: center;
+    padding:5px /* this pads the internal elements off the border a bit */
+}
+
+.PanelHeader .openerContainer{
+    width:25px; /* This determines the space between the triangle and the title */
+    flex:0 1 auto;
+}
+
+.PanelHeader .opener{ /* This is the triangle */
+    --a: 10px;
+
+    border-bottom: calc(0.866 * var(--a)) solid #6E737B;
+    border-left: calc(var(--a) / 2) solid transparent;
+    border-right: calc(var(--a) / 2) solid transparent;
+    border-top: 0;
+    height: 0;
+    width: 0;
+    rotate: 90deg;
+}
+.PanelHeader .opener.open{ /* this is triangle when open */
+    rotate: 180deg;
+}
+
+.PanelTitle{ /* This is the title container and may hold the check box 8*/
+    flex:1 1;
+    
+    
+}
+.PanelTitle__checkbox{
+    display: inline-block;
+    margin-right:5px;  /* This is the space between the check box and the title */     
+    /* margin-left:5px; */
+}
+.PanelTitle__title{
+    display: inline-block;
+    font-weight: 300;
+    font-size: 16px;
+}
+
+.Panel__content{
+    margin-left:10px;
+    font-weight: 300;
+}
+/********** Label Styles **********/
+label{
+    display: inline-block;
+    margin-right: 10px;
+    font-weight: 400;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    font-size: 12px;
+}
+input{
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+/***** number input styles *****/
+input[type="number"] {
+    margin-right: 10px;
+    margin-left: 5px;
+    width: 50px;
+}
+/********** Checkbox Styles **********/
+
+input[type="checkbox"] {
+    margin-right: 10px;
+    margin-left: 5px;
+}
+/********** Range Input Styles **********/
+
+.Panel__content input[type="range"] {
+    margin-right: 50px;
+    margin-left: 10px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    width: 50px;
+}
+
+
+/* Removes default focus */
+input[type="range"]:focus {
+  outline: none;
+}
+
+/***** Chrome, Safari, Opera and Edge Chromium styles *****/
+/* slider track */
+input[type="range"]::-webkit-slider-runnable-track {
+   background-color: #bbc1c8;
+   border-radius: 0.5rem;
+   height: 3px;
+  
+}
+
+/* slider thumb */
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; /* Override default look */
+   appearance: none;
+   margin-top: -5px; /* Centers thumb on the track */
+
+   /*custom styles*/
+   background-color: #ffffff;
+   height: 12px;
+   width: 12px;
+   border-radius:7px;
+   border: 1px solid #bbc1c8;
+}
+
+input[type="range"]:focus::-webkit-slider-thumb {   
+  border: 1px solid #bbc1c8;
+  /* outline: 3px solid #bbc1c8; */
+  /* outline-offset: 0.125rem;  */
+  background-color: #f2f2f2
+}
+
+/******** Firefox styles ********/
+/* slider track */
+input[type="range"]::-moz-range-track {
+    background-color: #bbc1c8;
+    border-radius: 0.5rem;
+    height: 3px;
+}
+
+/* slider thumb */
+input[type="range"]::-moz-range-thumb {
+   border: none; /*Removes extra border that FF applies*/
+   border-radius: 7px; 
+
+   /*custom styles*/
+   background-color: #ffffff;
+   height: 12px;
+   width: 12px;
+   border-radius:7px;
+   border: 1px solid #bbc1c8;
+}
+
+input[type="range"]:focus::-moz-range-thumb {
+    border: 1px solid #bbc1c8;
+    /* outline: 3px solid #bbc1c8; */
+    /* outline-offset: 0.125rem;  */
+    background-color: #f2f2f2
+}
