@@ -12,12 +12,12 @@ import { Branch } from "./Branch";
 export default function Branches(props:BranchProps) {
 
     const  {filter= (n:NodeRef) => true, 
-    attrs= { stroke: "black", strokeWidth: 2 },
+    attrs= { stroke: "black", strokeWidth: 2 },interactions,
     ...rest} = props;
     const animated = useAnimation();
     const vertices =useLayout();
     const tree = useTree();
-    const shapeProps = useAttributeMappers({attrs}); //TODO no obvious why in an object
+    const shapeProps = useAttributeMappers({attrs,interactions}); //TODO no obvious why in an object
     return (
         <g className={"branch-layer"}>
             {vertices.allIds.filter(a=>!vertices.byId[a].hidden).sort((a,b)=>(vertices.byId[a].x-vertices.byId[b].x)).filter((vid:string)=>vertices.byId[vid].branch).reduce<React.ReactNode[]>( (all, id) => {

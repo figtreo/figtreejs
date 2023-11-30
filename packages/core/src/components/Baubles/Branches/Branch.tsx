@@ -7,10 +7,10 @@ import { interpolatePath } from 'd3-interpolate-path'
 //TODO use gester for hover etc. 
 export function Branch(props:any){
     const animation = useAnimation()
-    const {attrs,id,d}=props;
+    const {attrs,interactions,id,d}=props;
 
     
-    
+    console.log(interactions)
     
     // useEffect(() => {
     //   /**
@@ -35,7 +35,7 @@ export function Branch(props:any){
      
 
     return (
-    <animated.path className={"branch-path"} key={`branch-${id}`} {...visibleProperties} fill={"none"} node-id={props.node.id}/>)
+    <animated.path className={"branch-path"} key={`branch-${id}`} {...visibleProperties} {...interactions} fill={"none"} node-id={props.node.id}/>)
     // <animated.path key={`branch-${vertex.id}`} {...attrs}  {...animatedAttrs} d={d} strokeWidth={pathX.x} fill={"none"} />)
     
 

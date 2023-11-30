@@ -23,19 +23,21 @@ export function mapAttrsToProps(attrs:any):Function {
     }
 
 }
+
+
 /**
  * This function does the same as mapping attrs to props but for interactions. the only difference is it can't
  * accept primatives as the values
  * @param {*} fs 
  * @returns 
  */
-// export function applyInteractions(fs) {
-//     return function (v) {
-//         const props = {};
-//         for (const [key, value] of Object.entries(fs)) {
-//                 props[key] = ()=>value(v)
-//         }
-//         return props;
-//     }
+export function applyInteractions(interactions:{[key:string]:Function}):Function  {
+    return function (data:any) {
+        const props:{[key:string]:any} = {};
+        for (const [key, value] of Object.entries(interactions)) {
+                props[key] = ()=>value(data)
+        }
+        return props;
+    }
 
-// }
+}

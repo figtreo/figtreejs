@@ -16,6 +16,7 @@ export function NodesHOC(ShapeComponent:React.ComponentType<any>) {
         const {filter=(n:NodeRef)=>true,
             ...rest} = props;
         const shapeProps = useAttributeMappers(props);
+        
         return (
             <g className={"node-layer"}>
                 {vertices.allIds.filter(a=>!vertices.byId[a].hidden).sort((a,b)=>(vertices.byId[a].x-vertices.byId[b].x)).reduce<React.ReactNode[]>( (all, id) => {

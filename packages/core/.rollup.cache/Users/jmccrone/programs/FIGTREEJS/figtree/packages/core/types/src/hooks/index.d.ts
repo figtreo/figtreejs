@@ -1,5 +1,6 @@
 export declare function useAttributeMappers(props: any, hoverKey?: string, selectionKey?: string): (dataEntry: any) => {
     attrs: any;
+    interactions: any;
 };
 export declare function useInteractions(): {
     state: boolean;

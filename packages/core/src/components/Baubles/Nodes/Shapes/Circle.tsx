@@ -8,6 +8,7 @@ export const AnimatedCircle = React.memo<CircleProps>( props=> {
 
    const animation = useAnimation();
    let visibleProperties;
+   
    if(animation){
 	visibleProperties = useSpring({...attrs,cx,cy, config: { duration: 500 }});
    }

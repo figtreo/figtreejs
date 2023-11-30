@@ -1,5 +1,5 @@
 import {useCallback,useContext} from "react";
-import {mapAttrsToProps} from "../baubleHelpers";
+import {applyInteractions, mapAttrsToProps} from "../baubleHelpers";
 import {
     DataContext,
     AnimationContext,
@@ -23,17 +23,20 @@ export function useAttributeMappers(props:any,hoverKey="id",selectionKey="id"){
     // const {state,dispatch} =useInteractions();
     //This memorizes the functions so they are not made each time - maybe overkill.
     const baseAttrMapper = useCallback(mapAttrsToProps((attrs?attrs:{})), [attrs]);
+    const baseInteractionMapper = useCallback(applyInteractions((interactions?interactions:{})), [interactions]);
     // const tooltipMapper = useCallback(mapAttrsToProps((tooltip?tooltip:{})),[tooltip]);
 
     function attrMapper(dataEntry:any) {
         let attrs = baseAttrMapper(dataEntry);
-        //state is true false 
-
-        // if (select.predicate(state,dataEntry)) {
-        //     attrs = {...attrs, ...selectedAttrMapper(dataEntry)};
-        // }
         return attrs;
     };
+    //interactions are separate because they are functions that do not get called immediately
+    function interactionMapper(dataEntry:any) {
+        let interactions = baseInteractionMapper(dataEntry);
+        return interactions;
+    }
+
+    // TODO handle interactions her
 
     //Maps interactions to element. Default hover dispatch etc. 
 
@@ -62,7 +65,7 @@ export function useAttributeMappers(props:any,hoverKey="id",selectionKey="id"){
     //     };
     // }
     return function shapeProps(dataEntry:any) {
-        return {attrs: attrMapper(dataEntry)} //, interactions: interactionMapper(dataEntry),tooltip:tooltipMapper(dataEntry)}
+        return {attrs: attrMapper(dataEntry),interactions: interactionMapper(dataEntry)}//,tooltip:tooltipMapper(dataEntry)}
     }
 
 }

@@ -160,10 +160,10 @@
             animated:true,
             baubles: [
             ft.Axis({bars:{}}),
-            ft.Branches({ attrs: { stroke: "black", strokeWidth: 2 } }),
+            ft.Branches({ attrs: { stroke: "black", strokeWidth: 2, cursor:"pointer"}, interactions:{onClick:()=>console.log("clicked")}}),
             ft.NodeLabels({filter:(n)=>tree.isExternal(n), attrs: { fill: "black", fontSize: 12, fontWeight: 300 }, text: (n) => tree.getName(n),aligned:true  }),
             ft.CircleNodes({ attrs: { r: 7, fill: (n) => tree.getChildCount(n) > "#005C68" } }),
-            ft.CircleNodes({ attrs: { r: 5, fill: (n) => tree.getChildCount(n) > 0 ? tree.isRoot(n) ? "#e31e58" : "#29c5ef" : "#22b680" } }),
+            ft.CircleNodes({ attrs: { r: 5, fill: (n) => tree.getChildCount(n) > 0 ? tree.isRoot(n) ? "#e31e58" : "#29c5ef" : "#22b680" , cursor:"pointer"},interactions:{onClick:(n)=>console.log(n)}}),
             ft.BranchLabels({ attrs: { fill: "black", fontSize: 8, fontWeight: 300 }, text: (n) => tree.getLength(n) }),
             ],
             opts: {} // todo remove the need for this empty options
