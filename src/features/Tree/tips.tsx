@@ -1,5 +1,5 @@
 import { useAppSelector } from "../../app/hooks";
-import { selectShapeState } from "../settings/panels/shapes/shapeSlice";
+import { selectShapeState } from "../Settings/panels/shapes/shapeSlice";
 import { NormalizedTree, Nodes, NodeRef } from "@figtreejs/core";
 import { Node } from "./treeSlice";
 import { selectHeader } from "../Header/headerSlice";

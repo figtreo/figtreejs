@@ -29,7 +29,7 @@ export class PolarLayout extends AbstractLayout {
             .range([this.padding, opts.height - this.padding]);
         const pointOfInterestY = y_og.invert(safeOpts.pointOfInterest.y)
 
-        const transform = fishEyeTransform(safeOpts.fishEye/treeStats.tipCount,treeStats.tipCount,pointOfInterestY); //fish eye does  wierd things here when too big 10 m
+        const transform = fishEyeTransform(safeOpts.fishEye,pointOfInterestY); //fish eye does  wierd things here when too big 10 m
             
 
         const maxRadius = min([opts.width,opts.height])!/2;

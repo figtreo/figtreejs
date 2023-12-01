@@ -2,8 +2,8 @@ import { useCallback, useEffect, useRef, useState, createContext } from 'react';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { selectNodeCount, parseNewick, selectTree } from './treeSlice';
 
-import { selectAppearance, selectLineWidth, selectStroke } from '../settings/panels/appearance/appearanceSlice';
-import { selectLayout, setPointOfInterest } from '../settings/panels/layout/layoutSlice';
+import { selectAppearance, selectLineWidth, selectStroke } from '../Settings/panels/appearance/appearanceSlice';
+import { selectLayout, setPointOfInterest } from '../Settings/panels/layout/layoutSlice';
 import { Tips } from './tips';
 import { InternalNodes } from './nodes';
 

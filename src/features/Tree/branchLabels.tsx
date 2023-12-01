@@ -1,6 +1,6 @@
 import { format } from "d3-format";
 import { useAppSelector } from "../../app/hooks";
-import { selectLabelState } from "../settings/panels/label/labelSlice";
+import { selectLabelState } from "../Settings/panels/label/labelSlice";
 import { NormalizedTree, NodeRef, BranchLabels as BL, decimalToDate} from "@figtreejs/core";
 import { timeFormat } from "d3-time-format";
 import { selectHeader } from "../Header/headerSlice";

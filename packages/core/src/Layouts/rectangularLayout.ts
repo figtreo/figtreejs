@@ -149,7 +149,7 @@ export class RectangularLayout extends AbstractLayout {
 
         const pointOfInterestY = y_og.invert(safeOpts.pointOfInterest.y)
 
-        const transform = fishEyeTransform(safeOpts.fishEye, treeStats.tipCount, pointOfInterestY); //1000 to match figtree
+        const transform = fishEyeTransform(safeOpts.fishEye, pointOfInterestY); //1000 to match figtree
 
         const y = scaleLinear()
             .domain(arbitraryLayout.extent.y.map(transform))
@@ -256,13 +256,13 @@ export class RectangularLayout extends AbstractLayout {
 
 // }
 // Figtree cc Andrew Rambaut
-export const fishEyeTransform = (fishEye: number, tipCount: number, pointOfInterestY: number) => (y: number) => { // point of interest is in layout scale.
+export const fishEyeTransform = (fishEye: number, pointOfInterestY: number) => (y: number) => { // point of interest is in layout scale.
 
     if (fishEye === 0.0) {
         return y;
     }
 
-    const scale = 1.0 / (fishEye * tipCount);
+    const scale = 1.0 / (fishEye ); 
     const dist = pointOfInterestY - y;
     const min = 1.0 - (pointOfInterestY / (scale + pointOfInterestY));
     const max = 1.0 - ((pointOfInterestY - 1.0) / (scale - (pointOfInterestY - 1.0)));

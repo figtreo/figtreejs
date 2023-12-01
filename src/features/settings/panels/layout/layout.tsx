@@ -69,7 +69,7 @@ export function Layout() {
                 <input
                     type="range"
                     min="0"
-                    max="1"
+                    max="0.1"
                     id="fishEye" step={0.01}
 
                     onChange={(e) => dispatch(setFisheye(parseFloat(e.target.value)))}
