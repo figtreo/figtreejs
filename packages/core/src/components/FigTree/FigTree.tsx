@@ -23,7 +23,7 @@ export const defaultOpts:FigtreeProps = {
     layout:RectangularLayout,
     margins:{top:10,right:10,bottom:10,left:10},
     tree:NormalizedTree.fromNewick("((A:1,B:1):1,C:2);"),
-    children:[<Branches filter={(n)=>true} attrs={{stroke:"black",strokeWidth:1}}/>],
+    children:[<Branches filter={(n)=>true} attrs={{stroke:"black",strokeWidth:1}} interactions={{}}/>],
     animated:false
    
 }

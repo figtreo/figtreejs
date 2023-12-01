@@ -1,7 +1,7 @@
 import './App.css';
 import { Header } from './features/Header/header';
 import { TreePanel } from './features/Tree/treePanel';
-import { SideBar } from './features/settings/sideBar';
+import { SideBar } from './features/Settings/sideBar';
 
 
 
