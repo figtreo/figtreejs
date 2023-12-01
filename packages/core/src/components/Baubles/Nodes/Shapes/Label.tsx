@@ -1,7 +1,7 @@
 import React from "react";
 import { useAnimation } from "../../../../hooks";
-import { useSpring, to, a, animated } from "@react-spring/web";
-
+import { useSpring, to,  animated } from "@react-spring/web";
+//We don't use the HOC here because of how the rotation transform is applied
 export default function Label(props: any) {
     const animation = useAnimation()
 

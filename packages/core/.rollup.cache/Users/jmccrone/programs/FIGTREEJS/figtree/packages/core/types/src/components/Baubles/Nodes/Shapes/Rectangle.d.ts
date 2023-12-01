@@ -1,10 +1,8 @@
 import React from "react";
 import { Vertex } from "../../../../Layouts/LayoutInterface";
-declare const Rectangle: React.NamedExoticComponent<RectangleProps>;
+declare const Rectangle: (props: any) => React.JSX.Element;
 export interface RectangleProps {
     attrs: {
-        height: number;
-        width: number;
         fill: string;
         strokeWidth: number;
         stroke: string;

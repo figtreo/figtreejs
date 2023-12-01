@@ -4,7 +4,7 @@ import {useAttributeMappers, useLayout, useTree} from "../../../hooks";
 
 import React from "react";
 import Label from "./Shapes/Label";
-import { AnimatedCircle, Circle } from "./Shapes/Circle";
+import {  Circle } from "./Shapes/Circle";
 import Rectangle from "./Shapes/Rectangle";
 import CoalescentShape from "./Shapes/CoalescentShape";
 
@@ -73,16 +73,7 @@ const CircleNodes = NodesHOC(Circle);
 //     label:()=>false,
 //     sortFactor:1,
 // };
-const AnimatedCircleNodes = NodesHOC(AnimatedCircle);
-// AnimatedCircleNodes.defaultProps={
-//     filter:(v)=>true,
-//     attrs:{r:2},
-//     selectedAttrs:{},
-//     hoveredAttrs:{},
-//     tooltip:{},
-//     label:()=>false,
-//     sortFactor:1,
-// };
+
 
 const RectangularNodes = NodesHOC(Rectangle);
 // Rectangle.defualtProps={
@@ -109,7 +100,7 @@ const CoalescentNodes=NodesHOC(CoalescentShape);
 
 
 
-const Nodes={Circle:AnimatedCircleNodes,Coalescent:CoalescentNodes,AnimatedCircleNodes:AnimatedCircleNodes,Rectangle:RectangularNodes,Label:NodeLabels};
+const Nodes={Circle:CircleNodes,Coalescent:CoalescentNodes,Rectangle:RectangularNodes,Label:NodeLabels};
 export default Nodes;
 
 

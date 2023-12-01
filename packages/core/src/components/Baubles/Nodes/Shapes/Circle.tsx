@@ -1,33 +1,18 @@
-import {useSpring,animated} from "@react-spring/web";
+import {animated} from "@react-spring/web";
 import React from "react";
-import { useAnimation } from "../../../../hooks";
+import withAnimation from "../../../HOC/withAnimation";
 
-export const AnimatedCircle = React.memo<CircleProps>( props=> {
+
+const BaseCircle = React.memo<CircleProps>( props=> {
  
-   const {attrs,interactions,tooltip,x:cx,y:cy} = props;
+   const {attrs,interactions,tooltip} = props;
 
-   const animation = useAnimation();
-   let visibleProperties;
-   
-   if(animation){
-	visibleProperties = useSpring({...attrs,cx,cy, config: { duration: 500 }});
-   }
-	else{
-		visibleProperties = {...attrs,cx,cy}
-	}
     return (
-    	<animated.circle {...tooltip}  className={"node-shape"} {...visibleProperties}  {...interactions}/>
+    	<animated.circle {...tooltip}  className={"node-shape"} {...attrs} cx={attrs.x} cy={attrs.y} {...interactions}/>
     	);
 },sameAttributes);
 
-
-export const Circle = React.memo<CircleProps>( (props)=>{
-	const {attrs,interactions,tooltip,x:cx,y:cy} = props;
-	return (
-		<circle {...tooltip}  className={"node-shape"} {...attrs} cx={cx} cy={cy} {...interactions}/>
-	);
-},sameAttributes);
-
+export const Circle =withAnimation(BaseCircle);
 
 
 export function sameAttributes(prev:{[key:string]:any},curr:{[key:string]:any}){

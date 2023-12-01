@@ -1,42 +1,18 @@
 import React, { useMemo, useRef, useEffect, useCallback } from "react";
 import { useAnimation } from "../../../hooks";
 import { useSpring ,animated} from "@react-spring/web";
-import { interpolatePath } from 'd3-interpolate-path'
+import withAnimation from "../../HOC/withAnimation";
 
 
-//TODO use gester for hover etc. 
-export function Branch(props:any){
-    const animation = useAnimation()
-    const {attrs,interactions,id,d}=props;
-
-    
-    console.log(interactions)
-    
-    // useEffect(() => {
-    //   /**
-    //    * assign the latest render value of d to the ref
-    //    * However, assigning a value to ref doesn't re-render the app
-    //    * So, prevCountRef.current in the return statement displays the
-    //    * last value in the ref at the time of render i.e., the previous state value.
-    //    */
-    //   prevDRef.current = d;
-
-    // }, [d]); //run this code when the value of count changes
-
-    // const interpolator = prevDRef.current? interpolatePath(prevDRef.current!, d):(value:number)=>d 
-
-    let visibleProperties;
-    if(animation){
-     visibleProperties = useSpring({...attrs,d, config: { duration: 500 }});
-    }
-     else{
-         visibleProperties = {...attrs,d}
-     }
-     
+//props types
+function BaseBranch(props:any){
+    const {attrs,interactions,id}=props; //d is included in attrs here
 
     return (
-    <animated.path className={"branch-path"} key={`branch-${id}`} {...visibleProperties} {...interactions} fill={"none"} node-id={props.node.id}/>)
+    <animated.path className={"branch-path"} key={`branch-${id}`} {...attrs}  {...interactions} fill={"none"} node-id={props.node.id}/>)
     // <animated.path key={`branch-${vertex.id}`} {...attrs}  {...animatedAttrs} d={d} strokeWidth={pathX.x} fill={"none"} />)
     
 
 }
+
+export const Branch= withAnimation(BaseBranch);
