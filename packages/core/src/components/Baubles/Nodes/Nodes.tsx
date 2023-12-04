@@ -7,10 +7,11 @@ import Label from "./Shapes/Label";
 import {  Circle } from "./Shapes/Circle";
 import Rectangle from "./Shapes/Rectangle";
 import CoalescentShape from "./Shapes/CoalescentShape";
+import { NodeProps, NodeShape } from "./Node.types";
 
 // todo don't expose in index
 export function NodesHOC(ShapeComponent:React.ComponentType<any>) {
-    return function Nodes(props:any) {
+    return function Nodes(props:NodeProps) {
         const vertices =useLayout();
         const tree = useTree();
         const {filter=(n:NodeRef)=>true,
@@ -63,40 +64,17 @@ function NodeLabels(props:any){
 
 
 
+
 const CircleNodes = NodesHOC(Circle);
-// CircleNodes.defaultProps={
-//     filter:(v)=>true,
-//     attrs:{r:2},
-//     selectedAttrs:{},
-//     hoveredAttrs:{},
-//     tooltip:{},
-//     label:()=>false,
-//     sortFactor:1,
-// };
+
 
 
 const RectangularNodes = NodesHOC(Rectangle);
-// Rectangle.defualtProps={
-//     filter:(v)=>true,
-//     attrs:{width:10,height:5},
-//     selectedAttrs:{},
-//     hoveredAttrs:{},
-//     tooltip:{},
-//     sortFactor:1,
-// }
+
 
 
 const CoalescentNodes=NodesHOC(CoalescentShape);
-// CoalescentNodes.defualtProps={
-//     attrs: {
-//         fill: "steelblue",
-//         strokeWidth: 1,
-//         stroke: 'black'
-//     },
-//     tooltip:{},
-//     filter:(v)=>true,
-//     sortFactor:1,
-// };
+
 
 
 

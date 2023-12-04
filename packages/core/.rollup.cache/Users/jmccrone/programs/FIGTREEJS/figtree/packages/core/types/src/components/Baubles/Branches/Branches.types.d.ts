@@ -1,10 +1,8 @@
-import { NodeRef } from "../../../Tree/Tree.types";
-export interface BranchProps {
-    filter: (node: NodeRef) => boolean;
+import { BaubleProps, attrType } from "..";
+export interface BranchProps extends BaubleProps {
     attrs: {
-        [key: string]: string | number | ((node: NodeRef) => string | number);
-    };
-    interactions: {
-        [key: string]: (node: NodeRef) => void;
+        fill: attrType;
+        stroke: attrType;
+        strokeWidth: attrType;
     };
 }
