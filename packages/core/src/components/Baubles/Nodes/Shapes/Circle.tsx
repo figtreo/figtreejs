@@ -1,14 +1,15 @@
 import {animated} from "@react-spring/web";
 import React from "react";
 import withAnimation from "../../../HOC/withAnimation";
+import { BaseBaubleProps } from "../";
 
 
 const BaseCircle = React.memo<CircleProps>( props=> {
  
-   const {attrs,interactions,tooltip} = props;
+   const {attrs,interactions,id} = props;
 
     return (
-    	<animated.circle {...tooltip}  className={"node-shape"} {...attrs} cx={attrs.x} cy={attrs.y} {...interactions}/>
+    	<animated.circle  node-id={id} className={"node-shape"} {...attrs} {...interactions} cx={attrs.x} cy={attrs.y} />
     	);
 },sameAttributes);
 
@@ -27,16 +28,13 @@ export function sameAttributes(prev:{[key:string]:any},curr:{[key:string]:any}){
 	return true;
 }
 //TODO specify tooltip and interactions
-export interface CircleProps{
+export interface CircleProps extends BaseBaubleProps{
 	attrs:{
 		r:number,
 		fill:string,
 		strokeWidth:number,
 		stroke:string,
-		[key:string]:any
+		x:number,
+		y:number
 	}
-	x:number,
-	y:number,
-	interactions?:any,
-	tooltip?:any
 }

@@ -11,8 +11,8 @@ import React, { ReactElement } from "react";
 const withAnimation = (WrappedComponent: React.ComponentType<any>) => {
     function AnimatedComponent(props: any) {
         const animation = useAnimation()
-        let {attrs,d=null,x=null,y=null}=props; // d is the data for the path
-        let visibleProperties;
+        let {attrs,d=null,x=null,y=null,...rest}=props; // d is the data for the path
+        let animatableProperties;
 
         if(attrs.width && attrs.height){
             //adjust rect to be centered on x,y
@@ -21,13 +21,12 @@ const withAnimation = (WrappedComponent: React.ComponentType<any>) => {
         }
 
         if(animation){
-         visibleProperties = useSpring({...attrs,d,x,y, config: { duration: 500 }});
+         animatableProperties = useSpring({...attrs,d,x,y, config: { duration: 500 }}); //TODO adjust animation config.
         }
          else{
-             visibleProperties = {...attrs,x,y,d}
+             animatableProperties = {...attrs,x,y,d}
          }
-         console.log(visibleProperties)
-         return (<WrappedComponent {...props} attrs={visibleProperties} />)
+         return (<WrappedComponent {...rest} attrs={animatableProperties} />)
     
     }
 

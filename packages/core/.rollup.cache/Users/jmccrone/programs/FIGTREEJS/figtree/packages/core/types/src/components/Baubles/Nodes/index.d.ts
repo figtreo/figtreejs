@@ -1,10 +1,8 @@
 import { NodeRef } from '../../../Tree';
-
-export {default as Nodes} from './Nodes';
-export * from "./Shapes"
-
+export { default as Nodes } from './Nodes';
+export * from "./Shapes";
 export interface BaseBaubleProps {
-    id:string
+    id: string;
     attrs: {
         [key: string]: number | string | ((n: NodeRef) => number | string);
     };
