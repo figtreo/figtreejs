@@ -8,7 +8,7 @@ export interface NodeProps extends BaubleProps{
         fill:attrType,
         width?:attrType,
         height?:attrType,
-        r:attrType
+        r?:attrType
     }
 }
 export interface NodeLabelProps extends BaubleProps{

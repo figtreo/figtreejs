@@ -1,12 +1,13 @@
 import { format } from "d3-format";
 import { useAppSelector } from "../../app/hooks";
 import { selectLabelState } from "../Settings/panels/label/labelSlice";
-import { NormalizedTree, NodeRef, BranchLabels as BL, decimalToDate} from "@figtreejs/core";
+import {  NodeRef, BranchLabels as BL, decimalToDate, Tree} from "@figtreejs/core";
 import { timeFormat } from "d3-time-format";
 import { selectHeader } from "../Header/headerSlice";
+import { tree } from "../../app/store";
 
-export function BranchLabels(props:{ tree: NormalizedTree,attrs?:{[key:string]:any} }) {
-    const { tree,attrs={} } = props;
+export function BranchLabels(props:{ attrs?:{[key:string]:any} }) {
+    const { attrs={} } = props;
     const settings = useAppSelector(selectLabelState("branch"));
 
     const header = useAppSelector(selectHeader)

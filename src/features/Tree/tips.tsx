@@ -1,11 +1,11 @@
 import { useAppSelector } from "../../app/hooks";
 import { selectShapeState } from "../Settings/panels/shapes/shapeSlice";
-import { NormalizedTree, Nodes, NodeRef } from "@figtreejs/core";
+import {  Nodes, NodeRef, Tree } from "@figtreejs/core";
 import { Node } from "./treeSlice";
 import { selectHeader } from "../Header/headerSlice";
+import { tree } from "../../app/store";
 
-export function Tips(props: { tree: NormalizedTree }) {
-    const tree = props.tree;
+export function Tips() {
     const settings = useAppSelector(selectShapeState("tip"));
     const header = useAppSelector(selectHeader)
 

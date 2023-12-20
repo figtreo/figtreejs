@@ -336,12 +336,12 @@ export function Tree({ panelRef }: any) {
             <AxisElement />
             <Highlight  attrs={{fill:(n:NodeRef)=> header.SelectNodeDecorations[n.id].hilighted, opacity:0.4}} filter={(n:NodeRef)=>header.SelectNodeDecorations[n.id] && header.SelectNodeDecorations[n.id].hilighted}/>
             <Branches attrs={{ strokeWidth: lineWidth + 4, stroke: "#959ABF", strokeLinecap: "round", strokeLinejoin: "round" }} filter={(n: NodeRef) => selectedNodes.has(n.id)} />
-            <Branches attrs={{ strokeWidth: lineWidth, stroke: branchColour }} filter={(n: NodeRef) => true} />
-            <BranchLabels tree={tree} />
-            <Tips tree={tree} />
-            <TipLabels tree={tree} attrs={{ filter: (n: NodeRef) => selectedTaxa.has(n.id) ? 'url(#solid)' : null }} />
-            <InternalNodes tree={tree} />
-            <NodeLabels tree={tree} />
+            <Branches attrs={{fill:'none', strokeWidth: lineWidth, stroke: branchColour }} filter={(n: NodeRef) => true} />
+            <BranchLabels />
+            <Tips  />
+            <TipLabels  attrs={{ filter: (n: NodeRef) => selectedTaxa.has(n.id) ? 'url(#solid)' : null }} />
+            <InternalNodes />
+            <NodeLabels  />
           </FigTree>
         </svg>
 

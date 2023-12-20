@@ -6,14 +6,14 @@ import {arc as arcgen} from "d3-shape"
 import { scaleLinear } from "d3-scale";
 const arc = arcgen();
 
-function CladeHighlight(props:{attrs:{[key:string]:any},node:NodeRef}){
+function CladeHighlight(props:{attrs:{[key:string]:any},id:string}){
 
-    const {attrs,node} = props;
+    const {attrs,id} = props;
 
+    
     const tree = useTree();
     const verticies = useLayout();
-
-
+    const node = tree.getNode(id);
     if(verticies.type==="Rectangular"){
         const minX = tree.getParent(node)? (verticies.byId[node.id].x +verticies.byId[tree.getParent(node)!.id].x)/2:0;
         let maxX = -Infinity;

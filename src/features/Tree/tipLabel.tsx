@@ -2,12 +2,13 @@ import { format } from "d3-format";
 import { useAppSelector } from "../../app/hooks";
 import { selectLabelState } from "../Settings/panels/label/labelSlice";
 import { selectLayout } from "../Settings/panels/layout/layoutSlice";
-import { NodeRef, NormalizedTree,Nodes } from "@figtreejs/core";
+import { NodeRef, Nodes } from "@figtreejs/core";
 import { Node } from "./treeSlice";
 import { selectHeader } from "../Header/headerSlice";
+import { tree } from "../../app/store";
 
-export function TipLabels(props: { tree: NormalizedTree,attrs?:{[key:string]:any} }) {
-    const { tree,attrs={} } = props;
+export function TipLabels(props: { attrs?:{[key:string]:any} }) {
+    const { attrs={} } = props;
     const settings = useAppSelector(selectLabelState("tip"));
     const header = useAppSelector(selectHeader);
 
