@@ -1,9 +1,9 @@
 import React from "react";
 import { shapeActions, shapeTarget, selectShapeState } from "./shapeSlice";
 import { useAppDispatch, useAppSelector } from "../../../../app/hooks";
-import { selectAnnotationTypes } from "../../../Tree/treeSlice";
 import { SettingPanel } from "../PanelHeader";
 import { Tracing } from "trace_events";
+import { tree } from "../../../../app/store";
 
 export function BaseShapes(props: { target: shapeTarget, }) {
 
@@ -11,7 +11,7 @@ export function BaseShapes(props: { target: shapeTarget, }) {
     const settings = useAppSelector(selectShapeState(props.target))
 
     //duplicate code
-    const attributeTypes = useAppSelector(selectAnnotationTypes);
+    const attributeTypes = tree.getAnnotations();
     //TODO add defaults like height/length/ etc.
     const attributeKeys = Object.keys(attributeTypes).length > 0 ? ["Fixed","User selection", ...Object.keys(attributeTypes)] : ["Fixed","User selection"]
 

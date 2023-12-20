@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Tree } from "./tree";
 import './treePanel.css'
-import { useSelectionContainer } from "@air/react-drag-to-select";
 export function TreePanel(){
 
     const treePanelRef = useRef<HTMLInputElement>(null);

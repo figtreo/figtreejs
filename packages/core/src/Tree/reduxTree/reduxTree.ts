@@ -103,6 +103,13 @@ const normalizedTreeSlice = createSlice({
     name: 'normalizedTree',
     initialState,
     reducers: {
+        setTreeData:{
+            reducer(state,action:PayloadAction<NormalizedTreeData>){
+                state = action.payload;
+        },
+        prepare(tree:NormalizedTreeData){
+            return {payload:tree}
+        }},
         setLevel: {
             reducer: (state, action: PayloadAction<{ node: NodeRef; level: number }>) => {
                 const { node, level } = action.payload;
@@ -265,7 +272,7 @@ const normalizedTreeSlice = createSlice({
     }   
 });
 
-export const {
+const {
     setLevel,
     removeChild,
     sortChildren,
@@ -279,7 +286,8 @@ export const {
     setLength,
     setRoot,
     annotateNode,
-    addNode
+    addNode,
+    setTreeData
 } = normalizedTreeSlice.actions;
 
 
@@ -294,7 +302,7 @@ export class Treedux extends AbstractTree {
    
     _store:ToolkitStore
     _getTree:()=>NormalizedTreeData
-    constructor( store?:ToolkitStore,treeGetter?:()=>NormalizedTreeData){
+    constructor( store?:ToolkitStore,treeGetter?:(state:ToolkitStore)=>NormalizedTreeData){
         super();
         
         if(store){
@@ -302,7 +310,7 @@ export class Treedux extends AbstractTree {
             if(!treeGetter){
                 throw new Error('treeGetter must be defined if store is provided')
             }
-            this._getTree = treeGetter!;
+            this._getTree = ()=> treeGetter(store);
         }else{
         this._store = configureStore({reducer:{tree:TreeduxReducer}});
         this._getTree = ()=>this._store.getState().tree;
@@ -314,6 +322,12 @@ export class Treedux extends AbstractTree {
 
     }
 
+    parseNewick(newick: string, options?: newickParsingOptions | undefined): void {
+        parseNewick(this, newick, options);
+    }
+    setTreeData(tree: NormalizedTreeData): void {
+        this._store.dispatch(setTreeData(tree))
+    }
     setLevel(node: NodeRef, level: number): void {
         this._store.dispatch(setLevel(node,level))
     }
@@ -333,7 +347,7 @@ export class Treedux extends AbstractTree {
         this._store.dispatch(setParent(child,parent))
     }
     addNode(): NodeRef {
-        const tree = this._store.getState().tree;
+        const tree = this._getTree();
         const id = `Node-${tree.nodes.allIds.length}`
         const Node = {
             id,
@@ -371,38 +385,38 @@ export class Treedux extends AbstractTree {
         this._store.dispatch(annotateNode(node,annotation))
     }
     getLevel(node: NodeRef): number {
-       return this._store.getState().tree.nodes.byId[node.id].level!
+       return this._getTree().nodes.byId[node.id].level!
     }
     getNodeByName(name: string): NodeRef | null {
-      return this.getNode(this._store.getState().tree.nodes.byName[name])
+      return this.getNode(this._getTree().nodes.byName[name])
     }
     getNodeByLabel(name: string): NodeRef | null {
-        return this.getNode(this._store.getState().tree.nodes.byLabel[name])
+        return this.getNode(this._getTree().nodes.byLabel[name])
     }
     getName(node: NodeRef): string | null {
-       return this._store.getState().tree.nodes.byId[node.id].name
+       return this._getTree().nodes.byId[node.id].name
     }
     getNode(id: string): NodeRef {
-        return this._store.getState().tree.nodes.byId[id]
+        return this._getTree().nodes.byId[id]
     }
     getDivergence(node: NodeRef): number {
-        return this._store.getState().tree.nodes.byId[node.id].divergence!
+        return this._getTree().nodes.byId[node.id].divergence!
     }
     getHeight(node: NodeRef): number {
-        return this._store.getState().tree.nodes.byId[node.id].height!
+        return this._getTree().nodes.byId[node.id].height!
     }
     getLength(node: NodeRef): number {
-        return this._store.getState().tree.nodes.byId[node.id].length!
+        return this._getTree().nodes.byId[node.id].length!
     }
     getChildCount(node: NodeRef): number {
-        return this._store.getState().tree.nodes.byId[node.id].children.length
+        return this._getTree().nodes.byId[node.id].children.length
     }
     getChild(node: NodeRef, index: number): NodeRef {
-        const tree = this._store.getState().tree;
+        const tree = this._getTree();
         return tree.nodes.byId[tree.nodes.byId[node.id].children[index]];
     }
     getParent(node: NodeRef): NodeRef | null {
-        const tree = this._store.getState().tree;
+        const tree = this._getTree();
         const parentId = tree.nodes.byId[node.id].parent;
         if (parentId === null) {
             return null
@@ -410,59 +424,66 @@ export class Treedux extends AbstractTree {
             return tree.nodes.byId[parentId]
         }
     }
+    getNodeCount(): number {
+        return this._getTree().nodes.allIds.length
+    }
     getChildren(node: NodeRef): NodeRef[] {
-        const tree = this._store.getState().tree;
+        const tree = this._getTree();
         return tree.nodes.byId[node.id].children.map((id:string) => tree.nodes.byId[id])
     }
     getAnnotation(node: NodeRef, name: string) {
-        const tree = this._store.getState().tree;
+        const tree = this._getTree();
         return tree.nodes.annotations[node.id][name]
     }
     getLabel(node: NodeRef): string | null {
-        const tree = this._store.getState().tree;
+        const tree = this._getTree();
         return tree.nodes.byId[node.id].label
     }
     getAnnotationType(name: string): string | undefined {
-        const tree = this._store.getState().tree;
+        const tree = this._getTree();
         return tree.annotations.byId[name].type
     }
+    getAnnotations(): string[] {
+        const tree = this._getTree();
+        return tree.annotations.allIds
+    }
     get nodeCount(): number {
-        return this._store.getState().tree.nodes.allIds.length
+        return this._getTree().nodes.allIds.length
     }
     get externalNodeCount(): number {
-        const tree = this._store.getState().tree
+        const tree = this._getTree()
         return tree.nodes.allIds.filter((n:string) => this.getChildCount(this.getNode(n)) === 0).length
     }
     get InternalNodeCount(): number {
-        const tree = this._store.getState().tree
+        const tree = this._getTree()
         return tree.nodes.allIds.filter((n:string) => this.getChildCount(this.getNode(n)) > 0).length
     }
     get externalNodes(): NodeRef[] {
-       const tree = this._store.getState().tree
+       const tree = this._getTree()
         return tree.nodes.allIds.filter((n:string) => this.getChildCount(this.getNode(n)) === 0).map((n:string) => this.getNode(n))
     }
     get internalNodes(): NodeRef[] {
-       const tree = this._store.getState().tree
+       const tree = this._getTree()
         return tree.nodes.allIds.filter((n:string) => this.getChildCount(this.getNode(n)) > 0).map((n:string) => this.getNode(n))
     }
     get root(): NodeRef | null {
-        const tree = this._store.getState().tree
+        const tree = this._getTree()
         return this.getNode(tree.rootNode!)
     }
     isRoot(node: NodeRef): boolean {
-        const tree = this._store.getState().tree
+        const tree = this._getTree()
         return tree.rootNode === node.id
     }
     isExternal(node: NodeRef): boolean {
-       const tree = this._store.getState().tree
+       const tree = this._getTree()
        return tree.nodes.byId[node.id].children.length === 0;
     }
     isInternal(node: NodeRef): boolean {
-        const tree = this._store.getState().tree
+        const tree = this._getTree()
         return tree.nodes.byId[node.id].children.length > 0;
     }
     getSibling(node: NodeRef): NodeRef | null {
-        const tree = this._store.getState().tree
+        const tree = this._getTree()
         const index = tree.nodes.byId[tree.nodes.byId[node.id].parent!].children.indexOf(node.id);
         if (this.getChildCount(this.getParent(node)!) === 1) {
             console.warn(`Node ${node.id} has only no sibling`)
@@ -475,7 +496,7 @@ export class Treedux extends AbstractTree {
     }
     
     getAnnotationDomain(name: string): string[] | [number, number] | number[] | [boolean, boolean] | undefined {
-        const tree = this._store.getState().tree;
+        const tree = this._getTree();
         return tree.annotations.byId[name].domain
     }
 

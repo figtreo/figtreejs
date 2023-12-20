@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState, createContext } from 'react';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
-import { selectNodeCount, parseNewick, selectTree } from './treeSlice';
+import {  parseNewick } from './treeSlice';
 
 import { selectAppearance, selectLineWidth, selectStroke } from '../Settings/panels/appearance/appearanceSlice';
 import { selectLayout, setPointOfInterest } from '../Settings/panels/layout/layoutSlice';
@@ -11,11 +11,12 @@ import { TipLabels } from './tipLabel';
 import { NodeLabels } from './nodeLabels';
 import { BranchLabels } from './branchLabels';
 
-import { FigTree, NormalizedTree, Branches, RectangularLayout, PolarLayout, RadialLayout, NodeRef, Highlight } from '@figtreejs/core'
+import { FigTree,  Branches, RectangularLayout, PolarLayout, RadialLayout, NodeRef, Highlight } from '@figtreejs/core'
 import { useAreaSelection } from '../../app/area-selection';
-import { select, selectAll } from "d3-selection"
-import { selectHeader, setSelectionMode, setSelectionRoot } from '../Header/headerSlice';
+import { select } from "d3-selection"
+import { selectHeader, setSelectionRoot } from '../Header/headerSlice';
 import AxisElement from './AxisElement';
+import { tree } from '../../app/store';
 
 const margins = { top: 80, bottom: 80, left: 50, right: 100 };
 //todo make zoom and expansion based on number of tips
@@ -25,7 +26,6 @@ const zoomFactor = 5;
 export function Tree({ panelRef }: any) {
 
   const dispatch = useAppDispatch();
-  const tree = new NormalizedTree(useAppSelector(selectTree).tree)
   const header = useAppSelector(selectHeader);
 
   //selection Box work //https://codesandbox.io/s/billowing-lake-rzhid4?file=/src/App.tsx
@@ -188,7 +188,7 @@ export function Tree({ panelRef }: any) {
 
 
 
-  const nodes = useAppSelector(selectNodeCount);
+  const nodes = tree.getNodeCount();
 
   const lineWidth = useAppSelector(selectLineWidth);
   const branchSettings = useAppSelector(selectAppearance)
@@ -208,7 +208,7 @@ export function Tree({ panelRef }: any) {
   const treeLayout = layout === "rectangular" ? RectangularLayout : layout === "circular" ? PolarLayout : RadialLayout;
   //
   const handlePaste = (event: any) => {
-    dispatch(parseNewick(event.clipboardData.getData('text')));
+    tree.parseNewick(event.clipboardData.getData('text'));
   }
   useEffect(() => {
 
