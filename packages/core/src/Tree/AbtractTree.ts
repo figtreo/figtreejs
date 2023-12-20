@@ -1,6 +1,6 @@
 import { AnnotationType, NodeRef, Tree } from "./Tree.types";
-import { processAnnotationValue } from ".";
 import { extent } from "d3-array";
+import { processAnnotationValue } from "./parsing";
 
 export abstract class AbstractTree implements Tree {
     annotateNodeUnknownType(node: NodeRef, annotations: { value: any, id: string }[] | { value: any, id: string }): void {
@@ -315,6 +315,15 @@ export abstract class AbstractTree implements Tree {
                     
                 }
                 newDomain.sort()
+                break;
+            }
+            case AnnotationType.DISCRETE:{
+                if (domain === undefined) {
+                    newDomain = [annotation.value]
+                } else {
+                    newDomain = [...new Set([...domain, annotation.value])]
+                    newDomain.sort()
+                }
                 break;
             }
             default: {

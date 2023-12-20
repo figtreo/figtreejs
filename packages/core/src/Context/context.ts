@@ -1,5 +1,5 @@
 import React from "react";
-import { NormalizedTree } from "../Tree/normalizedTree/normalizedTree";
+import { NormalizedTree } from "../Tree/";
 import { Vertices } from "../Layouts/LayoutInterface";
 import { Tree } from "../Tree/Tree.types";
 
