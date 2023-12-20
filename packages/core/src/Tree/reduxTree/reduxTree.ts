@@ -103,86 +103,166 @@ const normalizedTreeSlice = createSlice({
     name: 'normalizedTree',
     initialState,
     reducers: {
-        setLevel(state, action: PayloadAction<{ node: NodeRef; level: number }>) {
-            const { node, level } = action.payload;
-            state.nodes.byId[node.id].level = level;
+        setLevel: {
+            reducer: (state, action: PayloadAction<{ node: NodeRef; level: number }>) => {
+                const { node, level } = action.payload;
+                state.nodes.byId[node.id].level = level;
+            },
+            prepare: (node: NodeRef, level: number) => {
+                return { payload: { node, level } };
+            },
         },
-        removeChild(state, action: PayloadAction<{ parent: NodeRef; child: NodeRef }>) {
-            const { parent, child } = action.payload;
-            state.nodes.byId[parent.id].children = state.nodes.byId[parent.id].children.filter(
-                (id) => id !== child.id
-            );
+        removeChild: {
+            reducer: (state, action: PayloadAction<{ parent: NodeRef; child: NodeRef }>) => {
+                const { parent, child } = action.payload;
+                state.nodes.byId[parent.id].children = state.nodes.byId[parent.id].children.filter(
+                    (id) => id !== child.id
+                );
+            },
+            prepare: (parent: NodeRef, child: NodeRef) => {
+                return { payload: { parent, child } };
+            },
         },
-        sortChildren(state, action: PayloadAction<{ node: NodeRef; compare: (a: NodeRef, b: NodeRef) => number }>) {
-            const { node, compare } = action.payload;
-            state.nodes.byId[node.id].children = state.nodes.byId[node.id].children
-                .map((node_id) => state.nodes.byId[node_id])
-                .sort(compare)
-                .map((node) => node.id);
+        sortChildren: {
+            reducer: (state, action: PayloadAction<{ node: NodeRef; compare: (a: NodeRef, b: NodeRef) => number }>) => {
+                const { node, compare } = action.payload;
+                state.nodes.byId[node.id].children = state.nodes.byId[node.id].children
+                    .map((node_id) => state.nodes.byId[node_id])
+                    .sort(compare)
+                    .map((node) => node.id);
+            },
+            prepare: (node: NodeRef, compare: (a: NodeRef, b: NodeRef) => number) => {
+                return { payload: { node, compare } };
+            },
         },
-        addNode(state,action:PayloadAction<{node:Node}>){
-            const id = action.payload.node.id;
-            state.nodes.byId[id] = action.payload.node;
-            state.nodes.allIds.push(id)
-            state.nodes.annotations[id]={}
+        addNode: {
+            reducer: (state, action: PayloadAction<{ node: Node }>) => {
+                const id = action.payload.node.id;
+                state.nodes.byId[id] = action.payload.node;
+                state.nodes.allIds.push(id);
+                state.nodes.annotations[id] = {};
+            },
+            prepare: (node: Node) => {
+                return { payload: { node } };
+            },
+        },
+        addChild: {
+            reducer: (state, action: PayloadAction<{ parent: NodeRef; child: NodeRef }>) => {
+                const { parent, child } = action.payload;
+                state.nodes.byId[parent.id].children.push(child.id);
+            },
+            prepare: (parent: NodeRef, child: NodeRef) => {
+                return { payload: { parent, child } };
+            },
+        },
+        removeAllChildren: {
+            reducer: (state, action: PayloadAction<{ node: NodeRef }>) => {
+                const { node } = action.payload;
+                state.nodes.byId[node.id].children = [];
+            },
+            prepare: (node: NodeRef) => {
+                return { payload: { node } };
+            },
+        },
+        setParent: {
+            reducer: (state, action: PayloadAction<{ child: NodeRef; parent: NodeRef }>) => {
+                const { child, parent } = action.payload;
+                state.nodes.byId[child.id].parent = parent.id;
+            },
+            prepare: (child: NodeRef, parent: NodeRef) => {
+                return { payload: { child, parent } };
+            },
+        },
+        setName: {
+            reducer: (state, action: PayloadAction<{ node: NodeRef; name: string }>) => {
+                const { node, name } = action.payload;
+                state.nodes.byId[node.id].name = name;
+                if (state.nodes.byName[name] !== undefined) {
+                    throw new Error(`Duplicate node name ${name}`);
+                }
+                state.nodes.byName[name] = node.id;
+            },
+            prepare: (node: NodeRef, name: string) => {
+                return { payload: { node, name } };
+            },
+        },
+        setLabel: {
+            reducer: (state, action: PayloadAction<{ node: NodeRef; label: string }>) => {
+                const { node, label } = action.payload;
+                state.nodes.byId[node.id].label = label;
+                if (state.nodes.byLabel[label] !== undefined) {
+                    throw new Error(`Duplicate node label ${label}`);
+                }
+                state.nodes.byLabel[label] = node.id;
+            },
+            prepare: (node: NodeRef, label: string) => {
+                return { payload: { node, label } };
+            },
+        },
+        setHeight: {
+            reducer: (state, action: PayloadAction<{ node: NodeRef; height: number }>) => {
+                const { node, height } = action.payload;
+                state.nodes.byId[node.id].height = height;
+            },
+            prepare: (node: NodeRef, height: number) => {
+                return { payload: { node, height } };
+            },
+        },
+        setDivergence: {
+            reducer: (state, action: PayloadAction<{ node: NodeRef; divergence: number }>) => {
+                const { node, divergence } = action.payload;
+                state.nodes.byId[node.id].divergence = divergence;
+            },
+            prepare: (node: NodeRef, divergence: number) => {
+                return { payload: { node, divergence } };
+            },
+        },
+        setLength: {
+            reducer: (state, action: PayloadAction<{ node: NodeRef; length: number }>) => {
+                const { node, length } = action.payload;
+                state.nodes.byId[node.id].length = length;
+            },
+            prepare: (node: NodeRef, length: number) => {
+                return { payload: { node, length } };
+            },
+        },
+        setRoot: {
+            reducer: (state, action: PayloadAction<{ node: NodeRef }>) => {
+                const { node } = action.payload;
+                state.rootNode = node.id;
+            },
+            prepare: (node: NodeRef) => {
+                return { payload: { node } };
+            },
+        },
+        annotateNode: {
+            reducer: (state, action: PayloadAction<{ node: NodeRef; annotation: { name: string; value: any; type: AnnotationType } }>) => {
+                const currentType = state.annotations.byId[action.payload.annotation.name]
+                    ? state.annotations.byId[action.payload.annotation.name].type
+                    : undefined;
+                const currentDomain = state.annotations.byId[action.payload.annotation.name]
+                    ? state.annotations.byId[action.payload.annotation.name].domain
+                    : undefined;
 
-        },
-        addChild(state, action: PayloadAction<{ parent: NodeRef; child: NodeRef }>) {
-            const { parent, child } = action.payload;
-            state.nodes.byId[parent.id].children.push(child.id);
-        },
-        removeAllChildren(state, action: PayloadAction<{ node: NodeRef }>) {
-            const { node } = action.payload;
-            state.nodes.byId[node.id].children = [];
-        },
-        setParent(state, action: PayloadAction<{ child: NodeRef; parent: NodeRef }>) {
-            const { child, parent } = action.payload;
-            state.nodes.byId[child.id].parent = parent.id;
-        },
-        setName(state, action: PayloadAction<{ node: NodeRef; name: string }>) {
-            const { node, name } = action.payload;
-            state.nodes.byId[node.id].name = name;
-            if (state.nodes.byName[name] !== undefined) {
-                throw new Error(`Duplicate node name ${name}`);
-            }
-            state.nodes.byName[name] = node.id;
-        },
-        setLabel(state, action: PayloadAction<{ node: NodeRef; label: string }>) {
-            const { node, label } = action.payload;
-            state.nodes.byId[node.id].label = label;
-            if (state.nodes.byLabel[label] !== undefined) {
-                throw new Error(`Duplicate node label ${label}`);
-            }
-            state.nodes.byLabel[label] = node.id;
-        },
-        setHeight(state, action: PayloadAction<{ node: NodeRef; height: number }>) {
-            const { node, height } = action.payload;
-            state.nodes.byId[node.id].height = height;
-        },
-        setDivergence(state, action: PayloadAction<{ node: NodeRef; divergence: number }>) {
-            const { node, divergence } = action.payload;
-            state.nodes.byId[node.id].divergence = divergence;
-        },
-        setLength(state, action: PayloadAction<{ node: NodeRef; length: number }>) {
-            const { node, length } = action.payload;
-            state.nodes.byId[node.id].length = length;
-        },
-        setRoot(state, action: PayloadAction<{ node: NodeRef }>) {
-            const { node } = action.payload;
-            state.rootNode = node.id;
-        },
-        annotateNode(state,action:PayloadAction<{node: NodeRef, annotation: { name: string, value: any, type: AnnotationType }}>): void {
-            //todo check annotation type 
-            const currentType = state.annotations.byId[action.payload.annotation.name]?state.annotations.byId[action.payload.annotation.name].type:undefined;
-            const currentDomain = state.annotations.byId[action.payload.annotation.name]?state.annotations.byId[action.payload.annotation.name].domain:undefined;
-            
-            const checkedType =checkAnnotation( action.payload.annotation.type , currentType)
-            const domain = updateDomain( { id:action.payload.annotation.name, value:action.payload.annotation.value, type:checkedType },currentDomain)
+                const checkedType = checkAnnotation(action.payload.annotation.type, currentType);
+                const domain = updateDomain(
+                    { id: action.payload.annotation.name, value: action.payload.annotation.value, type: checkedType },
+                    currentDomain
+                );
 
-            state.nodes.annotations[action.payload.node.id][action.payload.annotation.name] = action.payload.annotation.value;
-            state.annotations.byId[action.payload.annotation.name]={id:action.payload.annotation.name,domain,type:checkedType}
+                state.nodes.annotations[action.payload.node.id][action.payload.annotation.name] =
+                    action.payload.annotation.value;
+                state.annotations.byId[action.payload.annotation.name] = {
+                    id: action.payload.annotation.name,
+                    domain,
+                    type: checkedType,
+                };
+            },
+            prepare: (node: NodeRef, annotation: { name: string; value: any; type: AnnotationType }) => {
+                return { payload: { node, annotation } };
+            },
         }
-    },
+    }   
 });
 
 export const {
@@ -233,23 +313,24 @@ export class Treedux extends AbstractTree {
         return parseNewick(tree, newick, options);
 
     }
+
     setLevel(node: NodeRef, level: number): void {
-        this._store.dispatch(setLevel({node,level}))
+        this._store.dispatch(setLevel(node,level))
     }
     removeChild(parent: NodeRef, child: NodeRef): void {
-        this._store.dispatch(removeChild({parent,child}))
+        this._store.dispatch(removeChild(parent,child))
     }
     sortChildren(node: NodeRef, compare: (a: NodeRef, b: NodeRef) => number): void {
-        this._store.dispatch(sortChildren({node,compare}))
+        this._store.dispatch(sortChildren(node,compare))
     }
     addChild(parent: NodeRef, child: NodeRef): void {
-        this._store.dispatch(addChild({parent,child}))
+        this._store.dispatch(addChild(parent,child))
     }
     removeAllChildren(node: NodeRef): void {
-        this._store.dispatch(removeAllChildren({node}))
+        this._store.dispatch(removeAllChildren(node))
     }
     setParent(child: NodeRef, parent: NodeRef): void {
-        this._store.dispatch(setParent({child,parent}))
+        this._store.dispatch(setParent(child,parent))
     }
     addNode(): NodeRef {
         const tree = this._store.getState().tree;
@@ -265,29 +346,29 @@ export class Treedux extends AbstractTree {
             name: null,
             level: undefined
         }
-        this._store.dispatch(addNode({node:Node}))
+        this._store.dispatch(addNode(Node))
         return Node;
     }
     setName(node: NodeRef, name: string): void {
-        this._store.dispatch(setName({node,name}))
+        this._store.dispatch(setName(node,name))
     }
     setLabel(node: NodeRef, label: string): void {
-        this._store.dispatch(setLabel({node,label}))
+        this._store.dispatch(setLabel(node,label))
     }
     setHeight(node: NodeRef, height: number): void {
-        this._store.dispatch(setHeight({node,height}))
+        this._store.dispatch(setHeight(node,height))
     }
     setDivergence(node: NodeRef, divergence: number): void {
-        this._store.dispatch(setDivergence({node,divergence}))
+        this._store.dispatch(setDivergence(node,divergence))
     }
     setLength(node: NodeRef, length: number): void {
-        this._store.dispatch(setLength({node,length}))
+        this._store.dispatch(setLength(node,length))
     }
     setRoot(node: NodeRef): void {
-        this._store.dispatch(setRoot({node}))
+        this._store.dispatch(setRoot(node))
     }
     annotateNode(node: NodeRef, annotation: { name: string, value: any, type: AnnotationType }): void {
-        this._store.dispatch(annotateNode({node,annotation}))
+        this._store.dispatch(annotateNode(node,annotation))
     }
     getLevel(node: NodeRef): number {
        return this._store.getState().tree.nodes.byId[node.id].level!

@@ -158,7 +158,6 @@ export abstract class AbstractTree implements Tree {
             // the node is the root - nothing to do
             return;
         }
-        console.log(node)
         if(!this.root){
             throw new Error("No root node")
         }
@@ -170,7 +169,6 @@ export abstract class AbstractTree implements Tree {
 
             let node0 = node;
             let parent = this.getParent(node)!;
-            console.log(parent)
 
             if(!parent){
                 throw new Error("no parent")

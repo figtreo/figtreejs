@@ -152,5 +152,26 @@ it('label annotation', function(){
     expect(probability).toEqual(0.95);
     
 })
+
+it('rotate',function(){
+    const tree = Treedux.fromNewick('(A:1,(B:1,(C:1,D:1):1):1);');
+    const C = tree.getNodeByName("C")!;
+    const D = tree.getNodeByName("D")!;
+    const parent = tree.getParent(C)!;
+    expect(tree.getChild(parent,0)).toEqual(C);
+    tree.rotate(parent,true);
+    expect(tree.getChild(parent,0)).toEqual(D);
+})
+
+it('reroot',function(){
+    const tree = Treedux.fromNewick('(A:1,(B:1,(C:1,D:1):1):1);');
+    const C = tree.getNodeByName("C")!;
+    const divergence = tree.getDivergence(C);
+    expect(divergence).toEqual(3);
+    tree.reroot(C,0.5);
+    const newDivergence = tree.getDivergence(C);
+    expect(newDivergence).toEqual(0.5);
 }   
  )
+
+})

@@ -45,7 +45,7 @@ export const parseNewick = createAsyncThunk(
 
 
 export const treeSlice = createSlice({
-    name: 'tree',
+    name: 'treelist',
     initialState,
     reducers: {
 
