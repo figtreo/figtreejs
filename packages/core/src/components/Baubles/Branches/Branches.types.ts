@@ -7,5 +7,6 @@ export interface BranchProps extends BaubleProps{
         stroke:attrType,
         strokeWidth:attrType,
         strokeLinecap?:attrType,
+        strokeLinejoin?:attrType
     },
 }
