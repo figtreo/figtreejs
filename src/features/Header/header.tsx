@@ -11,8 +11,10 @@ import colour from "../../figtreeGraphics/coloursTool.png"
 import find from "../../figtreeGraphics/findTool.png"
 import highlight from "../../figtreeGraphics/HilightTool.png"
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { cartoonNode, collapseNode, colorClade, colorNode, colourTaxa, hiLightNode, selectHeader, setSelectionMode } from "./headerSlice";
+import {  colourTaxa, selectHeader, setSelectionMode } from "./headerSlice";
 import { tree } from "../../app/store";
+import { AnnotationType } from "@figtreejs/core";
+import { CARTOON_ANNOTATION, COLLAPSE_ANNOTATION, COLOUR_ANNOTATION, HILIGHT_ANNOTATION } from "../../app/constants";
 export function Header() {
 
     const dispatch = useAppDispatch();
@@ -30,7 +32,14 @@ export function Header() {
             <div className={optionClasses}>
                 <img src={cartoon} onClick={() => {
                     if (header.SelectionRoot && header.SelectionMode !== "Taxa") {
-                        dispatch(cartoonNode(header.SelectionRoot))
+                        let cartoon:boolean|undefined = tree.getAnnotation(tree.getNode(header.SelectionRoot),CARTOON_ANNOTATION);
+                        if(cartoon===undefined){
+                            cartoon = true;
+                            tree.annotateNode(tree.getNode(header.SelectionRoot),{name:COLLAPSE_ANNOTATION,value:0.25,type:AnnotationType.CONTINUOUS})
+                        }else{
+                            cartoon = !cartoon;
+                        }
+                        tree.annotateNode(tree.getNode(header.SelectionRoot),{name:CARTOON_ANNOTATION,value:cartoon,type:AnnotationType.BOOLEAN})
                     }
                 }
                 } />
@@ -39,7 +48,16 @@ export function Header() {
             <div className={optionClasses}>
                 <img src={collapse} onClick={() => {
                     if (header.SelectionRoot && header.SelectionMode !== "Taxa") {
-                        dispatch(collapseNode(header.SelectionRoot))
+                        let cartoon:boolean|undefined = tree.getAnnotation(tree.getNode(header.SelectionRoot),CARTOON_ANNOTATION);
+                        let collapse:number|undefined = tree.getAnnotation(tree.getNode(header.SelectionRoot),COLLAPSE_ANNOTATION);
+                        
+                        if(collapse===undefined){
+                            tree.annotateNode(tree.getNode(header.SelectionRoot),{name:COLLAPSE_ANNOTATION,value:0.25,type:AnnotationType.CONTINUOUS})
+                            tree.annotateNode(tree.getNode(header.SelectionRoot),{name:CARTOON_ANNOTATION,value:true,type:AnnotationType.BOOLEAN})
+                        }else{
+                            collapse = collapse!>0.9?0:collapse!+0.25;
+                            tree.annotateNode(tree.getNode(header.SelectionRoot),{name:COLLAPSE_ANNOTATION,value:collapse,type:AnnotationType.CONTINUOUS})
+                        }
                     }
                 }} />
                 <p>Collapse</p>
@@ -77,20 +95,19 @@ export function Header() {
                     const customColor=e.target.value;
                      if (header.SelectionRoot) {
                         if (header.SelectionMode === "Node") {
-                            dispatch(colorNode({ id: header.SelectionRoot, colour: customColor }))
+                            tree.annotateNode(tree.getNode(header.SelectionRoot),{name:COLOUR_ANNOTATION,value:customColor,type:AnnotationType.DISCRETE})
 
                         } else if (header.SelectionMode === "Clade") {
                             const colours = [];
                             for(const node of tree.getPostorderNodes(tree.getNode(header.SelectionRoot))){
                                 colours.push({id:node.id,colour:customColor})
+                                tree.annotateNode(node,{name:COLOUR_ANNOTATION,value:customColor,type:AnnotationType.DISCRETE})
                             }
-                            dispatch(colorClade(colours))
                         } else if (header.SelectionMode ==="Taxa"){
                             const colours = [];
                             for(const node of tree.getTips(tree.getNode(header.SelectionRoot))){
                                 colours.push({id:node.id,colour:customColor})
                             }
-
                             dispatch(colourTaxa(colours))
                         }
                     }
@@ -107,7 +124,7 @@ export function Header() {
                     const customColor=e.target.value;
                      if (header.SelectionRoot) {
                         if (header.SelectionMode === "Node" || header.SelectionMode==="Clade") {
-                            dispatch(hiLightNode({ id: header.SelectionRoot, colour: customColor }))
+                            tree.annotateNode(tree.getNode(header.SelectionRoot),{name:HILIGHT_ANNOTATION,value:customColor,type:AnnotationType.DISCRETE})
                         } 
                     }
                 }}/>

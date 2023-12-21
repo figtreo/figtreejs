@@ -408,7 +408,7 @@ export const TreeduxListReducer = treeListSlice.reducer;
         const tree = this.getTreeSlice();
         return tree.nodes.byId[node.id].children.map((id:string) => tree.nodes.byId[id])
     }
-    getAnnotation(node: NodeRef, name: string) {
+    getAnnotation(node: NodeRef, name: string):any {
         const tree = this.getTreeSlice();
         return tree.nodes.annotations[node.id][name]
     }

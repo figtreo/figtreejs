@@ -4,21 +4,22 @@ import {  Nodes, NodeRef, Tree } from "@figtreejs/core";
 import { Node } from "./treeSlice";
 import { selectHeader } from "../Header/headerSlice";
 import { tree } from "../../app/store";
+import { COLOUR_ANNOTATION } from "../../app/constants";
 
 export function Tips() {
     const settings = useAppSelector(selectShapeState("tip"));
     const header = useAppSelector(selectHeader)
 
-    const filter = (n: Node) => tree.getChildCount(n) === 0;
+    const filter = (n: NodeRef) => tree.getChildCount(n) === 0;
 
 
     // check if sizing by an attribute or by a constant
     const radius = settings.maxSize / 2;
-    const fill = settings.colourBy === "User selection" ?
-        (n: NodeRef) => {
-            const custom = header.SelectNodeDecorations[n.id] ? header.SelectNodeDecorations[n.id].customColor : settings.colour
-            return custom!
-        } : settings.colour;
+    const fill = settings.colourBy === "User selection" ? (n: NodeRef) => {
+        const custom = tree.getAnnotation(n,COLOUR_ANNOTATION);
+         return custom===undefined?settings.colour:custom;
+      } : settings.colour;;
+    
 
     const stroke = settings.outlineColour;;
     const strokeWidth = settings.outlineWidth;

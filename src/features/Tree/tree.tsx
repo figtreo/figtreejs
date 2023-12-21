@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useRef, useState, createContext } from 'react';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
-import {  parseNewick } from './treeSlice';
 
 import { selectAppearance, selectLineWidth, selectStroke } from '../Settings/panels/appearance/appearanceSlice';
 import { selectLayout, setPointOfInterest } from '../Settings/panels/layout/layoutSlice';
@@ -11,12 +10,13 @@ import { TipLabels } from './tipLabel';
 import { NodeLabels } from './nodeLabels';
 import { BranchLabels } from './branchLabels';
 
-import { FigTree,  Branches, RectangularLayout, PolarLayout, RadialLayout, NodeRef, Highlight } from '@figtreejs/core'
+import { FigTree,  Branches, RectangularLayout, PolarLayout, RadialLayout, NodeRef, Highlight, NodeDecoration } from '@figtreejs/core'
 import { useAreaSelection } from '../../app/area-selection';
 import { select } from "d3-selection"
 import { selectHeader, setSelectionRoot } from '../Header/headerSlice';
 import AxisElement from './AxisElement';
 import { tree } from '../../app/store';
+import { CARTOON_ANNOTATION, COLLAPSE_ANNOTATION, COLOUR_ANNOTATION, HILIGHT_ANNOTATION } from '../../app/constants';
 
 const margins = { top: 80, bottom: 80, left: 50, right: 100 };
 //todo make zoom and expansion based on number of tips
@@ -191,17 +191,24 @@ export function Tree({ panelRef }: any) {
 
   const lineWidth = useAppSelector(selectLineWidth);
   const branchSettings = useAppSelector(selectAppearance)
-  const branchColour = branchSettings.colourBy === "User selection" ? (n: NodeRef) => {
+  const branchColour = branchSettings.colourBy === "User selection" ? (n: NodeRef):string => {
 
-    const custom = header.SelectNodeDecorations[n.id] && header.SelectNodeDecorations[n.id].customColor ? header.SelectNodeDecorations[n.id].customColor : branchSettings.colour
-    return custom!
-  } : branchSettings.colour;;
+    const custom = tree.getAnnotation(n,COLOUR_ANNOTATION);
+    return custom===undefined?branchSettings.colour:(custom as string);
+  } : branchSettings.colour;
+  const branchFiller = (n: NodeRef):string =>  {
+
+    const custom = tree.getAnnotation(n,COLOUR_ANNOTATION);
+    const cartoon = tree.getAnnotation(n,CARTOON_ANNOTATION);
+    return cartoon && custom!==undefined?(custom as string):'none';
+  } 
 
   const { expansion, zoom, layout, rootAngle, rootLength, angleRange, showRoot, spread, curvature, fishEye, pointOfInterest, animate } = useAppSelector(selectLayout);
 
-  const layoutOpts = {
-    rootAngle, rootLength, angleRange, showRoot, spread, curvature, fishEye, pointOfInterest, nodeDecorations: header.SelectNodeDecorations
-  }
+
+  const nodeDecorations:{[key:string]:NodeDecoration} ={};
+  //memorize
+
 
 
   const treeLayout = layout === "rectangular" ? RectangularLayout : layout === "circular" ? PolarLayout : RadialLayout;
@@ -315,6 +322,20 @@ export function Tree({ panelRef }: any) {
   }
 
   if (tree.getCurrentIndex() > -1) {
+
+    for(const node of tree.getPostorderNodes()){
+      const cartoon = tree.getAnnotation(node,CARTOON_ANNOTATION);
+      if(cartoon){
+        nodeDecorations[node.id]={
+                                  cartooned:(cartoon as boolean),
+                                  collapseFactor:(tree.getAnnotation(node,COLLAPSE_ANNOTATION) as number)
+          }
+      }
+    }
+  
+    const layoutOpts = {
+      rootAngle, rootLength, angleRange, showRoot, spread, curvature, fishEye, pointOfInterest, nodeDecorations: nodeDecorations
+    }
     return (
       <div>
 
@@ -333,14 +354,9 @@ export function Tree({ panelRef }: any) {
 
           <FigTree animated={animate} width={width} height={height} tree={tree} layout={treeLayout} margins={margins} opts={layoutOpts}>
             <AxisElement />
-            <Highlight  attrs={{fill:(n:NodeRef)=> header.SelectNodeDecorations[n.id]!.hilighted!, opacity:0.4}} filter={(n:NodeRef)=>{
-              if (header.SelectNodeDecorations[n.id] && header.SelectNodeDecorations[n.id].hilighted){
-                return true;
-              }
-              return false;
-              }}/>
+            <Highlight  attrs={{fill:(n:NodeRef)=> (tree.getAnnotation(n,HILIGHT_ANNOTATION)! as string), opacity:0.4}} filter={(n:NodeRef)=> tree.getAnnotation(n,HILIGHT_ANNOTATION)!==undefined}/>             
             <Branches attrs={{ fill:'none',strokeWidth: lineWidth + 4, stroke: "#959ABF", strokeLinecap: "round", strokeLinejoin: "round" }} filter={(n: NodeRef) => selectedNodes.has(n.id)} />
-            <Branches attrs={{fill:'none', strokeWidth: lineWidth, stroke: branchColour }} filter={(n: NodeRef) => true} />
+            <Branches attrs={{fill:branchFiller, strokeWidth: lineWidth, stroke: branchColour }} filter={(n: NodeRef) => true} />
             <BranchLabels />
             <Tips  />
             <TipLabels  attrs={{ filter: (n: NodeRef) => selectedTaxa.has(n.id) ? 'url(#solid)' : null }} />
