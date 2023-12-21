@@ -188,7 +188,6 @@ export function Tree({ panelRef }: any) {
 
 
 
-  const nodes = tree.getNodeCount();
 
   const lineWidth = useAppSelector(selectLineWidth);
   const branchSettings = useAppSelector(selectAppearance)
@@ -208,7 +207,7 @@ export function Tree({ panelRef }: any) {
   const treeLayout = layout === "rectangular" ? RectangularLayout : layout === "circular" ? PolarLayout : RadialLayout;
   //
   const handlePaste = (event: any) => {
-    tree.parseNewick(event.clipboardData.getData('text'));
+    tree.addFromNewick(event.clipboardData.getData('text'));
   }
   useEffect(() => {
 
@@ -315,7 +314,7 @@ export function Tree({ panelRef }: any) {
     }
   }
 
-  if (nodes > 0) {
+  if (tree.getCurrentIndex() > -1) {
     return (
       <div>
 

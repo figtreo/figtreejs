@@ -239,7 +239,7 @@ const treeListSlice = createSlice({
         previousTree
     } = treeListSlice.actions;
     
-export const TreeDuxListReducer = treeListSlice.reducer;
+export const TreeduxListReducer = treeListSlice.reducer;
 
  export class TreeduxList extends AbstractTree implements TreeList {
    
@@ -255,13 +255,16 @@ export const TreeDuxListReducer = treeListSlice.reducer;
             }
             this._getMySlice = ()=> treeGetter(store);
         }else{
-        this._store = configureStore({reducer:{treeList:TreeDuxListReducer}});
+        this._store = configureStore({reducer:{treeList:TreeduxListReducer}});
         this._getMySlice = ()=>this._store.getState().treeList;
 
         }
     }
     
     private getTreeSlice():NormalizedTreeData{
+        if(this._getMySlice().currentTree<0){
+            throw new Error("No tree loaded or at least currentTree index is -1")
+        }
         return this._getMySlice().trees[this._getMySlice().currentTree];
     }
     getNextTree(): Tree {
