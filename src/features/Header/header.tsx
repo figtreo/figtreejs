@@ -22,6 +22,9 @@ export function Header() {
     const optionClasses = header.SelectionRoot ? "tool" : "tool deactivated"
 
 
+    const nextTreeAvaliable = tree.getCurrentIndex() < tree.getTreeCount() - 1;
+    const previoustreeAvaliable = tree.getCurrentIndex() > 0;
+
     return (
         <div className="header">
             <div className={optionClasses}>
@@ -137,10 +140,10 @@ export function Header() {
             <div className="tool">
                 <div className="selectionOptions">
                     <div className='optionContainer'>
-                        <div className="selectionOption">
+                        <div className={`selectionOption ${previoustreeAvaliable?"":"deactivated"}`} onClick={()=>{if(previoustreeAvaliable){tree.getPreviousTree()}}}>
                             <div className="arrow left" />
                         </div>
-                        <div className="selectionOption">
+                        <div className={`selectionOption ${nextTreeAvaliable?"":"deactivated"}`} onClick={()=>{if(nextTreeAvaliable){tree.getNextTree()}}}>
                             <div className="arrow right" />
 
                         </div>
