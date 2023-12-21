@@ -1,7 +1,7 @@
 import { BaubleProps, attrType } from "..";
 
 
-export interface NodeProps extends BaubleProps{
+interface NodeProps extends BaubleProps{
     attrs:{
         stroke?:attrType,
         strokeWidth?:attrType,
@@ -12,6 +12,8 @@ export interface NodeProps extends BaubleProps{
         opacity?:attrType
     }
 }
+
+//TODO make a CIRCLENODEPROPS ... 
 export interface NodeLabelProps extends BaubleProps{
     attrs:{
         fontFamily?:attrType,

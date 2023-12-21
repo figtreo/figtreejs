@@ -1,7 +1,7 @@
 import React from "react";
 import { animated} from "@react-spring/web";
 import withAnimation from "../../HOC/withAnimation";
-import { BaseBaubleProps } from "..";
+import { BaseShapeProps } from "..";
 
 
 //props types
@@ -15,7 +15,7 @@ function BaseBranch(props:BaseBranchProps){
 
 }
 
-interface BaseBranchProps extends BaseBaubleProps{
+interface BaseBranchProps extends BaseShapeProps{
     id:string,
     attrs:{
         fill:string,

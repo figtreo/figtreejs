@@ -1,7 +1,7 @@
 import {animated} from "@react-spring/web";
 import React from "react";
 import withAnimation from "../../../HOC/withAnimation";
-import { BaseBaubleProps } from "../";
+import { BaseShapeProps } from "../";
 
 
 const BaseCircle = React.memo<CircleProps>( props=> {
@@ -28,7 +28,7 @@ export function sameAttributes(prev:{[key:string]:any},curr:{[key:string]:any}){
 	return true;
 }
 //TODO specify tooltip and interactions
-export interface CircleProps extends BaseBaubleProps{
+export interface CircleProps extends BaseShapeProps{
 	attrs:{
 		r:number,
 		fill:string,
