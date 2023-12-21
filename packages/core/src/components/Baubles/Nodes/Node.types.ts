@@ -1,7 +1,7 @@
 import { BaubleProps, attrType } from "..";
 
 
-interface NodeProps extends BaubleProps{
+export interface NodeProps extends BaubleProps{
     attrs:{
         stroke?:attrType,
         strokeWidth?:attrType,

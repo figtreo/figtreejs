@@ -6,7 +6,7 @@ import { ToolkitStore } from '@reduxjs/toolkit/dist/configureStore';
 import { AbstractTree } from '../AbtractTree';
 import { parseNewick } from '../parsing';
 
-function checkAnnotation(suggestedType: AnnotationType , currentType:AnnotationType|undefined): AnnotationType {
+export function checkAnnotation(suggestedType: AnnotationType , currentType:AnnotationType|undefined): AnnotationType {
     let annotationType = currentType;
    
 
@@ -25,7 +25,7 @@ function checkAnnotation(suggestedType: AnnotationType , currentType:AnnotationT
     throw new Error(`Annotation has type ${suggestedType} but previously seen as ${annotationType}`)
 }
 
-function updateDomain( annotation: { id: string; value: any;type:AnnotationType },domain:[number, number] | string[] | number[]|[boolean,boolean]|undefined  ): [number, number] | string[] | number[]|[boolean,boolean]  {
+export function updateDomain( annotation: { id: string; value: any;type:AnnotationType },domain:[number, number] | string[] | number[]|[boolean,boolean]|undefined  ): [number, number] | string[] | number[]|[boolean,boolean]  {
     let newDomain = domain;
     switch (annotation.type) {
         case AnnotationType.CONTINUOUS: {
@@ -301,7 +301,7 @@ export const TreeduxReducer = normalizedTreeSlice.reducer;
 export class Treedux extends AbstractTree {
    
     _store:ToolkitStore
-    _getTree:()=>NormalizedTreeData
+    _getTree:()=>NormalizedTreeData //selector
     constructor( store?:ToolkitStore,treeGetter?:(state:ToolkitStore)=>NormalizedTreeData){
         super();
         
