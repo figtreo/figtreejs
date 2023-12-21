@@ -11,7 +11,7 @@ export function BaseShapes(props: { target: shapeTarget, }) {
     const settings = useAppSelector(selectShapeState(props.target))
 
     //duplicate code
-    const attributeTypes = tree.getAnnotations();
+    const attributeTypes = tree.getCurrentIndex()>-1?tree.getAnnotations():[];
     //TODO add defaults like height/length/ etc.
     const attributeKeys = Object.keys(attributeTypes).length > 0 ? ["Fixed","User selection", ...Object.keys(attributeTypes)] : ["Fixed","User selection"]
 

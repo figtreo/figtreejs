@@ -1,5 +1,5 @@
 import { combineReducers, createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { NormalizedTree, NormalizedTreeData, TreeduxReducer } from '@figtreejs/core';
+import { NormalizedTree, NormalizedTreeData, TreeduxListReducer } from '@figtreejs/core';
 
 export interface Node {
     id: string,
@@ -47,7 +47,7 @@ const treeStatus = createSlice({
 
 const treeReducer =  combineReducers({
     status: treeStatus.reducer,
-    tree: TreeduxReducer})
+    tree: TreeduxListReducer})
     
 export default treeReducer;
 

@@ -10,7 +10,7 @@ export function Appearance() {
         minWidth,
         colour
     } = useAppSelector(selectAppearance)
-    const attributeTypes = tree.getAnnotations();
+    const attributeTypes = tree.getCurrentIndex()>-1?tree.getAnnotations():[];
     const attributeKeys = Object.keys(attributeTypes).length > 0 ? ["User selection", ...Object.keys(attributeTypes)] : ["User selection"]
 
     const options = []

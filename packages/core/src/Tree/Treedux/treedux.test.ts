@@ -1,4 +1,4 @@
-import { Treedux } from "./reduxTree";
+import { Treedux } from "./treedux";
 
 describe("Test tree parsing and TREEDUX",()=>{
     it('simpleParse', function() {
