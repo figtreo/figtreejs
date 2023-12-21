@@ -12,14 +12,12 @@ import find from "../../figtreeGraphics/findTool.png"
 import highlight from "../../figtreeGraphics/HilightTool.png"
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { cartoonNode, collapseNode, colorClade, colorNode, colourTaxa, hiLightNode, selectHeader, setSelectionMode } from "./headerSlice";
-import { rotate, reroot, selectTree } from "../Tree/treeSlice";
-import { NormalizedTree } from "@figtreejs/core";
+import { tree } from "../../app/store";
 export function Header() {
 
     const dispatch = useAppDispatch();
 
     const header = useAppSelector(selectHeader)
-    const tree = new NormalizedTree(useAppSelector(selectTree).tree)
 
     const optionClasses = header.SelectionRoot ? "tool" : "tool deactivated"
 
@@ -46,7 +44,7 @@ export function Header() {
             <div className={optionClasses}>
                 <img src={rooting} onClick={() => {
                     if (header.SelectionRoot && header.SelectionMode !== "Taxa") {
-                        dispatch(reroot(header.SelectionRoot))
+                        tree.reroot({id:header.SelectionRoot},0.5)
                     }
                 }} />
                 <p>Reroot</p>
@@ -55,10 +53,10 @@ export function Header() {
                 <img src={rotatePic} onClick={() => {
                     if (header.SelectionRoot) {
                         if (header.SelectionMode === "Node") {
-                            dispatch(rotate({ node: header.SelectionRoot, recursive: false }))
+                           tree.rotate( {id:header.SelectionRoot},false )
 
                         } else if (header.SelectionMode === "Clade") {
-                            dispatch(rotate({ node: header.SelectionRoot, recursive: true }))
+                            tree.rotate( {id:header.SelectionRoot},true )
                         }
                     }
 

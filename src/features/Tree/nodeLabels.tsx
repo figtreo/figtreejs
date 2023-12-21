@@ -1,13 +1,13 @@
 import { format } from "d3-format";
 import { useAppSelector } from "../../app/hooks";
 import { selectLabelState } from "../Settings/panels/label/labelSlice";
-import { selectLayout } from "../Settings/panels/layout/layoutSlice";
 import { Node } from "./treeSlice";
-import {NormalizedTree, Nodes,NodeRef} from "@figtreejs/core";
+import { Nodes,NodeRef} from "@figtreejs/core";
 import { selectHeader } from "../Header/headerSlice";
+import { tree } from "../../app/store";
 
-export function NodeLabels(props:{ tree: NormalizedTree,attrs?:{[key:string]:any} }) {
-    const { tree,attrs={} } = props;
+export function NodeLabels(props:{ attrs?:{[key:string]:any} }) {
+    const { attrs={} } = props;
     const settings = useAppSelector(selectLabelState("node"));
     const header = useAppSelector(selectHeader)
 
@@ -19,7 +19,6 @@ export function NodeLabels(props:{ tree: NormalizedTree,attrs?:{[key:string]:any
         const custom = header.SelectNodeDecorations[n.id] ? header.SelectNodeDecorations[n.id].customColor : settings.colour
         return custom!
     } : settings.colour;
-
 
     if (settings.activated) {
 

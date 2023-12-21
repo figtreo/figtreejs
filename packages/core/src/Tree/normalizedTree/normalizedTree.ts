@@ -1,6 +1,6 @@
 import { AbstractTree } from "../AbtractTree"
 import { AnnotationType, NodeRef, Tree, newickParsingOptions } from "../Tree.types"
-import { parseNewick } from "../..";
+import { parseNewick } from "../parsing";
 import { NormalizedTreeData } from "./normalizedTree.types"
 //todo clean up null vs undefined
 export class NormalizedTree extends AbstractTree {

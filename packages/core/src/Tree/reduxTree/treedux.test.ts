@@ -1,74 +1,31 @@
-import { NormalizedTree } from "../normalizedTree";
-import { processAnnotationValue } from "./AnnotationParser";
+import { Treedux } from "./reduxTree";
 
-describe("Test annotation parsing",()=>{
-
-    it('integer', function () {
-        const annotation = processAnnotationValue("1");
-        expect(annotation).toEqual({ type: "INTEGER", value: 1 });
-    });
-    it('integer array', function () {
-        const annotation = processAnnotationValue(["1", "2", "3"]);
-        expect(annotation).toEqual({ type: "INTEGER", value: [1, 2, 3] });
-    });
-
-    it('continuous array', function () {
-        const annotation = processAnnotationValue(["1", "2.5", "3"]);
-        expect(annotation).toEqual({ type: "CONTINUOUS", value: [1, 2.5, 3] });
-    });
-
-    it('continuous', function () {
-        const annotation = processAnnotationValue("1.3");
-        expect(annotation).toEqual({ type: "CONTINUOUS", value: 1.3 });
-    });
-    it('discrete', function () {
-        const annotation = processAnnotationValue("a");
-        expect(annotation).toEqual({ type: "DISCRETE", value: "a" });
-    });
-    it('discrete array', function () {
-        const annotation = processAnnotationValue(["a", "b", "c"]);
-        expect(annotation).toEqual({ type: "DISCRETE", value: ["a", "b", "c"] });
-    });
-    it('markov jump', function () {
-        const annotation = processAnnotationValue([["0.1", "U", "me"]]);
-        expect(annotation).toEqual({ type: "MARKOV_JUMP", value: [{ time: 0.1, from: "U", to: "me" }] });
-    });
-    it('markov jump array', function () {
-        const annotation = processAnnotationValue([[0.1, "U", "me"], [0.2, "me", "U"]]);
-        expect(annotation).toEqual({ type: "MARKOV_JUMP", value: [{ time: 0.1, from: "U", to: "me" }, { time: 0.2, from: "me", to: "U" }] });
-    });
-    it('probabilities', function () {
-        const annotation = processAnnotationValue({ HERE: 0.3, THERE: 0.7 });
-        expect(annotation).toEqual({ type: "PROBABILITIES", value: { HERE: 0.3, THERE: 0.7 } });
-    });
-});
-
-describe("Test tree parsing and normalized Tree",()=>{
+describe("Test tree parsing and TREEDUX",()=>{
     it('simpleParse', function() {
 
         const newickString = `((((((virus1:0.1,virus2:0.12):0.08,(virus3:0.011,virus4:0.0087):0.15):0.03,virus5:0.21):0.2,(virus6:0.45,virus7:0.4):0.02):0.1,virus8:0.4):0.1,(virus9:0.04,virus10:0.03):0.6);`;
 
-        const tree = NormalizedTree.fromNewick(newickString,{parseAnnotations:false});
+        const tree = Treedux.fromNewick(newickString,{parseAnnotations:false});
         expect(tree.toNewick()).toEqual(newickString);
 
     }); 
 
     it('height', function() {
         const newickString = `((((((virus1:0.1,virus2:0.12):0.08,(virus3:0.011,virus4:0.0087):0.15):0.03,virus5:0.21):0.2,(virus6:0.45,virus7:0.4):0.02):0.1,virus8:0.4):0.1,(virus9:0.04,virus10:0.03):0.6);`;
-        const tree = NormalizedTree.fromNewick(newickString);
+        const tree = Treedux.fromNewick(newickString);
 
         const virus1Node = tree.getNodeByName("virus1")!
         expect(tree.getHeight(virus1Node)).toBeCloseTo(0.06,1e-6)
   })
   it('divergence', function() {
     const newickString = `((((((virus1:0.1,virus2:0.12):0.08,(virus3:0.011,virus4:0.0087):0.15):0.03,virus5:0.21):0.2,(virus6:0.45,virus7:0.4):0.02):0.1,virus8:0.4):0.1,(virus9:0.04,virus10:0.03):0.6);`;
-    const tree = NormalizedTree.fromNewick(newickString);
+    const tree = Treedux.fromNewick(newickString);
 
     const virus6Node = tree.getNodeByName("virus6")!
     expect(tree.getDivergence(virus6Node)).toBeCloseTo(0.67,1e-6)
 })
  it('general_parse', function() {
-    const tree = NormalizedTree.fromNewick("(a:1,b:4)#l;"); 
+    const tree = Treedux.fromNewick("(a:1,b:4)#l;"); 
     const root = tree.root!;
     const label = tree.getLabel(root)
     expect(label).toEqual( "l");
@@ -95,7 +52,7 @@ describe("Test tree parsing and normalized Tree",()=>{
 })
 
 it('scientific notation', function() {
-    const tree = NormalizedTree.fromNewick("(a:1E1,b:2e-5)l;");
+    const tree = Treedux.fromNewick("(a:1E1,b:2e-5)l;");
     const root = tree.root!;
     const bl = [];
     const count = tree.getChildCount(root);
@@ -114,17 +71,17 @@ it('scientific notation', function() {
 
 it('quoted taxa', function() {
 
-   const tree =  NormalizedTree.fromNewick("('234] ':1,'here a *':1);")
+   const tree =  Treedux.fromNewick("('234] ':1,'here a *':1);")
    const names = [...tree.getTips()].map((node) => tree.getName(node));
    expect(names).toEqual(["234]", "here a *"])
 })
 
 it('whitespace', function() {
-    const tree =  NormalizedTree.fromNewick("  (a,b:1);\t")
+    const tree =  Treedux.fromNewick("  (a,b:1);\t")
     expect(tree.toNewick()).toEqual("(a,b:1);")
 });
 it('node id', function() {
-    const tree = NormalizedTree.fromNewick("((A,T)#Node_1:1,(a,b:1));")
+    const tree = Treedux.fromNewick("((A,T)#Node_1:1,(a,b:1));")
     
     const A = tree.getNodeByName("A")!;
     const node1 = tree.getNodeByLabel("Node_1")!;
@@ -135,7 +92,7 @@ it('node id', function() {
     expect(tree.toNewick()).toEqual("((A,T)#Node_1:1,(a,b:1));")
 });
 it('root length and label', function() {
-    const tree = NormalizedTree.fromNewick("((A,T)#Node_1:1,(a,b:1))#root:0.1;")
+    const tree = Treedux.fromNewick("((A,T)#Node_1:1,(a,b:1))#root:0.1;")
     const root = tree.root!;
     const rootLength = tree.getLength(root);
     expect(rootLength).toEqual(0.1);
@@ -145,20 +102,20 @@ it('root length and label', function() {
 });
 
 it('fail no ;', function(){
-    expect(()=>NormalizedTree.fromNewick("('234] ','here a *')")).toThrow("expecting a semi-colon at the end of the newick string");
+    expect(()=>Treedux.fromNewick("('234] ','here a *')")).toThrow("expecting a semi-colon at the end of the newick string");
 });
 
 
 it('fail unbalanced )', function(){
-    expect(()=>NormalizedTree.fromNewick("(a,b));")).toThrow("the brackets in the newick file are not balanced: too many closed");
+    expect(()=>Treedux.fromNewick("(a,b));")).toThrow("the brackets in the newick file are not balanced: too many closed");
 });
 
 it('fail unbalanced (', function(){
-    expect(()=>NormalizedTree.fromNewick("((a,b);")).toThrow("the brackets in the newick file are not balanced: too many opened");
+    expect(()=>Treedux.fromNewick("((a,b);")).toThrow("the brackets in the newick file are not balanced: too many opened");
 });
 
 it('comment', function() {
-    const tree = NormalizedTree.fromNewick("(a[&test=ok],b:1);",{parseAnnotations:true})
+    const tree = Treedux.fromNewick("(a[&test=ok],b:1);",{parseAnnotations:true})
     const a = tree.getNodeByName("a")!;
     const testAnnotation =    tree.getAnnotation(a, "test");
     expect(testAnnotation).toEqual( "ok" );
@@ -166,7 +123,7 @@ it('comment', function() {
 
 
 it('markov jump comment', function() {
-    const tree = NormalizedTree.fromNewick("(a[&test=ok],b[&jump={{0.1,U,me}}]);",{parseAnnotations:true})
+    const tree = Treedux.fromNewick("(a[&test=ok],b[&jump={{0.1,U,me}}]);",{parseAnnotations:true})
     const a = tree.getNodeByName("a")!;
     const b = tree.getNodeByName("b")!;
     const testAnnotation =    tree.getAnnotation(a, "test");
@@ -177,7 +134,7 @@ it('markov jump comment', function() {
 });
 
 it('double comment', function() {
-    const tree = NormalizedTree.fromNewick("(a[&test=ok,other test = 1],b:1);",{parseAnnotations:true})
+    const tree = Treedux.fromNewick("(a[&test=ok,other test = 1],b:1);",{parseAnnotations:true})
     const a = tree.getNodeByName("a")!;
     const testAnnotation =    tree.getAnnotation(a, "test");
     expect(testAnnotation).toEqual("ok");
@@ -186,7 +143,7 @@ it('double comment', function() {
 });
 
 it('label annotation', function(){
-    const tree = NormalizedTree.fromNewick('((((((virus1:0.1,virus2:0.12)0.95:0.08,(virus3:0.011,virus4:0.0087)1.0:0.15)0.65:0.03,virus5:0.21)1.0:0.2,(virus6:0.45,virus7:0.4)0.51:0.02)1.0:0.1,virus8:0.4)1.0:0.1,(virus9:0.04,virus10:0.03)1.0:0.6);',
+    const tree = Treedux.fromNewick('((((((virus1:0.1,virus2:0.12)0.95:0.08,(virus3:0.011,virus4:0.0087)1.0:0.15)0.65:0.03,virus5:0.21)1.0:0.2,(virus6:0.45,virus7:0.4)0.51:0.02)1.0:0.1,virus8:0.4)1.0:0.1,(virus9:0.04,virus10:0.03)1.0:0.6);',
     {parseAnnotations:true,labelName:"probability"});
 
     const virus1Node = tree.getNodeByName("virus1")!;
@@ -195,6 +152,26 @@ it('label annotation', function(){
     expect(probability).toEqual(0.95);
     
 })
+
+it('rotate',function(){
+    const tree = Treedux.fromNewick('(A:1,(B:1,(C:1,D:1):1):1);');
+    const C = tree.getNodeByName("C")!;
+    const D = tree.getNodeByName("D")!;
+    const parent = tree.getParent(C)!;
+    expect(tree.getChild(parent,0)).toEqual(C);
+    tree.rotate(parent,true);
+    expect(tree.getChild(parent,0)).toEqual(D);
+})
+
+it('reroot',function(){
+    const tree = Treedux.fromNewick('(A:1,(B:1,(C:1,D:1):1):1);');
+    const C = tree.getNodeByName("C")!;
+    const divergence = tree.getDivergence(C);
+    expect(divergence).toEqual(3);
+    tree.reroot(C,0.5);
+    const newDivergence = tree.getDivergence(C);
+    expect(newDivergence).toEqual(0.5);
 }   
  )
 
+})

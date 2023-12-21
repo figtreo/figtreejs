@@ -1,13 +1,12 @@
 import { useAppSelector } from "../../app/hooks";
 import { selectShapeState } from "../Settings/panels/shapes/shapeSlice";
-import { NormalizedTree, Nodes, NodeRef } from "@figtreejs/core";
-import { Node } from "./treeSlice";
+import {  Nodes, NodeRef } from "@figtreejs/core";
 import { selectHeader } from "../Header/headerSlice";
+import { tree } from "../../app/store";
 
-export function InternalNodes(props: { tree: NormalizedTree }) {
-    const tree = props.tree;
+export function InternalNodes() {
     const settings = useAppSelector(selectShapeState("node"));
-    const filter = (n: Node) => tree.getChildCount(n) > 0;
+    const filter = (n: NodeRef) => tree.getChildCount(n) > 0;
     const header = useAppSelector(selectHeader)
 
     // check if sizing by an attribute or by a constant

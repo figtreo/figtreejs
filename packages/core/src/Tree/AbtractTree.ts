@@ -1,6 +1,6 @@
 import { AnnotationType, NodeRef, Tree } from "./Tree.types";
-import { processAnnotationValue } from ".";
 import { extent } from "d3-array";
+import { processAnnotationValue } from "./parsing";
 
 export abstract class AbstractTree implements Tree {
     annotateNodeUnknownType(node: NodeRef, annotations: { value: any, id: string }[] | { value: any, id: string }): void {
@@ -158,7 +158,6 @@ export abstract class AbstractTree implements Tree {
             // the node is the root - nothing to do
             return;
         }
-        console.log(node)
         if(!this.root){
             throw new Error("No root node")
         }
@@ -170,7 +169,6 @@ export abstract class AbstractTree implements Tree {
 
             let node0 = node;
             let parent = this.getParent(node)!;
-            console.log(parent)
 
             if(!parent){
                 throw new Error("no parent")
@@ -315,6 +313,15 @@ export abstract class AbstractTree implements Tree {
                     
                 }
                 newDomain.sort()
+                break;
+            }
+            case AnnotationType.DISCRETE:{
+                if (domain === undefined) {
+                    newDomain = [annotation.value]
+                } else {
+                    newDomain = [...new Set([...domain, annotation.value])]
+                    newDomain.sort()
+                }
                 break;
             }
             default: {

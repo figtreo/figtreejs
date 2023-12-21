@@ -1,8 +1,8 @@
 import { AnnotationType } from '@figtreejs/core';
-import treeReducer, { TreeState, rotate } from './treeSlice';
+import treeReducer from './treeSlice';
   
   describe('tree reducer', () => {
-    const initialState: TreeState = {
+    const initialState: any = {
         tree:{nodes:{
             byId:{node0:{
                 id:'node0',
@@ -50,7 +50,7 @@ import treeReducer, { TreeState, rotate } from './treeSlice';
       status: 'idle'
     };
 
-    const realInitialState: TreeState = {
+    const realInitialState: any = {
       tree:{
         nodes:{
             byId:{},

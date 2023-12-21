@@ -3,7 +3,7 @@ import {sameAttributes} from "./Circle";
 import { Vertex } from "../../../../Layouts/LayoutInterface";
 import { animated } from "@react-spring/web";
 import withAnimation from "../../../HOC/withAnimation";
-import { BaseBaubleProps } from "..";
+import { BaseShapeProps } from "..";
 const BaseRect = React.memo<RectangleProps>( (props)=>{
     
 	const {attrs,interactions,id} = props;
@@ -16,7 +16,7 @@ const BaseRect = React.memo<RectangleProps>( (props)=>{
 
 const Rectangle =withAnimation(BaseRect);
 
-export interface RectangleProps extends BaseBaubleProps{
+export interface RectangleProps extends BaseShapeProps{
 	attrs:{
 		fill:string,
 		strokeWidth:number,
