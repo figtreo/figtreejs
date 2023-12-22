@@ -188,6 +188,38 @@ const treeListSlice = createSlice({
                     return { payload: { node } };
                 },
             },
+            orderNodesByDensity: {
+                reducer: (state, action: PayloadAction<{ increasing: boolean; node?: NodeRef }>) => {
+                    const { increasing, node } = action.payload;
+                    const factor = increasing ? 1 : -1;
+                    const tree = state.trees[state.currentTree];
+                    let thisNode = node;
+                    if(thisNode===undefined){
+                        if(tree.rootNode===null){
+                            throw new Error("No root node set can not order nodes")
+                        }
+                        thisNode = tree.nodes.byId[tree.rootNode]
+                    }
+                    const orderer =(tree:NormalizedTreeData,node:NodeRef,factor:number):number=>{
+                    
+                    const counts :{[key:string]:number} = {};
+                    let descendants=0
+                    for(const child of tree.nodes.byId[node.id].children){
+                        const thisLine = orderer(tree,tree.nodes.byId[child],factor);
+                        descendants+=thisLine+1; //one for the child itself
+                        counts[child]=thisLine;
+                    }
+                    tree.nodes.byId[node.id].children.sort((a,b)=>factor*(counts[a]-counts[b]));
+                    return descendants
+                  }
+
+                    orderer(tree,thisNode,factor);
+                }
+                  ,
+                prepare: (increasing: boolean, node?: NodeRef) => {
+                    return { payload: { increasing, node } };
+                },
+            },
             annotateNode: {
                 reducer: (state, action: PayloadAction<{ node: NodeRef; annotation: { name: string; value: any; type: AnnotationType } }>) => {
                     const currentType = state.trees[state.currentTree].annotations.byId[action.payload.annotation.name]
@@ -236,7 +268,8 @@ const treeListSlice = createSlice({
         setCurrentTree,
         addTree,
         nextTree,
-        previousTree
+        previousTree,
+        orderNodesByDensity
     } = treeListSlice.actions;
     
 export const TreeduxListReducer = treeListSlice.reducer;
@@ -300,9 +333,11 @@ export const TreeduxListReducer = treeListSlice.reducer;
             return tree;
     }
     addFromNewick(newick: string, options?: newickParsingOptions | undefined): void {
-        this._store.dispatch(addTree(new NormalizedTree().data))
+        const fakeTree:NormalizedTree = (NormalizedTree.fromNewick(newick, options)as NormalizedTree);
+        //this avoids pushing all the parsing events to the redux store
+        this._store.dispatch(addTree(fakeTree.data))
         this._store.dispatch(setCurrentTree(this._getMySlice().trees.length-1))
-        parseNewick(this, newick, options);
+        
     }
 
     setLevel(node: NodeRef, level: number): void {
@@ -339,6 +374,10 @@ export const TreeduxListReducer = treeListSlice.reducer;
         }
         this._store.dispatch(addNode(Node))
         return Node;
+    }
+
+    orderNodesByDensity(increasing: boolean, node?: NodeRef): void {
+        this._store.dispatch(orderNodesByDensity(increasing,node));
     }
     setName(node: NodeRef, name: string): void {
         this._store.dispatch(setName(node,name))

@@ -224,6 +224,24 @@ export function Tree({ panelRef }: any) {
     };
   })
 
+const handleKeyDown = (event: KeyboardEvent) => {
+  if (event.key === "d" && event.metaKey) {
+    tree.orderNodesByDensity(true);
+    event.preventDefault();
+  }
+  if (event.key === "u" && event.metaKey) {
+    tree.orderNodesByDensity(false);
+  }
+
+};
+
+useEffect(() => {
+  window.addEventListener("keydown", handleKeyDown);
+  return () => {
+    window.removeEventListener("keydown", handleKeyDown);
+  };
+});
+
 
   const zoomed = [treeSize.baseWidth * zoom * zoomFactor, treeSize.baseHeight * zoom * zoomFactor]
 
