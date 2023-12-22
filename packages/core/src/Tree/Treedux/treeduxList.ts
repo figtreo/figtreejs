@@ -5,7 +5,6 @@ import { checkAnnotation, updateDomain } from "./treedux";
 import { AbstractTree } from "../AbtractTree";
 import { ToolkitStore } from "@reduxjs/toolkit/dist/configureStore";
 import { TreeList } from "../TreeList/TreeListInterface";
-import { parseNewick } from "../parsing";
 
 type treeduxState ={
     currentTree:number;
@@ -99,6 +98,19 @@ const treeListSlice = createSlice({
                     return { payload: { node } };
                 },
             },
+            rotate:{
+                reducer:(state,action:PayloadAction<{node:NodeRef,recursive:boolean}> )=>{
+                    const { node,recursive } = action.payload;
+                    const tree = state.trees[state.currentTree];
+                    const fakeTree = new NormalizedTree(tree);
+                    fakeTree.rotate(node,recursive);
+                    state.trees[state.currentTree] = fakeTree.data;
+                },
+                prepare:(node:NodeRef,recursive:boolean)=>{
+                    return {payload:{node,recursive}}
+                }
+            },
+
             addChild: {
                 reducer: (state, action: PayloadAction<{ parent: NodeRef; child: NodeRef }>) => {
                     const { parent, child } = action.payload;
@@ -189,6 +201,7 @@ const treeListSlice = createSlice({
                 },
             },
             orderNodesByDensity: {
+                //could be simplified by using the orderNodesByDensity function from normalizedTree 
                 reducer: (state, action: PayloadAction<{ increasing: boolean; node?: NodeRef }>) => {
                     const { increasing, node } = action.payload;
                     const factor = increasing ? 1 : -1;
@@ -218,6 +231,19 @@ const treeListSlice = createSlice({
                   ,
                 prepare: (increasing: boolean, node?: NodeRef) => {
                     return { payload: { increasing, node } };
+                },
+            },
+            reroot: {
+                reducer: (state, action: PayloadAction<{ node: NodeRef; proportion: number }>) => {
+                    const { node, proportion } = action.payload;
+                    const tree = state.trees[state.currentTree];
+                    const fakeTree = new NormalizedTree(tree);
+                    fakeTree.reroot(node, proportion);
+                
+                    state.trees[state.currentTree] = fakeTree.data;
+                },
+                prepare: (node: NodeRef, proportion: number) => {
+                    return { payload: { node, proportion } };
                 },
             },
             annotateNode: {
@@ -269,7 +295,10 @@ const treeListSlice = createSlice({
         addTree,
         nextTree,
         previousTree,
-        orderNodesByDensity
+        //overwrite abstract methods for speed
+        orderNodesByDensity,
+        reroot,
+        rotate
     } = treeListSlice.actions;
     
 export const TreeduxListReducer = treeListSlice.reducer;
@@ -327,6 +356,8 @@ export const TreeduxListReducer = treeListSlice.reducer;
      hasTree(): boolean {
          return this._getMySlice().currentTree<this._getMySlice().trees.length-1
      }
+
+
     static fromNewick(newick: string, options?: newickParsingOptions | undefined): TreeduxList {
             const tree = new this();
             tree.addFromNewick( newick, options);
@@ -339,7 +370,12 @@ export const TreeduxListReducer = treeListSlice.reducer;
         this._store.dispatch(setCurrentTree(this._getMySlice().trees.length-1))
         
     }
-
+    reroot(node: NodeRef, proportion: number): void {
+        this._store.dispatch(reroot(node,proportion))
+    }
+    rotate(node: NodeRef, recursive: boolean): void {
+        this._store.dispatch(rotate(node,recursive))
+    }
     setLevel(node: NodeRef, level: number): void {
             this._store.dispatch(setLevel(node,level))
     }
@@ -519,3 +555,6 @@ export const TreeduxListReducer = treeListSlice.reducer;
     
     
 
+
+
+//treefunctions
