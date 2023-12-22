@@ -1,4 +1,4 @@
-import { AbstractLayout, NodeDecoration } from "../../Layouts/LayoutInterface";
+import { AbstractLayout, CartoonData } from "../../Layouts/LayoutInterface";
 import { Tree,NodeRef } from "../../Tree/Tree.types";
 
 interface Margins{
@@ -19,7 +19,7 @@ export interface layoutOptions{
     spread?: number
     pointOfInterest?: { x: number; y: number; },
     fishEye?: number;
-    nodeDecorations:{[key:string]:NodeDecoration}
+    cartoonedNodes:{[key:string]:CartoonData}
 
 }
 

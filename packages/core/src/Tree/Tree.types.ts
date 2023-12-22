@@ -16,6 +16,7 @@ export interface newickParsingOptions  {
      labelName?: string,  parseAnnotations: boolean , tipNameMap?: Map<string, string>
 }
 export interface Tree  {
+    
     getNodeByName(name: string): NodeRef|null
     getNodeByLabel(label: string): NodeRef|null
     getName(node: NodeRef):string|null
@@ -63,49 +64,6 @@ export interface Tree  {
     setLevel(node:NodeRef,level:number):void;
     //TODO decide if we want to keep integers different from continuous
     getAnnotationDomain(name:string):[number,number]|[boolean,boolean]|string[]|number[]|undefined;
-    // addChild(parent: Node, child: Node): void {
-    //     throw new Error("Method not implemented.")
-    // }
-    // setParent(node: Node, parent: Node): void {
-    //     throw new Error("Method not implemented.")
-    // }
-    // removeChild(parent: Node, child: Node): void {
-    //     throw new Error("Method not implemented.")
-    // }
-    // removeParent(node: Node): void {
-    //     throw new Error("Method not implemented.")
-    // }
-    // getNodeHeight(node: Node): number {
-    //     throw new Error("Method not implemented.")
-    // }
-    // getBranchLength(node: Node): number {
-    //     throw new Error("Method not implemented.")
-    // }
-    // setBranchLength(node: Node, length: number): void {
-    //     throw new Error("Method not implemented.")
-    // }
-    // setNodeHeight(node: Node, height: number): void {
-    //     throw new Error("Method not implemented.")
-    // }
-    // setNodeDivergence(node: Node, divergence: number): void {
-    //     throw new Error("Method not implemented.")
-    // }
-    // setLabel(node: Node, label: string): void {
-    //     throw new Error("Method not implemented.")
-    // }
-    // setTaxon(node: Node, taxon: Taxon): void {
-    //     throw new Error("Method not implemented.")
-    // }
-    // annotateNode(node: Node, annotations: { [key: string]: any }): void
-    // annotateNode(node: Node, annotations: Annotation[]): void
-    // annotateNode(node: Node, annotation: Annotation): void
-    // annotateNode(node: unknown, annotation: unknown): void {
-    //     throw new Error("Method not implemented.")
-    // }
-
-    // toNewick(): string {
-    //     throw new Error("Method not implemented.")
-    // }
     get nodeCount(): number 
     get externalNodeCount(): number
     get InternalNodeCount(): number

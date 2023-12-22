@@ -370,6 +370,18 @@ export const TreeduxListReducer = treeListSlice.reducer;
         this._store.dispatch(setCurrentTree(this._getMySlice().trees.length-1))
         
     }
+    addFromNexus(nexus: string, options?: newickParsingOptions | undefined): void {
+        const fakeTree:NormalizedTree = (NormalizedTree.fromNexus(nexus, options)as NormalizedTree);
+        //this avoids pushing all the parsing events to the redux store
+        this._store.dispatch(addTree(fakeTree.data))
+        this._store.dispatch(setCurrentTree(this._getMySlice().trees.length-1))
+    }
+    addFromString(string: string, options?: newickParsingOptions | undefined): void {
+        const fakeTree:NormalizedTree = (NormalizedTree.fromString(string, options)as NormalizedTree);
+        //this avoids pushing all the parsing events to the redux store
+        this._store.dispatch(addTree(fakeTree.data))
+        this._store.dispatch(setCurrentTree(this._getMySlice().trees.length-1))
+    }
     reroot(node: NodeRef, proportion: number): void {
         this._store.dispatch(reroot(node,proportion))
     }

@@ -9,7 +9,7 @@ export class RectangularLayout extends AbstractLayout {
     static getArbitraryLayout(tree: Tree, opts: internalLayoutOptions): ArbitraryVertices {
         const safeOpts = { ...defaultInternalLayoutOptions, ...opts };
         const { rootLength, tipSpace } = safeOpts;
-        const nodeDecorations = safeOpts.nodeDecorations;
+        const cartoonedNodes     = safeOpts.cartoonedNodes;
         let currentY = 0;
         const vertices: ArbitraryVertices = { byId: {}, allIds: [], extent: { x: [0, 0], y: [0, 0] } };
         let maxY = 0;
@@ -55,7 +55,7 @@ export class RectangularLayout extends AbstractLayout {
                     }
                 }
 
-                if (nodeDecorations[node.id] && nodeDecorations[node.id].cartooned) {
+                if (cartoonedNodes[node.id] && cartoonedNodes[node.id].cartooned) {
                     let i = 0;
                     // need max x for labels
                     let maxX = x;
@@ -67,14 +67,14 @@ export class RectangularLayout extends AbstractLayout {
                         if (tree.isExternal(tree.getNode(descendent.id))) {
                             const descendentVertex = vertices.byId[descendent.id];
                             if (descendentVertex.x > maxX) maxX = descendentVertex.x;
-                            const y = descendentVertex.y - i * nodeDecorations[node.id].collapseFactor;
+                            const y = descendentVertex.y - i * cartoonedNodes[node.id].collapseFactor;
                             descendentVertex.y = y; // update for labeling etc
                             if (y > maxY) maxY = y;
                             if (y < minY) minY = y;
                             i++;
                         }
                         vertices.byId[descendent.id].hidden=true;
-                        vertices.byId[descendent.id].labelHidden= nodeDecorations[node.id].collapseFactor===0;
+                        vertices.byId[descendent.id].labelHidden= cartoonedNodes[node.id].collapseFactor===0;
                     }
 
                     const newy = (maxY + minY) / 2;
