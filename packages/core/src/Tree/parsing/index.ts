@@ -1,2 +1,3 @@
 export * from "./AnnotationParser"
-export * from "./TreeParsing"
+export * from "./newickParsing"
+export * from "./nexusParsing"

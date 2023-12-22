@@ -1,6 +1,6 @@
 import { AbstractTree } from "../AbtractTree"
 import { AnnotationType, NodeRef, Tree, newickParsingOptions } from "../Tree.types"
-import { parseNewick } from "../parsing";
+import { parseNewick, parseNexus } from "../parsing";
 import { NormalizedTreeData } from "./normalizedTree.types"
 //todo clean up null vs undefined
 export class NormalizedTree extends AbstractTree {
@@ -50,6 +50,18 @@ export class NormalizedTree extends AbstractTree {
         const tree = new this();
         return parseNewick(tree, newick, options);
 
+    }
+    static fromNexus(nexus: string, options?: newickParsingOptions | undefined): Tree {
+        const tree = new this();
+        return parseNexus(tree, nexus, options);
+
+    }
+    static fromString(string: string, options?: newickParsingOptions | undefined): Tree {
+        if (string.toLowerCase().includes("#nexus")) {
+            return this.fromNexus(string, options)
+        } else {
+            return this.fromNewick(string, options)
+        }
     }
     addChild(parent: NodeRef, child: NodeRef): void {
 

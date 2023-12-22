@@ -10,7 +10,7 @@ import { TipLabels } from './tipLabel';
 import { NodeLabels } from './nodeLabels';
 import { BranchLabels } from './branchLabels';
 
-import { FigTree,  Branches, RectangularLayout, PolarLayout, RadialLayout, NodeRef, Highlight, NodeDecoration } from '@figtreejs/core'
+import { FigTree,  Branches, RectangularLayout, PolarLayout, RadialLayout, NodeRef, Highlight, CartoonData } from '@figtreejs/core'
 import { useAreaSelection } from '../../app/area-selection';
 import { select } from "d3-selection"
 import { selectHeader, setSelectionRoot } from '../Header/headerSlice';
@@ -206,7 +206,7 @@ export function Tree({ panelRef }: any) {
   const { expansion, zoom, layout, rootAngle, rootLength, angleRange, showRoot, spread, curvature, fishEye, pointOfInterest, animate } = useAppSelector(selectLayout);
 
 
-  const nodeDecorations:{[key:string]:NodeDecoration} ={};
+  const cartoonedNodes:{[key:string]:CartoonData} ={};
   //memorize
 
 
@@ -214,7 +214,7 @@ export function Tree({ panelRef }: any) {
   const treeLayout = layout === "rectangular" ? RectangularLayout : layout === "circular" ? PolarLayout : RadialLayout;
   //
   const handlePaste = (event: any) => {
-    tree.addFromNewick(event.clipboardData.getData('text'));
+    tree.addFromString(event.clipboardData.getData('text'));
   }
   useEffect(() => {
 
@@ -344,7 +344,7 @@ useEffect(() => {
     for(const node of tree.getPostorderNodes()){
       const cartoon = tree.getAnnotation(node,CARTOON_ANNOTATION);
       if(cartoon){
-        nodeDecorations[node.id]={
+        cartoonedNodes[node.id]={
                                   cartooned:(cartoon as boolean),
                                   collapseFactor:(tree.getAnnotation(node,COLLAPSE_ANNOTATION) as number)
           }
@@ -352,10 +352,10 @@ useEffect(() => {
     }
   
     const layoutOpts = {
-      rootAngle, rootLength, angleRange, showRoot, spread, curvature, fishEye, pointOfInterest, nodeDecorations: nodeDecorations
+      rootAngle, rootLength, angleRange, showRoot, spread, curvature, fishEye, pointOfInterest, cartoonedNodes
     }
     return (
-      <div>
+      <div >
 
 
 

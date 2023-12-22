@@ -129,8 +129,12 @@ export function parseNewick(tree:Tree,newick: string,options?:newickParsingOptio
 
 
                 const externalNode = tree.addNode();
-                if(options.tipNameMap && options.tipNameMap.has(name)){
-                    name=options.tipNameMap.get(name)!
+                if(options.tipNameMap ){
+                    if(options.tipNameMap.has(name)){
+                        name=options.tipNameMap.get(name)!
+                    }else{
+                        console.warn(`No mapping found for ${name} in tipNameMap. It's name will not be updated`)
+                    }
                 }
                 tree.setName(externalNode,name)
                 // externalNode.label = taxon.id;

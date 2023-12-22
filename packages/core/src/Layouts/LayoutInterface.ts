@@ -67,12 +67,9 @@ export interface internalLayoutOptions extends layoutOptions { // all layout opt
     height: number,
 }
 
-export interface NodeDecoration{
+export interface CartoonData{
     cartooned:boolean,
     collapseFactor:number,
-    hilighted:string|undefined,
-    customColor:string|undefined
-    taxaCustomColor:string|undefined
 }
 
 export const defaultInternalLayoutOptions = {
@@ -87,7 +84,7 @@ export const defaultInternalLayoutOptions = {
     spread: 1,
     pointOfInterest: { x: 0, y: 0 },
     fishEye: 0,
-    nodeDecorations:{}
+    cartoonedNodes:{}
 }
 
 

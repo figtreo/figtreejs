@@ -46,14 +46,14 @@ function FigTree(props:FigtreeProps){
         spread = defaultOpts.opts.spread,
         pointOfInterest = defaultOpts.opts.pointOfInterest,
         fishEye = defaultOpts.opts.fishEye,
-        nodeDecorations = defaultOpts.opts.nodeDecorations,
+        cartoonedNodes: nodeDecorations = defaultOpts.opts.cartoonedNodes,
     } = props.opts; //todo this requires opts to not be undefined even though all the values are optional.
 
     const w = width - margins.left - margins.right;
     const h = height - margins.top - margins.bottom;
     const point = pointOfInterest?pointOfInterest: {x:(margins.left+w)/2,y:(margins.top+height)/2};
 
-    const vertices = layout.layout(tree,{showRoot,width:w,height:h,rootLength,rootAngle,angleRange,curvature,spread,tipSpace:(tip1:NodeRef,tip2:NodeRef)=>1,fishEye,pointOfInterest:point,nodeDecorations});
+    const vertices = layout.layout(tree,{showRoot,width:w,height:h,rootLength,rootAngle,angleRange,curvature,spread,tipSpace:(tip1:NodeRef,tip2:NodeRef)=>1,fishEye,pointOfInterest:point,cartoonedNodes: nodeDecorations});
         
 
 
