@@ -13,7 +13,7 @@ import { BranchLabels } from './branchLabels';
 import { FigTree,  Branches, RectangularLayout, PolarLayout, RadialLayout, NodeRef, Highlight, CartoonData } from '@figtreejs/core'
 import { useAreaSelection } from '../../app/area-selection';
 import { select } from "d3-selection"
-import { selectHeader, setSelectionRoot } from '../Header/headerSlice';
+import { selectSelectionRoot, setSelectionRoot } from '../Header/headerSlice';
 import AxisElement from './AxisElement';
 import { tree } from '../../app/store';
 import { CARTOON_ANNOTATION, COLLAPSE_ANNOTATION, COLOUR_ANNOTATION, HILIGHT_ANNOTATION } from '../../app/constants';
@@ -26,7 +26,7 @@ const zoomFactor = 5;
 export function Tree({ panelRef }: any) {
 
   const dispatch = useAppDispatch();
-  const header = useAppSelector(selectHeader);
+  const selectionRoot = useAppSelector(selectSelectionRoot);
 
   //selection Box work //https://codesandbox.io/s/billowing-lake-rzhid4?file=/src/App.tsx
   const svgRef = useRef<SVGSVGElement>(null);;
@@ -321,18 +321,18 @@ useEffect(() => {
 
   const selectedNodes = new Set();
   const selectedTaxa = new Set();
-  if (header.SelectionRoot) {
-    switch (header.SelectionMode) {
+  if (selectionRoot) {
+    switch (selectionRoot) {
       case 'Node':
-        selectedNodes.add(header.SelectionRoot);
+        selectedNodes.add(selectionRoot);
         break;
       case 'Taxa':
-        for (const node of tree.getTips(tree.getNode(header.SelectionRoot))) {
+        for (const node of tree.getTips(tree.getNode(selectionRoot))) {
           selectedTaxa.add(node.id);
         }
         break;
       case 'Clade':
-        for (const node of tree.getPostorderNodes(tree.getNode(header.SelectionRoot))) {
+        for (const node of tree.getPostorderNodes(tree.getNode(selectionRoot))) {
           selectedNodes.add(node.id);
         }
         break;

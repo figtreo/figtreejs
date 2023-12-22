@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import './header.css'
 
 import cartoon from "../../figtreeGraphics/CartoonTool.png"
@@ -11,7 +10,7 @@ import colour from "../../figtreeGraphics/coloursTool.png"
 import find from "../../figtreeGraphics/findTool.png"
 import highlight from "../../figtreeGraphics/HilightTool.png"
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import {  colourTaxa, selectHeader, setSelectionMode } from "./headerSlice";
+import {  colourTaxa, selectSelectionMode, selectSelectionRoot, setSelectionMode } from "./headerSlice";
 import { tree } from "../../app/store";
 import { AnnotationType } from "@figtreejs/core";
 import { CARTOON_ANNOTATION, COLLAPSE_ANNOTATION, COLOUR_ANNOTATION, HILIGHT_ANNOTATION } from "../../app/constants";
@@ -19,9 +18,10 @@ export function Header() {
 
     const dispatch = useAppDispatch();
 
-    const header = useAppSelector(selectHeader)
+    const selectionRoot = useAppSelector(selectSelectionRoot)
+    const selectionMode = useAppSelector(selectSelectionMode)
 
-    const optionClasses = header.SelectionRoot ? "tool" : "tool deactivated"
+    const optionClasses = selectionRoot ? "tool" : "tool deactivated"
 
 
     const nextTreeAvaliable = tree.getCurrentIndex() < tree.getTreeCount() - 1;
@@ -31,15 +31,15 @@ export function Header() {
         <div className="header">
             <div className={optionClasses}>
                 <img src={cartoon} onClick={() => {
-                    if (header.SelectionRoot && header.SelectionMode !== "Taxa") {
-                        let cartoon:boolean|undefined = tree.getAnnotation(tree.getNode(header.SelectionRoot),CARTOON_ANNOTATION);
+                    if (selectionRoot && selectionMode !== "Taxa") {
+                        let cartoon:boolean|undefined = tree.getAnnotation(tree.getNode(selectionRoot),CARTOON_ANNOTATION);
                         if(cartoon===undefined){
                             cartoon = true;
-                            tree.annotateNode(tree.getNode(header.SelectionRoot),{name:COLLAPSE_ANNOTATION,value:0.25,type:AnnotationType.CONTINUOUS})
+                            tree.annotateNode(tree.getNode(selectionRoot),{name:COLLAPSE_ANNOTATION,value:0.25,type:AnnotationType.CONTINUOUS})
                         }else{
                             cartoon = !cartoon;
                         }
-                        tree.annotateNode(tree.getNode(header.SelectionRoot),{name:CARTOON_ANNOTATION,value:cartoon,type:AnnotationType.BOOLEAN})
+                        tree.annotateNode(tree.getNode(selectionRoot),{name:CARTOON_ANNOTATION,value:cartoon,type:AnnotationType.BOOLEAN})
                     }
                 }
                 } />
@@ -47,16 +47,16 @@ export function Header() {
             </div>
             <div className={optionClasses}>
                 <img src={collapse} onClick={() => {
-                    if (header.SelectionRoot && header.SelectionMode !== "Taxa") {
-                        let cartoon:boolean|undefined = tree.getAnnotation(tree.getNode(header.SelectionRoot),CARTOON_ANNOTATION);
-                        let collapse:number|undefined = tree.getAnnotation(tree.getNode(header.SelectionRoot),COLLAPSE_ANNOTATION);
+                    if (selectionRoot && selectionMode !== "Taxa") {
+                        let cartoon:boolean|undefined = tree.getAnnotation(tree.getNode(selectionRoot),CARTOON_ANNOTATION);
+                        let collapse:number|undefined = tree.getAnnotation(tree.getNode(selectionRoot),COLLAPSE_ANNOTATION);
                         
                         if(collapse===undefined){
-                            tree.annotateNode(tree.getNode(header.SelectionRoot),{name:COLLAPSE_ANNOTATION,value:0.25,type:AnnotationType.CONTINUOUS})
-                            tree.annotateNode(tree.getNode(header.SelectionRoot),{name:CARTOON_ANNOTATION,value:true,type:AnnotationType.BOOLEAN})
+                            tree.annotateNode(tree.getNode(selectionRoot),{name:COLLAPSE_ANNOTATION,value:0.25,type:AnnotationType.CONTINUOUS})
+                            tree.annotateNode(tree.getNode(selectionRoot),{name:CARTOON_ANNOTATION,value:true,type:AnnotationType.BOOLEAN})
                         }else{
                             collapse = collapse!>0.9?0:collapse!+0.25;
-                            tree.annotateNode(tree.getNode(header.SelectionRoot),{name:COLLAPSE_ANNOTATION,value:collapse,type:AnnotationType.CONTINUOUS})
+                            tree.annotateNode(tree.getNode(selectionRoot),{name:COLLAPSE_ANNOTATION,value:collapse,type:AnnotationType.CONTINUOUS})
                         }
                     }
                 }} />
@@ -64,20 +64,20 @@ export function Header() {
             </div>
             <div className={optionClasses}>
                 <img src={rooting} onClick={() => {
-                    if (header.SelectionRoot && header.SelectionMode !== "Taxa") {
-                        tree.reroot({id:header.SelectionRoot},0.5)
+                    if (selectionRoot && selectionMode !== "Taxa") {
+                        tree.reroot({id:selectionRoot},0.5)
                     }
                 }} />
                 <p>Reroot</p>
             </div>
             <div className={optionClasses}>
                 <img src={rotatePic} onClick={() => {
-                    if (header.SelectionRoot) {
-                        if (header.SelectionMode === "Node") {
-                           tree.rotate( {id:header.SelectionRoot},false )
+                    if (selectionRoot) {
+                        if (selectionMode === "Node") {
+                           tree.rotate( {id:selectionRoot},false )
 
-                        } else if (header.SelectionMode === "Clade") {
-                            tree.rotate( {id:header.SelectionRoot},true )
+                        } else if (selectionMode === "Clade") {
+                            tree.rotate( {id:selectionRoot},true )
                         }
                     }
 
@@ -93,19 +93,19 @@ export function Header() {
                 <img src={colour} />
                 <input style={{display:"none"}} type='color' onChange={(e)=>{
                     const customColor=e.target.value;
-                     if (header.SelectionRoot) {
-                        if (header.SelectionMode === "Node") {
-                            tree.annotateNode(tree.getNode(header.SelectionRoot),{name:COLOUR_ANNOTATION,value:customColor,type:AnnotationType.DISCRETE})
+                     if (selectionRoot) {
+                        if (selectionMode === "Node") {
+                            tree.annotateNode(tree.getNode(selectionRoot),{name:COLOUR_ANNOTATION,value:customColor,type:AnnotationType.DISCRETE})
 
-                        } else if (header.SelectionMode === "Clade") {
+                        } else if (selectionMode === "Clade") {
                             const colours = [];
-                            for(const node of tree.getPostorderNodes(tree.getNode(header.SelectionRoot))){
+                            for(const node of tree.getPostorderNodes(tree.getNode(selectionRoot))){
                                 colours.push({id:node.id,colour:customColor})
                                 tree.annotateNode(node,{name:COLOUR_ANNOTATION,value:customColor,type:AnnotationType.DISCRETE})
                             }
-                        } else if (header.SelectionMode ==="Taxa"){
+                        } else if (selectionMode ==="Taxa"){
                             const colours = [];
-                            for(const node of tree.getTips(tree.getNode(header.SelectionRoot))){
+                            for(const node of tree.getTips(tree.getNode(selectionRoot))){
                                 colours.push({id:node.id,colour:customColor})
                             }
                             dispatch(colourTaxa(colours))
@@ -122,9 +122,9 @@ export function Header() {
                 <img src={highlight} />
                 <input style={{display:"none"}} type='color' onChange={(e)=>{
                     const customColor=e.target.value;
-                     if (header.SelectionRoot) {
-                        if (header.SelectionMode === "Node" || header.SelectionMode==="Clade") {
-                            tree.annotateNode(tree.getNode(header.SelectionRoot),{name:HILIGHT_ANNOTATION,value:customColor,type:AnnotationType.DISCRETE})
+                     if (selectionRoot) {
+                        if (selectionMode === "Node" || selectionMode==="Clade") {
+                            tree.annotateNode(tree.getNode(selectionRoot),{name:HILIGHT_ANNOTATION,value:customColor,type:AnnotationType.DISCRETE})
                         } 
                     }
                 }}/>
@@ -139,13 +139,13 @@ export function Header() {
             <div className="tool">
                 <div className="selectionOptions">
                     <div className='optionContainer'>
-                        <div className={`selectionOption ${header.SelectionMode === "Node" ? "selected" : ''}`} onClick={() => dispatch(setSelectionMode("Node"))}>
+                        <div className={`selectionOption ${selectionMode === "Node" ? "selected" : ''}`} onClick={() => dispatch(setSelectionMode("Node"))}>
                             <p>Node</p>
                         </div>
-                        <div className={`selectionOption ${header.SelectionMode === "Clade" ? "selected" : ''}`} onClick={() => dispatch(setSelectionMode("Clade"))} >
+                        <div className={`selectionOption ${selectionMode === "Clade" ? "selected" : ''}`} onClick={() => dispatch(setSelectionMode("Clade"))} >
                             <p>Clade</p>
                         </div>
-                        <div className={`selectionOption ${header.SelectionMode === "Taxa" ? "selected" : ''}`} onClick={() => dispatch(setSelectionMode("Taxa"))} >
+                        <div className={`selectionOption ${selectionMode === "Taxa" ? "selected" : ''}`} onClick={() => dispatch(setSelectionMode("Taxa"))} >
                             <p>Taxa</p>
                         </div>
                     </div>
