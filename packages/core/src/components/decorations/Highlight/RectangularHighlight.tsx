@@ -1,4 +1,4 @@
-import { NodeRef } from "../../../../dist";
+import { NodeRef } from "../../../Tree";
 import { useLayout, useTree } from "../../../hooks";
 import React from "react";
 export function RectangularHighlight(props:{attrs:{[key:string]:any},node:NodeRef}){
