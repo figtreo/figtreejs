@@ -11,15 +11,16 @@ import find from "../../figtreeGraphics/findTool.png"
 import highlight from "../../figtreeGraphics/HilightTool.png"
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {  colourTaxa, selectSelectionMode, selectSelectionRoot, setSelectionMode } from "./headerSlice";
-import { tree } from "../../app/store";
 import { AnnotationType } from "@figtreejs/core";
 import { CARTOON_ANNOTATION, COLLAPSE_ANNOTATION, COLOUR_ANNOTATION, HILIGHT_ANNOTATION } from "../../app/constants";
+import { selectTree } from '../../app/store'
 export function Header() {
 
     const dispatch = useAppDispatch();
 
     const selectionRoot = useAppSelector(selectSelectionRoot)
     const selectionMode = useAppSelector(selectSelectionMode)
+    const tree = useAppSelector(selectTree);
 
     const optionClasses = selectionRoot ? "tool" : "tool deactivated"
 

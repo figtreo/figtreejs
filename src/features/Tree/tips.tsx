@@ -1,11 +1,12 @@
 import { useAppSelector } from "../../app/hooks";
 import { selectShapeState } from "../Settings/panels/shapes/shapeSlice";
 import {  Nodes, NodeRef, Tree } from "@figtreejs/core";
-import { tree } from "../../app/store";
 import { COLOUR_ANNOTATION } from "../../app/constants";
+import { selectTree } from "../../app/store";
 
 export function Tips() {
     const settings = useAppSelector(selectShapeState("tip"));
+    const tree = useAppSelector(selectTree);
 
     const filter = (n: NodeRef) => tree.getChildCount(n) === 0;
 

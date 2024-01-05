@@ -13,10 +13,10 @@ import { BranchLabels } from './branchLabels';
 import { FigTree,  Branches, RectangularLayout, PolarLayout, RadialLayout, NodeRef, Highlight, CartoonData } from '@figtreejs/core'
 import { useAreaSelection } from '../../app/area-selection';
 import { select } from "d3-selection"
-import { selectSelectionRoot, setSelectionRoot } from '../Header/headerSlice';
+import { selectSelectionMode, selectSelectionRoot, setSelectionRoot } from '../Header/headerSlice';
 import AxisElement from './AxisElement';
-import { tree } from '../../app/store';
 import { CARTOON_ANNOTATION, COLLAPSE_ANNOTATION, COLOUR_ANNOTATION, HILIGHT_ANNOTATION } from '../../app/constants';
+import { selectTree } from '../../app/store';
 
 const margins = { top: 80, bottom: 80, left: 50, right: 100 };
 //todo make zoom and expansion based on number of tips
@@ -24,10 +24,11 @@ const zoomFactor = 5;
 
 
 export function Tree({ panelRef }: any) {
-
+console.log("tree render")
   const dispatch = useAppDispatch();
   const selectionRoot = useAppSelector(selectSelectionRoot);
-
+  const selectionMode = useAppSelector(selectSelectionMode)
+  const tree = useAppSelector(selectTree);
   //selection Box work //https://codesandbox.io/s/billowing-lake-rzhid4?file=/src/App.tsx
   const svgRef = useRef<SVGSVGElement>(null);;
   //https://codesandbox.io/s/react-area-selection-hook-slggxd?file=/src/area-selection.ts
@@ -322,7 +323,8 @@ useEffect(() => {
   const selectedNodes = new Set();
   const selectedTaxa = new Set();
   if (selectionRoot) {
-    switch (selectionRoot) {
+    console.log(selectionRoot)
+    switch (selectionMode) {
       case 'Node':
         selectedNodes.add(selectionRoot);
         break;
@@ -338,6 +340,7 @@ useEffect(() => {
         break;
     }
   }
+  console.log(selectedNodes )
 
   if (tree.getCurrentIndex() > -1) {
 
@@ -362,7 +365,7 @@ useEffect(() => {
         <svg id={"treeContainer"} width={width} height={height} ref={svgRef}>
           <defs>
             <filter x="0" y="0" width="1" height="1" id="solid">
-              <feFlood flood-color="#959ABF" result="bg" />
+              <feFlood floodColor="#959ABF" result="bg" />
               <feMerge>
                 <feMergeNode in="bg" />
                 <feMergeNode in="SourceGraphic" />

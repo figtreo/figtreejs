@@ -11,9 +11,8 @@ export const store = configureStore({
   },
 });
 
-
-export const tree = new TreeduxList(store,(store)=>store.getState().treeStatus.tree);
-
+//todo update this selector so we cache the tree instance if the tree data is not changed.
+export const selectTree = ()=>new TreeduxList(store,(store)=>store.getState().treeStatus.tree)
 export type AppDispatch = typeof store.dispatch;
 export type RootState = ReturnType<typeof store.getState>;
 export type AppThunk<ReturnType = void> = ThunkAction<

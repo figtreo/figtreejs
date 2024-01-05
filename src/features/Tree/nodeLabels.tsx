@@ -4,12 +4,13 @@ import { selectLabelState } from "../Settings/panels/label/labelSlice";
 import { Node } from "./treeSlice";
 import { Nodes,NodeRef} from "@figtreejs/core";
 import {  selectNodeDecorations } from "../Header/headerSlice";
-import { tree } from "../../app/store";
+import { selectTree } from "../../app/store";
 
 export function NodeLabels(props:{ attrs?:{[key:string]:any} }) {
     const { attrs={} } = props;
     const settings = useAppSelector(selectLabelState("node"));
     const taxaColours = useAppSelector(selectNodeDecorations)
+    const tree = useAppSelector(selectTree);
 
 
     attrs.fill =  settings.colourBy === "User selection" ?

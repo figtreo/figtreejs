@@ -5,11 +5,12 @@ import { selectLayout } from "../Settings/panels/layout/layoutSlice";
 import { NodeRef, Nodes } from "@figtreejs/core";
 import { Node } from "./treeSlice";
 import {  selectNodeDecorations } from "../Header/headerSlice";
-import { tree } from "../../app/store";
+import { selectTree } from "../../app/store";
 
 export function TipLabels(props: { attrs?:{[key:string]:any} }) {
     const { attrs={} } = props;
     const settings = useAppSelector(selectLabelState("tip"));
+    const tree = useAppSelector(selectTree);
 
     const { alignTipLabels } = useAppSelector(selectLayout)
 

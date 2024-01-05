@@ -4,11 +4,12 @@ import { selectLabelState } from "../Settings/panels/label/labelSlice";
 import {  NodeRef, BranchLabels as BL, decimalToDate, Tree} from "@figtreejs/core";
 import { timeFormat } from "d3-time-format";
 import { selectNodeDecorations } from "../Header/headerSlice";
-import { tree } from "../../app/store";
+import { selectTree } from "../../app/store";
 
 export function BranchLabels(props:{ attrs?:{[key:string]:any} }) {
     const { attrs={} } = props;
     const settings = useAppSelector(selectLabelState("branch"));
+    const tree = useAppSelector(selectTree);
 
     const taxaColours = useAppSelector(selectNodeDecorations)
     const filter = (n: NodeRef) => true;

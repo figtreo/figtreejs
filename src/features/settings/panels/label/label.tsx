@@ -2,7 +2,7 @@ import React from "react";
 import { labelActions, labelTarget, selectLabelState } from "./labelSlice";
 import { useAppDispatch, useAppSelector } from "../../../../app/hooks";
 import { SettingPanel } from "../PanelHeader";
-import { tree } from "../../../../app/store";
+import { selectTree } from "../../../../app/store";
 
 const defaultOptions = ["Fixed","User selection","Node Heights","Branch lengths"]
 
@@ -12,6 +12,8 @@ export function BaseLabel(props: { target: labelTarget,defaultOptions:string[], 
     const settings = useAppSelector(selectLabelState(props.target))
 
     //duplicate code
+    const tree = useAppSelector(selectTree);
+
     const attributeTypes = tree.getCurrentIndex()>-1?tree.getAnnotations():[];
     //TODO add defaults like height/length/ etc.
     const attributeKeys = [...defaultOptions,...props.defaultOptions, ...Object.keys(attributeTypes)] 
