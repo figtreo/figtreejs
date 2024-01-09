@@ -59,24 +59,20 @@ function FigTree(props:FigtreeProps){
 
     const children = props.children?props.children:defaultOpts.children;
 
-    const scaleContext:scaleContextType = {width:w,height:h,maxDivergence:tree.getHeight(tree.root!)+rootLength!};
-    if(layout === PolarLayout){
-        scaleContext.maxR = max(vertices.allIds,d=>vertices.byId[d].r);
-        scaleContext.theta = extent(vertices.allIds,d=>vertices.byId[d].theta!) as [number,number];
-    }
+    const scaleContext:scaleContextType = {width:w,height:h,maxDivergence:tree.getHeight(tree.root!)+rootLength!,maxR : max(vertices.allIds,d=>vertices.byId[d].r),theta :extent(vertices.allIds,d=>vertices.byId[d].theta!) as [number,number]};
 
     //context gives us a nicer api where the data don't need to be passed to the subcomponents of the figure and the subcomponents can be added by user with JSX
     return (
                 <TreeContext.Provider value={tree}>
                     <LayoutContext.Provider value={vertices}>
-                    <AnimationContext.Provider value={animated}>
-                        <ScaleContext.Provider value={scaleContext}>
+                        <AnimationContext.Provider value={animated}>
+                            <ScaleContext.Provider value={scaleContext}>
                        
                         {/*<rect x="0" y="0" width="100%" height="100%" fill="none" pointerEvents={"visible"} onClick={()=>nodeDispatch({type:"clearSelection"})}/>*/}
                         <g transform={`translate(${margins.left},${margins.top})`}>
                             {children}
                         </g>
-                        </ScaleContext.Provider>
+                            </ScaleContext.Provider>
                         </AnimationContext.Provider>
                     </LayoutContext.Provider>
                 </TreeContext.Provider>

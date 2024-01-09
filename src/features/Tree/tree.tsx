@@ -24,7 +24,6 @@ const zoomFactor = 5;
 
 
 export function Tree({ panelRef }: any) {
-console.log("tree render")
   const dispatch = useAppDispatch();
   const selectionRoot = useAppSelector(selectSelectionRoot);
   const selectionMode = useAppSelector(selectSelectionMode)
@@ -140,17 +139,19 @@ console.log("tree render")
     if (brushedNodeIds.length === 0) {
       dispatch(setSelectionRoot(undefined))
     } else {
-      const nodes = brushedNodeIds.map(id => tree.getNode(id));
+      const nodes = brushedNodeIds.map(id => tree.getNode(id)).filter(n => n !== undefined);
       if (nodes.length === 1) {
         dispatch(setSelectionRoot(nodes[0].id))
         return;
       }
+      if(nodes.length>0){
       const mrca = tree.getMRCA(nodes);
       if (mrca === undefined) {
         throw new Error("Could not find mrca")
       }
       dispatch(setSelectionRoot(mrca.id))
     }
+  }
   }
   const clearSelectionRoot = () => {
     dispatch(setSelectionRoot(undefined));
@@ -323,7 +324,6 @@ useEffect(() => {
   const selectedNodes = new Set();
   const selectedTaxa = new Set();
   if (selectionRoot) {
-    console.log(selectionRoot)
     switch (selectionMode) {
       case 'Node':
         selectedNodes.add(selectionRoot);
@@ -340,7 +340,6 @@ useEffect(() => {
         break;
     }
   }
-  console.log(selectedNodes )
 
   if (tree.getCurrentIndex() > -1) {
 
@@ -379,7 +378,7 @@ useEffect(() => {
             <Branches attrs={{ fill:'none',strokeWidth: lineWidth + 4, stroke: "#959ABF", strokeLinecap: "round", strokeLinejoin: "round" }} filter={(n: NodeRef) => selectedNodes.has(n.id)} />
             <Branches attrs={{fill:branchFiller, strokeWidth: lineWidth, stroke: branchColour }} filter={(n: NodeRef) => true} />
             <BranchLabels />
-            <Tips  />
+            <Tips />
             <TipLabels  attrs={{ filter: (n: NodeRef) => selectedTaxa.has(n.id) ? 'url(#solid)' : null }} />
             <InternalNodes />
             <NodeLabels  />

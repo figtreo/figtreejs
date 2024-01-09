@@ -1,4 +1,4 @@
-import { PayloadAction, createSlice,configureStore} from "@reduxjs/toolkit";
+import { PayloadAction, createSlice,configureStore, createSelector} from "@reduxjs/toolkit";
 import { NormalizedTreeData,Node, NormalizedTree } from "../normalizedTree";
 import { AnnotationType, NodeRef, Tree, newickParsingOptions } from "../Tree.types";
 import { checkAnnotation, updateDomain } from "./treedux";
@@ -6,6 +6,7 @@ import { AbstractTree } from "../AbtractTree";
 import { ToolkitStore } from "@reduxjs/toolkit/dist/configureStore";
 import { TreeList } from "../TreeList/TreeListInterface";
 
+const DEBUG = true;
 type treeduxState ={
     currentTree:number;
     trees:NormalizedTreeData[];
@@ -303,19 +304,32 @@ const treeListSlice = createSlice({
     
 export const TreeduxListReducer = treeListSlice.reducer;
 
+
+
+export function treeSelectorFactory(store:ToolkitStore,treeSelector:(state:ToolkitStore)=>treeduxState){
+    return createSelector(treeSelector,(treeData)=>{
+        if(DEBUG){
+            console.log("New tree made")
+        }
+         return new TreeduxList(store,treeSelector)
+    })
+}
+
+
  export class TreeduxList extends AbstractTree implements TreeList {
    
     _store:ToolkitStore
+
    private  _getMySlice:()=>treeduxState //selector
-    constructor( store?:ToolkitStore,treeGetter?:(state:ToolkitStore)=>treeduxState){
+    constructor( store?:ToolkitStore,treeSelector?:(state:ToolkitStore)=>treeduxState){
         super();
         
         if(store){
             this._store = store;
-            if(!treeGetter){
+            if(!treeSelector){
                 throw new Error('treeGetter must be defined if store is provided')
             }
-            this._getMySlice = ()=> treeGetter(store);
+            this._getMySlice = ()=> treeSelector(store.getState());
         }else{
         this._store = configureStore({reducer:{treeList:TreeduxListReducer}});
         this._getMySlice = ()=>this._store.getState().treeList;

@@ -19,9 +19,7 @@ export class PolarLayout extends AbstractLayout {
 
     static finalizeArbitraryLayout(arbitraryLayout: ArbitraryVertices, treeStats:{tipCount:number,rootId:string}, opts: internalLayoutOptions):Vertices {
         const safeOpts = { ...defaultInternalLayoutOptions, ...opts };
-        console.log(defaultInternalLayoutOptions)
-        console.log(opts)
-        console.log(safeOpts)
+
         // Do fisheye thing assuming we are using the rectangular layout
 
         const y_og = scaleLinear()
@@ -48,7 +46,6 @@ export class PolarLayout extends AbstractLayout {
             .domain(arbitraryLayout.extent.y.map(transform))
             .range([startAngle,endAngle]); // rotated to match figtree orientation
        
-        console.log(angleRange)
         const polarVertices = [];
         
         for(const id of arbitraryLayout.allIds){
@@ -58,7 +55,6 @@ export class PolarLayout extends AbstractLayout {
             const [x,y] = polarToCartesian(r,theta);// convert back to cartesian for x and y (will need to be scaled for svg coordinates)
             const level = vertex.level;
 
-            console.log(vertex)
             //this ends up converting points that have been converted previously. maybe just pass 
             // parent id as source and fetch when needed?
             let pathPoints:{x:number,y:number,r:number,theta:number}[] = [];
@@ -180,7 +176,6 @@ export class PolarLayout extends AbstractLayout {
             const [alignedX,alignedY] = polarToCartesian(maxRadius,vertex.theta);
 
             const scalePathPoints = vertex.pathPoints.map(d=>({...d,x:x(d.x),y:y(d.y)}));
-            console.log(vertex,scalePathPoints)
 
             scaledVertices.byId[vertex.id] = {
                 hidden:arbitraryLayout.byId[vertex.id].hidden,
