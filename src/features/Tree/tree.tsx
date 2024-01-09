@@ -17,6 +17,7 @@ import { selectSelectionMode, selectSelectionRoot, setSelectionRoot } from '../H
 import AxisElement from './AxisElement';
 import { CARTOON_ANNOTATION, COLLAPSE_ANNOTATION, COLOUR_ANNOTATION, HILIGHT_ANNOTATION } from '../../app/constants';
 import { selectTree } from '../../app/store';
+import { ActionCreators } from 'redux-undo';
 
 const margins = { top: 80, bottom: 80, left: 50, right: 100 };
 //todo make zoom and expansion based on number of tips
@@ -226,6 +227,8 @@ export function Tree({ panelRef }: any) {
     };
   })
 
+
+  //Keyboard shortcuts here
 const handleKeyDown = (event: KeyboardEvent) => {
   if (event.key === "d" && event.metaKey) {
     tree.orderNodesByDensity(true);
@@ -233,6 +236,13 @@ const handleKeyDown = (event: KeyboardEvent) => {
   }
   if (event.key === "u" && event.metaKey) {
     tree.orderNodesByDensity(false);
+  }
+  if (event.key === "z" && event.metaKey) {
+    dispatch(ActionCreators.undo());
+  }
+  if(event.key === "y" && event.metaKey){
+    dispatch(ActionCreators.redo());
+    event.preventDefault();
   }
 
 };
