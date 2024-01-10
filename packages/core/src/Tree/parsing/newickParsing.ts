@@ -129,7 +129,7 @@ export function parseNewick(tree:Tree,newick: string,options?:newickParsingOptio
 
 
                 const externalNode = tree.addNode();
-                if(options.tipNameMap ){
+                if(options.tipNameMap && options.tipNameMap.keys().next().value !== undefined ){
                     if(options.tipNameMap.has(name)){
                         name=options.tipNameMap.get(name)!
                     }else{
