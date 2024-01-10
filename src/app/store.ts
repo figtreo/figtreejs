@@ -2,18 +2,20 @@ import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
 import treeReducer from '../features/Tree/treeSlice';
 import settingReducer from '../features/Settings/settingsSlice';
 import headerReducer from '../features/Header/headerSlice';
-import { TreeduxList } from '@figtreejs/core';
+import {  treeSelectorFactory } from '@figtreejs/core';
+import undoable from 'redux-undo';
+
 export const store = configureStore({
   reducer: {
-    treeStatus: treeReducer,
+    treeStatus: undoable(treeReducer,{limit:10}),
     settings: settingReducer,
     header:headerReducer
   },
 });
 
-
-export const tree = new TreeduxList(store,(store)=>store.getState().treeStatus.tree);
-
+//todo update this selector so we cache the tree instance if the tree data is not changed.
+export const selectTree = treeSelectorFactory( store, (state:any)=>state.treeStatus.present.tree
+)
 export type AppDispatch = typeof store.dispatch;
 export type RootState = ReturnType<typeof store.getState>;
 export type AppThunk<ReturnType = void> = ThunkAction<

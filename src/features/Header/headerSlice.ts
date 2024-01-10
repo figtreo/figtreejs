@@ -1,6 +1,6 @@
 import { RootState } from '../../app/store';
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
-import { NodeDecoration } from '@figtreejs/core';
+import { NodeDecoration } from '@figtreejs/core'; //TODO taxa list 
 //TODO tree list or count to include multiple trees
 
 
@@ -49,9 +49,8 @@ export const HeaderSlice = createSlice({
 export default HeaderSlice.reducer;
 export const {setSelectionMode,setSelectionRoot,colourTaxa} = HeaderSlice.actions;
 //Lets 
-export const selectHeader = (state:RootState) => ({
-    SelectionMode:state.header.selectionMode,
-    SelectionRoot:state.header.selectionRoot,
-    SelectNodeDecorations:state.header.nodeDecorations,
 
-})
+
+export const selectSelectionRoot = (state:RootState) => state.header.selectionRoot;
+export const selectSelectionMode = (state:RootState) => state.header.selectionMode;
+export const selectNodeDecorations = (state:RootState) => state.header.nodeDecorations;

@@ -2,13 +2,13 @@ import React from "react";
 import { shapeActions, shapeTarget, selectShapeState } from "./shapeSlice";
 import { useAppDispatch, useAppSelector } from "../../../../app/hooks";
 import { SettingPanel } from "../PanelHeader";
-import { Tracing } from "trace_events";
-import { tree } from "../../../../app/store";
+import { selectTree } from "../../../../app/store";
 
 export function BaseShapes(props: { target: shapeTarget, }) {
 
     const dispatch = useAppDispatch();
     const settings = useAppSelector(selectShapeState(props.target))
+    const tree = useAppSelector(selectTree);
 
     //duplicate code
     const attributeTypes = tree.getCurrentIndex()>-1?tree.getAnnotations():[];

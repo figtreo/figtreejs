@@ -4,21 +4,24 @@ import { selectLabelState } from "../Settings/panels/label/labelSlice";
 import { selectLayout } from "../Settings/panels/layout/layoutSlice";
 import { NodeRef, Nodes } from "@figtreejs/core";
 import { Node } from "./treeSlice";
-import { selectHeader } from "../Header/headerSlice";
-import { tree } from "../../app/store";
+import {  selectNodeDecorations } from "../Header/headerSlice";
+import { selectTree } from "../../app/store";
 
 export function TipLabels(props: { attrs?:{[key:string]:any} }) {
     const { attrs={} } = props;
     const settings = useAppSelector(selectLabelState("tip"));
-    const header = useAppSelector(selectHeader);
+    const tree = useAppSelector(selectTree);
 
     const { alignTipLabels } = useAppSelector(selectLayout)
 
     const filter = (n: Node) => tree.getChildCount(n) === 0;
 
+    const taxaColours = useAppSelector(selectNodeDecorations)
+
+
     attrs.fill =  settings.colourBy === "User selection" ?
     (n: NodeRef) => {
-        const custom = header.SelectNodeDecorations[n.id] ? header.SelectNodeDecorations[n.id].taxaCustomColor : settings.colour
+        const custom = taxaColours[n.id] ? taxaColours[n.id].customColor : settings.colour
         return custom!
     } : settings.colour;
 

@@ -1,14 +1,14 @@
 import { useAppSelector } from "../../app/hooks";
 import { selectShapeState } from "../Settings/panels/shapes/shapeSlice";
 import {  Nodes, NodeRef } from "@figtreejs/core";
-import { selectHeader } from "../Header/headerSlice";
-import { tree } from "../../app/store";
 import { COLOUR_ANNOTATION } from "../../app/constants";
+import { selectTree } from "../../app/store";
 
 export function InternalNodes() {
     const settings = useAppSelector(selectShapeState("node"));
+    const tree = useAppSelector(selectTree);
+
     const filter = (n: NodeRef) => tree.getChildCount(n) > 0;
-    const header = useAppSelector(selectHeader)
 
     // check if sizing by an attribute or by a constant
     const radius = settings.maxSize / 2;

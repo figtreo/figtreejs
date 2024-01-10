@@ -13,10 +13,11 @@ import { BranchLabels } from './branchLabels';
 import { FigTree,  Branches, RectangularLayout, PolarLayout, RadialLayout, NodeRef, Highlight, CartoonData } from '@figtreejs/core'
 import { useAreaSelection } from '../../app/area-selection';
 import { select } from "d3-selection"
-import { selectHeader, setSelectionRoot } from '../Header/headerSlice';
+import { selectSelectionMode, selectSelectionRoot, setSelectionRoot } from '../Header/headerSlice';
 import AxisElement from './AxisElement';
-import { tree } from '../../app/store';
 import { CARTOON_ANNOTATION, COLLAPSE_ANNOTATION, COLOUR_ANNOTATION, HILIGHT_ANNOTATION } from '../../app/constants';
+import { selectTree } from '../../app/store';
+import { ActionCreators } from 'redux-undo';
 
 const margins = { top: 80, bottom: 80, left: 50, right: 100 };
 //todo make zoom and expansion based on number of tips
@@ -24,10 +25,10 @@ const zoomFactor = 5;
 
 
 export function Tree({ panelRef }: any) {
-
   const dispatch = useAppDispatch();
-  const header = useAppSelector(selectHeader);
-
+  const selectionRoot = useAppSelector(selectSelectionRoot);
+  const selectionMode = useAppSelector(selectSelectionMode)
+  const tree = useAppSelector(selectTree);
   //selection Box work //https://codesandbox.io/s/billowing-lake-rzhid4?file=/src/App.tsx
   const svgRef = useRef<SVGSVGElement>(null);;
   //https://codesandbox.io/s/react-area-selection-hook-slggxd?file=/src/area-selection.ts
@@ -139,17 +140,19 @@ export function Tree({ panelRef }: any) {
     if (brushedNodeIds.length === 0) {
       dispatch(setSelectionRoot(undefined))
     } else {
-      const nodes = brushedNodeIds.map(id => tree.getNode(id));
+      const nodes = brushedNodeIds.map(id => tree.getNode(id)).filter(n => n !== undefined);
       if (nodes.length === 1) {
         dispatch(setSelectionRoot(nodes[0].id))
         return;
       }
+      if(nodes.length>0){
       const mrca = tree.getMRCA(nodes);
       if (mrca === undefined) {
         throw new Error("Could not find mrca")
       }
       dispatch(setSelectionRoot(mrca.id))
     }
+  }
   }
   const clearSelectionRoot = () => {
     dispatch(setSelectionRoot(undefined));
@@ -224,6 +227,8 @@ export function Tree({ panelRef }: any) {
     };
   })
 
+
+  //Keyboard shortcuts here
 const handleKeyDown = (event: KeyboardEvent) => {
   if (event.key === "d" && event.metaKey) {
     tree.orderNodesByDensity(true);
@@ -231,6 +236,13 @@ const handleKeyDown = (event: KeyboardEvent) => {
   }
   if (event.key === "u" && event.metaKey) {
     tree.orderNodesByDensity(false);
+  }
+  if (event.key === "z" && event.metaKey) {
+    dispatch(ActionCreators.undo());
+  }
+  if(event.key === "y" && event.metaKey){
+    dispatch(ActionCreators.redo());
+    event.preventDefault();
   }
 
 };
@@ -321,18 +333,18 @@ useEffect(() => {
 
   const selectedNodes = new Set();
   const selectedTaxa = new Set();
-  if (header.SelectionRoot) {
-    switch (header.SelectionMode) {
+  if (selectionRoot) {
+    switch (selectionMode) {
       case 'Node':
-        selectedNodes.add(header.SelectionRoot);
+        selectedNodes.add(selectionRoot);
         break;
       case 'Taxa':
-        for (const node of tree.getTips(tree.getNode(header.SelectionRoot))) {
+        for (const node of tree.getTips(tree.getNode(selectionRoot))) {
           selectedTaxa.add(node.id);
         }
         break;
       case 'Clade':
-        for (const node of tree.getPostorderNodes(tree.getNode(header.SelectionRoot))) {
+        for (const node of tree.getPostorderNodes(tree.getNode(selectionRoot))) {
           selectedNodes.add(node.id);
         }
         break;
@@ -362,7 +374,7 @@ useEffect(() => {
         <svg id={"treeContainer"} width={width} height={height} ref={svgRef}>
           <defs>
             <filter x="0" y="0" width="1" height="1" id="solid">
-              <feFlood flood-color="#959ABF" result="bg" />
+              <feFlood floodColor="#959ABF" result="bg" />
               <feMerge>
                 <feMergeNode in="bg" />
                 <feMergeNode in="SourceGraphic" />
@@ -376,7 +388,7 @@ useEffect(() => {
             <Branches attrs={{ fill:'none',strokeWidth: lineWidth + 4, stroke: "#959ABF", strokeLinecap: "round", strokeLinejoin: "round" }} filter={(n: NodeRef) => selectedNodes.has(n.id)} />
             <Branches attrs={{fill:branchFiller, strokeWidth: lineWidth, stroke: branchColour }} filter={(n: NodeRef) => true} />
             <BranchLabels />
-            <Tips  />
+            <Tips />
             <TipLabels  attrs={{ filter: (n: NodeRef) => selectedTaxa.has(n.id) ? 'url(#solid)' : null }} />
             <InternalNodes />
             <NodeLabels  />

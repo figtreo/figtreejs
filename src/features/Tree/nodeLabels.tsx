@@ -3,22 +3,24 @@ import { useAppSelector } from "../../app/hooks";
 import { selectLabelState } from "../Settings/panels/label/labelSlice";
 import { Node } from "./treeSlice";
 import { Nodes,NodeRef} from "@figtreejs/core";
-import { selectHeader } from "../Header/headerSlice";
-import { tree } from "../../app/store";
+import {  selectNodeDecorations } from "../Header/headerSlice";
+import { selectTree } from "../../app/store";
 
 export function NodeLabels(props:{ attrs?:{[key:string]:any} }) {
     const { attrs={} } = props;
     const settings = useAppSelector(selectLabelState("node"));
-    const header = useAppSelector(selectHeader)
+    const taxaColours = useAppSelector(selectNodeDecorations)
+    const tree = useAppSelector(selectTree);
 
-
-    const filter = (n: Node) => tree.getChildCount(n) > 0;
 
     attrs.fill =  settings.colourBy === "User selection" ?
     (n: NodeRef) => {
-        const custom = header.SelectNodeDecorations[n.id] ? header.SelectNodeDecorations[n.id].customColor : settings.colour
+        const custom = taxaColours[n.id] ? taxaColours[n.id].customColor : settings.colour
         return custom!
     } : settings.colour;
+
+    const filter = (n: Node) => tree.getChildCount(n) > 0;
+
 
     if (settings.activated) {
 

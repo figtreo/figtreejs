@@ -3,18 +3,19 @@ import { useAppSelector } from "../../app/hooks";
 import { selectLabelState } from "../Settings/panels/label/labelSlice";
 import {  NodeRef, BranchLabels as BL, decimalToDate, Tree} from "@figtreejs/core";
 import { timeFormat } from "d3-time-format";
-import { selectHeader } from "../Header/headerSlice";
-import { tree } from "../../app/store";
+import { selectNodeDecorations } from "../Header/headerSlice";
+import { selectTree } from "../../app/store";
 
 export function BranchLabels(props:{ attrs?:{[key:string]:any} }) {
     const { attrs={} } = props;
     const settings = useAppSelector(selectLabelState("branch"));
+    const tree = useAppSelector(selectTree);
 
-    const header = useAppSelector(selectHeader)
+    const taxaColours = useAppSelector(selectNodeDecorations)
     const filter = (n: NodeRef) => true;
 
     attrs.fill =  settings.colourBy==="User Selection"?(n:NodeRef)=>{
-        const custom = header.getCustomTaxaColor(n.id);
+        const custom = taxaColours[n.id];
         return custom?custom:settings.colour
     }:settings.colour;
 

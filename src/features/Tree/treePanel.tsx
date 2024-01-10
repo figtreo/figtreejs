@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Tree } from "./tree";
 import './treePanel.css'
-import { tree } from "../../app/store";
+import { selectTree } from "../../app/store";
+import { useAppSelector } from "../../app/hooks";
 export function TreePanel(){
+  const tree = useAppSelector(selectTree);
 
     const treePanelRef = useRef<HTMLInputElement>(null);
     const [drag,setDrag] = useState(false);

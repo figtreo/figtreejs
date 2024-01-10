@@ -1,2 +1,2 @@
 export  {TreeduxReducer,Treedux} from './treedux';
-export  {TreeduxListReducer,TreeduxList} from './treeduxList';
+export  {TreeduxListReducer,TreeduxList,treeSelectorFactory} from './treeduxList';

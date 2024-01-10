@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useAppSelector, useAppDispatch } from '../../../../app/hooks';
 import { selectAppearance, setColourBy, setLineWidth, setMinWidth, setWidthBy, setColour } from './appearanceSlice';
 import { SettingPanel } from '../PanelHeader';
-import { tree } from '../../../../app/store';
+import { selectTree } from '../../../../app/store';
 export function Appearance() {
     const { colourBy,
         lineWidth,
@@ -10,6 +10,8 @@ export function Appearance() {
         minWidth,
         colour
     } = useAppSelector(selectAppearance)
+    const tree = useAppSelector(selectTree);
+
     const attributeTypes = tree.getCurrentIndex()>-1?tree.getAnnotations():[];
     const attributeKeys = Object.keys(attributeTypes).length > 0 ? ["User selection", ...Object.keys(attributeTypes)] : ["User selection"]
 
