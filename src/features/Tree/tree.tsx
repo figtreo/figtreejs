@@ -3,7 +3,7 @@ import { useAppSelector, useAppDispatch } from '../../app/hooks';
 
 import { selectAppearance, selectLineWidth, selectStroke } from '../Settings/panels/appearance/appearanceSlice';
 import { selectLayout, setPointOfInterest } from '../Settings/panels/layout/layoutSlice';
-import { Tips } from './tips';
+import { Tips, TipsBackground } from './tips';
 import { InternalNodes } from './nodes';
 
 import { TipLabels } from './tipLabel';
@@ -388,8 +388,9 @@ useEffect(() => {
             <Branches attrs={{ fill:'none',strokeWidth: lineWidth + 4, stroke: "#959ABF", strokeLinecap: "round", strokeLinejoin: "round" }} filter={(n: NodeRef) => selectedNodes.has(n.id)} />
             <Branches attrs={{fill:branchFiller, strokeWidth: lineWidth, stroke: branchColour }} filter={(n: NodeRef) => true} />
             <BranchLabels />
-            <Tips />
+            <TipsBackground/>
             <TipLabels  attrs={{ filter: (n: NodeRef) => selectedTaxa.has(n.id) ? 'url(#solid)' : null }} />
+            <Tips />
             <InternalNodes />
             <NodeLabels  />
           </FigTree>

@@ -4,6 +4,8 @@ import { useAppDispatch, useAppSelector } from "../../../../app/hooks";
 import { SettingPanel } from "../PanelHeader";
 import { selectTree } from "../../../../app/store";
 
+
+
 export function BaseShapes(props: { target: shapeTarget, }) {
 
     const dispatch = useAppDispatch();
@@ -86,13 +88,25 @@ export function BaseShapes(props: { target: shapeTarget, }) {
 }
 
 
-export function Shapes(props: { target: shapeTarget }) {
+export function Shapes(props: { target: shapeTarget,background?:boolean }) {
     const dispatch = useAppDispatch();
-    const settings = useAppSelector(selectShapeState(props.target))
-    const flipActivated = shapeActions[props.target].flipActivated
+
+    const mainTarget = props.target;
+    const backgroundTarget = `${props.target}Background` as shapeTarget
+    const mainSettings = useAppSelector(selectShapeState(mainTarget))
+    const mainFlipActivated = shapeActions[mainTarget].flipActivated
+    
+    const backgroundSettings = useAppSelector(selectShapeState(backgroundTarget))
+    const backgroundFlipActivated = shapeActions[backgroundTarget].flipActivated
+    
     return (
-        <SettingPanel title={`${props.target[0].toLocaleUpperCase() + props.target.slice(1)} Shapes`} checkable={true} onClick={() => dispatch(flipActivated(false))} checked={settings.activated}>
+        <SettingPanel title={`${mainTarget[0].toLocaleUpperCase() + mainTarget.slice(1)} Shapes`} checkable={true} onClick={() => dispatch(mainFlipActivated(false))} checked={mainSettings.activated}>
             <BaseShapes target={props.target} />
+            {props.background&&
+            <SettingPanel title="Background" checkable={true} onClick={() => dispatch(backgroundFlipActivated(false))} checked={backgroundSettings.activated}>
+                <BaseShapes target={backgroundTarget} />
+            </SettingPanel>
+            }
         </SettingPanel>
     )
 }
