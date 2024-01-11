@@ -1,5 +1,5 @@
 import { PayloadAction, createSlice,configureStore, createSelector} from "@reduxjs/toolkit";
-import { NormalizedTreeData,Node, NormalizedTree } from "../normalizedTree";
+import { NormalizedTreeData,Node, NormalizedTree, Annotation } from "../normalizedTree";
 import { AnnotationType, NodeRef, Tree, newickParsingOptions } from "../Tree.types";
 import { checkAnnotation, updateDomain } from "./treedux";
 import { AbstractTree } from "../AbtractTree";
@@ -575,6 +575,10 @@ export function treeSelectorFactory(store:ToolkitStore,treeSelector:(state:Toolk
     getAnnotationDomain(name: string): string[] | [number, number] | number[] | [boolean, boolean] | undefined {
         const tree = this.getTreeSlice();
         return tree.annotations.byId[name].domain
+    }
+    getAnnotationData(name: string): Annotation {
+        const tree = this.getTreeSlice();
+        return tree.annotations.byId[name]
     }
 
 }

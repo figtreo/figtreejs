@@ -14,9 +14,9 @@ export function BaseLabel(props: { target: labelTarget,defaultOptions:string[], 
     //duplicate code
     const tree = useAppSelector(selectTree);
 
-    const attributeTypes = tree.getCurrentIndex()>-1?tree.getAnnotations():[];
+    const attributes = tree.getCurrentIndex()>-1?tree.getAnnotations():[];
     //TODO add defaults like height/length/ etc.
-    const attributeKeys = [...defaultOptions,...props.defaultOptions, ...Object.keys(attributeTypes)] 
+    const attributeKeys = [...defaultOptions,...props.defaultOptions, ...attributes] 
 
     const options = []
     for (const key of attributeKeys) {

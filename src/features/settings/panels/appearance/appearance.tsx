@@ -3,6 +3,11 @@ import { useAppSelector, useAppDispatch } from '../../../../app/hooks';
 import { selectAppearance, setColourBy, setLineWidth, setMinWidth, setWidthBy, setColour } from './appearanceSlice';
 import { SettingPanel } from '../PanelHeader';
 import { selectTree } from '../../../../app/store';
+import { selectColorableAttributes } from '../../../ColorScales/colourSlice';
+import { AnnotationType } from '@figtreejs/core';
+const defaultOptions = ["Fixed","User selection"]
+
+
 export function Appearance() {
     const { colourBy,
         lineWidth,
@@ -12,16 +17,22 @@ export function Appearance() {
     } = useAppSelector(selectAppearance)
     const tree = useAppSelector(selectTree);
 
-    const attributeTypes = tree.getCurrentIndex()>-1?tree.getAnnotations():[];
-    const attributeKeys = Object.keys(attributeTypes).length > 0 ? ["User selection", ...Object.keys(attributeTypes)] : ["User selection"]
+
+    const dispatch = useAppDispatch();
+    const attributes = useAppSelector(selectColorableAttributes)
+    const continuousAttributes = tree.getCurrentIndex() > -1? tree.getAnnotations().filter(a => tree.getAnnotationType(a) === AnnotationType.CONTINUOUS):[]
+
+    const attributeKeys = [...defaultOptions, ...attributes] 
 
     const options = []
     for (const key of attributeKeys) {
         options.push(<option key={key} value={key}>{key}</option>)
     }
 
-    const dispatch = useAppDispatch();
-
+    const widthOptions = []
+    for (const key of continuousAttributes) {
+        widthOptions.push(<option key={key} value={key}>{key}</option>)
+    }
 
     return (
         <SettingPanel title="Appearance">
@@ -44,7 +55,7 @@ export function Appearance() {
             <div>
                 <label htmlFor='widthBy'>Width By:</label>
                 <select name="widthBy" id="widthBy" onChange={e => dispatch(setWidthBy(e.target.value))} value={widthBy}>
-                    {options}
+                    {widthOptions}
                 </select>
             </div>
             <div>

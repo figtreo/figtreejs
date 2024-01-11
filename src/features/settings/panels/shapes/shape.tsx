@@ -4,6 +4,7 @@ import { useAppDispatch, useAppSelector } from "../../../../app/hooks";
 import { SettingPanel } from "../PanelHeader";
 import { selectTree } from "../../../../app/store";
 
+const defaultOptions = ["Fixed","User selection",]
 
 
 export function BaseShapes(props: { target: shapeTarget,activated:boolean }) {
@@ -13,14 +14,15 @@ export function BaseShapes(props: { target: shapeTarget,activated:boolean }) {
     const tree = useAppSelector(selectTree);
     const {activated} = props;
     //duplicate code
-    const attributeTypes = tree.getCurrentIndex()>-1?tree.getAnnotations():[];
-    //TODO add defaults like height/length/ etc.
-    const attributeKeys = Object.keys(attributeTypes).length > 0 ? ["Fixed","User selection", ...Object.keys(attributeTypes)] : ["Fixed","User selection"]
+
+    const attributes = tree.getCurrentIndex()>-1?tree.getAnnotations():[];
+    const attributeKeys = [...defaultOptions, ...attributes] 
 
     const options = []
     for (const key of attributeKeys) {
         options.push(<option key={key} value={key}>{key}</option>)
     }
+
 
     const shapes = []
     if (props.target === "tip") {

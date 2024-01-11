@@ -7,6 +7,8 @@ export enum AnnotationType {
     BOOLEAN = "BOOLEAN",
     INTEGER = "INTEGER",
     CONTINUOUS = "CONTINUOUS",
+    RANGE = "RANGE",
+    SET= "SET",
     PROBABILITIES = "PROBABILITIES",
     MARKOV_JUMP = "MARKOV_JUMP",
 

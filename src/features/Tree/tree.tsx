@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState, createContext } from 'react';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 
-import { selectAppearance, selectLineWidth, selectStroke } from '../Settings/panels/appearance/appearanceSlice';
+import { selectAppearance, selectLineWidth} from '../Settings/panels/appearance/appearanceSlice';
 import { selectLayout, setPointOfInterest } from '../Settings/panels/layout/layoutSlice';
 import { Tips, TipsBackground } from './tips';
 import { InternalNodes } from './nodes';
@@ -10,7 +10,7 @@ import { TipLabels } from './tipLabel';
 import { NodeLabels } from './nodeLabels';
 import { BranchLabels } from './branchLabels';
 
-import { FigTree,  Branches, RectangularLayout, PolarLayout, RadialLayout, NodeRef, Highlight, CartoonData } from '@figtreejs/core'
+import { FigTree,  Branches, RectangularLayout, PolarLayout, RadialLayout, NodeRef, Highlight, CartoonData, AnnotationType } from '@figtreejs/core'
 import { useAreaSelection } from '../../app/area-selection';
 import { select } from "d3-selection"
 import { selectSelectionMode, selectSelectionRoot, setSelectionRoot } from '../Header/headerSlice';
@@ -18,6 +18,7 @@ import AxisElement from './AxisElement';
 import { CARTOON_ANNOTATION, COLLAPSE_ANNOTATION, COLOUR_ANNOTATION, HILIGHT_ANNOTATION } from '../../app/constants';
 import { selectTree } from '../../app/store';
 import { ActionCreators } from 'redux-undo';
+import { addScaleFromAnnotation } from '../ColorScales/colourSlice';
 
 const margins = { top: 80, bottom: 80, left: 50, right: 100 };
 //todo make zoom and expansion based on number of tips
@@ -218,6 +219,14 @@ export function Tree({ panelRef }: any) {
   //
   const handlePaste = (event: any) => {
     tree.addFromString(event.clipboardData.getData('text'));
+    for(const annotation of tree.getAnnotations()){
+      const data = tree.getAnnotationData(annotation)
+      const type = tree.getAnnotationType(annotation);
+      if(type===AnnotationType.DISCRETE||type===AnnotationType.CONTINUOUS){
+        dispatch(addScaleFromAnnotation(data));
+
+      }
+  }
   }
   useEffect(() => {
 

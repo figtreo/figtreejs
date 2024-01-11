@@ -2,10 +2,11 @@ import { format } from "d3-format";
 import { useAppSelector } from "../../app/hooks";
 import { selectLabelState } from "../Settings/panels/label/labelSlice";
 import { selectLayout } from "../Settings/panels/layout/layoutSlice";
-import { NodeRef, Nodes } from "@figtreejs/core";
+import { AnnotationType, NodeRef, Nodes } from "@figtreejs/core";
 import { Node } from "./treeSlice";
 import {  selectNodeDecorations } from "../Header/headerSlice";
 import { selectTree } from "../../app/store";
+import { getTextFunction } from "./branchLabels";
 
 export function TipLabels(props: { attrs?:{[key:string]:any} }) {
     const { attrs={} } = props;
@@ -27,40 +28,8 @@ export function TipLabels(props: { attrs?:{[key:string]:any} }) {
 
     if (settings.activated) {
 
-        let numericalFormater: (n: number) => string;
-        switch (settings.format) {
-            case "Decimal":
-                numericalFormater = format(`.${settings.sigDigs}f`);
-                break;
-            case "Scientific":
-                numericalFormater = format(`.${settings.sigDigs}e`);
-                break;
-            case "Percent":
-                numericalFormater = format(`.${settings.sigDigs}%`);
-                break;
-            case "Roman":
-                numericalFormater = (n: number) => romanize(n);
-                break;
-            default:
-                throw new Error(`Unknown numerical format ${settings.format}`);
-        }
+        let textFunction = getTextFunction(tree,settings);
 
-
-
-        let textFunction;
-        switch (settings.display) {
-            case "Name":
-                textFunction = (node: NodeRef) => tree.getName(node);
-                break;
-            case "Node Heights":
-                textFunction = (node: NodeRef) => numericalFormater(tree.getHeight(node));
-                break;
-            case "Branch lengths":
-                textFunction = (node: NodeRef) => numericalFormater(tree.getLength(node));
-                break
-            default:
-                throw new Error(`Unknown tip label display type ${settings.display}}`);
-        }
         return (
             <Nodes.Label filter={filter} attrs={{ fontSize: settings.fontSize,...attrs }} aligned={alignTipLabels} text={textFunction} />
         )

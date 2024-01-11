@@ -108,16 +108,16 @@ export function processAnnotationValue(values: any):{type:AnnotationType, value:
         }
 
         else if (values.map(v => isNaN(v)).reduce((acc, curr) => acc && curr, true)) {
-            type = AnnotationType.DISCRETE;
+            type = AnnotationType.SET;
             processedValue = values;
 
         }
         else if (values.map(v => parseFloat(v)).reduce((acc, curr) => acc && Number.isInteger(curr), true)) {
-            type = AnnotationType.INTEGER;
             processedValue = values.map(v => parseInt(v))
+            type=processedValue.length===2?AnnotationType.RANGE:AnnotationType.SET;
         } else if (values.map(v => parseFloat(v)).reduce((acc, curr) => acc || !Number.isInteger(curr), false)) {
-            type = AnnotationType.CONTINUOUS;
             processedValue = values.map(v => parseFloat(v))
+            type=processedValue.length===2?AnnotationType.RANGE:AnnotationType.SET;
         }
 
     } else if (Object.isExtensible(values)) {

@@ -1,7 +1,7 @@
 import { format } from "d3-format";
 import { useAppSelector } from "../../app/hooks";
 import { selectLabelState } from "../Settings/panels/label/labelSlice";
-import {  NodeRef, BranchLabels as BL, decimalToDate, Tree} from "@figtreejs/core";
+import {  NodeRef, BranchLabels as BL, decimalToDate, Tree, AnnotationType} from "@figtreejs/core";
 import { timeFormat } from "d3-time-format";
 import { selectNodeDecorations } from "../Header/headerSlice";
 import { selectTree } from "../../app/store";
@@ -22,25 +22,8 @@ export function BranchLabels(props:{ attrs?:{[key:string]:any} }) {
 
     if (settings.activated) {
 
-        let numericalFormatter = getNumericalFormatter(settings.format,settings.sigDigs)
-
-
-
-        let textFunction;
-        switch (settings.display) {
-            case "Name":
-                textFunction = (node: NodeRef) => tree.getName(node);
-                break;
-            case "Node Heights":
-                textFunction = (node: NodeRef) => numericalFormatter(tree.getHeight(node));
-                break;
-            case "Branch lengths":
-                textFunction = (node: NodeRef) => numericalFormatter(tree.getLength(node));
-                break
-            default:
-                throw new Error(`Unknown tip label display type ${settings.display}}`);
-        }
-        
+        let textFunction = getTextFunction(tree,settings);
+       
         return (
             <BL filter={filter} attrs={{ fontSize: settings.fontSize,...attrs }}  text={textFunction} /> 
         )
@@ -98,4 +81,37 @@ function romanize(num: number):string {
         default:
             throw new Error(`Unknown numerical format ${formatString}`);
     }
+}
+
+export function getTextFunction(tree:Tree,settings:any){
+    let numericalFormatter = getNumericalFormatter(settings.format,settings.sigDigs)
+        let textFunction;
+    switch (settings.display) {
+        case "Name":
+            textFunction = (node: NodeRef) => tree.getName(node);
+            break;
+        case "Node Heights":
+            textFunction = (node: NodeRef) => numericalFormatter(tree.getHeight(node));
+            break;
+        case "Branch lengths":
+            textFunction = (node: NodeRef) => numericalFormatter(tree.getLength(node));
+            break
+        default:
+            const type = tree.getAnnotationType(settings.display);
+            if(type===AnnotationType.CONTINUOUS){
+                textFunction = (node: NodeRef) => numericalFormatter(tree.getAnnotation(node, settings.display));
+            }else if(type===AnnotationType.RANGE){
+                textFunction = (node: NodeRef) => {
+                   if(tree.getAnnotation(node, settings.display)){
+                    return `[${tree.getAnnotation(node, settings.display).map(numericalFormatter).join(", ")}]`;
+                   }
+                   return ''
+                }
+            }else{
+                textFunction = (node: NodeRef) => tree.getAnnotation(node, settings.display); 
+            }
+        
+            // throw new Error(`Unknown tip label display type ${settings.display}}`);
+    }
+    return textFunction;
 }

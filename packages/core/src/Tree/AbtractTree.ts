@@ -271,7 +271,14 @@ export abstract class AbstractTree implements Tree {
                 // upgrade to float
                 return AnnotationType.CONTINUOUS;
             }
+            if(suggestedType===AnnotationType.RANGE && annotationType===AnnotationType.SET){
+                return AnnotationType.RANGE;
+            }
+            if(suggestedType===AnnotationType.SET && annotationType===AnnotationType.RANGE){
+                return AnnotationType.RANGE;
+            }
         }
+        
         throw new Error(`Annotation ${input.name} has type ${suggestedType} but previously seen as ${annotationType}`)
     }
     
@@ -321,6 +328,23 @@ export abstract class AbstractTree implements Tree {
                 } else {
                     newDomain = [...new Set([...domain, annotation.value])]
                     newDomain.sort()
+                }
+                break;
+            }
+            case AnnotationType.SET:{
+                if (domain === undefined) {
+                    newDomain = [annotation.value]
+                } else {
+                    newDomain = [...new Set([...domain, annotation.value])]
+                    newDomain.sort()
+                }
+                break;
+            }
+            case AnnotationType.RANGE:{
+                if (domain === undefined) {
+                    newDomain = extent(annotation.value) as unknown as [number, number]
+                } else {
+                    newDomain = extent([...domain, ...annotation.value]) as unknown as [number, number]
                 }
                 break;
             }

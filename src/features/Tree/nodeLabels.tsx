@@ -5,6 +5,7 @@ import { Node } from "./treeSlice";
 import { Nodes,NodeRef} from "@figtreejs/core";
 import {  selectNodeDecorations } from "../Header/headerSlice";
 import { selectTree } from "../../app/store";
+import { getTextFunction } from "./branchLabels";
 
 export function NodeLabels(props:{ attrs?:{[key:string]:any} }) {
     const { attrs={} } = props;
@@ -24,40 +25,7 @@ export function NodeLabels(props:{ attrs?:{[key:string]:any} }) {
 
     if (settings.activated) {
 
-        let numericalFormater: (n: number) => string;
-        switch (settings.format) {
-            case "Decimal":
-                numericalFormater = format(`.${settings.sigDigs}f`);
-                break;
-            case "Scientific":
-                numericalFormater = format(`.${settings.sigDigs}e`);
-                break;
-            case "Percent":
-                numericalFormater = format(`.${settings.sigDigs}%`);
-                break;
-            case "Roman":
-                numericalFormater = (n: number) => romanize(n);
-                break;
-            default:
-                throw new Error(`Unknown numerical format ${settings.format}`);
-        }
-
-
-
-        let textFunction;
-        switch (settings.display) {
-            case "Name":
-                textFunction = (node: NodeRef) => tree.getName(node);
-                break;
-            case "Node Heights":
-                textFunction = (node: NodeRef) => numericalFormater(tree.getHeight(node));
-                break;
-            case "Branch lengths":
-                textFunction = (node: NodeRef) => numericalFormater(tree.getLength(node));
-                break
-            default:
-                throw new Error(`Unknown tip label display type ${settings.display}}`);
-        }
+        let textFunction = getTextFunction(tree,settings);
 
         return (
             <Nodes.Label filter={filter} attrs={{ fontSize: settings.fontSize,...attrs }}  text={textFunction} />

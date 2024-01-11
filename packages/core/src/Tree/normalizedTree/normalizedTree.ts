@@ -117,6 +117,9 @@ export class NormalizedTree extends AbstractTree {
         const domain = this.updateDomain( { id:annotation.name, value:annotation.value, type:checkedType })
 
         this._data.annotations.byId[annotation.name]={id:annotation.name,domain,type:checkedType}
+        if (this._data.annotations.allIds.indexOf(annotation.name) === -1) {
+            this._data.annotations.allIds.push(annotation.name)
+        }
     }
 
 

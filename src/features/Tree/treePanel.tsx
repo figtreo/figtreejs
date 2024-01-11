@@ -2,9 +2,13 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Tree } from "./tree";
 import './treePanel.css'
 import { selectTree } from "../../app/store";
-import { useAppSelector } from "../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { addScaleFromAnnotation } from "../ColorScales/colourSlice";
+import { AnnotationType } from "@figtreejs/core";
 export function TreePanel(){
   const tree = useAppSelector(selectTree);
+  const dispatch = useAppDispatch();
+
 
     const treePanelRef = useRef<HTMLInputElement>(null);
     const [drag,setDrag] = useState(false);
@@ -23,6 +27,14 @@ export function TreePanel(){
                 const reader = new FileReader();
 		        reader.onload = function(e) {
                     tree.addFromString(e.target!.result as string);
+                    for(const annotation of tree.getAnnotations()){
+                      const data = tree.getAnnotationData(annotation)
+                      const type = tree.getAnnotationType(annotation);
+                      if(type===AnnotationType.DISCRETE||type===AnnotationType.CONTINUOUS){
+                        dispatch(addScaleFromAnnotation(data));
+
+                      }
+                  }
 		        }
 		        reader.readAsText(file);
             }
@@ -33,6 +45,14 @@ export function TreePanel(){
             const reader = new FileReader();
             reader.onload = function(e) {
                 tree.addFromString(e.target!.result as string);
+                for(const annotation of tree.getAnnotations()){
+                  const data = tree.getAnnotationData(annotation)
+                  const type = tree.getAnnotationType(annotation);
+                  if(type===AnnotationType.DISCRETE||type===AnnotationType.CONTINUOUS){
+                    dispatch(addScaleFromAnnotation(data));
+
+                  }
+              }
             }
             reader.readAsText(file);
         });

@@ -9,12 +9,17 @@ describe("Test annotation parsing",()=>{
     });
     it('integer array', function () {
         const annotation = processAnnotationValue(["1", "2", "3"]);
-        expect(annotation).toEqual({ type: "INTEGER", value: [1, 2, 3] });
+        expect(annotation).toEqual({ type: "SET", value: [1, 2, 3] });
     });
 
     it('continuous array', function () {
         const annotation = processAnnotationValue(["1", "2.5", "3"]);
-        expect(annotation).toEqual({ type: "CONTINUOUS", value: [1, 2.5, 3] });
+        expect(annotation).toEqual({ type: "SET", value: [1, 2.5, 3] });
+    });
+
+    it('continuous range', function () {
+        const annotation = processAnnotationValue([0.0,1]);
+        expect(annotation).toEqual({ type: "RANGE", value: [0,1] });
     });
 
     it('continuous', function () {
@@ -27,7 +32,7 @@ describe("Test annotation parsing",()=>{
     });
     it('discrete array', function () {
         const annotation = processAnnotationValue(["a", "b", "c"]);
-        expect(annotation).toEqual({ type: "DISCRETE", value: ["a", "b", "c"] });
+        expect(annotation).toEqual({ type: "SET", value: ["a", "b", "c"] });
     });
     it('markov jump', function () {
         const annotation = processAnnotationValue([["0.1", "U", "me"]]);
