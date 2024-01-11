@@ -13,7 +13,7 @@ export function Settings() {
             <Appearance/>
             {/* <TimeScale/> */}
             <Labels target='tip' defaultOptions={['Name']}/>
-            <Shapes target="tip" />
+            <Shapes target="tip" background={true} />
             <Labels target='node' defaultOptions={[]}/>
             <Shapes target="node"/>
             <Labels target='branch' defaultOptions={[]}/>

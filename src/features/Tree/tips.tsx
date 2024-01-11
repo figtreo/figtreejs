@@ -4,12 +4,15 @@ import {  Nodes, NodeRef, Tree } from "@figtreejs/core";
 import { COLOUR_ANNOTATION } from "../../app/constants";
 import { selectTree } from "../../app/store";
 
-export function Tips() {
-    const settings = useAppSelector(selectShapeState("tip"));
+function tipShapeGenerator(target: "tip" | "tipBackground" ) {
+    return function(props:any){
+    const settings = useAppSelector(selectShapeState(target));
+    const activated = useAppSelector(selectShapeState("tip")).activated && settings.activated;
     const tree = useAppSelector(selectTree);
 
     const filter = (n: NodeRef) => tree.getChildCount(n) === 0;
 
+    
 
     // check if sizing by an attribute or by a constant
     const radius = settings.maxSize / 2;
@@ -23,7 +26,7 @@ export function Tips() {
     const strokeWidth = settings.outlineWidth;
 
 
-    if (settings.activated) {
+    if (activated) {
         if (settings.shape === "Circle") {
             return (
                 <Nodes.Circle filter={filter} attrs={{ r: radius, fill, stroke, strokeWidth }} />
@@ -41,6 +44,8 @@ export function Tips() {
         return <g></g>;
     }
 
-
-
+    }
 }
+
+export const Tips = tipShapeGenerator("tip")
+export const TipsBackground = tipShapeGenerator("tipBackground")
