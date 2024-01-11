@@ -105,6 +105,7 @@ export function Shapes(props: { target: shapeTarget,background?:boolean }) {
             {props.background&&
             <SettingPanel title="Background" checkable={true} onClick={() => dispatch(backgroundFlipActivated(false))} checked={backgroundSettings.activated && mainSettings.activated}>
                 <BaseShapes target={backgroundTarget} activated={ backgroundSettings.activated && mainSettings.activated}/>
+
             </SettingPanel>
             }
         </SettingPanel>
