@@ -1,11 +1,12 @@
 import { format } from "d3-format";
-import { useAppSelector } from "../../../app/hooks";
+import { getColorScale, useAppSelector } from "../../../app/hooks";
 import { selectLabelState } from "../../Settings/panels/label/labelSlice";
 import { Node } from "../treeSlice";
 import { Nodes,NodeRef} from "@figtreejs/core";
 import {  selectNodeDecorations } from "../../Header/headerSlice";
 import { selectTree } from '../../../app/hooks';
 import { getTextFunction } from "./labelUtils";
+import { COLOUR_ANNOTATION } from "../../../app/constants";
 
 export function NodeLabels(props:{ attrs?:{[key:string]:any} }) {
     const { attrs={} } = props;
@@ -14,11 +15,19 @@ export function NodeLabels(props:{ attrs?:{[key:string]:any} }) {
     const tree = useAppSelector(selectTree);
 
 
-    attrs.fill =  settings.colourBy === "User selection" ?
-    (n: NodeRef) => {
-        const custom = taxaColours[n.id] ? taxaColours[n.id].customColor : settings.colour
-        return custom!
-    } : settings.colour;
+    const fillColorScale = useAppSelector( (state)=>getColorScale(state,settings.colourBy));
+    attrs.fill = (n:NodeRef)=>{
+        if(settings.colourBy==="User selection"){
+          const custom = tree.getAnnotation(n,COLOUR_ANNOTATION);
+          return custom===undefined?settings.colour:(custom as string);
+      }else{
+        const annotation = tree.getAnnotation(n,settings.colourBy);
+        if(annotation===undefined){
+          return settings.colour;
+        }
+        return fillColorScale(tree.getAnnotation(n,settings.colourBy)) as string;
+      }
+    }
 
     const filter = (n: Node) => tree.getChildCount(n) > 0;
 

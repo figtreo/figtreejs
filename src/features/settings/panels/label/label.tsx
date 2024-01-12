@@ -3,6 +3,7 @@ import { labelActions, labelTarget, selectLabelState } from "./labelSlice";
 import { useAppDispatch, useAppSelector } from "../../../../app/hooks";
 import { SettingPanel } from "../PanelHeader";
 import { selectTree } from '../../../../app/hooks';
+import { selectColorableAttributes } from "../colorScales/colourSlice";
 
 const defaultOptions = ["User selection","Node Heights","Branch lengths"]
 
@@ -14,7 +15,7 @@ export function BaseLabel(props: { target: labelTarget,defaultOptions:string[], 
     //duplicate code
     const tree = useAppSelector(selectTree);
 
-    const attributes = tree.getCurrentIndex()>-1?tree.getAnnotations():[];
+    const attributes = useAppSelector(selectColorableAttributes)
     //TODO add defaults like height/length/ etc.
     const attributeKeys = [...defaultOptions,...props.defaultOptions, ...attributes] 
 

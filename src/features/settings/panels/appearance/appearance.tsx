@@ -20,6 +20,7 @@ export function Appearance() {
 
     const dispatch = useAppDispatch();
     const attributes = useAppSelector(selectColorableAttributes)
+    
     const continuousAttributes = tree.getCurrentIndex() > -1? tree.getAnnotations().filter(a => tree.getAnnotationType(a) === AnnotationType.CONTINUOUS):[]
 
     const attributeKeys = [...defaultOptions, ...attributes] 
