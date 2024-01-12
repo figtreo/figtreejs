@@ -1,4 +1,4 @@
-import { extent, max, mean } from "d3-array";
+import {  max, mean } from "d3-array";
 import { scaleLinear } from "d3-scale";
 import { AbstractLayout, ArbitraryVertex, ArbitraryVertices, defaultInternalLayoutOptions, internalLayoutOptions, Vertices } from "./LayoutInterface";
 import { NodeRef, Tree } from "../Tree";
@@ -161,7 +161,7 @@ export class RectangularLayout extends AbstractLayout {
             type:"Rectangular"
         };
         for (const id of arbitraryLayout.allIds) {
-            const vertex = arbitraryLayout.byId[id];
+            const vertex = arbitraryLayout.byId[id]; //is this a post order ? 
 
             const xpos = x(vertex.x);
             const ypos = y(transform(vertex.y));
@@ -189,7 +189,7 @@ export class RectangularLayout extends AbstractLayout {
                 branch: vertex.pathPoints.length > 1 ? {
                     d: this.pathGenerator(vertex.pathPoints.map(d => ({ x: x(d.x), y: y(transform(d.y)) })), safeOpts),
                     label: {
-                        x: mean([xpos, x(vertex.pathPoints[1].x)])!, //parent is at the end of the array
+                        x: mean([xpos, x(vertex.pathPoints[vertex.pathPoints.length-1].x)])!, //parent is at the end of the array
                         y: ypos - 6,
                         alignmentBaseline: "bottom",
                         textAnchor: "middle",
