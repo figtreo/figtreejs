@@ -2,9 +2,9 @@ import React from "react";
 import { labelActions, labelTarget, selectLabelState } from "./labelSlice";
 import { useAppDispatch, useAppSelector } from "../../../../app/hooks";
 import { SettingPanel } from "../PanelHeader";
-import { selectTree } from "../../../../app/store";
+import { selectTree } from '../../../../app/hooks';
 
-const defaultOptions = ["Fixed","User selection","Node Heights","Branch lengths"]
+const defaultOptions = ["User selection","Node Heights","Branch lengths"]
 
 export function BaseLabel(props: { target: labelTarget,defaultOptions:string[], }) {
 

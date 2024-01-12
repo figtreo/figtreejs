@@ -13,7 +13,7 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {  colourTaxa, selectSelectionMode, selectSelectionRoot, setSelectionMode } from "./headerSlice";
 import { AnnotationType } from "@figtreejs/core";
 import { CARTOON_ANNOTATION, COLLAPSE_ANNOTATION, COLOUR_ANNOTATION, HILIGHT_ANNOTATION } from "../../app/constants";
-import { selectTree } from '../../app/store'
+import { selectTree } from '../../app/hooks'
 export function Header() {
 
     const dispatch = useAppDispatch();

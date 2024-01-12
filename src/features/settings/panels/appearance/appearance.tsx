@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { useAppSelector, useAppDispatch } from '../../../../app/hooks';
 import { selectAppearance, setColourBy, setLineWidth, setMinWidth, setWidthBy, setColour } from './appearanceSlice';
 import { SettingPanel } from '../PanelHeader';
-import { selectTree } from '../../../../app/store';
-import { selectColorableAttributes } from '../../../ColorScales/colourSlice';
+import { selectTree } from '../../../../app/hooks';
+import { selectColorableAttributes } from '../colorScales/colourSlice';
 import { AnnotationType } from '@figtreejs/core';
 const defaultOptions = ["Fixed","User selection"]
 

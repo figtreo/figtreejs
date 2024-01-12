@@ -1,14 +1,14 @@
 import { useCallback, useEffect, useRef, useState, createContext } from 'react';
-import { useAppSelector, useAppDispatch } from '../../app/hooks';
+import { useAppSelector, useAppDispatch, getColorScale } from '../../app/hooks';
 
 import { selectAppearance, selectLineWidth} from '../Settings/panels/appearance/appearanceSlice';
 import { selectLayout, setPointOfInterest } from '../Settings/panels/layout/layoutSlice';
 import { Tips, TipsBackground } from './tips';
 import { InternalNodes } from './nodes';
 
-import { TipLabels } from './tipLabel';
-import { NodeLabels } from './nodeLabels';
-import { BranchLabels } from './branchLabels';
+import { TipLabels } from './Labels/tipLabel';
+import { NodeLabels } from './Labels/nodeLabels';
+import { BranchLabels } from './Labels/branchLabels';
 
 import { FigTree,  Branches, RectangularLayout, PolarLayout, RadialLayout, NodeRef, Highlight, CartoonData, AnnotationType } from '@figtreejs/core'
 import { useAreaSelection } from '../../app/area-selection';
@@ -16,9 +16,9 @@ import { select } from "d3-selection"
 import { selectSelectionMode, selectSelectionRoot, setSelectionRoot } from '../Header/headerSlice';
 import AxisElement from './AxisElement';
 import { CARTOON_ANNOTATION, COLLAPSE_ANNOTATION, COLOUR_ANNOTATION, HILIGHT_ANNOTATION } from '../../app/constants';
-import { selectTree } from '../../app/store';
+import { selectTree } from '../../app/hooks';
 import { ActionCreators } from 'redux-undo';
-import { addScaleFromAnnotation } from '../ColorScales/colourSlice';
+import { addScaleFromAnnotation } from '../Settings/panels/colorScales/colourSlice';
 
 const margins = { top: 80, bottom: 80, left: 50, right: 100 };
 //todo make zoom and expansion based on number of tips
@@ -195,11 +195,10 @@ export function Tree({ panelRef }: any) {
 
   const lineWidth = useAppSelector(selectLineWidth);
   const branchSettings = useAppSelector(selectAppearance)
-  const branchColour = branchSettings.colourBy === "User selection" ? (n: NodeRef):string => {
 
-    const custom = tree.getAnnotation(n,COLOUR_ANNOTATION);
-    return custom===undefined?branchSettings.colour:(custom as string);
-  } : branchSettings.colour;
+
+
+
   const branchFiller = (n: NodeRef):string =>  {
 
     const custom = tree.getAnnotation(n,COLOUR_ANNOTATION);
@@ -211,7 +210,23 @@ export function Tree({ panelRef }: any) {
 
 
   const cartoonedNodes:{[key:string]:CartoonData} ={};
-  //memorize
+
+  //TODO mover to branch componet like tips
+  const branchColorScale = useAppSelector( (state)=>getColorScale(state,branchSettings.colourBy));
+  
+  function branchColourur(n:NodeRef):string{
+    if(branchSettings.colourBy==="User selection"){
+      const custom = tree.getAnnotation(n,COLOUR_ANNOTATION);
+      return custom===undefined?branchSettings.colour:(custom as string);
+  }else{
+    const annotation = tree.getAnnotation(n,branchSettings.colourBy);
+    if(annotation===undefined){
+      return branchSettings.colour;
+    }
+    return branchColorScale(tree.getAnnotation(n,branchSettings.colourBy)) as string;
+  }
+}
+
 
 
 
@@ -394,8 +409,8 @@ useEffect(() => {
           <FigTree animated={animate} width={width} height={height} tree={tree} layout={treeLayout} margins={margins} opts={layoutOpts}>
             <AxisElement />
             <Highlight  attrs={{fill:(n:NodeRef)=> (tree.getAnnotation(n,HILIGHT_ANNOTATION)! as string), opacity:0.4}} filter={(n:NodeRef)=> tree.getAnnotation(n,HILIGHT_ANNOTATION)!==undefined}/>             
-            <Branches attrs={{ fill:'none',strokeWidth: lineWidth + 4, stroke: "#959ABF", strokeLinecap: "round", strokeLinejoin: "round" }} filter={(n: NodeRef) => selectedNodes.has(n.id)} />
-            <Branches attrs={{fill:branchFiller, strokeWidth: lineWidth, stroke: branchColour }} filter={(n: NodeRef) => true} />
+            <Branches attrs={{ fill:'none',strokeWidth: lineWidth + 4, stroke: "#959ABF", strokeLinecap: "round", strokeLinejoin: "round" }} filter={(n: NodeRef) => selectedNodes.has(n.id)} /> 
+            <Branches attrs={{fill:branchFiller, strokeWidth: lineWidth, stroke: branchColourur }} filter={(n: NodeRef) => true} />
             <BranchLabels />
             <TipsBackground/>
             <TipLabels  attrs={{ filter: (n: NodeRef) => selectedTaxa.has(n.id) ? 'url(#solid)' : null }} />
@@ -411,7 +426,7 @@ useEffect(() => {
   } else {
     return (
       <div>
-        <p>Paste newick string</p>
+        <p>Try this newick string</p>
         <p> ((((((virus1:0.1,virus2:0.12)0.95:0.08,(virus3:0.011,virus4:0.0087)1.0:0.15)0.65:0.03,virus5:0.21)1.0:0.2,(virus6:0.45,virus7:0.4)0.51:0.02)1.0:0.1,virus8:0.4)1.0:0.1,(virus9:0.04,virus10:0.03)1.0:0.6);</p>
       </div>
     )

@@ -2,11 +2,10 @@ import {  createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { Annotation, AnnotationType } from '@figtreejs/core';
 import { scaleOrdinal, scaleSequential } from 'd3-scale';
-import {schemeBlues} from 'd3-scale-chromatic';
 import * as d3 from 'd3-scale-chromatic';
-import { RootState } from '../../app/store';
+import { RootState } from '../../../../app/store';
 
-interface colorScale {
+export interface colorScale {
     attribute:string
     type:"continuous"|"discrete",
     scheme: string,
@@ -24,9 +23,40 @@ const initialState:colorState = {
     allIds:[]
 }
 
-const discreteColorSchemes = ["Accent","Category10","Dark2","Paired","Pastel1","Pastel2","Set1","Set2","Set3","Tableau10","BrBG","PRGn","PiYG","PuOr","RdBu","RdGy","RdYlBu","RdYlGn","Spectral"]
+const discreteColorSchemes = ["Accent","Category10","Dark2","Paired","Pastel1","Pastel2","Set1","Set2","Set3","Tableau10"]
 const divergingColorSchemes = ["BrBG","PRGn","PiYG","PuOr","RdBu","RdGy","RdYlBu","RdYlGn","Spectral"]
-const sequentialColorSchemes = ["Blues","Greens","Greys","Oranges","Purples","Reds","BuGn","BuPu","GnBu","OrRd","PuBuGn","PuBu","PuRd","RdPu","YlGnBu","YlGn","YlOrBr","YlOrRd","Viridis","Inferno","Magma","Plasma","Warm","Cool","CubehelixDefault","BuGnYl","BuPuYl","GnBuPu","OrRdPu","PuBuGnYl","PuBuPu","PuRdPu","RdPuPu","YlGnBuPu","YlGnPu","YlOrBrPu","YlOrRdPu","ViridisYl","InfernoYl","MagmaYl","PlasmaYl","WarmYl","CoolYl","CubehelixDefaultYl","BuGnYl","BuPuYl","GnBuPu","OrRdPu","PuBuGnYl","PuBuPu","PuRdPu","RdPuPu","YlGnBuPu","YlGnPu","YlOrBrPu","YlOrRdPu","ViridisYl","InfernoYl","MagmaYl","PlasmaYl","WarmYl","CoolYl","CubehelixDefaultYl"]
+const sequentialColorSchemes = ["Blues","Greens","Greys","Oranges","Purples","Reds"]// others can not be discretized,"Turbo","Viridis","Inferno","Magma","Civids","Warm","Cool"]
+
+export const schemes = {
+    discrete:discreteColorSchemes,
+    sequential:sequentialColorSchemes,
+    diverging:divergingColorSchemes
+}
+export function getScale(scaleData:colorScale){
+    const prefix = scaleData.type==="discrete"?"scheme":"interpolate";
+    const {scheme,domain} = scaleData;
+    
+    switch(scaleData.type){
+        case "discrete":
+            if(discreteColorSchemes.includes(scheme)){
+                return scaleOrdinal(d3[`${prefix}${scheme}`]).domain(domain as string[]);
+        
+            }else if(sequentialColorSchemes.includes(scheme)){
+                const n=Math.max(3,Math.min(domain.length,9));
+                return scaleOrdinal(d3[`${prefix}${scheme}`][n]).domain(domain);
+        
+            }else if(divergingColorSchemes.includes(scheme)){
+                const n=Math.max(3,Math.min(domain.length,11));
+                return scaleOrdinal(d3[`${prefix}${scheme}`][n]).domain(domain);
+            }else{
+                throw new Error(`Unknown color scheme ${prefix}${scheme}`)
+            }
+        case "continuous":
+            return scaleSequential(d3[`${prefix}${scheme}`]).domain(domain as [number,number]);
+    
+    }
+}
+
 
 function getStartingRange(domain:any[],name:string):string[]{
     let scheme:any=undefined;
@@ -98,6 +128,14 @@ export const colorScalesSlice = createSlice({
             const {attribute,range} = action.payload;
             state.byId[attribute].range = range;
         },
+        setScheme:{
+            reducer:(state,action:PayloadAction<{attribute:string,scheme:string}>) =>{
+            const {attribute,scheme} = action.payload;
+            state.byId[attribute].scheme = scheme;
+            },
+            prepare: (attribute: string, scheme: string) => ({payload:{attribute,scheme}})
+        },
+    
         addScaleFromAnnotation:{
             reducer:(state,action:PayloadAction<colorScale>)=>{
                 const {attribute} = action.payload;
@@ -142,6 +180,6 @@ export const colorScalesSlice = createSlice({
     });
 export default colorScalesSlice.reducer;
 
-export const  {addScaleFromAnnotation} = colorScalesSlice.actions;
+export const  {addScaleFromAnnotation,setScheme} = colorScalesSlice.actions;
 
 export const selectColorableAttributes = (state:RootState) => state.colorScales.allIds;

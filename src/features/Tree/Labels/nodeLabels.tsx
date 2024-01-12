@@ -1,23 +1,17 @@
 import { format } from "d3-format";
-import { useAppSelector } from "../../app/hooks";
-import { selectLabelState } from "../Settings/panels/label/labelSlice";
-import { selectLayout } from "../Settings/panels/layout/layoutSlice";
-import { AnnotationType, NodeRef, Nodes } from "@figtreejs/core";
-import { Node } from "./treeSlice";
-import {  selectNodeDecorations } from "../Header/headerSlice";
-import { selectTree } from "../../app/store";
-import { getTextFunction } from "./branchLabels";
+import { useAppSelector } from "../../../app/hooks";
+import { selectLabelState } from "../../Settings/panels/label/labelSlice";
+import { Node } from "../treeSlice";
+import { Nodes,NodeRef} from "@figtreejs/core";
+import {  selectNodeDecorations } from "../../Header/headerSlice";
+import { selectTree } from '../../../app/hooks';
+import { getTextFunction } from "./labelUtils";
 
-export function TipLabels(props: { attrs?:{[key:string]:any} }) {
+export function NodeLabels(props:{ attrs?:{[key:string]:any} }) {
     const { attrs={} } = props;
-    const settings = useAppSelector(selectLabelState("tip"));
-    const tree = useAppSelector(selectTree);
-
-    const { alignTipLabels } = useAppSelector(selectLayout)
-
-    const filter = (n: Node) => tree.getChildCount(n) === 0;
-
+    const settings = useAppSelector(selectLabelState("node"));
     const taxaColours = useAppSelector(selectNodeDecorations)
+    const tree = useAppSelector(selectTree);
 
 
     attrs.fill =  settings.colourBy === "User selection" ?
@@ -26,12 +20,15 @@ export function TipLabels(props: { attrs?:{[key:string]:any} }) {
         return custom!
     } : settings.colour;
 
+    const filter = (n: Node) => tree.getChildCount(n) > 0;
+
+
     if (settings.activated) {
 
         let textFunction = getTextFunction(tree,settings);
 
         return (
-            <Nodes.Label filter={filter} attrs={{ fontSize: settings.fontSize,...attrs }} aligned={alignTipLabels} text={textFunction} />
+            <Nodes.Label filter={filter} attrs={{ fontSize: settings.fontSize,...attrs }}  text={textFunction} />
         )
 
     } else {

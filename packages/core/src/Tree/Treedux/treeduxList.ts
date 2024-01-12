@@ -307,7 +307,7 @@ export const TreeduxListReducer = treeListSlice.reducer;
 
 
 export function treeSelectorFactory(store:ToolkitStore,treeSelector:(state:ToolkitStore)=>treeduxState){
-    return createSelector(treeSelector,(treeData)=>{
+    return createSelector([treeSelector],(treeData)=>{
         if(DEBUG){
             console.log("New tree made")
         }

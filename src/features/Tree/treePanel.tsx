@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Tree } from "./tree";
 import './treePanel.css'
-import { selectTree } from "../../app/store";
+import { selectTree } from '../../app/hooks';
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { addScaleFromAnnotation } from "../ColorScales/colourSlice";
+import { addScaleFromAnnotation } from "../Settings/panels/colorScales/colourSlice";
 import { AnnotationType } from "@figtreejs/core";
 export function TreePanel(){
   const tree = useAppSelector(selectTree);

@@ -2,7 +2,7 @@ import React from "react";
 import { shapeActions, shapeTarget, selectShapeState } from "./shapeSlice";
 import { useAppDispatch, useAppSelector } from "../../../../app/hooks";
 import { SettingPanel } from "../PanelHeader";
-import { selectTree } from "../../../../app/store";
+import { selectTree } from '../../../../app/hooks';
 
 const defaultOptions = ["Fixed","User selection",]
 

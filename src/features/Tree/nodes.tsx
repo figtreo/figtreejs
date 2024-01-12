@@ -1,8 +1,8 @@
-import { useAppSelector } from "../../app/hooks";
+import { getColorScale, useAppSelector } from "../../app/hooks";
 import { selectShapeState } from "../Settings/panels/shapes/shapeSlice";
 import {  Nodes, NodeRef } from "@figtreejs/core";
 import { COLOUR_ANNOTATION } from "../../app/constants";
-import { selectTree } from "../../app/store";
+import { selectTree } from '../../app/hooks';
 
 export function InternalNodes() {
     const settings = useAppSelector(selectShapeState("node"));
@@ -12,11 +12,20 @@ export function InternalNodes() {
 
     // check if sizing by an attribute or by a constant
     const radius = settings.maxSize / 2;
-    const fill = settings.colourBy === "User selection" ? (n: NodeRef) => {
-
+    const fillColorScale = useAppSelector( (state)=>getColorScale(state,settings.colourBy));
+  
+    function filler(n:NodeRef):string{
+      if(settings.colourBy==="User selection"){
         const custom = tree.getAnnotation(n,COLOUR_ANNOTATION);
-         return custom===undefined?settings.colour:custom;
-      } : settings.colour;;
+        return custom===undefined?settings.colour:(custom as string);
+    }else{
+      const annotation = tree.getAnnotation(n,settings.colourBy);
+      if(annotation===undefined){
+        return settings.colour;
+      }
+      return fillColorScale(tree.getAnnotation(n,settings.colourBy)) as string;
+    }
+  }
     
     const stroke = settings.outlineColour;;
     const strokeWidth = settings.outlineWidth;
@@ -24,15 +33,15 @@ export function InternalNodes() {
     if (settings.activated) {
         if (settings.shape === "Circle") {
             return (
-                <Nodes.Circle filter={filter} attrs={{ r: radius, fill, stroke, strokeWidth }} />
+                <Nodes.Circle filter={filter} attrs={{ r: radius, fill:filler, stroke, strokeWidth }} />
             )
         } else if (settings.shape === "Rectangle") {
             return (
-                <Nodes.Rectangle filter={filter} attrs={{ width: settings.maxSize, height: settings.maxSize, fill, stroke, strokeWidth }} />
+                <Nodes.Rectangle filter={filter} attrs={{ width: settings.maxSize, height: settings.maxSize, fill:filler, stroke, strokeWidth }} />
             )
         } else if (settings.shape === "Swoosh") {
             return (
-                <Nodes.Coalescent filter={filter} attrs={{ width: settings.maxSize, height: settings.maxSize, fill, stroke, strokeWidth }} />
+                <Nodes.Coalescent filter={filter} attrs={{ width: settings.maxSize, height: settings.maxSize, fill:filler, stroke, strokeWidth }} />
             )
         }
         else {
