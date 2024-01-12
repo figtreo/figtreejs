@@ -306,8 +306,10 @@ export const TreeduxListReducer = treeListSlice.reducer;
 
 
 
-export function treeSelectorFactory(store:ToolkitStore,treeSelector:(state:ToolkitStore)=>treeduxState){
-    return createSelector([treeSelector],(treeData)=>{
+export function treeSelectorFactory(store:ToolkitStore,treeSelector:(state:any)=>treeduxState){
+    return createSelector(
+        [treeSelector],
+        (treeData)=>{
         if(DEBUG){
             console.log("New tree made")
         }
@@ -321,7 +323,7 @@ export function treeSelectorFactory(store:ToolkitStore,treeSelector:(state:Toolk
     _store:ToolkitStore
 
    private  _getMySlice:()=>treeduxState //selector
-    constructor( store?:ToolkitStore,treeSelector?:(state:ToolkitStore)=>treeduxState){
+    constructor( store?:ToolkitStore,treeSelector?:(state:any)=>treeduxState){
         super();
         
         if(store){

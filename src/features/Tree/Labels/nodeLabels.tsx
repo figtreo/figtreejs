@@ -11,7 +11,6 @@ import { COLOUR_ANNOTATION } from "../../../app/constants";
 export function NodeLabels(props:{ attrs?:{[key:string]:any} }) {
     const { attrs={} } = props;
     const settings = useAppSelector(selectLabelState("node"));
-    const taxaColours = useAppSelector(selectNodeDecorations)
     const tree = useAppSelector(selectTree);
 
 

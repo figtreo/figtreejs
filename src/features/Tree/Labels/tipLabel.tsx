@@ -7,7 +7,6 @@ import { Node } from "../treeSlice";
 import {  selectNodeDecorations } from "../../Header/headerSlice";
 import { selectTree } from '../../../app/hooks';
 import { getTextFunction } from "./labelUtils";
-import { COLOUR_ANNOTATION } from "../../../app/constants";
 
 export function TipLabels(props: { attrs?:{[key:string]:any} }) {
     const { attrs={} } = props;
