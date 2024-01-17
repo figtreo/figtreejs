@@ -18,7 +18,7 @@ export default function Axis(props: AxisProps) {
     x,y } = props;
     
     const ticks = props.ticks?{...defaultAxisProps.ticks!,...props.ticks}:defaultAxisProps.ticks!;
-    const title = props.title?{...defaultAxisProps.title!, ...props.ticks}:defaultAxisProps.title!;
+    const title = props.title?{...defaultAxisProps.title!, ...props.title}:defaultAxisProps.title!;
 
     const scale = makeAxisScale(props, scaleContext);
 
@@ -63,7 +63,7 @@ export default function Axis(props: AxisProps) {
                 })}
                 {/*TODO sometimes scale doesn't have a range*/}
                 <g transform={`translate(${(direction === "horizontal" ? mean(scale.range()) : title.padding)},${(direction === "horizontal" ? title.padding : mean(scale.range()))})`}>
-                    <text textAnchor={"middle"}>{title.text}</text>
+                    <text textAnchor={"middle"}{...title.style}>{title.text}</text>
                 </g>
             </g>
 

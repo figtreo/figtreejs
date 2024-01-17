@@ -14,7 +14,7 @@ export default function AxisElement(props:{}) {
     }
     if(axisSettings.activated && layout!=="equalangle"){
         return(
-        <Axis reverse={axisSettings.reverseAxis} offsetBy={axisSettings.originValue} scaleBy = {axisSettings.scaleBy} strokeWidth={axisSettings.lineWeight} ticks={ticks}>
+        <Axis reverse={axisSettings.reverseAxis} offsetBy={axisSettings.originValue} scaleBy = {axisSettings.scaleBy} strokeWidth={axisSettings.lineWeight} ticks={ticks} title={{text:axisSettings.title,style:{fontSize:axisSettings.fontSize+6},padding:45   }}>
             {axisSettings.showGrid?<AxisBars />:undefined}
         </Axis>
             )

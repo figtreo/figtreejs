@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from "../../../../app/hooks";
-import { flipActivated, selectAxis, setScale, setTicks } from "./axisSlice";
+import { flipActivated, selectAxis, setScale, setTicks, setTitle } from "./axisSlice";
 import { flipShowGrid, setFormat,setSigDigs, setLineWeight, flipReverseAxis, setOriginValue, setFontSize } from "./axisSlice"
 import { SettingPanel } from "../PanelHeader";
 
@@ -56,6 +56,10 @@ export function Axis() {
                 <label htmlFor='sigDigits'>Sig. Digits: </label>
                 <input name="sigDigits" id="sigDigits" type="number" value={settings.sigDigs} min={0} onChange={e => dispatch(setSigDigs(e.target.value))} disabled={!settings.activated} />
             </div>
+            <div>
+                    <label htmlFor="title">Title: </label>
+                    <input id="title" name="title" type="text" value={settings.title} onChange={e => dispatch(setTitle(e.target.value))} disabled={!settings.activated} />
+                </div>
         </div>
     </SettingPanel >
 
