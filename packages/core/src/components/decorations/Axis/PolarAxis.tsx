@@ -21,7 +21,7 @@ export default function PolarAxis(props: AxisProps) {
     x,y } = props;
     
     const ticks = props.ticks?{...defaultAxisProps.ticks!,...props.ticks}:defaultAxisProps.ticks!;
-    const title = props.title?{...defaultAxisProps.title!, ...props.ticks}:defaultAxisProps.title!;
+    const title = props.title?{...defaultAxisProps.title!, ...props.title}:defaultAxisProps.title!;
 
     const scale = makeAxisScale(props, {domain:scaleContext.domain,range:verticies.axisLength!});
 
@@ -68,7 +68,7 @@ export default function PolarAxis(props: AxisProps) {
                     )
                 })}
                 {/*TODO sometimes scale doesn't have a range*/}
-                <g transform={`translate(${ mean(scale.range()) },${ title.padding})`}>
+                <g transform={`translate(${ mean(scale.range()) },${ title.padding}) rotate(${-degrees(theta[1]+0.1)})`}>
                     <text textAnchor={"middle"}>{title.text}</text>
                 </g>
             </g>
