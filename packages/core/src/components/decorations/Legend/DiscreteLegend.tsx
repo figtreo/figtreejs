@@ -25,42 +25,39 @@ export default function DiscreteLegend(props:{scale:any,pos:{x:number,y:number},
     // const onUnHover = useCallback(()=>dispatch({type:"unhover",payload:{}}));
     // TODO safari doesn't like the legend with two columns maybe move out of svg but need to scale and position so behaves the same
     const {scale,pos,width,height,swatchSize,format,columns}=props;
-    return(
-        <foreignObject x={pos.x} y={pos.y} width={width} height={height}>
-            <p >{props.title}</p>
-            <div style={{display: "flex", alignItems: "center", minHeight: "33px",font: "12px sans-serif"}}>
 
-                
-                <div style={{width: "100%", columns: `${columns}`}}>
-                    {scale.domain().sort().map((value:string) => {
-                        return(
-                            <div key={value}  style={{cursor:"pointer",
-                                                      breakInside: "avoid",
-                                                      display: "flex",
-                                                      alignItems: "center",
-                                                      paddingBottom: "1px"
-                                                        }} 
-                                                        // onMouseEnter={onHover(value)}
-                                                        //     onMouseLeave={()=>onUnHover()}
-                                                        //     onClick={()=>onClick(value)} 
-                                                            >
-                                <div style={{width: `${swatchSize}px`,
-                                  height: `${swatchSize}px`,
-                                  margin: "0 0.5em 0 0",
-                                  background:`${scale(value)}`,
-                                  }}/>
-                                  <div style={{
-                                whiteSpace: "nowrap",
-                                overflow: "hidden",
-                                textOverflow: "ellipsis",
-                                maxWidth: `calc(100% - ${swatchSize}px - 0.5em)`}}
-                                  >{format(value)}</div>
-                            </div>)
-                    }
-                    )}
-                </div>
-            </div>
-        </foreignObject>
+
+    const numEntries = scale.domain().length
+    const maxEntriesPerColumn = Math.ceil(numEntries/columns)
+    const columnStarts = []
+    const xGap = width/columns
+    const yGap = height/maxEntriesPerColumn
+    for(let i = 0; i < columns; i++){
+        columnStarts.push(i*xGap)
+    }
+    const rowStarts = []
+    for(let i = 0; i < maxEntriesPerColumn; i++){
+        rowStarts.push(i*yGap)
+    }
+    const swatchPositions = []
+    for(let i = 0; i < numEntries; i++){
+        swatchPositions.push({x:columnStarts[i%columns],y:rowStarts[i%maxEntriesPerColumn],text:scale.domain()[i],color:scale(scale.domain()[i])})
+    }
+
+// text is too big and this should not be clipped should be out side of clipped g
+
+    return(
+        <g transform={`translate(${pos.x},${pos.y})`}>
+            <text textAnchor="start" x={0} y={0} className="legend-title">{props.title}</text>
+            <g transform={`translate(0,20)`}>
+                {swatchPositions.map((d,i)=>(
+                    <g key={i} transform={`translate(${d.x},${d.y})`}>
+                        <rect width={swatchSize} height={swatchSize} fill={d.color}/>
+                        <text textAnchor="start" dominantBaseline={'center'} x={swatchSize+5} y={swatchSize} >{format(d.text)}</text>
+                    </g>
+                ))}
+            </g>
+        </g>
     )
 
 }

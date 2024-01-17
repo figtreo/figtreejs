@@ -237,7 +237,7 @@ export function Tree({ panelRef }: any) {
   const treeLayout = layout === "rectangular" ? RectangularLayout : layout === "circular" ? PolarLayout : RadialLayout;
   //
   const handlePaste = (event: any) => {
-    tree.addFromString(event.clipboardData.getData('text'));
+    tree.addFromString(event.clipboardData.getData('text'),{parseAnnotations:true});
     for(const annotation of tree.getAnnotations()){
       const data = tree.getAnnotationData(annotation)
       const type = tree.getAnnotationType(annotation);
