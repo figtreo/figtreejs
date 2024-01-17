@@ -121,15 +121,13 @@ function makeAxisScale(props: any, { width, height, domain,padding }: AxisScaleC
     const axisScale = (scale === undefined ? (direction === "horizontal" ? scaleLinear().domain([0,domain[1]]).range([padding, width-padding]) : scaleLinear().domain([0,domain[1]]).range([padding, height-padding])) : scale).copy();
     if (scale === undefined) {
         // assume domain goes 0 to max divergence make adjustments on this scale and then update min if it is not 0
-        const withOffset = axisScale.domain().map((d: number,i:number) => (d + offsetBy)) // shifts by offset.
         const offset = domain.map(d=>d+offsetBy)
-        const span = (withOffset[1]-withOffset[0])*scaleBy;
         const newDomain = offset.map((d,i)=>(d-offsetBy)*scaleBy + offsetBy)
             
         axisScale.domain(newDomain);
         
         if (reverse) {
-            axisScale.domain(newDomain.reverse());
+            axisScale.domain([offsetBy-(newDomain[1]-newDomain[0]),offsetBy]);
         }
     }
 
