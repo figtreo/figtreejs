@@ -21,6 +21,7 @@ import { ActionCreators } from 'redux-undo';
 import { addScaleFromAnnotation } from '../Settings/panels/colorScales/colourSlice';
 import { Legends } from './ColorLegend';
 import { selectTitle } from '../Settings/panels/title/titleSlice';
+import { saveSvg } from '../../app/utils';
 
 const margins = { top: 80, bottom: 80, left: 50, right: 100 };
 //todo make zoom and expansion based on number of tips
@@ -271,6 +272,13 @@ const handleKeyDown = (event: KeyboardEvent) => {
     dispatch(ActionCreators.redo());
     event.preventDefault();
   }
+  if(event.key === "s" && event.metaKey){
+    if(svgRef.current && title){
+      const name = title.text.length>0?title.text:"tree";
+    saveSvg(svgRef.current, `${name}.svg`);
+}
+    event.preventDefault();
+  }
 
 };
 
@@ -397,7 +405,7 @@ useEffect(() => {
       <div >
 
 
-        <svg id={"treeContainer"} width={width} height={height} ref={svgRef}>
+        <svg id={"treeContainer"} width={width} height={height} ref={svgRef} style={{fontFamily:"-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu,Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif"}}>
           <defs>
             <filter x="0" y="0" width="1" height="1" id="solid">
               <feFlood floodColor="#959ABF" result="bg" />
@@ -406,6 +414,8 @@ useEffect(() => {
                 <feMergeNode in="SourceGraphic" />
               </feMerge>
             </filter>
+
+           
           </defs>
           {title.activated&&<text fontSize={title.fontSize} fill={title.color} fontWeight={title.fontWeight} x={margins.left+title.x} y={margins.top+title.y}>{title.text}</text>}
 
