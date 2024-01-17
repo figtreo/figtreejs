@@ -7,10 +7,22 @@ import { selectTree } from '../../app/hooks';
 function tipShapeGenerator(target: "tip" | "tipBackground" ) {
     return function(props:any){
     const settings = useAppSelector(selectShapeState(target));
+    const tipColourBy = useAppSelector(selectShapeState("tip")).colourBy;
     const activated = useAppSelector(selectShapeState("tip")).activated && settings.activated;
     const tree = useAppSelector(selectTree);
 
-    const filter = (n: NodeRef) => tree.getChildCount(n) === 0;
+    //if we color by an attribute and the tip doesn't have that attribute, don't show it
+
+    function filter(n:NodeRef):boolean{
+        if(tipColourBy==="User selection"){
+           return  tree.getChildCount(n) === 0;
+        }else{
+            const annotation = tree.getAnnotation(n,tipColourBy);
+           return annotation!==undefined && tree.getChildCount(n) === 0;
+        }
+    }
+
+    // const filter = (n: NodeRef) => tree.getChildCount(n) === 0;
 
     const fillColorScale = useAppSelector( (state)=>getColorScale(state,settings.colourBy));
   

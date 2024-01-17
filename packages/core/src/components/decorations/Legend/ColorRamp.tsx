@@ -3,7 +3,8 @@ import withLinearGradient from "../../HOC/WithLinearGradient";
 
 
 //TODO move to bauble
-function Rect({width,height,attrs}){
+function Rect(props:{width:number,height:number,attrs:{[key:string]:any}}){
+    const {width,height,attrs} = props;
     return  <rect width={width} height={height} {...attrs}/>
 }
 /** Color ramp

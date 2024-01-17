@@ -9,6 +9,7 @@ export class RectangularLayout extends AbstractLayout {
     static getArbitraryLayout(tree: Tree, opts: internalLayoutOptions): ArbitraryVertices {
         const safeOpts = { ...defaultInternalLayoutOptions, ...opts };
         const { rootLength, tipSpace } = safeOpts;
+        if(safeOpts.pollard>1 || safeOpts.pollard<0) throw new Error("Pollard must be between 0 and 1");
         const cartoonedNodes     = safeOpts.cartoonedNodes;
         let currentY = 0;
         const vertices: ArbitraryVertices = { byId: {}, allIds: [], extent: { x: [0, 0], y: [0, 0] } };
@@ -123,7 +124,7 @@ export class RectangularLayout extends AbstractLayout {
             }
         }
 
-        vertices.extent = { x: [0, maxX], y: [0, currentY-1] }
+        vertices.extent = { x: [maxX*safeOpts.pollard, maxX], y: [0, currentY-1] }
 
         if (tree.root) {
             const rootVertex = vertices.byId[tree.root.id];
@@ -139,13 +140,14 @@ export class RectangularLayout extends AbstractLayout {
     static finalizeArbitraryLayout(arbitraryLayout: ArbitraryVertices, treeStats: { tipCount: number }, opts: internalLayoutOptions): Vertices {
 
         const safeOpts = { ...defaultInternalLayoutOptions, ...opts };
+        const padding = safeOpts.padding;
         const x = scaleLinear()
             .domain(arbitraryLayout.extent.x)
-            .range([this.padding, opts.width - this.padding]);
+            .range([padding, opts.width - padding]);
 
         const y_og = scaleLinear()
             .domain(arbitraryLayout.extent.y)
-            .range([this.padding, opts.height - this.padding]);
+            .range([padding, opts.height - padding]);
 
         const pointOfInterestY = y_og.invert(safeOpts.pointOfInterest.y)
 
@@ -153,7 +155,7 @@ export class RectangularLayout extends AbstractLayout {
 
         const y = scaleLinear()
             .domain(arbitraryLayout.extent.y.map(transform))
-            .range([this.padding, opts.height - this.padding]);
+            .range([padding, opts.height - padding]);
 
         const scaledVertices: Vertices = {
             byId: {},

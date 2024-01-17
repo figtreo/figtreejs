@@ -54,7 +54,7 @@ export function Axis() {
             </div>
             <div>
                 <label htmlFor='sigDigits'>Sig. Digits: </label>
-                <input name="sigDigits" id="sigDigits" type="number" value={settings.sigDigs} min={2} onChange={e => dispatch(setSigDigs(e.target.value))} disabled={!settings.activated} />
+                <input name="sigDigits" id="sigDigits" type="number" value={settings.sigDigs} min={0} onChange={e => dispatch(setSigDigs(e.target.value))} disabled={!settings.activated} />
             </div>
         </div>
     </SettingPanel >

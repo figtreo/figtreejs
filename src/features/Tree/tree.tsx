@@ -19,6 +19,7 @@ import { CARTOON_ANNOTATION, COLLAPSE_ANNOTATION, COLOUR_ANNOTATION, HILIGHT_ANN
 import { selectTree } from '../../app/hooks';
 import { ActionCreators } from 'redux-undo';
 import { addScaleFromAnnotation } from '../Settings/panels/colorScales/colourSlice';
+import { Legends } from './ColorLegend';
 
 const margins = { top: 80, bottom: 80, left: 50, right: 100 };
 //todo make zoom and expansion based on number of tips
@@ -206,7 +207,7 @@ export function Tree({ panelRef }: any) {
     return cartoon && custom!==undefined?(custom as string):'none';
   } 
 
-  const { expansion, zoom, layout, rootAngle, rootLength, angleRange, showRoot, spread, curvature, fishEye, pointOfInterest, animate } = useAppSelector(selectLayout);
+  const { expansion, zoom, layout, rootAngle, rootLength, angleRange, showRoot, spread, curvature, fishEye, pointOfInterest, animate,pollard } = useAppSelector(selectLayout);
 
 
   const cartoonedNodes:{[key:string]:CartoonData} ={};
@@ -388,7 +389,7 @@ useEffect(() => {
     }
   
     const layoutOpts = {
-      rootAngle, rootLength, angleRange, showRoot, spread, curvature, fishEye, pointOfInterest, cartoonedNodes
+      rootAngle, rootLength, angleRange, showRoot, spread, curvature, fishEye, pointOfInterest, cartoonedNodes,pollard
     }
     return (
       <div >
@@ -409,6 +410,7 @@ useEffect(() => {
           <FigTree animated={animate} width={width} height={height} tree={tree} layout={treeLayout} margins={margins} opts={layoutOpts}>
             <AxisElement />
             <Highlight  attrs={{fill:(n:NodeRef)=> (tree.getAnnotation(n,HILIGHT_ANNOTATION)! as string), opacity:0.4}} filter={(n:NodeRef)=> tree.getAnnotation(n,HILIGHT_ANNOTATION)!==undefined}/>             
+            <Legends />
             <Branches attrs={{ fill:'none',strokeWidth: lineWidth + 4, stroke: "#959ABF", strokeLinecap: "round", strokeLinejoin: "round" }} filter={(n: NodeRef) => selectedNodes.has(n.id)} /> 
             <Branches attrs={{fill:branchFiller, strokeWidth: lineWidth, stroke: branchColourur }} filter={(n: NodeRef) => true} />
             <BranchLabels />

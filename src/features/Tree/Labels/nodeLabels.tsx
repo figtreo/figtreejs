@@ -3,7 +3,6 @@ import { getColorScale, useAppSelector } from "../../../app/hooks";
 import { selectLabelState } from "../../Settings/panels/label/labelSlice";
 import { Node } from "../treeSlice";
 import { Nodes,NodeRef} from "@figtreejs/core";
-import {  selectNodeDecorations } from "../../Header/headerSlice";
 import { selectTree } from '../../../app/hooks';
 import { getTextFunction } from "./labelUtils";
 import { COLOUR_ANNOTATION } from "../../../app/constants";

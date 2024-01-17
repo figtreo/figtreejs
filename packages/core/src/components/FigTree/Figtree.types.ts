@@ -20,6 +20,8 @@ export interface layoutOptions{
     pointOfInterest?: { x: number; y: number; },
     fishEye?: number;
     cartoonedNodes:{[key:string]:CartoonData}
+    pollard?:number,
+    padding:number,
 
 }
 

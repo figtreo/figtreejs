@@ -1,9 +1,9 @@
 import React from "react"
 import ColorRamp from "./ColorRamp";
-import Axis from "../Axis/Axis";
 import {format} from "d3-format";
 import {quantize, interpolate, interpolateRound} from "d3-interpolate";
 import{ScaleContext} from "../../../Context/context";
+import RectangularAxis from "../Axis/RectangularAxis";
 
 /**
  * ContinuousLegend
@@ -23,8 +23,10 @@ import{ScaleContext} from "../../../Context/context";
  * @return {(number|*)[]|*}
  * @constructor
  */
-export default function ContinuousLegend({scale,pos,width,height,direction,title,ticks} ){
+//TODO also need to remove the scale context provider here so axis can be used in other contexts
+export default function ContinuousLegend(props:{scale:any,pos:{x:number,y:number},width:number,height:number,direction:"horizontal"|"vertical",title:string,ticks:{number: number, format: (n:number)=>string, padding: number, style:any, length: number}} ){
 
+    const {scale,pos,width,height,direction,title,ticks} = props;
     let x;
     let colorRamper;
     //Continuous
@@ -42,8 +44,8 @@ export default function ContinuousLegend({scale,pos,width,height,direction,title
         <g className={"legend"} transform={`translate(${pos.x},${pos.y})`}>
             <text transform={`translate(0,-6)`}>{title}</text>
             <ColorRamp {...{colorRamper: colorRamper,width,height}}/>
-            <ScaleContext.Provider value={{scales:{x:x,y:null},width,height}}>
-                <Axis transform={`translate(${0},${height})`} {...{width,height,direction,ticks}} scale={x} />
+            <ScaleContext.Provider value={{domain:scale.domain,width,height}}> 
+                <RectangularAxis x={0} y={height} {...{width,height,direction,ticks}} scale={x} />
             </ScaleContext.Provider>
         </g>
     )

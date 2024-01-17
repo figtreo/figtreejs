@@ -5,6 +5,7 @@ import { RootState } from '../../../../app/store';
 export interface LayoutState {
     layout: "rectangular" | "circular" | "equalangle",
     expansion: number,
+    pollard: number,
     rootLength: number,
     curvature: number,
     alignTipLabels: boolean
@@ -31,7 +32,8 @@ const initialState: LayoutState = {
     spread:0,
     pointOfInterest:undefined,
     fishEye:0,
-    animate:false
+    animate:false,
+    pollard:0
 }
 
 export const layoutSlice = createSlice({
@@ -70,6 +72,9 @@ export const layoutSlice = createSlice({
         },
         setFisheye: (state, action: PayloadAction<number>) => {
             state.fishEye = action.payload;
+        },        
+        setPollard: (state, action: PayloadAction<number>) => {
+            state.pollard = action.payload;
         },
         setPointOfInterest(state, action: PayloadAction<{ x: number; y: number; }>) {
             state.pointOfInterest = action.payload;
@@ -81,7 +86,7 @@ export const layoutSlice = createSlice({
 }
 )
 
-export const { setSpread, setZoom, setLayout, setExpansion, setFisheye, setRootLength, setCurvature, flipAlignTipLabels,setRootAngle,flipShowRoot,setAngleRange,setPointOfInterest,flipAnimate} = layoutSlice.actions;
+export const { setSpread, setZoom, setLayout, setExpansion, setFisheye, setRootLength, setCurvature, flipAlignTipLabels,setRootAngle,flipShowRoot,setAngleRange,setPointOfInterest,flipAnimate,setPollard} = layoutSlice.actions;
 
 export const selectLayout = (state: RootState) => state.settings.layout
 

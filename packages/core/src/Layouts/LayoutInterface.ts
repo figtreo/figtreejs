@@ -84,7 +84,9 @@ export const defaultInternalLayoutOptions = {
     spread: 1,
     pointOfInterest: { x: 0, y: 0 },
     fishEye: 0,
-    cartoonedNodes:{}
+    cartoonedNodes:{},
+    pollard:0,
+    padding:20
 }
 
 
@@ -92,7 +94,6 @@ export const defaultInternalLayoutOptions = {
 
 
 export abstract class AbstractLayout {
-    static readonly padding = 20;
     static layout(tree: Tree, layoutOptions: internalLayoutOptions): Vertices {
         const arbitraryLayout = this.getArbitraryLayout(tree, layoutOptions);
         const treeStats = { tipCount: [...tree.getTips()].length,rootId:tree.root!.id } //todo cache this count

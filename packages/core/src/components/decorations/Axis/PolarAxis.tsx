@@ -17,12 +17,13 @@ export default function PolarAxis(props: AxisProps) {
 
     const { direction = defaultAxisProps.direction!, 
         gap = defaultAxisProps.gap!,
-        strokeWidth = defaultAxisProps.strokeWidth! } = props;
+        strokeWidth = defaultAxisProps.strokeWidth!,
+    x,y } = props;
     
     const ticks = props.ticks?{...defaultAxisProps.ticks!,...props.ticks}:defaultAxisProps.ticks!;
     const title = props.title?{...defaultAxisProps.title!, ...props.ticks}:defaultAxisProps.title!;
 
-    const scale = makeAxisScale(props, {domain:scaleContext.maxDivergence,range:verticies.axisLength!});
+    const scale = makeAxisScale(props, {domain:scaleContext.domain,range:verticies.axisLength!});
 
     // scaleSequentialQuantile doesn’t implement tickValues or tickFormat.
     let tickValues: number[];
@@ -35,7 +36,13 @@ export default function PolarAxis(props: AxisProps) {
     const origin = verticies.origin!;
     const theta = verticies.theta!;
 
-    const transform =  `translate(${origin.x},${origin.y})` 
+    let transform;
+    if(x!==undefined && y!==undefined){
+        transform = `translate(${x},${y})`;
+    }else{
+        transform =  `translate(${origin.x},${origin.y})` 
+
+    }
 
 
     // update scale to account for changing range 
@@ -108,14 +115,14 @@ function getTickLine(length: number, direction: AxisOrientation) {
  */
 //TODO can make maxR and height the same parameter and use this  all axes
 
-function makeAxisScale(props: any, { domain ,range }: {domain:number,range:number}) {
+function makeAxisScale(props: any, { domain ,range }: {domain:[number,number],range:number}) {
     const { reverse = defaultAxisProps.reverse,
         offsetBy = defaultAxisProps.offsetBy,
         scaleBy = defaultAxisProps.scaleBy, 
         scale= defaultAxisProps.scale} = props;
         
 
-    const axisScale = scale === undefined ?  scaleLinear().domain([0, domain]).range([0, range]) : scale.copy();
+    const axisScale = scale === undefined ?  scaleLinear().domain(domain).range([0, range]) : scale.copy();
     if (scale === undefined) {
         if (reverse) {
             const newMax = axisScale.domain()[0];

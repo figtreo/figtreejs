@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { getColorData, useAppDispatch, useAppSelector } from "../../../../app/hooks";
 import { SettingPanel } from "../PanelHeader";
-import { colorScale, schemes, selectColorableAttributes, setScheme } from "./colourSlice";
+import { colorScale, flipLegendActivation, schemes, selectColorableAttributes, setLegendColumns, setLegendDirection, setLegendHeight, setLegendTitle, setLegendWidth, setLegendX, setLegendY, setScheme } from "./colourSlice";
 
 export function ColourScales() {
 
@@ -28,6 +28,7 @@ export function ColourScales() {
                 </select>
             </div>
            <ColorScaleOptions colorData={colorData}/>
+           {colorData.type==="discrete"?<DiscreteLegendOptions colorData={colorData}/>:<ContinuousLegendOptions colorData={colorData}/>}
         </SettingPanel>
         )
        
@@ -66,6 +67,67 @@ function ColorScaleOptions(props:{colorData:colorScale}){
     </div>
     </div>
 
+    )
+
+}
+
+function DiscreteLegendOptions(props:{colorData:colorScale}){
+
+    const dispatch = useAppDispatch();
+    const{attribute} = props.colorData;
+    const {legend} = props.colorData;
+    const {columns,title,activated,width,height,x,y} = legend;
+
+    return(
+        <SettingPanel title="Legend" checkable={true} onClick={() => dispatch(flipLegendActivation({attribute}))} checked={activated}>
+            <div>
+                <label htmlFor='title'>Title:</label>
+                <input type="text" name="title" id="title" onChange={e => dispatch(setLegendTitle({attribute,title:e.target.value}))} value={title} disabled={!activated}/>
+            </div>
+            <div>
+                <label htmlFor='columns'>Columns:</label>
+                <input type="number" name="columns" id="columns" onChange={e => dispatch(setLegendColumns({attribute,columns:e.target.value}))} value={columns} disabled={!activated}/>
+            </div>
+            <div>
+                <label htmlFor='width'>Width:</label>
+                <input type="number" name="width" id="width" onChange={e => dispatch(setLegendWidth({attribute,width:e.target.value}))} value={width} disabled={!activated}/>
+            </div>
+            <div>
+                <label htmlFor='height'>Height:</label>
+                <input type="number" name="height" id="height" onChange={e => dispatch(setLegendHeight({attribute,height:e.target.value}))} value={height} disabled={!activated}/>
+            </div>
+
+            <div>
+                <label htmlFor='x'>x:</label>
+                <input type="number" name="x" id="x" onChange={e => dispatch(setLegendX({attribute,x:e.target.value}))} value={x} disabled={!activated}/>
+                <label htmlFor='y'>y:</label>
+                <input type="number" name="y" id="y" onChange={e => dispatch(setLegendY({attribute,y:e.target.value}))} value={y} disabled={!activated}/>
+            </div>           
+        </SettingPanel>
+    )
+
+}
+function ContinuousLegendOptions(props:{colorData:colorScale}){
+
+    const dispatch = useAppDispatch();
+    const{attribute} = props.colorData;
+    const {legend} = props.colorData;
+    const {direction,title,activated} = legend;
+
+    return(
+        <SettingPanel title="Legend" checkable={true} onClick={() => dispatch(flipLegendActivation({attribute}))} checked={activated}>
+            <div>
+                <label htmlFor='title'>Title:</label>
+                <input type="text" name="title" id="title" onChange={e => dispatch(setLegendTitle({attribute,title:e.target.value}))} value={title} disabled={!activated}/>
+            </div>
+            <div>
+                <label htmlFor='direction'>Direction:</label>
+                <select name="direction" id="direction" onChange={e => dispatch(setLegendDirection({attribute,direction:e.target.value}))} value={direction} disabled={!activated}>
+                    <option key={"horizontal"} value={"horizontal"}>{"Horizontal"}</option>
+                    <option key={"vertical"} value={"vertical"}>{"Vertical"}</option>
+                </select>
+            </div>
+        </SettingPanel>
     )
 
 }

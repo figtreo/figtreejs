@@ -14,7 +14,8 @@ export default function Axis(props: AxisProps) {
     const scaleContext = useScale();
     const { direction = defaultAxisProps.direction!, 
         gap = defaultAxisProps.gap!,
-        strokeWidth = defaultAxisProps.strokeWidth! } = props;
+        strokeWidth = defaultAxisProps.strokeWidth!,
+    x,y } = props;
     
     const ticks = props.ticks?{...defaultAxisProps.ticks!,...props.ticks}:defaultAxisProps.ticks!;
     const title = props.title?{...defaultAxisProps.title!, ...props.ticks}:defaultAxisProps.title!;
@@ -29,7 +30,16 @@ export default function Axis(props: AxisProps) {
         tickValues = scale.ticks(ticks.number);
     }
 
-    const transform = direction === "horizontal" ? `translate(${0},${scaleContext.height + gap})` : `translate(${-1 * gap},${0})`;
+    //TODO this needs to be lifted so transmform can be applied to other axis
+
+    let transform;
+    if(x!==undefined && y!==undefined){
+        transform = `translate(${x},${y})`;
+
+    }else{
+        transform = direction === "horizontal" ? `translate(${0},${scaleContext.height + gap})` : `translate(${-1 * gap},${0})`;
+    }
+
 
     //TODO break this into parts HOC with logic horizontal/ vertical axis ect.
     return (
@@ -100,35 +110,31 @@ function getTickLine(length: number, direction: AxisOrientation) {
 
 
 
-function makeAxisScale(props: any, { width, height, maxDivergence }: AxisScaleContext) {
+function makeAxisScale(props: any, { width, height, domain,padding }: AxisScaleContext) {
     const { reverse = defaultAxisProps.reverse,
         offsetBy = defaultAxisProps.offsetBy,
         scaleBy = defaultAxisProps.scaleBy, 
         scale= defaultAxisProps.scale,
         direction = defaultAxisProps.direction } = props;
         
-
-    const axisScale = (scale === undefined ? (direction === "horizontal" ? scaleLinear().domain([0, maxDivergence]).range([0, width]) : scaleLinear().domain([0, maxDivergence]).range([0, height])) : scale).copy();
+//todo unify this code with the scale making code in layout
+    const axisScale = (scale === undefined ? (direction === "horizontal" ? scaleLinear().domain([0,domain[1]]).range([padding, width-padding]) : scaleLinear().domain([0,domain[1]]).range([padding, height-padding])) : scale).copy();
     if (scale === undefined) {
-        // behaviour if not reversed 0 is at root and scale increases
-        // if reversed 0 at tips and scale still increases left to right
-       
-
-        const domain = axisScale.domain().map((d: number,i:number) => (d + offsetBy)) // shifts by offset.
-        const span = (domain[1]-domain[0])*scaleBy;
-        const newDomain = [domain[0],domain[0]+span]
+        // assume domain goes 0 to max divergence make adjustments on this scale and then update min if it is not 0
+        const withOffset = axisScale.domain().map((d: number,i:number) => (d + offsetBy)) // shifts by offset.
+        const offset = domain.map(d=>d+offsetBy)
+        const span = (withOffset[1]-withOffset[0])*scaleBy;
+        const newDomain = offset.map((d,i)=>(d-offsetBy)*scaleBy + offsetBy)
             
         axisScale.domain(newDomain);
         
         if (reverse) {
-            const newMax = axisScale.domain()[0];
-            const newMin = axisScale.domain()[0]-span;
-            axisScale.domain([newMin,newMax]);
+            axisScale.domain(newDomain.reverse());
         }
     }
 
 
-    return axisScale.nice();
+    return axisScale;//.nice();
 
 }
 

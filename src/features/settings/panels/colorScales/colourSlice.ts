@@ -10,13 +10,23 @@ export interface colorScale {
     type:"continuous"|"discrete",
     scheme: string,
     range:string[]|[string,string],
-    domain: string[]|number[]|boolean[]
+    domain: string[]|number[]|boolean[],
+    legend: {
+        activated: boolean,
+        x:number,
+        y:number,
+        direction?:"horizontal"|"vertical",
+        columns?:number,
+        title?:string,
+        width:number
+        height:number
+    }
+    
 
 }
 interface colorState{
     byId:{[key:string]:colorScale}
-    allIds:string[]
-}
+    allIds:string[]}
 
 const initialState:colorState = {
     byId:{},
@@ -135,7 +145,42 @@ export const colorScalesSlice = createSlice({
             },
             prepare: (attribute: string, scheme: string) => ({payload:{attribute,scheme}})
         },
-    
+
+        flipLegendActivation:(state,action:PayloadAction<{attribute:string}>)=>{
+            const {attribute} = action.payload;
+            state.byId[attribute].legend.activated = !state.byId[attribute].legend.activated;
+        },
+
+        setLegendDirection:(state,action:PayloadAction<{attribute:string,direction:"horizontal"|"vertical"}>)=>{
+            const {attribute,direction} = action.payload;
+            state.byId[attribute].legend.direction = direction;
+        },
+        setLegendColumns:(state,action:PayloadAction<{attribute:string,columns:number}>)=>{
+            const {attribute,columns} = action.payload;
+            state.byId[attribute].legend.columns = columns;
+        },        
+        setLegendWidth:(state,action:PayloadAction<{attribute:string,width:number}>)=>{
+            const {attribute,width} = action.payload;
+            state.byId[attribute].legend.width = width;
+        },        
+        setLegendHeight:(state,action:PayloadAction<{attribute:string,height:number}>)=>{
+            const {attribute,height} = action.payload;
+            state.byId[attribute].legend.height = height;
+        },
+        setLegendTitle:(state,action:PayloadAction<{attribute:string,title:string}>)=>{
+            const {attribute,title} = action.payload;
+            state.byId[attribute].legend.title = title;
+        },
+
+        setLegendX: (state, action: PayloadAction<{ attribute: string, x: number }>) => {
+            const { attribute, x } = action.payload;
+            state.byId[attribute].legend.x = x;
+        },
+        setLegendY: (state, action: PayloadAction<{ attribute: string, y: number }>) => {
+            const { attribute, y } = action.payload;
+            state.byId[attribute].legend.y = y;
+        },
+            
         addScaleFromAnnotation:{
             reducer:(state,action:PayloadAction<colorScale>)=>{
                 const {attribute} = action.payload;
@@ -160,7 +205,17 @@ export const colorScalesSlice = createSlice({
                                 type: "continuous",
                                 domain: annotation.domain!,
                                 scheme: 'Blues',
-                                range: scaleSequential(d3.interpolateBlues).domain(annotation.domain as [number, number]).range() 
+                                range: scaleSequential(d3.interpolateBlues).domain(annotation.domain as [number, number]).range(),
+                                legend:{
+                                    activated:false,
+                                    pos:{x:0,y:0},
+                                    direction:"horizontal",
+                                    title:annotation.id,
+                                    width:100,
+                                    height:200,
+                                    x:0,
+                                    y:0,
+                                }
                             }
                         };
                     case "discrete":
@@ -170,7 +225,16 @@ export const colorScalesSlice = createSlice({
                                 type: "discrete",
                                 domain: annotation.domain!,
                                 scheme: 'Blues',
-                                range: getStartingRange(annotation.domain!, "Blues")
+                                range: getStartingRange(annotation.domain!, "Blues"),
+                                legend:{
+                                    activated:false,
+                                    x:0,
+                                    y:0,
+                                    columns:1,
+                                    title:annotation.id,
+                                    width:100,
+                                    height:200,
+                                }
                             }
                         };
                 }
@@ -180,6 +244,6 @@ export const colorScalesSlice = createSlice({
     });
 export default colorScalesSlice.reducer;
 
-export const  {addScaleFromAnnotation,setScheme} = colorScalesSlice.actions;
+export const  {addScaleFromAnnotation,setScheme,setLegendColumns,setLegendTitle,setLegendPos,flipLegendActivation,setLegendDirection,setLegendHeight,setLegendWidth, setLegendX,setLegendY} = colorScalesSlice.actions;
 
 export const selectColorableAttributes = (state:RootState) => state.colorScales.allIds;

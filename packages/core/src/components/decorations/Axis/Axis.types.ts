@@ -14,7 +14,9 @@ export interface AxisProps {
     ticks?: { number?: number, format?: (value: number) => string, padding?: number, style?: {}, length?: number },
     direction?: AxisOrientation,
     scale?: ScaleContinuousNumeric<number, number> ,
-    strokeWidth?: number
+    strokeWidth?: number,
+    x?: number,
+    y?: number,
     children?: React.ReactNode
 }
 
@@ -22,9 +24,10 @@ export interface AxisProps {
 export interface AxisScaleContext {
     width: number;
     height: number;
-    maxDivergence: number;
+    domain: [number,number];
     maxR?: number;
     theta?: [number, number];
+    padding:number
 }
 
 export const defaultAxisProps: AxisProps = {

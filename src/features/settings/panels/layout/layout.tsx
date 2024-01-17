@@ -1,5 +1,5 @@
 import { useAppSelector, useAppDispatch } from '../../../../app/hooks';
-import { flipAnimate, selectLayout, setExpansion, setFisheye, setLayout, setZoom } from './layoutSlice';
+import { flipAnimate, selectLayout, setExpansion, setFisheye, setLayout, setPollard, setZoom } from './layoutSlice';
 import { SettingPanel } from '../PanelHeader';
 import './layout.css'
 import { RectangularOptions } from './rectangularOptions';
@@ -9,7 +9,7 @@ import rectTreeImage from '../../../../figtreeGraphics/rectangularTree.png'
 import polarTreeImage from '../../../../figtreeGraphics/polarTree.png'
 import radialTreeImage from '../../../../figtreeGraphics/radialTree.png'
 export function Layout() {
-    const { layout,zoom,expansion,fishEye,animate } = useAppSelector(selectLayout);
+    const { layout,zoom,expansion,fishEye,animate,pollard} = useAppSelector(selectLayout);
     const dispatch = useAppDispatch();
     return (
         <SettingPanel title="Layout" intialOpen={true} >
@@ -77,6 +77,22 @@ export function Layout() {
                     disabled={layout==="equalangle"}
 
                 />
+            </div>
+            <div  className='option range'>
+
+
+            <label htmlFor="pollard">Pollard: </label>
+
+            <input
+                type="range"
+                min="0"
+                max="0.99"
+                step={0.01}
+                id="pollard"
+                onChange={(e) => { dispatch(setPollard(parseFloat(e.target.value))) }}
+                value={pollard}
+                disabled={layout!=="rectangular"}
+            />
             </div>
             <div>
             <input

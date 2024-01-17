@@ -145,13 +145,15 @@ export class RadialLayout extends AbstractLayout {
     }
 
     static finalizeArbitraryLayout(arbitraryLayout: ArbitraryVertices, treeStats: { tipCount: number }, opts: internalLayoutOptions): Vertices {
+        const padding = opts.padding;
+
         const x = scaleLinear()
             .domain(arbitraryLayout.extent.x)
-            .range([this.padding, opts.width - this.padding]);
+            .range([padding, opts.width - padding]);
 
         const y = scaleLinear()
             .domain(arbitraryLayout.extent.y)
-            .range([opts.height - this.padding, this.padding]); //flipped to match figtree
+            .range([opts.height - padding, padding]); //flipped to match figtree
 
         const scaledVertices: Vertices = {
             byId: {},

@@ -8,8 +8,8 @@ import { Tree } from "..";
 export class PolarLayout extends AbstractLayout {
 
     static getArbitraryLayout(tree: Tree, opts:internalLayoutOptions): ArbitraryVertices {
-        const safeOpts = { ...defaultInternalLayoutOptions, ...opts };
-        const rectangularVerticies = RectangularLayout.getArbitraryLayout(tree,opts);
+        const safeOpts = { ...defaultInternalLayoutOptions, ...opts,pollard:0 };
+        const rectangularVerticies = RectangularLayout.getArbitraryLayout(tree,safeOpts);
         //remove root path if needed
         if(!safeOpts.showRoot){
             rectangularVerticies.byId[tree.root!.id].pathPoints = [];
@@ -22,9 +22,10 @@ export class PolarLayout extends AbstractLayout {
 
         // Do fisheye thing assuming we are using the rectangular layout
 
+        const padding = safeOpts.padding;
         const y_og = scaleLinear()
             .domain(arbitraryLayout.extent.y)
-            .range([this.padding, opts.height - this.padding]);
+            .range([padding, opts.height - padding]);
         const pointOfInterestY = y_og.invert(safeOpts.pointOfInterest.y)
 
         const transform = fishEyeTransform(safeOpts.fishEye,pointOfInterestY); //fish eye does  wierd things here when too big 10 m

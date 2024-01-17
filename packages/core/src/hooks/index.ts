@@ -102,7 +102,7 @@ export function useAnimation(){
 }
 export const useFigtreeContext={layout:useLayout,tree:useTree};
 
-//TODO remove and add this to layout
+//TODO remove and make this a prop for each axis. 
 export function useScale(){
     return useContext(ScaleContext);
 }
