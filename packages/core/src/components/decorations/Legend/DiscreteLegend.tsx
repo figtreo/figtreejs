@@ -19,12 +19,12 @@ import React, {useContext,useCallback} from "react"
  * @constructor
  */
 
-export default function DiscreteLegend(props:{scale:any,pos:{x:number,y:number},width:number,height:number,swatchSize:number,format:(s:string)=>string,columns:number,title:string} ){
+export default function DiscreteLegend(props:{scale:any,pos:{x:number,y:number},width:number,height:number,swatchSize:number,format:(s:string)=>string,fontSize:number,columns:number,title:string} ){
     // const dispatch = useInteractionsDispatch();
     // const onHover=useCallback((value)=>()=>dispatch({type:"hover",payload:{dataType:DataType.DISCRETE,key:annotation,value:value}}))
     // const onUnHover = useCallback(()=>dispatch({type:"unhover",payload:{}}));
     // TODO safari doesn't like the legend with two columns maybe move out of svg but need to scale and position so behaves the same
-    const {scale,pos,width,height,swatchSize,format,columns}=props;
+    const {scale,pos,width,height,swatchSize,format,columns,fontSize}=props;
 
 
     const numEntries = scale.domain().length
@@ -44,16 +44,17 @@ export default function DiscreteLegend(props:{scale:any,pos:{x:number,y:number},
         swatchPositions.push({x:columnStarts[i%columns],y:rowStarts[i%maxEntriesPerColumn],text:scale.domain()[i],color:scale(scale.domain()[i])})
     }
 
-// text is too big and this should not be clipped should be out side of clipped g
+// add a font size option with title being bigger than swatch text
+// add swatch size option too.
 
     return(
         <g transform={`translate(${pos.x},${pos.y})`}>
-            <text textAnchor="start" x={0} y={0} className="legend-title">{props.title}</text>
+            <text textAnchor="start" x={0} y={0} className="legend-title" fontSize={`${fontSize+4}px`}>{props.title}</text>
             <g transform={`translate(0,20)`}>
                 {swatchPositions.map((d,i)=>(
                     <g key={i} transform={`translate(${d.x},${d.y})`}>
-                        <rect width={swatchSize} height={swatchSize} fill={d.color}/>
-                        <text textAnchor="start" dominantBaseline={'center'} x={swatchSize+5} y={swatchSize} >{format(d.text)}</text>
+                        <rect width={swatchSize} height={swatchSize} fill={d.color} />
+                        <text textAnchor="start"  dominantBaseline={'middle'} x={swatchSize+5} dy={swatchSize/2} fontSize={`${fontSize}px`}>{format(d.text)}</text>
                     </g>
                 ))}
             </g>

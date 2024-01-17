@@ -24,7 +24,7 @@ export function RectangularHighlight(props:{attrs:{[key:string]:any},node:NodeRe
             lastY=v.y;
 
         }
-        console.log(padding)
+        // console.log(padding)
         const width = maxX-minX;
         const height = maxY-minY;
 

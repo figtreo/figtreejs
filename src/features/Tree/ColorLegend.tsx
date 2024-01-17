@@ -12,16 +12,18 @@ function ColorLegend(props:{colorScale:colorScale}){
     
 
     const scale =  useAppSelector( (state)=>getColorScale(state,props.colorScale.attribute));
-    const {columns,title,width,height,x,y} = props.colorScale.legend;
+    const {columns,title,width,height,x,y,fontSize,swatchSize} = props.colorScale.legend;
     if(props.colorScale.type==="discrete"){
         return <DiscreteLegend scale={scale} 
-        swatchSize={10} 
+        swatchSize={swatchSize?swatchSize:10} 
         columns={columns?columns:1}
         format={(s:string)=>s}
         pos={{x,y}}
         width={width}
         height={height}
-        title={title?title:""}/>
+        title={title?title:""}
+        fontSize={fontSize}
+        />
     }else if(props.colorScale.type==="continuous"){
             return null
     }
@@ -35,7 +37,7 @@ export function Legends(props:{}){
 
     return (
         <g>
-            {activatedLegends.map((legend,i)=><ColorLegend key={i} colorScale={legend} x={i*110} y={10}/>)}
+            {activatedLegends.map((legend,i)=><ColorLegend key={i} colorScale={legend}/>)}
         </g>
     )
 

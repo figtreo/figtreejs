@@ -62,8 +62,8 @@ function FigTree(props:FigtreeProps){
 
     const children = props.children?props.children:defaultOpts.children;
     const maxD = tree.getHeight(tree.root!)+rootLength!;
-    console.log(maxD)
-    console.log(maxD*pollard!)
+    // console.log(maxD)
+    // console.log(maxD*pollard!)
     const scaleContext:scaleContextType = {width:w,height:h,domain:[pollard!*maxD,maxD],padding,maxR : max(vertices.allIds,d=>vertices.byId[d].r),theta :extent(vertices.allIds,d=>vertices.byId[d].theta!) as [number,number]};
 
     //context gives us a nicer api where the data don't need to be passed to the subcomponents of the figure and the subcomponents can be added by user with JSX

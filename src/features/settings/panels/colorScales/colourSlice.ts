@@ -19,7 +19,9 @@ export interface colorScale {
         columns?:number,
         title?:string,
         width:number
-        height:number
+        height:number,
+        fontSize:number,
+        swatchSize?:number,
     }
     
 
@@ -180,6 +182,14 @@ export const colorScalesSlice = createSlice({
             const { attribute, y } = action.payload;
             state.byId[attribute].legend.y = y;
         },
+        setLegendFontSize(state,action:PayloadAction<{attribute:string,fontSize:number}>){
+            const {attribute,fontSize} = action.payload;
+            state.byId[attribute].legend.fontSize = fontSize;
+        },
+        setLegendSwatchSize(state,action:PayloadAction<{attribute:string,swatchSize:number}>){
+            const {attribute,swatchSize} = action.payload;
+            state.byId[attribute].legend.swatchSize = swatchSize;
+        },
             
         addScaleFromAnnotation:{
             reducer:(state,action:PayloadAction<colorScale>)=>{
@@ -215,6 +225,8 @@ export const colorScalesSlice = createSlice({
                                     height:200,
                                     x:0,
                                     y:0,
+                                    fontSize:12,
+
                                 }
                             }
                         };
@@ -234,6 +246,8 @@ export const colorScalesSlice = createSlice({
                                     title:annotation.id,
                                     width:100,
                                     height:200,
+                                    swatchSize:10,
+                                    fontSize:12,
                                 }
                             }
                         };
@@ -244,6 +258,6 @@ export const colorScalesSlice = createSlice({
     });
 export default colorScalesSlice.reducer;
 
-export const  {addScaleFromAnnotation,setScheme,setLegendColumns,setLegendTitle,setLegendPos,flipLegendActivation,setLegendDirection,setLegendHeight,setLegendWidth, setLegendX,setLegendY} = colorScalesSlice.actions;
+export const  {addScaleFromAnnotation,setScheme,setLegendColumns,setLegendTitle,setLegendPos,flipLegendActivation,setLegendDirection,setLegendHeight,setLegendWidth, setLegendX,setLegendY, setLegendFontSize,setLegendSwatchSize} = colorScalesSlice.actions;
 
 export const selectColorableAttributes = (state:RootState) => state.colorScales.allIds;

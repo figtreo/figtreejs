@@ -71,7 +71,7 @@ function CladeHighlight(props:{attrs:{[key:string]:any},id:string}){
             endAngle: endAngle
         }
     )!
-    console.log({startAngle,endAngle,angleRange})
+    // console.log({startAngle,endAngle,angleRange})
         return <path d={shape} {...attrs} transform={transform}/>
 
     }else{

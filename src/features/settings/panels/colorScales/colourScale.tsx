@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { getColorData, useAppDispatch, useAppSelector } from "../../../../app/hooks";
 import { SettingPanel } from "../PanelHeader";
-import { colorScale, flipLegendActivation, schemes, selectColorableAttributes, setLegendColumns, setLegendDirection, setLegendHeight, setLegendTitle, setLegendWidth, setLegendX, setLegendY, setScheme } from "./colourSlice";
+import { colorScale, flipLegendActivation, schemes, selectColorableAttributes, setLegendColumns, setLegendDirection, setLegendFontSize, setLegendHeight, setLegendSwatchSize, setLegendTitle, setLegendWidth, setLegendX, setLegendY, setScheme } from "./colourSlice";
 
 export function ColourScales() {
 
@@ -29,6 +29,7 @@ export function ColourScales() {
             </div>
            <ColorScaleOptions colorData={colorData}/>
            {colorData.type==="discrete"?<DiscreteLegendOptions colorData={colorData}/>:<ContinuousLegendOptions colorData={colorData}/>}
+
         </SettingPanel>
         )
        
@@ -52,20 +53,19 @@ function ColorScaleOptions(props:{colorData:colorScale}){
 
     return(
         <div>
-
-    <div>
-    <label htmlFor='type'>Type:</label>
-        <select name="type" id="type" onChange={e => {setScaleType(e.target.value);dispatch(setScheme(attribute,schemes[e.target.value.toLowerCase() as 'diverging'|'discrete'|'sequential'][0])) }} value={scaleType}>
-            {scaleTypeOptions}
-        </select>
-    </div>
-    <div>
-    <label htmlFor='scale'>Scale:</label>
-        <select name="scale" id="scale" onChange={e => dispatch(setScheme(attribute,e.target.value))} value={scheme}>
-            {scaleOptions}
-        </select>
-    </div>
-    </div>
+            <div>
+            <label htmlFor='type'>Type:</label>
+                <select name="type" id="type" onChange={e => {setScaleType(e.target.value);dispatch(setScheme(attribute,schemes[e.target.value.toLowerCase() as 'diverging'|'discrete'|'sequential'][0])) }} value={scaleType}>
+                    {scaleTypeOptions}
+                </select>
+            </div>
+            <div>
+            <label htmlFor='scale'>Scale:</label>
+                <select name="scale" id="scale" onChange={e => dispatch(setScheme(attribute,e.target.value))} value={scheme}>
+                    {scaleOptions}
+                </select>
+            </div>
+        </div>
 
     )
 
@@ -76,7 +76,7 @@ function DiscreteLegendOptions(props:{colorData:colorScale}){
     const dispatch = useAppDispatch();
     const{attribute} = props.colorData;
     const {legend} = props.colorData;
-    const {columns,title,activated,width,height,x,y} = legend;
+    const {columns,title,activated,width,height,x,y,fontSize,swatchSize} = legend;
 
     return(
         <SettingPanel title="Legend" checkable={true} onClick={() => dispatch(flipLegendActivation({attribute}))} checked={activated}>
@@ -102,7 +102,15 @@ function DiscreteLegendOptions(props:{colorData:colorScale}){
                 <input type="number" name="x" id="x" onChange={e => dispatch(setLegendX({attribute,x:e.target.value}))} value={x} disabled={!activated}/>
                 <label htmlFor='y'>y:</label>
                 <input type="number" name="y" id="y" onChange={e => dispatch(setLegendY({attribute,y:e.target.value}))} value={y} disabled={!activated}/>
-            </div>           
+            </div>        
+
+            <div>
+                <label htmlFor='fontSize'>Font Size:</label>
+                <input type="number" id="fontSize" name="fontSize" min="0"  onChange={e => dispatch(setLegendFontSize({attribute,fontSize:parseFloat(e.target.value)}))} value={fontSize} disabled={!activated}/>
+
+                <label htmlFor='swatchSize'>Swatch Size:</label>
+                <input type="number" id="fontSize" name="fontSize" min="0"  onChange={e => dispatch(setLegendSwatchSize({attribute,swatchSize:parseFloat(e.target.value)}))} value={swatchSize} disabled={!activated}/>
+           </div>   
         </SettingPanel>
     )
 
