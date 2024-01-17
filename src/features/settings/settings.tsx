@@ -7,6 +7,7 @@ import { Axis } from "./panels/axis/axis"
 import { ColourScales } from "./panels/colorScales/colourScale";
 import { useAppSelector } from "../../app/hooks";
 import { selectColorableAttributes } from "./panels/colorScales/colourSlice";
+import { Title } from "./panels/title/title";
 
 export function Settings() {
     const colorableAttributes = useAppSelector(selectColorableAttributes)
@@ -14,6 +15,7 @@ export function Settings() {
         <div className="Settings">
             <Layout />
             <Appearance/>
+            <Title/>
             {/* <TimeScale/> */}
             <Labels target='tip' defaultOptions={['Name']}/>
             <Shapes target="tip" background={true} />

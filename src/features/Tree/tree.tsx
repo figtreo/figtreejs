@@ -20,6 +20,7 @@ import { selectTree } from '../../app/hooks';
 import { ActionCreators } from 'redux-undo';
 import { addScaleFromAnnotation } from '../Settings/panels/colorScales/colourSlice';
 import { Legends } from './ColorLegend';
+import { selectTitle } from '../Settings/panels/title/titleSlice';
 
 const margins = { top: 80, bottom: 80, left: 50, right: 100 };
 //todo make zoom and expansion based on number of tips
@@ -30,6 +31,7 @@ export function Tree({ panelRef }: any) {
   const dispatch = useAppDispatch();
   const selectionRoot = useAppSelector(selectSelectionRoot);
   const selectionMode = useAppSelector(selectSelectionMode)
+  const title = useAppSelector(selectTitle)
   const tree = useAppSelector(selectTree);
   //selection Box work //https://codesandbox.io/s/billowing-lake-rzhid4?file=/src/App.tsx
   const svgRef = useRef<SVGSVGElement>(null);;
@@ -387,13 +389,12 @@ useEffect(() => {
           }
       }
     }
-  
+    
     const layoutOpts = {
-      rootAngle, rootLength, angleRange, showRoot, spread, curvature, fishEye, pointOfInterest, cartoonedNodes,pollard
+      rootAngle, rootLength, angleRange, showRoot, spread, curvature, fishEye, pointOfInterest, cartoonedNodes,pollard,padding:20
     }
     return (
       <div >
-
 
 
         <svg id={"treeContainer"} width={width} height={height} ref={svgRef}>
@@ -406,6 +407,7 @@ useEffect(() => {
               </feMerge>
             </filter>
           </defs>
+          {title.activated&&<text fontSize={title.fontSize} fill={title.color} fontWeight={title.fontWeight} x={margins.left+title.x} y={margins.top+title.y}>{title.text}</text>}
 
           <FigTree animated={animate} width={width} height={height} tree={tree} layout={treeLayout} margins={margins} opts={layoutOpts}>
             <AxisElement />
