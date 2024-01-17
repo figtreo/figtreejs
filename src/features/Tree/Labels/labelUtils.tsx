@@ -60,12 +60,25 @@ export function getTextFunction(tree: Tree, settings: any) {
             textFunction = (node: NodeRef) => numericalFormatter(tree.getHeight(node));
             break;
         case "Branch lengths":
-            textFunction = (node: NodeRef) => numericalFormatter(tree.getLength(node));
+            textFunction = (node: NodeRef) => {
+                if (tree.getLength(node)) {
+                   return  numericalFormatter(tree.getLength(node));
+                }else{
+                    return '';
+                }
+                
+            }
             break;
         default:
             const type = tree.getAnnotationType(settings.display);
             if (type === AnnotationType.CONTINUOUS) {
-                textFunction = (node: NodeRef) => numericalFormatter(tree.getAnnotation(node, settings.display));
+                textFunction = (node: NodeRef) => {
+                    if (tree.getAnnotation(node, settings.display)) {
+                        numericalFormatter(tree.getAnnotation(node, settings.display));
+                    }else{
+                        return '';
+                    }
+                }
             } else if (type === AnnotationType.RANGE) {
                 textFunction = (node: NodeRef) => {
                     if (tree.getAnnotation(node, settings.display)) {

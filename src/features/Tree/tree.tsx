@@ -391,7 +391,7 @@ useEffect(() => {
     }
     
     const layoutOpts = {
-      rootAngle, rootLength, angleRange, showRoot, spread, curvature, fishEye, pointOfInterest, cartoonedNodes,pollard,padding:20
+      rootAngle, rootLength, angleRange, showRoot, spread, curvature, fishEye, pointOfInterest, cartoonedNodes,pollard,padding:50
     }
     return (
       <div >
