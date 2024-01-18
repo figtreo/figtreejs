@@ -40,11 +40,12 @@ export default function ContinuousLegend(props:{scale:any,pos:{x:number,y:number
             {range(){return[0,width]}}) //vc assigns range function so we can use it later!
         colorRamper=scale.interpolator();
     }
+    //TODO need to remove the scale context provider here so axis can be used in other contexts
     return(
         <g className={"legend"} transform={`translate(${pos.x},${pos.y})`}>
             <text transform={`translate(0,-6)`}>{title}</text>
             <ColorRamp {...{colorRamper: colorRamper,width,height}}/>
-            <ScaleContext.Provider value={{domain:scale.domain,width,height}}> 
+            <ScaleContext.Provider value={{domain:scale.domain,width,height, padding:0}}> 
                 <RectangularAxis x={0} y={height} {...{width,height,direction,ticks}} scale={x} />
             </ScaleContext.Provider>
         </g>

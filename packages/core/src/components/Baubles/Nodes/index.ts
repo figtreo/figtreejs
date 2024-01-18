@@ -1,6 +1,9 @@
 import { NodeRef } from '../../../Tree';
 
 export {default as Nodes} from './Nodes';
+
+export {NodeProps} from './Node.types';
+
 export * from "./Shapes"
 //TODO separate exposed props from required
 

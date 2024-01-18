@@ -35,6 +35,9 @@ const initialState:colorState = {
     allIds:[]
 }
 
+/// state will need a custom scales object. 
+// custom scales will come with own domain. need to 
+
 const discreteColorSchemes = ["Accent","Category10","Dark2","Paired","Pastel1","Pastel2","Set1","Set2","Set3","Tableau10"]
 const divergingColorSchemes = ["BrBG","PRGn","PiYG","PuOr","RdBu","RdGy","RdYlBu","RdYlGn","Spectral"]
 const sequentialColorSchemes = ["Blues","Greens","Greys","Oranges","Purples","Reds"]// others can not be discretized,"Turbo","Viridis","Inferno","Magma","Civids","Warm","Cool"]

@@ -13,6 +13,9 @@ export interface NodeProps extends BaubleProps{
     }
 }
 
+
+
+
 //TODO make a CIRCLENODEPROPS ... 
 export interface NodeLabelProps extends BaubleProps{
     attrs:{

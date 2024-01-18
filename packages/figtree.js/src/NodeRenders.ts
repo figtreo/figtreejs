@@ -1,22 +1,21 @@
 import React from "react";
-import { CircleProps } from "@figtreejs/core";
-import { RectangleProps } from "@figtreejs/core";
-import { CoalescentProps } from "@figtreejs/core";
+import { CircleNodeProps, CoalescentNodeProps, RectangleNodeProps } from "@figtreejs/core";
 import { Nodes } from "@figtreejs/core";
 
 
 
 
-export  function CircleNodeRender(options:CircleProps){
+export  function CircleNodeRender(options:CircleNodeProps){
     return React.createElement(Nodes.Circle, options)
 }
-export  function RectNodeRender(options:RectangleProps){
+export  function RectNodeRender(options:RectangleNodeProps){
     return React.createElement(Nodes.Rectangle, options)
 }
-export function CoalNodeRender(options:CoalescentProps){
+export function CoalNodeRender(options:CoalescentNodeProps){
     return React.createElement(Nodes.Coalescent, options)
 
 }
 export function NodeLabelRender(options:any){
     return React.createElement(Nodes.Label, options)
 }
+7

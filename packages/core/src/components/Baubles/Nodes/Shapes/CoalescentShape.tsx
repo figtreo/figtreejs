@@ -4,7 +4,8 @@ import {extent, max, min} from "d3-array";
 import { useLayout,useTree} from "../../../../hooks";
 import { Vertex } from "../../../../Layouts/LayoutInterface";
 import withLinearGradient from "../../../HOC/WithLinearGradient";
-import { NodeRef } from "../../../..";
+import { NodeRef } from "../../../../Tree";
+import { NodeProps } from "..";
 
 type genericAttr = {[key:string]:any};
 
@@ -45,6 +46,19 @@ export interface CoalescentProps{
     curveSlope:"min"    |"max" |number,
     vertex:Vertex
     interactions?:any
+}
+
+
+export interface CoalescentNodeProps extends NodeProps{
+    attrs:{
+        fill:string,
+        strokeWidth:number,
+        stoke:string,
+        [key:string]:any
+    }
+    startWidth:number,
+    FadeEndpoint:string,
+    curveSlope:"min"    |"max" |number,
 }
 
 CoalescentShape.defaultProps= {

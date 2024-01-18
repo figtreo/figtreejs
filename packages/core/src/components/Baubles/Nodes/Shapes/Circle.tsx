@@ -2,6 +2,7 @@ import {animated} from "@react-spring/web";
 import React from "react";
 import withAnimation from "../../../HOC/withAnimation";
 import { BaseShapeProps } from "../";
+import { NodeProps } from "../Node.types";
 
 
 const BaseCircle = React.memo<CircleProps>( props=> {
@@ -36,5 +37,14 @@ export interface CircleProps extends BaseShapeProps{
 		stroke:string,
 		x:number,
 		y:number
+	}
+}
+
+export interface CircleNodeProps extends NodeProps{
+	attrs:{
+		r:number,
+		fill:string,
+		strokeWidth:number,
+		stroke:string,
 	}
 }
