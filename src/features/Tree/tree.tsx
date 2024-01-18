@@ -436,9 +436,10 @@ useEffect(() => {
 
           {
           tangle && tree.getTreeCount()>1? 
-          <Tanglegram trees={[...tree.getTrees()]} layout={RectangularLayout} opts={layoutOpts} gap={20} totalWidth={width} totalHeight={height} margins={margins} animated={animate}>
-            {figureElements}
-            </Tanglegram>
+          null
+          // <Tanglegram trees={[...tree.getTrees()]} layout={RectangularLayout} opts={layoutOpts} gap={20} totalWidth={width} totalHeight={height} margins={margins} animated={animate}>
+          //   {figureElements}
+          //   </Tanglegram>
           :<FigTree animated={animate} width={width} height={height} tree={tree} layout={treeLayout} margins={margins} opts={layoutOpts}>
             {figureElements}
           </FigTree>

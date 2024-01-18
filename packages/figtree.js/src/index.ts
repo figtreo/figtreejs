@@ -4,6 +4,7 @@ import branchesRender from "./BranchesRender";
 import figtreeRender from "./FigtreeRender";
 import { CircleNodeRender,RectNodeRender,CoalNodeRender,NodeLabelRender } from "./NodeRenders";
 import AxisRender from "./AxisRender";
+import tanglegramRender from "./TanglegramRender";
 
 export const ft ={
     figtree: figtreeRender,
@@ -14,6 +15,7 @@ export const ft ={
     CoalNodes:CoalNodeRender,
     NodeLabels:NodeLabelRender,
     Axis:AxisRender,
+    tanglegram:tanglegramRender,
     rectangularLayout:RectangularLayout,
     polarLayout:PolarLayout,
     radialLayout:RadialLayout

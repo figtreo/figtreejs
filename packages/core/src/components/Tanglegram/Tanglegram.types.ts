@@ -9,7 +9,7 @@ export interface TanglegramProps {
     gap:number|number[],
     layout:typeof AbstractLayout | typeof AbstractLayout[],
     trees:Tree[],
-    children:React.ReactNode,
+    baubles:React.ReactNode,
     opts:layoutOptions|layoutOptions[],
     animated:boolean,
     

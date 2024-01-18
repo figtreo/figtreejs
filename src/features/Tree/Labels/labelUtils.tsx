@@ -74,7 +74,7 @@ export function getTextFunction(tree: Tree, settings: any) {
             if (type === AnnotationType.CONTINUOUS) {
                 textFunction = (node: NodeRef) => {
                     if (tree.getAnnotation(node, settings.display)) {
-                        numericalFormatter(tree.getAnnotation(node, settings.display));
+                        return numericalFormatter(tree.getAnnotation(node, settings.display));
                     }else{
                         return '';
                     }
