@@ -16,7 +16,8 @@ export interface LayoutState {
     spread:number
     pointOfInterest: { x: number; y: number; } | undefined;
     fishEye: number,
-    animate:boolean
+    animate:boolean,
+    tangle:boolean
 }
 
 const initialState: LayoutState = {
@@ -33,7 +34,8 @@ const initialState: LayoutState = {
     pointOfInterest:undefined,
     fishEye:0,
     animate:false,
-    pollard:0
+    pollard:0,
+    tangle:false
 }
 
 export const layoutSlice = createSlice({
@@ -81,12 +83,15 @@ export const layoutSlice = createSlice({
         },
         flipAnimate(state) {
             state.animate = !state.animate;
+        },
+        flipTangle(state) {
+            state.tangle = !state.tangle;
         }
     }
 }
 )
 
-export const { setSpread, setZoom, setLayout, setExpansion, setFisheye, setRootLength, setCurvature, flipAlignTipLabels,setRootAngle,flipShowRoot,setAngleRange,setPointOfInterest,flipAnimate,setPollard} = layoutSlice.actions;
+export const { flipTangle,setSpread, setZoom, setLayout, setExpansion, setFisheye, setRootLength, setCurvature, flipAlignTipLabels,setRootAngle,flipShowRoot,setAngleRange,setPointOfInterest,flipAnimate,setPollard} = layoutSlice.actions;
 
 export const selectLayout = (state: RootState) => state.settings.layout
 

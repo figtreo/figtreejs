@@ -72,6 +72,9 @@ export function TreePanel(){
         ev.preventDefault();
       }
 
+
+      
+
     return(
         <div id="treePanel" className={`TreePanel ${drag?'dragged':''}`} ref={treePanelRef} onDrop= {dropHandler} onDragOver={dragOverHandler} onDragLeave={dragLeaveHandler}>
             <Tree panelRef={treePanelRef} style={"cursor:crosshair"} />

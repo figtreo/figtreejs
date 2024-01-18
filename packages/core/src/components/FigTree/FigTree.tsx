@@ -25,7 +25,7 @@ export const defaultOpts:FigtreeProps = {
     tree:NormalizedTree.fromNewick("((A:1,B:1):1,C:2);"),
     children:[<Branches filter={(n)=>true} attrs={{fill:'none',stroke:"black",strokeWidth:1}} interactions={{}}/>],
     animated:false,
-    
+    tipSpace:(n:NodeRef,n2:NodeRef)=>1,
    
 }
 
@@ -37,7 +37,9 @@ function FigTree(props:FigtreeProps){
         margins = defaultOpts.margins,
         tree = defaultOpts.tree,
         layout = defaultOpts.layout,
-        animated=defaultOpts.animated} = props;
+        animated=defaultOpts.animated,
+    } = props;
+    let {vertices} = props;
     
     const {rootAngle = defaultOpts.opts.rootAngle,
         rootLength = defaultOpts.opts.rootLength,
@@ -49,22 +51,23 @@ function FigTree(props:FigtreeProps){
         fishEye = defaultOpts.opts.fishEye,
         cartoonedNodes: nodeDecorations = defaultOpts.opts.cartoonedNodes,
         pollard = defaultOpts.opts.pollard,
-        padding = defaultOpts.opts.padding
+        padding = defaultOpts.opts.padding,
+        tipSpace = defaultOpts.opts.tipSpace
     } = props.opts; //todo this requires opts to not be undefined even though all the values are optional.
 
     const w = width - margins.left - margins.right;
     const h = height - margins.top - margins.bottom;
     const point = pointOfInterest?pointOfInterest: {x:(margins.left+w)/2,y:(margins.top+height)/2};
-
-    const vertices = layout.layout(tree,{showRoot,width:w,height:h,rootLength,rootAngle,angleRange,curvature,spread,pollard,padding,tipSpace:(tip1:NodeRef,tip2:NodeRef)=>1,fishEye,pointOfInterest:point,cartoonedNodes: nodeDecorations});
+    
+    if(!vertices){
+        vertices = layout.layout(tree,{showRoot,width:w,height:h,rootLength,rootAngle,angleRange,curvature,spread,pollard,padding,tipSpace,fishEye,pointOfInterest:point,cartoonedNodes: nodeDecorations});
+    }
         
-
-
     const children = props.children?props.children:defaultOpts.children;
     const maxD = tree.getHeight(tree.root!)+rootLength!;
     // console.log(maxD)
     // console.log(maxD*pollard!)
-    const scaleContext:scaleContextType = {width:w,height:h,domain:[pollard!*maxD,maxD],padding,maxR : max(vertices.allIds,d=>vertices.byId[d].r),theta :extent(vertices.allIds,d=>vertices.byId[d].theta!) as [number,number]};
+    const scaleContext:scaleContextType = {width:w,height:h,domain:[pollard!*maxD,maxD],padding,maxR : max(vertices.allIds,d=>vertices!.byId[d].r),theta :extent(vertices.allIds,d=>vertices!.byId[d].theta!) as [number,number]};
 
     //context gives us a nicer api where the data don't need to be passed to the subcomponents of the figure and the subcomponents can be added by user with JSX
     return (

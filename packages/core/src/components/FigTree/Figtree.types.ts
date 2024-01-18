@@ -1,7 +1,7 @@
-import { AbstractLayout, CartoonData } from "../../Layouts/LayoutInterface";
+import { AbstractLayout, CartoonData, Vertices } from "../../Layouts/LayoutInterface";
 import { Tree,NodeRef } from "../../Tree/Tree.types";
 
-interface Margins{
+export interface Margins{
     top:number,
     bottom:number,
     left:number,
@@ -34,4 +34,6 @@ export interface FigtreeProps {
     children:React.ReactNode,
     opts:layoutOptions
     animated:boolean,
+    tipSpace?: (tip1: NodeRef, tip2: NodeRef) => number,
+    vertices?:Vertices
 }

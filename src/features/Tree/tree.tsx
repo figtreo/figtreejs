@@ -10,7 +10,7 @@ import { TipLabels } from './Labels/tipLabel';
 import { NodeLabels } from './Labels/nodeLabels';
 import { BranchLabels } from './Labels/branchLabels';
 
-import { FigTree,  Branches, RectangularLayout, PolarLayout, RadialLayout, NodeRef, Highlight, CartoonData, AnnotationType } from '@figtreejs/core'
+import { FigTree,Tanglegram,  Branches, RectangularLayout, PolarLayout, RadialLayout, NodeRef, Highlight, CartoonData, AnnotationType } from '@figtreejs/core'
 import { useAreaSelection } from '../../app/area-selection';
 import { select } from "d3-selection"
 import { selectSelectionMode, selectSelectionRoot, setSelectionRoot } from '../Header/headerSlice';
@@ -22,6 +22,7 @@ import { addScaleFromAnnotation } from '../Settings/panels/colorScales/colourSli
 import { Legends } from './ColorLegend';
 import { selectTitle } from '../Settings/panels/title/titleSlice';
 import { saveSvg } from '../../app/utils';
+import { selectTanglegram } from '../Settings/panels/tanglegram/tangleSlice';
 
 const margins = { top: 80, bottom: 80, left: 50, right: 100 };
 //todo make zoom and expansion based on number of tips
@@ -34,6 +35,7 @@ export function Tree({ panelRef }: any) {
   const selectionMode = useAppSelector(selectSelectionMode)
   const title = useAppSelector(selectTitle)
   const tree = useAppSelector(selectTree);
+  const {activated:tangle} = useAppSelector((selectTanglegram));
   //selection Box work //https://codesandbox.io/s/billowing-lake-rzhid4?file=/src/App.tsx
   const svgRef = useRef<SVGSVGElement>(null);;
   //https://codesandbox.io/s/react-area-selection-hook-slggxd?file=/src/area-selection.ts
@@ -401,6 +403,19 @@ useEffect(() => {
     const layoutOpts = {
       rootAngle, rootLength, angleRange, showRoot, spread, curvature, fishEye, pointOfInterest, cartoonedNodes,pollard,padding:50
     }
+
+    const figureElements =[            <AxisElement />,
+    <Highlight  attrs={{fill:(n:NodeRef)=> (tree.getAnnotation(n,HILIGHT_ANNOTATION)! as string), opacity:0.4}} filter={(n:NodeRef)=> tree.getAnnotation(n,HILIGHT_ANNOTATION)!==undefined}/>,            
+    <Legends />,
+    <Branches attrs={{ fill:'none',strokeWidth: lineWidth + 4, stroke: "#959ABF", strokeLinecap: "round", strokeLinejoin: "round" }} filter={(n: NodeRef) => selectedNodes.has(n.id)} />, 
+    <Branches attrs={{fill:branchFiller, strokeWidth: lineWidth, stroke: branchColourur }} filter={(n: NodeRef) => true} />,
+    <BranchLabels />,
+    <TipsBackground/>,
+    <TipLabels  attrs={{ filter: (n: NodeRef) => selectedTaxa.has(n.id) ? 'url(#solid)' : null }} />,
+    <Tips />,
+    <InternalNodes />,
+    <NodeLabels  />]
+
     return (
       <div >
 
@@ -419,19 +434,15 @@ useEffect(() => {
           </defs>
           {title.activated&&<text fontSize={title.fontSize} fill={title.color} fontWeight={title.fontWeight} x={margins.left+title.x} y={margins.top+title.y}>{title.text}</text>}
 
-          <FigTree animated={animate} width={width} height={height} tree={tree} layout={treeLayout} margins={margins} opts={layoutOpts}>
-            <AxisElement />
-            <Highlight  attrs={{fill:(n:NodeRef)=> (tree.getAnnotation(n,HILIGHT_ANNOTATION)! as string), opacity:0.4}} filter={(n:NodeRef)=> tree.getAnnotation(n,HILIGHT_ANNOTATION)!==undefined}/>             
-            <Legends />
-            <Branches attrs={{ fill:'none',strokeWidth: lineWidth + 4, stroke: "#959ABF", strokeLinecap: "round", strokeLinejoin: "round" }} filter={(n: NodeRef) => selectedNodes.has(n.id)} /> 
-            <Branches attrs={{fill:branchFiller, strokeWidth: lineWidth, stroke: branchColourur }} filter={(n: NodeRef) => true} />
-            <BranchLabels />
-            <TipsBackground/>
-            <TipLabels  attrs={{ filter: (n: NodeRef) => selectedTaxa.has(n.id) ? 'url(#solid)' : null }} />
-            <Tips />
-            <InternalNodes />
-            <NodeLabels  />
+          {
+          tangle && tree.getTreeCount()>1? 
+          <Tanglegram trees={[...tree.getTrees()]} layout={RectangularLayout} opts={layoutOpts} gap={20} totalWidth={width} totalHeight={height} margins={margins} animated={animate}>
+            {figureElements}
+            </Tanglegram>
+          :<FigTree animated={animate} width={width} height={height} tree={tree} layout={treeLayout} margins={margins} opts={layoutOpts}>
+            {figureElements}
           </FigTree>
+          }
         </svg>
 
       </div>

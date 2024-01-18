@@ -1,5 +1,5 @@
 import { useAppSelector, useAppDispatch } from '../../../../app/hooks';
-import { flipAnimate, selectLayout, setExpansion, setFisheye, setLayout, setPollard, setZoom } from './layoutSlice';
+import { flipTangle, flipAnimate, selectLayout, setExpansion, setFisheye, setLayout, setPollard, setZoom } from './layoutSlice';
 import { SettingPanel } from '../PanelHeader';
 import './layout.css'
 import { RectangularOptions } from './rectangularOptions';
@@ -11,6 +11,8 @@ import radialTreeImage from '../../../../figtreeGraphics/radialTree.png'
 export function Layout() {
     const { layout,zoom,expansion,fishEye,animate,pollard} = useAppSelector(selectLayout);
     const dispatch = useAppDispatch();
+
+
     return (
         <SettingPanel title="Layout" intialOpen={true} >
 
@@ -99,9 +101,9 @@ export function Layout() {
                     type="checkbox"
                     checked={animate}
                     onChange={() => dispatch(flipAnimate())}
-                    id="alignLabels"
+                    id="animate"
                 />
-                <label htmlFor='alignlabels'>Animate</label>
+                <label htmlFor='animate'>Animate</label>
             </div>
             <div className="layoutOptions">
             {layout === "rectangular" ? <RectangularOptions /> :
