@@ -1,5 +1,6 @@
 import { AbstractLayout } from "../../Layouts";
-import { Tree } from "../../Tree";
+import { NodeRef, Tree } from "../../Tree";
+import { attrType } from "../Baubles";
 import { Margins, layoutOptions } from "../FigTree/Figtree.types";
 
 export interface TanglegramProps {
@@ -9,8 +10,21 @@ export interface TanglegramProps {
     gap:number|number[],
     layout:typeof AbstractLayout | typeof AbstractLayout[],
     trees:Tree[],
-    baubles:React.ReactNode,
+    baubles:React.ReactNode[],
     opts:layoutOptions|layoutOptions[],
     animated:boolean,
+    connections:{ attrs:{
+        fill:attrType,
+        stroke:attrType,
+        strokeWidth:attrType,
+        strokeLinecap?:attrType,
+        strokeLinejoin?:attrType
+    },
+    interactions?: {
+        OnClick?: (n: NodeRef) => void;
+        OnMouseOver?: (n: NodeRef) => void;
+        OnEnter?: (n: NodeRef) => void;
+        OnExit?: (n: NodeRef) => void;
+    };}
     
 }

@@ -22,6 +22,7 @@ export interface layoutOptions{
     cartoonedNodes:{[key:string]:CartoonData}
     pollard?:number,
     padding:number,
+    invert?:boolean
 
 }
 

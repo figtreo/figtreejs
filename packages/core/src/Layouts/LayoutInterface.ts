@@ -86,7 +86,8 @@ export const defaultInternalLayoutOptions = {
     fishEye: 0,
     cartoonedNodes:{},
     pollard:0,
-    padding:20
+    padding:20,
+    invert:false,
 }
 
 

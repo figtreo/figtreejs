@@ -141,9 +141,11 @@ export class RectangularLayout extends AbstractLayout {
 
         const safeOpts = { ...defaultInternalLayoutOptions, ...opts };
         const padding = safeOpts.padding;
+
+        const xRange = safeOpts.invert ? [padding, opts.width - padding].reverse() : [padding, opts.width - padding];
         const x = scaleLinear()
             .domain(arbitraryLayout.extent.x)
-            .range([padding, opts.width - padding]);
+            .range(xRange);
 
         const y_og = scaleLinear()
             .domain(arbitraryLayout.extent.y)

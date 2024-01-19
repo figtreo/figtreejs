@@ -1,9 +1,10 @@
 import React from 'react';
 import { TanglegramProps } from "./Tanglegram.types";
 import { FigTree } from '../FigTree';
+import { Connections } from './Connections';
 
 export default function Tanglegram(props:TanglegramProps){
-    const {trees,layout,opts,gap,baubles,totalWidth,totalHeight,margins,animated} = props;
+    const {trees,layout,opts,gap,baubles,totalWidth,totalHeight,margins,animated,connections} = props;
     if(Array.isArray(layout) && layout.length!==trees.length){
         throw new Error("If layout is an array it must be the same length as trees")
     }
@@ -18,11 +19,15 @@ export default function Tanglegram(props:TanglegramProps){
 
     const height=totalHeight-margins.top-margins.bottom-figureMargins.top-figureMargins.bottom;
     
-    const vertices = trees.map((tree,index)=>getLayout(layout,index).layout(tree,{height,width:widths[index],...getOptions(opts,index)}));
-// lines between trees will need to adjust for the gap etc.
+    const vertices = trees.map((tree,index)=>getLayout(layout,index).layout(tree,{height,width:widths[index],...getOptions(opts,index),invert:trees.length===2&&index===1}));
+    const figureStarts = trees.map((tree,index)=>(totalWidth-margins.left-margins.right)*index/trees.length)
+    const figureEnds = figureStarts.map((start,index)=>(start+widths[index]));
+    const figurePositions=vertices.map((v,index)=>({start:figureStarts[index],end:figureEnds[index]})) 
+    
     return (
-        <g transform={`translate(${margins.left},${margins.top})`} >
-            
+    
+    <g transform={`translate(${margins.left},${margins.top})`} >
+        <Connections filter={()=>true} trees={trees} figurePositions={figurePositions} vertices={vertices}  {...connections}/>
         {trees.map((tree,index)=>{
             return (
             <g transform={`translate(${(totalWidth-margins.left-margins.right)*index/trees.length},${0})`}>
