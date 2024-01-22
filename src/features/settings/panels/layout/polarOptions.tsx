@@ -1,9 +1,9 @@
 import { useAppDispatch, useAppSelector } from '../../../../app/hooks';
-import { selectLayout, setRootAngle, setAngleRange, flipShowRoot, setRootLength, flipAlignTipLabels } from './layoutSlice';
+import { selectLayout, setRootAngle, setAngleRange, flipShowRoot, setRootLength, flipAlignTipLabels, flipInvert, setMinR } from './layoutSlice';
 
 const roundPI= 3.14;//inputs can't get to 0
 export function PolarOptions() {
-    const { rootAngle, showRoot, rootLength, alignTipLabels,angleRange} = useAppSelector(selectLayout);
+    const { rootAngle, showRoot, rootLength, alignTipLabels,angleRange,invert,minR} = useAppSelector(selectLayout);
     const dispatch = useAppDispatch();
 
 
@@ -38,6 +38,19 @@ export function PolarOptions() {
                 />
             </div>
             <div className='option range'>
+                <label htmlFor="minR">Minimum Radius: </label>
+
+                <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step={0.01}
+                    id="minR"
+                    onChange={(e) => dispatch(setMinR(parseFloat(e.target.value)))}
+                    value={minR}
+                />
+            </div>
+            <div className='option range'>
                 <label htmlFor="rootLength">Root Length: </label>
 
                 <input
@@ -49,8 +62,7 @@ export function PolarOptions() {
                     onChange={(e) => dispatch(setRootLength(parseFloat(e.target.value)))}
                     value={rootLength}
                 />
-            </div>
-
+            </div>            
 
             <div style={{ display: "flex" }}>
                 <div className='layoutSpacer' />
@@ -74,6 +86,15 @@ export function PolarOptions() {
                     id="alignLabels"
                 />
                 <label htmlFor='alignlabels'>Align Tip Labels</label>
+            </div>
+            <div>
+                <input
+                    type="checkbox"
+                    checked={invert}
+                    onChange={() => dispatch(flipInvert())}
+                    id="alignLabels"
+                />
+                <label htmlFor='checkbox'>Invert Layout</label>
             </div>
         </div>)
 

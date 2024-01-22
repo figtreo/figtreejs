@@ -6,6 +6,7 @@ import { FigtreeProps } from './Figtree.types';
 import { NormalizedTree } from '../../Tree/normalizedTree';
 import {Branches, PolarLayout, defaultInternalLayoutOptions} from '../../index';
 import { extent, max } from 'd3-array';
+import { miniSerializeError } from '@reduxjs/toolkit';
 
 
 
@@ -52,15 +53,17 @@ function FigTree(props:FigtreeProps){
         cartoonedNodes: nodeDecorations = defaultOpts.opts.cartoonedNodes,
         pollard = defaultOpts.opts.pollard,
         padding = defaultOpts.opts.padding,
-        tipSpace = defaultOpts.opts.tipSpace
+        tipSpace = defaultOpts.opts.tipSpace,
+        minRadius = defaultOpts.opts.minRadius,
+        invert = defaultOpts.opts.invert
     } = props.opts; //todo this requires opts to not be undefined even though all the values are optional.
 
     const w = width - margins.left - margins.right;
     const h = height - margins.top - margins.bottom;
     const point = pointOfInterest?pointOfInterest: {x:(margins.left+w)/2,y:(margins.top+height)/2};
-    
+    //handle defaults once not here and in layout methods
     if(!vertices){
-        vertices = layout.layout(tree,{showRoot,width:w,height:h,rootLength,rootAngle,angleRange,curvature,spread,pollard,padding,tipSpace,fishEye,pointOfInterest:point,cartoonedNodes: nodeDecorations});
+        vertices = layout.layout(tree,{showRoot,width:w,height:h,rootLength,rootAngle,angleRange,curvature,spread,pollard,padding,tipSpace,fishEye,pointOfInterest:point,cartoonedNodes: nodeDecorations,invert,minRadius});
     }
         
     const children = props.children?props.children:defaultOpts.children;

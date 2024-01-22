@@ -17,7 +17,9 @@ export interface LayoutState {
     pointOfInterest: { x: number; y: number; } | undefined;
     fishEye: number,
     animate:boolean,
-    tangle:boolean
+    tangle:boolean,
+    invert:boolean,
+    minR:number
 }
 
 const initialState: LayoutState = {
@@ -35,7 +37,9 @@ const initialState: LayoutState = {
     fishEye:0,
     animate:false,
     pollard:0,
-    tangle:false
+    tangle:false,
+    invert:false,
+    minR:0
 }
 
 export const layoutSlice = createSlice({
@@ -53,6 +57,9 @@ export const layoutSlice = createSlice({
         },
         setCurvature: (state, action: PayloadAction<number>) => {
             state.curvature = action.payload;
+        },        
+        setMinR: (state, action: PayloadAction<number>) => {
+            state.minR = action.payload;
         },
         flipAlignTipLabels: (state) => {
             state.alignTipLabels = !state.alignTipLabels;
@@ -86,12 +93,15 @@ export const layoutSlice = createSlice({
         },
         flipTangle(state) {
             state.tangle = !state.tangle;
+        },
+        flipInvert(state){
+            state.invert = !state.invert;
         }
     }
 }
 )
 
-export const { flipTangle,setSpread, setZoom, setLayout, setExpansion, setFisheye, setRootLength, setCurvature, flipAlignTipLabels,setRootAngle,flipShowRoot,setAngleRange,setPointOfInterest,flipAnimate,setPollard} = layoutSlice.actions;
+export const { flipInvert,setMinR,flipTangle,setSpread, setZoom, setLayout, setExpansion, setFisheye, setRootLength, setCurvature, flipAlignTipLabels,setRootAngle,flipShowRoot,setAngleRange,setPointOfInterest,flipAnimate,setPollard} = layoutSlice.actions;
 
 export const selectLayout = (state: RootState) => state.settings.layout
 

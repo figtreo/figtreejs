@@ -88,6 +88,7 @@ export const defaultInternalLayoutOptions = {
     pollard:0,
     padding:20,
     invert:false,
+    minRadius:0,
 }
 
 

@@ -1,8 +1,8 @@
 import { useAppDispatch, useAppSelector } from '../../../../app/hooks';
-import { setZoom, selectLayout, setCurvature, setExpansion, setFisheye, setRootLength, flipAlignTipLabels } from './layoutSlice';
+import { setZoom, selectLayout, setCurvature, setExpansion, setFisheye, setRootLength, flipAlignTipLabels, setMinR, flipInvert } from './layoutSlice';
 
 export function RectangularOptions() {
-    const { zoom, expansion, fishEye, curvature, rootLength, alignTipLabels } = useAppSelector(selectLayout);
+    const { invert, curvature, rootLength, alignTipLabels } = useAppSelector(selectLayout);
     const dispatch = useAppDispatch();
 
 
@@ -43,6 +43,15 @@ export function RectangularOptions() {
                     id="alignLabels"
                 />
                 <label htmlFor='alignlabels'>Align Tip Labels</label>
+            </div>
+            <div>
+                <input
+                    type="checkbox"
+                    checked={invert}
+                    onChange={() => dispatch(flipInvert())}
+                    id="alignLabels"
+                />
+                <label htmlFor='checkbox'>Invert Layout</label>
             </div>
         </div>)
 

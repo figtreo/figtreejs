@@ -212,7 +212,7 @@ export function Tree({ panelRef }: any) {
     return cartoon && custom!==undefined?(custom as string):'none';
   } 
 
-  const { expansion, zoom, layout, rootAngle, rootLength, angleRange, showRoot, spread, curvature, fishEye, pointOfInterest, animate,pollard } = useAppSelector(selectLayout);
+  const { expansion, zoom, layout, rootAngle, rootLength, angleRange, showRoot, spread, curvature, fishEye, pointOfInterest, animate,pollard,minR,invert } = useAppSelector(selectLayout);
 
 
   const cartoonedNodes:{[key:string]:CartoonData} ={};
@@ -401,7 +401,7 @@ useEffect(() => {
     }
     
     const layoutOpts = {
-      rootAngle, rootLength, angleRange, showRoot, spread, curvature, fishEye, pointOfInterest, cartoonedNodes,pollard,padding:50
+      rootAngle, rootLength, angleRange, showRoot, spread, curvature, fishEye, pointOfInterest, cartoonedNodes,pollard,padding:50,minRadius:minR,invert
     }
 
     const figureElements =[            <AxisElement />,

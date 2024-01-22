@@ -19,10 +19,9 @@ export class PolarLayout extends AbstractLayout {
 
     static finalizeArbitraryLayout(arbitraryLayout: ArbitraryVertices, treeStats:{tipCount:number,rootId:string}, opts: internalLayoutOptions):Vertices {
         const safeOpts = { ...defaultInternalLayoutOptions, ...opts };
-
+        const {minRadius,padding,invert} = safeOpts;
         // Do fisheye thing assuming we are using the rectangular layout
 
-        const padding = safeOpts.padding;
         const y_og = scaleLinear()
             .domain(arbitraryLayout.extent.y)
             .range([padding, opts.height - padding]);
@@ -36,9 +35,10 @@ export class PolarLayout extends AbstractLayout {
         const angleRange = normalizeAngle(safeOpts.angleRange);
         // These scales adjust the x and y values from arbitrary layout to polar coordinates with r within the svg and theta between 0 and 2pi
 
+        const rRange = invert? [minRadius*maxRadius,maxRadius].reverse():[minRadius*maxRadius,maxRadius];
         const rScale = scaleLinear()
             .domain(arbitraryLayout.extent.x)
-            .range([0, maxRadius ]);
+            .range(rRange);
 
     
             const startAngle = safeOpts.rootAngle+(2*3.14 - angleRange)/2; //2pi - angle range  is what we ignore and we want to center this on the root angle
@@ -146,7 +146,7 @@ export class PolarLayout extends AbstractLayout {
             const xpos = x(vertex.x);
             const ypos = y(vertex.y);
 
-            //hypothenuse is 12 (tip label gap) or -6 node label gap
+            //hypothenuse is 12 (tip label gap) or 6 node label gap
             let dx,dy;
            if(vertex.nodeLabel.dx===12){
                 dx = Math.cos(vertex.theta)*12;
@@ -155,7 +155,7 @@ export class PolarLayout extends AbstractLayout {
                 dx = Math.cos(vertex.theta)*6;
                 dy = Math.sin(vertex.theta)*6;
             }
-
+            
             //branch lable dx dy;
             let branchDx,branchDy;
             const normalizedTheta = normalizeAngle(vertex.theta);
