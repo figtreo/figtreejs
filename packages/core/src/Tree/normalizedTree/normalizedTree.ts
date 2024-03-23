@@ -1,6 +1,6 @@
 import { AbstractTree } from "../AbtractTree"
 import { AnnotationType, NodeRef, Tree, newickParsingOptions } from "../Tree.types"
-import { parseNewick, parseNexus } from "../parsing";
+import { parseNewick, parseNexus, processAnnotationValue } from "../parsing";
 import { NormalizedTreeData } from "./normalizedTree.types"
 //todo clean up null vs undefined
 export class NormalizedTree extends AbstractTree {
@@ -110,9 +110,10 @@ export class NormalizedTree extends AbstractTree {
     }
 
 
-    annotateNode(node: NodeRef, annotation: { name: string, value: any, type: AnnotationType }): void {
+    annotateNode(node: NodeRef, annotation: { name: string, value: any }): void {
+        const suggestedType  = processAnnotationValue(annotation.value);
         //todo check annotation type 
-        let checkedType = this.checkAnnotation({ name: annotation.name, suggestedType: annotation.type })
+        let checkedType = this.checkAnnotation({ name: annotation.name, suggestedType: suggestedType.type })
         this._data.nodes.annotations[node.id][annotation.name] = annotation.value;
         const domain = this.updateDomain( { id:annotation.name, value:annotation.value, type:checkedType })
 
