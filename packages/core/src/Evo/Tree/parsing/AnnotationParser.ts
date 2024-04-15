@@ -2,7 +2,7 @@ import { AnnotationType } from "../Tree.types";
 
 
 
-export function parseAnnotation(annotationString: string):  {id:string, value:any}[]  {
+export function parseAnnotation(annotationString: string):  {name:string, value:any}[]  {
     const tokens = annotationString.split(/\s*('[^']+'|"[^"]+"|;|\(|\)|,|:|=|\[&|\]|\{|\})\s*/).filter(token => token.length > 0);
     let annotationKeyNext = true;
     let annotationKey: string = "";
@@ -10,7 +10,7 @@ export function parseAnnotation(annotationString: string):  {id:string, value:an
     let inSubRange = false;
     let subValue: any[] = [];
     let value = null;
-    let annotations: {id:string, value:any}[] = [];
+    let annotations: {name:string, value:any}[] = [];
 
     // expect the first token to be a [& and last ]
     if (tokens[0] !== "[&" || tokens[tokens.length - 1] !== "]") {
@@ -29,7 +29,7 @@ export function parseAnnotation(annotationString: string):  {id:string, value:an
             
 
             //finalize annotation
-            annotations.push({ value: value, id: annotationKey });
+            annotations.push({ value: value, name: annotationKey });
             }else{
                 continue; //to next value in range
             }
@@ -53,7 +53,7 @@ export function parseAnnotation(annotationString: string):  {id:string, value:an
             // close BEAST annotation
 
             //finalize annotation
-            annotations.push({ value: value, id: annotationKey })
+            annotations.push({ value: value, name: annotationKey })
         } else {
             // must be annotation
             // remove any quoting and then trim whitespace

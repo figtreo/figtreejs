@@ -2,7 +2,7 @@ import React from "react";
 import { useAnimation } from "../../../../hooks";
 import { useSpring, to,  animated } from "@react-spring/web";
 import { BaseShapeProps } from "..";
-import { NodeRef } from "../../../../Tree";
+import { NodeRef } from "../../../../Evo/Tree";
 //We don't use the HOC here because of how the rotation transform is applied
 export default function Label(props: any) {
     const animation = useAnimation()

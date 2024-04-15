@@ -1,5 +1,5 @@
 import { BaubleProps, attrType } from "..";
-import { NodeRef } from "../../../Tree/Tree.types";
+import { NodeRef } from "../../../Evo/Tree/Tree.types";
 
 export interface BranchProps extends BaubleProps{
     attrs:{

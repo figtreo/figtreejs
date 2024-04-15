@@ -1,7 +1,7 @@
 import {  max, mean } from "d3-array";
 import { scaleLinear } from "d3-scale";
 import { AbstractLayout, ArbitraryVertex, ArbitraryVertices, defaultInternalLayoutOptions, internalLayoutOptions, Vertices } from "./LayoutInterface";
-import { NodeRef, Tree } from "../Tree";
+import { NodeRef, Tree } from "../Evo/Tree";
 
 
 export class RectangularLayout extends AbstractLayout {

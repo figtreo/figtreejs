@@ -21,5 +21,5 @@ export const ft ={
     radialLayout:RadialLayout
 }
 
-
-export {NormalizedTree} from "@figtreejs/core";
+//TODO mimic plot api have d3 return svg //how to handle animations?
+export {NormalizedTree,Treedux} from "@figtreejs/core";

@@ -1,9 +1,9 @@
 import React from 'react';
 import { LayoutContext, TreeContext,AnimationContext,ScaleContext, scaleContextType } from '../../Context/context';
-import { NodeRef } from '../../Tree/Tree.types';
+import { NodeRef } from '../../Evo/Tree/Tree.types';
 import { RectangularLayout } from '../../Layouts/rectangularLayout';
 import { FigtreeProps } from './Figtree.types';
-import { NormalizedTree } from '../../Tree/normalizedTree';
+import { NormalizedTree } from '../../Evo/Tree/normalizedTree';
 import {Branches, PolarLayout, defaultInternalLayoutOptions} from '../../index';
 import { extent, max } from 'd3-array';
 import { miniSerializeError } from '@reduxjs/toolkit';

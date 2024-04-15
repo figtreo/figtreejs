@@ -1,5 +1,5 @@
 import { AbstractLayout } from "../../Layouts";
-import { NodeRef, Tree } from "../../Tree";
+import { NodeRef, Tree } from "../../Evo/Tree";
 import { attrType } from "../Baubles";
 import { Margins, layoutOptions } from "../FigTree/Figtree.types";
 

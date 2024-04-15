@@ -2,7 +2,7 @@
 // calculating those layouts, but they should not create side effects. So each class here 
 // is should only use static methods. and store any state as static constants.
 
-import { NodeRef, Tree } from "../Tree"
+import { NodeRef, Tree } from "../Evo/Tree"
 import { layoutOptions } from "../components/FigTree/Figtree.types"
 //TODO make tree
 

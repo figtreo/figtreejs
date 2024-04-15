@@ -4,7 +4,7 @@ import { AnnotationType, newickParsingOptions, NodeRef, Tree } from '../Tree.typ
 import { extent } from 'd3-array';
 import { ToolkitStore } from '@reduxjs/toolkit/dist/configureStore';
 import { AbstractTree } from '../AbtractTree';
-import { parseNewick } from '../parsing';
+import { parseNewick, parseNexus } from '../parsing';
 
 export function checkAnnotation(suggestedType: AnnotationType , currentType:AnnotationType|undefined): AnnotationType {
     let annotationType = currentType;
@@ -321,7 +321,18 @@ export class Treedux extends AbstractTree {
         return parseNewick(tree, newick, options);
 
     }
+    static fromNexus(nexus: string, options?: newickParsingOptions | undefined): Tree {
+        const tree = new this();
+        return parseNexus(tree, nexus, options);
 
+    }
+    static fromString(string: string, options?: newickParsingOptions | undefined): Tree {
+        if (string.toLowerCase().includes("#nexus")) {
+            return this.fromNexus(string, options)
+        } else {
+            return this.fromNewick(string, options)
+        }
+    }
     parseNewick(newick: string, options?: newickParsingOptions | undefined): void {
         parseNewick(this, newick, options);
     }
@@ -499,6 +510,10 @@ export class Treedux extends AbstractTree {
         const tree = this._getTree();
         return tree.annotations.byId[name].domain
     }
+
+    // subscribe(f:()=>void):Function{
+    // return this._store.subscribe(f);
+    // }
 
 }
 

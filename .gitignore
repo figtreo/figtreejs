@@ -23,3 +23,5 @@ yarn-debug.log*
 yarn-error.log*
 
 **/.rollup.cache/*
+packages/core/node_modules/*
+

@@ -1,5 +1,5 @@
 
-import { NodeRef } from "../../../Tree/Tree.types";
+import { NodeRef } from "../../../Evo/Tree/Tree.types";
 import {useAttributeMappers, useLayout, useTree} from "../../../hooks";
 
 import React from "react";

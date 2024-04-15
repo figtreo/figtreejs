@@ -1,11 +1,11 @@
-import { AnnotationType } from "../Tree.types"
+import { AnnotationType, NodeRef } from "../Tree.types"
 
 export interface Node {
-    id: string,
+    number: number,
     name: string | null,
     label: string | null,
-    children: string[],
-    parent: string | null,
+    children: number[],
+    parent: number | null,
     length: number | undefined,
     height: number | undefined,
     divergence: number | undefined,//derive height and divergence from this for now
@@ -19,24 +19,21 @@ export interface Annotation {
 }
 export interface NormalizedTreeData {
     nodes: {
-        byId: {
-            [id: string]: Node
-        },
+        allNodes:NodeRef[],
+
         byName: {
-            [name: string]: string
+            [name: string]: number
         },
         byLabel: {
-            [label: string]: string
+            [label: string]: number
         },
         annotations: {
             [nodeId: string]: {
                 [annotation: string]: string | string[] | number | number[]
             }
         },
-
-        allIds: string[]
     },
-    rootNode: string | null,
+    rootNode: number | null,
 
     annotations: {
         byId: {
@@ -45,3 +42,5 @@ export interface NormalizedTreeData {
         allIds: string[]
     },
 }
+
+export type TreeData = NormalizedTreeData;

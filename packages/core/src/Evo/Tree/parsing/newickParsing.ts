@@ -1,7 +1,8 @@
 import { NodeRef, Tree, newickParsingOptions } from "../Tree.types";
+import { ImmutableTree, postOrderIterator,  preOrderIterator } from "../normalizedTree/ImmutableTree";
 import { parseAnnotation } from "./AnnotationParser";
 
-export function parseNewick(tree:Tree,newick: string,options?:newickParsingOptions): Tree {
+export function parseNewick(tree:ImmutableTree,newick: string,options?:newickParsingOptions): ImmutableTree {
     if (options === undefined) {
      
         options = { parseAnnotations: false }
@@ -16,6 +17,7 @@ export function parseNewick(tree:Tree,newick: string,options?:newickParsingOptio
     let labelNext = false;
     let lengthNext = false;
 
+    tree.beginBatchedEdits();
     const end = tokens.pop();
     if (end !== ";") {
         throw new Error("expecting a semi-colon at the end of the newick string")
@@ -25,7 +27,7 @@ export function parseNewick(tree:Tree,newick: string,options?:newickParsingOptio
         if (options.parseAnnotations && token.length > 2 && token.substring(0, 2) === '[&') {
             const annotations = parseAnnotation(token);
             
-            tree.annotateNodeUnknownType(currentNode!, annotations);
+            tree.annotateNode(currentNode!, annotations);
 
         } else if (token === "(") {
             // an internal node
@@ -36,8 +38,8 @@ export function parseNewick(tree:Tree,newick: string,options?:newickParsingOptio
                 throw new Error("expecting a comma");
             }
 
-            let node = tree.addNode();
-
+            tree.addNode();
+            let node = tree.getNode(tree.getNodeCount()-1);
             level += 1;
             if (currentNode!==undefined) {
                 nodeStack.push(currentNode);
@@ -56,7 +58,7 @@ export function parseNewick(tree:Tree,newick: string,options?:newickParsingOptio
 
             let parent = nodeStack.pop()! as NodeRef;
             tree.addChild(parent,currentNode!)
-            tree.setParent(currentNode!,parent)
+            // tree.setParent(currentNode!,parent)
 
             currentNode = parent;
         } else if (token === ")") {
@@ -73,7 +75,7 @@ export function parseNewick(tree:Tree,newick: string,options?:newickParsingOptio
             // the end of an internal node
             let parent = nodeStack.pop()! as NodeRef;
             tree.addChild(parent,currentNode!)
-            tree.setParent(currentNode!,parent)
+            // tree.setParent(currentNode!,parent)
 
             level -= 1;
             currentNode = parent ;
@@ -102,8 +104,9 @@ export function parseNewick(tree:Tree,newick: string,options?:newickParsingOptio
                         value = token;
                     }
                     if(options.labelName){
-                        let label_annotation = { id: options.labelName, value: value }
-                        tree.annotateNodeUnknownType(currentNode!, label_annotation)
+                        let label_annotation = { name: options.labelName, value: value }
+                        tree.annotateNode(currentNode!, label_annotation)
+
                     }else{
                         console.warn(`No label name provided to newick parser but found label ${token}. It will be ignored`)
                     }
@@ -128,7 +131,8 @@ export function parseNewick(tree:Tree,newick: string,options?:newickParsingOptio
                 name = name.trim();
 
 
-                const externalNode = tree.addNode();
+               tree.addNode();
+               const externalNode = tree.getNode(tree.getNodeCount()-1);
                 if(options.tipNameMap && options.tipNameMap.keys().next().value !== undefined ){
                     if(options.tipNameMap.has(name)){
                         name=options.tipNameMap.get(name)!
@@ -153,19 +157,19 @@ export function parseNewick(tree:Tree,newick: string,options?:newickParsingOptio
     }
 
     const maxDivergence = setDivergence(tree);
-    for (const node of tree.getPostorderNodes() ) {
+    for (const node of postOrderIterator(tree) ) {
         tree.setHeight(node,maxDivergence - tree.getDivergence(node));
     }
 
-    return tree;
+    return tree.endBatchedEdits();
 }
 
 
-function setDivergence(tree: Tree): number {
+function setDivergence(tree: ImmutableTree): number {
 let maxDivergence = 0;
-for (const node of tree.getPreorderNodes()) {
+for (const node of preOrderIterator(tree)) {
     if (tree.getParent(node)) {
-        tree.setDivergence(node,tree.getLength( node)! + tree.getDivergence(tree.getParent(node)!)!);
+        tree.setDivergence(node,tree.getBranchLength( node)! + tree.getDivergence(tree.getParent(node)!)!);
     } else {
         tree.setDivergence(node,0);
     }

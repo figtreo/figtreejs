@@ -1,6 +1,6 @@
 
 export interface NodeRef{
-    id:string
+    number:number
 }
 export enum AnnotationType {
     DISCRETE = "DISCRETE",
@@ -14,17 +14,44 @@ export enum AnnotationType {
 
 }
 
+// For small standalone apps we want a OO model with a figure subscribing to the tree
+// for observable we want a functional, immutable approach. 
+// Does the functional immutable approach pretend to be a class
+
+
 export interface newickParsingOptions  {
      labelName?: string,  parseAnnotations: boolean , tipNameMap?: Map<string, string>
 }
 export interface Tree  {
     
+    getRoot():NodeRef|null
+    getNodeCount():number
+    getInternalNodeCount():number
+    getExternalNodeCount():number
+    getNode(i: number): NodeRef 
+    getInternalNodes():NodeRef[]
+    getExternalNodes():NodeRef[]
+
+    getNodeTaxon(node:NodeRef):string
+    hasNodeHeights():boolean
+    getNodeHeight(node:NodeRef):number
+    hasBranchLength(node:NodeRef):number
+    getBranchLength(node:NodeRef):number
+
+    getNodeAttribute(node:NodeRef,name:string):Object
+    getNodeAttributeNames(node:NodeRef):Iterator<string>
+
+    isExternal(node:NodeRef):boolean
+    isRoot(node:NodeRef):boolean
+
+    getChildCount(node:NodeRef):number
+    getChild(node:NodeRef,i:number):NodeRef
+
     getNodeByName(name: string): NodeRef|null
     getNodeByLabel(label: string): NodeRef|null
-    getName(node: NodeRef):string|null
     getLevel(node:NodeRef):number;
    
-    getNode(id: string): NodeRef 
+    // getNode(id: string): NodeRef 
     getDivergence(node: NodeRef): number 
     getHeight(node:NodeRef):number 
 
@@ -41,9 +68,8 @@ export interface Tree  {
     getAnnotationType(name: string): string |undefined
 
     addNode(): NodeRef
-    removeAllChildren(node:NodeRef):void
     removeChild(parent:NodeRef,child:NodeRef):void
-    getSibling(node:NodeRef):NodeRef|null
+    getNextSibling(node:NodeRef):NodeRef|null
 
     setHeight(node:NodeRef,height:number):void
     setDivergence(node:NodeRef,divergence:number):void
@@ -54,7 +80,6 @@ export interface Tree  {
     annotateNode(node:NodeRef,annotation:{name:string,value:any,type:AnnotationType}):void
 
     addChild(parent: NodeRef, child: NodeRef): void
-    setParent(node: NodeRef, parent: NodeRef): void
     setRoot(node: NodeRef): void
     toNewick(node?:NodeRef,options?:{includeAnnotations:boolean}): string;
     orderNodesByDensity(increasing:boolean):void
@@ -63,27 +88,10 @@ export interface Tree  {
     getMRCA(nodes:NodeRef[]):NodeRef;
     rotate(node:NodeRef,recursive:boolean):void;
     reroot(node:NodeRef,proportion:number):void;
-    setLevel(node:NodeRef,level:number):void;
     //TODO decide if we want to keep integers different from continuous
     getAnnotationDomain(name:string):[number,number]|[boolean,boolean]|string[]|number[]|undefined;
-    get nodeCount(): number 
-    get externalNodeCount(): number
-    get InternalNodeCount(): number
-    get externalNodes(): NodeRef[] 
-    get internalNodes(): NodeRef[] 
-    get root(): NodeRef | null 
-    getTips(node:NodeRef ): Generator<NodeRef> 
-    getTips( ): Generator<NodeRef> 
     isExternal(node:NodeRef):boolean
     isInternal(node:NodeRef):boolean
-
-    getPostorderNodes(node:NodeRef):Generator<NodeRef>
-    getPostorderNodes():Generator<NodeRef>
-
-    getPreorderNodes(node:NodeRef ):Generator<NodeRef>
-    getPreorderNodes( ):Generator<NodeRef>
-
-   
 
 }
 

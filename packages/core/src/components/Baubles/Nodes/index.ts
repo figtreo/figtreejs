@@ -1,4 +1,4 @@
-import { NodeRef } from '../../../Tree';
+import { NodeRef } from '../../../Evo/Tree';
 
 export {default as Nodes} from './Nodes';
 

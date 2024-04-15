@@ -1,4 +1,4 @@
-import { NodeRef } from "../../../Tree";
+import { NodeRef } from "../../../Evo/Tree";
 import { useLayout, useTree } from "../../../hooks";
 import React from "react";
 export function RectangularHighlight(props:{attrs:{[key:string]:any},node:NodeRef}){

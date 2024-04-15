@@ -9,9 +9,7 @@
     "build": "rollup -c --bundleConfigAsCjs",
     "build:watch": "rollup -c --bundleConfigAsCjs -w",
     "dev": "rollup -c --bundleConfigAsCjs -w",
-    "test": "jest",
-    "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "test": "jest"
   },
   "author": "Andrew Rambaut and JT McCrone",
   "license": "MIT",
@@ -59,6 +57,7 @@
     "d3-interpolate-path": "^2.3.0",
     "d3-scale": "^4.0.2",
     "d3-shape": "^3.2.0",
+    "immer": "^10.0.4",
     "normalize-svg-path": "^1.1.0",
     "parse-svg-path": "^0.1.2"
   },

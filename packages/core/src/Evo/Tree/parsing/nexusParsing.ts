@@ -1,8 +1,9 @@
 import { Tree } from "../Tree.types";
+import { ImmutableTree } from "../normalizedTree/ImmutableTree";
 import { parseNewick } from "./newickParsing";
 
 //ONLY parses the first tree
-export function  parseNexus(tree:Tree,nexus:string,options={}):Tree{
+export function  parseNexus(tree:ImmutableTree,nexus:string,options={}):ImmutableTree{
 
 
    // odd parts ensure we're not in a taxon label

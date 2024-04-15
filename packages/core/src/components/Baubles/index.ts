@@ -1,4 +1,4 @@
-import { NodeRef } from '../../Tree';
+import { NodeRef } from '../../Evo/Tree';
 import { BaseShapeProps, ShapeProps } from './Nodes';
 
 export * from './Nodes';

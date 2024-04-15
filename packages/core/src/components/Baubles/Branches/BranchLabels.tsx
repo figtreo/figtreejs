@@ -2,7 +2,7 @@ import React, { useMemo } from "react"
 
 import {useAttributeMappers, useLayout, useTree} from "../../../hooks";
 import Label from "../Nodes/Shapes/Label";
-import { NodeRef } from "../../../Tree/Tree.types";
+import { NodeRef } from "../../../Evo/Tree/Tree.types";
 
 
 

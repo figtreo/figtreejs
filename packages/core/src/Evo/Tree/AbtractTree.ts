@@ -3,6 +3,8 @@ import { extent } from "d3-array";
 import { processAnnotationValue } from "./parsing";
 
 export abstract class AbstractTree implements Tree {
+
+
     annotateNodeUnknownType(node: NodeRef, annotations: { value: any, id: string }[] | { value: any, id: string }): void {
         if (!Array.isArray(annotations)) {
             annotations = [annotations]
@@ -35,7 +37,7 @@ export abstract class AbstractTree implements Tree {
     abstract addChild(parent: NodeRef, child: NodeRef): void
     abstract setParent(node: NodeRef, parent: NodeRef): void
     abstract getName(node: NodeRef): string | null
-    abstract getNode(id: string): NodeRef
+    abstract getNode(number:number): NodeRef
     abstract getDivergence(node: NodeRef): number
     abstract getHeight(node: NodeRef): number
     abstract getLength(node: NodeRef): number

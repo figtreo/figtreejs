@@ -1,7 +1,7 @@
 import React from "react";
-import { NormalizedTree } from "../Tree/";
+import { NormalizedTree } from "../Evo/Tree";
 import { Vertices } from "../Layouts/LayoutInterface";
-import { Tree } from "../Tree/Tree.types";
+import { Tree } from "../Evo/Tree/Tree.types";
 
 
 export const InteractionStateContext = React.createContext(false);

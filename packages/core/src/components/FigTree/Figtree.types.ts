@@ -1,5 +1,5 @@
 import { AbstractLayout, CartoonData, Vertices } from "../../Layouts/LayoutInterface";
-import { Tree,NodeRef } from "../../Tree/Tree.types";
+import { Tree,NodeRef } from "../../Evo/Tree/Tree.types";
 
 export interface Margins{
     top:number,

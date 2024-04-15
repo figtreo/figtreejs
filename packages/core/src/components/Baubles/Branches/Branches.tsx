@@ -2,7 +2,7 @@ import React, { useMemo, useRef } from "react"
 import { useAnimation, useAttributeMappers, useLayout, useTree } from "../../../hooks";
 
 import { Vertex } from "../../../Layouts/LayoutInterface";
-import { NodeRef } from "../../../Tree/Tree.types";
+import { NodeRef } from "../../../Evo/Tree/Tree.types";
 import { normalizePath } from "../../../path.helpers";
 import { BranchProps } from "./Branches.types";
 import { Branch } from "./Branch";

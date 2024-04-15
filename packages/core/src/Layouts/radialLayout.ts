@@ -26,7 +26,7 @@ import { max, mean } from "d3-array";
 import { scaleLinear } from "d3-scale";
 import { AbstractLayout, ArbitraryVertex, ArbitraryVertices, defaultInternalLayoutOptions, internalLayoutOptions, Vertices } from "./LayoutInterface";
 import { textSafeDegrees } from "./polarLayout";
-import { NodeRef, Tree } from "../Tree";
+import { NodeRef, Tree } from "../Evo/Tree";
 
 type data = {
     angleStart: number,
@@ -52,7 +52,7 @@ export class RadialLayout extends AbstractLayout {
 
         //visits parents first and passes data to children through a stack to avoid recursion (but mostly for fun)
         const dataStack: data[] = [{ angleStart: 0, angleEnd: 2 * Math.PI, xpos: 0, ypos: 0, level: 0, id: tree.root!.id }]
-        for (const node of tree.getPreorderNodes()) {
+        for (const node of tree.getPreorderNodes()) { // TODO traverse from tip so layout doesn't change with root
 
             const { angleStart, angleEnd, xpos, ypos, level, id } = dataStack.pop()!
 
