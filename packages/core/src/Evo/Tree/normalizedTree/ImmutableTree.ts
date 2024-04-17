@@ -3,18 +3,20 @@ import { extent } from "d3-array";
 import { Annotation, AnnotationType, NodeRef, Tree, newickParsingOptions } from "../Tree.types"
 import { parseNewick, parseNexus, processAnnotationValue } from "../parsing";
 import {createDraft, finishDraft, immerable, produce} from "immer"
+import { symbol } from "d3-shape";
 
 interface Node extends NodeRef{
     number: number,
     name: string | undefined,
     label: string | undefined,
-    children: Node[],
+    children: number[],
     parent: number | undefined,
     length: number | undefined,
     height: number | undefined,
     divergence: number | undefined,//derive height and divergence from this for now
     level: number | undefined,
-    annotations: {[annotation: string]: string | string[] | number | number[]}
+    annotations: {[annotation: string]: string | string[] | number | number[]},
+    _id: symbol // an id so we can mark updates to root when toplogy changes
 }
 
 interface ImmutableTreeData {
@@ -195,7 +197,7 @@ export class ImmutableTree implements Tree  {
             return this._draft.getNextSibling(node)
         }
         const parent = this._data.nodes.allNodes[this._data.nodes.allNodes[node.number].parent!]
-        const index = parent.children.map(c=>c.number).indexOf(node.number);
+        const index = parent.children.map(c=>c).indexOf(node.number);
         if (this.getChildCount(this.getParent(node)!) === 1) {
             console.warn(`Node ${node.number} has only no sibling`)
             return undefined
@@ -237,7 +239,7 @@ export class ImmutableTree implements Tree  {
         if(this._draft){
             return this._draft.getChild(node,index);
         }
-        return this._data.nodes.allNodes[node.number].children[index];
+        return this._data.nodes.allNodes[this._data.nodes.allNodes[node.number].children[index]];
     }
     getParent(node: NodeRef): NodeRef | undefined {
         if(this._draft){
@@ -254,7 +256,7 @@ export class ImmutableTree implements Tree  {
         if(this._draft){
             return this._draft.getChildren(node);
         }
-        return this._data.nodes.allNodes[node.number].children
+        return this._data.nodes.allNodes[node.number].children.map(n=>this.getNode(n))
     }
 
     getAnnotation(node: NodeRef, name: string): any | undefined {
@@ -322,7 +324,8 @@ export class ImmutableTree implements Tree  {
         this._draft._draft=undefined;
         //update all other nodes 
         this._draft._changeLog.forEach((n:number)=>{
-            this._draft._updateNodesToRoot(n)
+            const node = this._draft.getNode(n) as Node;
+            this._draft._updateNodesToRoot(node)
         })
         this._draft._changeLog = [];
         return finishDraft(this._draft)
@@ -346,13 +349,16 @@ export class ImmutableTree implements Tree  {
                     height: undefined,
                     name: undefined,
                     level: undefined,
-                    annotations: {}
+                    annotations: {},
+                    _id: Symbol(),
                 })
             }
         })
     }else{
+        const number = this._draft._data.nodes.allNodes.length
+        for (let i = 0; i < n!; i++) {
         this._draft._data.nodes.allNodes.push({
-            number:this._draft._data.nodes.allNodes.length,
+            number:number+i,
             children: [],
             parent: undefined,
             label: '',
@@ -361,8 +367,10 @@ export class ImmutableTree implements Tree  {
             height: undefined,
             name: undefined,
             level: undefined,
-            annotations: {}
+            annotations: {},
+            _id: Symbol(),
         })
+    }
         return this;
     }
 }
@@ -377,12 +385,10 @@ export class ImmutableTree implements Tree  {
             const n = draft.getNode(node.number) as Node;
             n.name = name;
             this._data.nodes.byName[name] = node.number
-            draft._updateNodesToRoot(node.number);
         }))
     }else{
         this._draft._data.nodes.allNodes[node.number].name = name;
         this._draft._data.nodes.byName[name] = node.number
-        this._draft._changeLog.push(node.number);
         return this;
     }
     }
@@ -429,7 +435,7 @@ export class ImmutableTree implements Tree  {
                 const n = draft.getNode(node.number) as Node;
                 n.height = height;
                 //update all nodes to root
-                draft._updateNodesToRoot(node.number);
+                draft._updateNodesToRoot(node);
     
             })
             }else{
@@ -446,7 +452,7 @@ export class ImmutableTree implements Tree  {
                 const n = draft.getNode(node.number) as Node;
                 n.divergence = divergence;
                 //update all nodes to root
-                draft._updateNodesToRoot(node.number);
+                draft._updateNodesToRoot(node);
     
             })
             }else{
@@ -468,12 +474,10 @@ export class ImmutableTree implements Tree  {
             const n = draft.getNode(node.number) as Node;
             n.label = label;
             this._data.nodes.byLabel[label] = node.number
-            draft._updateNodesToRoot(node.number);
         }))
     }else{
         this._draft._data.nodes.allNodes[node.number].label = label;
         this._draft._data.nodes.byLabel[label] = node.number
-        this._draft._changeLog.push(node.number);
         return this;
     }
     }
@@ -485,7 +489,7 @@ export class ImmutableTree implements Tree  {
             const n = draft.getNode(node.number) as Node;
             n.length = length;
             //update all nodes to root
-            draft._updateNodesToRoot(node.number);
+            draft._updateNodesToRoot(n);
 
         })
         }else{
@@ -496,9 +500,6 @@ export class ImmutableTree implements Tree  {
         }
     }
 
-    setLength(node: NodeRef, length: number): ImmutableTree {
-        return this.setBranchLength(node, length)
-    }
     
     
     // getAnnotationType(name: string): AnnotationType|undefined {
@@ -543,8 +544,15 @@ export class ImmutableTree implements Tree  {
         }
     }
 
-    rotate(node: NodeRef, recursive: boolean): void {
-        throw new Error("rotate not implemented.");
+    rotate(node: NodeRef, recursive: boolean=false): ImmutableTree {
+        if(this._draft){
+            this._draft.rotate(node,recursive);
+            return this;
+        }else{
+            return produce(this,draft=>{
+                rotate(draft,node,recursive);
+            })
+        }
     }
     //TODO infinte loop
     reroot(node: NodeRef, proportion: number): ImmutableTree {
@@ -562,7 +570,7 @@ export class ImmutableTree implements Tree  {
                 if(rootNode.children.length!==2){
                     console.warn("Root node has more than two children and we are rerooting! There be dragons!")
                 }
-                const rootLength = rootNode.children.reduce((acc,child) => child.length! + acc,0)
+                const rootLength = rootNode.children.map(n=>draft.getNode(n)).map(n=>draft.getBranchLength(n)).reduce((acc,l) => l! + acc!,0)!
 
                 const treeNode = draft.getNode(node.number) as Node; 
                 if (draft.getParent(node) !== rootNode) {
@@ -587,7 +595,7 @@ export class ImmutableTree implements Tree  {
 
                         // remove the node that will becoming the parent from the children 
 
-                        parent.children = parent.children.filter(n=>n.number!==node0.number)
+                        parent.children = parent.children.filter(n=>n!==node0.number)
 
                         if (draft.getParent(parent)!.number === rootNode.number) {
                             const sibling = draft.getNextSibling(parent)! as Node;
@@ -597,7 +605,7 @@ export class ImmutableTree implements Tree  {
                                 console.log(draft.getChildren(draft.getParent(parent)!).map(d=>d.number))
                                 throw new Error("no sibling in rerooting")
                             }
-                            parent.children.push(sibling);
+                            parent.children.push(sibling.number);
                             sibling.parent = parent.number;
                             sibling.length=rootLength;
 
@@ -615,7 +623,7 @@ export class ImmutableTree implements Tree  {
 
                             // add the new child don't update the parent yet - need for loop.
                             // nan.parent = parent.number;
-                            parent.children.push(nan);
+                            parent.children.push(nan.number);
                         }
 
                         node0=parent;
@@ -629,7 +637,7 @@ export class ImmutableTree implements Tree  {
                     // This makes for a more visually consistent rerooting graphically.
                     rootChild1.parent = rootNode.number;
                     rootChild2.parent = rootNode.number;
-                    rootNode.children = [rootChild1, rootChild2]
+                    rootNode.children = [rootChild1.number, rootChild2.number]
 
                     if (!nodeAtTop) {
                         rootNode.children = rootNode.children.reverse();
@@ -652,7 +660,7 @@ export class ImmutableTree implements Tree  {
                     treeNode.length = l;
                     const sibling = draft.getNextSibling(node)! as Node;
                     sibling.length = rootLength - l;
-                    draft._updateNodesToRoot(node.number);
+                    draft._updateNodesToRoot(node);
                 }
 
         });
@@ -665,11 +673,11 @@ export class ImmutableTree implements Tree  {
     removeChild(parent: NodeRef, child: NodeRef): ImmutableTree {
         if(!this._draft){
             return(produce(this,draft=>{
-                draft._data.nodes.allNodes[parent.number].children = draft._data.nodes.allNodes[parent.number].children.filter(n => n.number !== child.number)
+                draft._data.nodes.allNodes[parent.number].children = draft._data.nodes.allNodes[parent.number].children.filter(n => n !== child.number)
                 draft._data.nodes.allNodes[child.number].parent=-1;
             }))
         }else{
-            this._draft._data.nodes.allNodes[parent.number].children = this._draft._data.nodes.allNodes[parent.number].children.filter((n: { number: number; }) => n.number !== child.number)
+            this._draft._data.nodes.allNodes[parent.number].children = this._draft._data.nodes.allNodes[parent.number].children.filter((n: number) => n !== child.number)
             this._draft._data.nodes.allNodes[child.number].parent=-1;
             return this;
         }
@@ -677,11 +685,11 @@ export class ImmutableTree implements Tree  {
     sortChildren(node: NodeRef, compare: (a: NodeRef, b: NodeRef) => number): ImmutableTree {
         if(!this._draft){
             return(produce(this,draft=>{
-                draft._data.nodes.allNodes[node.number].children = this._data.nodes.allNodes[node.number].children.sort(compare);
-                draft._updateNodesToRoot(node.number);
+                draft._data.nodes.allNodes[node.number].children = this._data.nodes.allNodes[node.number].children.map(n=>draft.getNode(n)).sort(compare).map(n=>n.number);
+                draft._updateNodesToRoot(node);
             }))
         }else{
-            this._draft._data.nodes.allNodes[node.number].children = this._draft._data.nodes.allNodes[node.number].children.sort(compare);
+            this._draft._data.nodes.allNodes[node.number].children = this._draft._data.nodes.allNodes[node.number].children.map((n:number)=>this._draft.getNode(n)).sort(compare).map((n:NodeRef)=>n.number);
             this._draft._data.nodes.allNodes[node.number].children.forEach((n:NodeRef)=>{this._draft._changeLog.push(n.number)})
             return this;
         }
@@ -693,14 +701,14 @@ export class ImmutableTree implements Tree  {
             return(produce(this,draft=>{
                 const c = draft.getNode(child.number) as Node;
                 const p = draft.getNode(parent.number) as Node;
-                p.children.push(c);
+                p.children.push(c.number);
                 c.parent=parent.number
-                draft._updateNodesToRoot(child.number);
+                draft._updateNodesToRoot(child);
             }))
         }else{
             const c = this._draft.getNode(child.number) as Node;
             const p = this._draft.getNode(parent.number) as Node;
-            p.children.push(c);
+            p.children.push(c.number);
             c.parent=parent.number   
             this._draft._changeLog.push(c.number);
             return this;
@@ -720,12 +728,11 @@ export class ImmutableTree implements Tree  {
 
     // Helper functions
 
-    _updateNodesToRoot( x: number): void {
-        let n = this.getNode(x) as Node;
+    _updateNodesToRoot( node: NodeRef): void {
+        let n = node as Node;
         while( n.parent!==undefined){
-            const p = this.getParent(n) as Node;
-            const index = p.children.map(c=>c.number).indexOf(n.number);
-            p.children[index] = n;
+            const p = this.getParent(n) as Node; // important to use 'this' since its is a proxy here
+            p._id = Symbol()
             n=p;
         }
     }
@@ -882,8 +889,21 @@ export class ImmutableTree implements Tree  {
             return this;
         }
     }
+
     
 }
+
+function rotate(draft:ImmutableTree,n:NodeRef,recursive:boolean): void{
+    
+        const node = draft.getNode(n.number) as Node;
+        node.children = node.children.reverse();
+        if(recursive){
+            for(const child of node.children.map(n=>draft.getNode(n))){
+                rotate(draft,child,recursive)
+            }
+        }
+}
+
 /**
  * A private recursive function that rotates nodes to give an ordering provided
  * by a function.
@@ -898,7 +918,7 @@ function orderNodes(treeData: ImmutableTreeData, node: NodeRef, ordering: (a: No
     if (treeData.nodes.allNodes[node.number].children.length > 0) {
         // count the number of descendents for each child
         const counts = new Map();
-        for (const child of treeData.nodes.allNodes[node.number].children) {
+        for (const child of treeData.nodes.allNodes[node.number].children.map(n=>treeData.nodes.allNodes[n])) {
             const value = orderNodes(treeData, child, ordering);
             counts.set(child, value);
             count += value;
@@ -906,7 +926,7 @@ function orderNodes(treeData: ImmutableTreeData, node: NodeRef, ordering: (a: No
 
         // sort the children using the provided function
         treeData.nodes.allNodes[node.number].children = treeData.nodes.allNodes[node.number].children.sort( (a, b) => {
-            return ordering(a, counts.get(a), b, counts.get(b))
+            return ordering(treeData.nodes.allNodes[a], counts.get(a), treeData.nodes.allNodes[b], counts.get(b))
         });
 
     } else {
@@ -1034,7 +1054,7 @@ export function* tipIterator(tree: Tree, node: NodeRef): Generator<NodeRef> {
 //                     throw new Error("no sibling")
 //                 }
 //                 this.addChild(parent, sibling)
-//                 this.setLength(sibling, rootLength);
+//                 this.setBranchLength(sibling, rootLength);
 
 //             } else {
 //                 // swap the parent and parent's parent's length around
@@ -1043,8 +1063,8 @@ export function* tipIterator(tree: Tree, node: NodeRef): Generator<NodeRef> {
 //                 throw new Error("no nan!")
 //                 }
 //                 const nanLength = this.getLength(nan);
-//                 this.setLength(nan, oldLength);
-//                 this.setLength(parent, nanLength);
+//                 this.setBranchLength(nan, oldLength);
+//                 this.setBranchLength(parent, nanLength);
 
 //                 // add the new child
 //                 // parent._children.push(parent.parent);
@@ -1077,12 +1097,12 @@ export function* tipIterator(tree: Tree, node: NodeRef): Generator<NodeRef> {
 //             });
 
 //         const l = this.getLength(rootChild1) * proportion;
-//         this.setLength(rootChild2, l)
-//         this.setLength(rootChild1, this.getLength(rootChild1) - l)
+//         this.setBranchLength(rootChild2, l)
+//         this.setBranchLength(rootChild1, this.getLength(rootChild1) - l)
 
 //     } else {
 //         // the root is staying the same, just the position of the root changing
 //         const l = this.getLength(node) * (1.0 - proportion);
-//         this.setLength(node, l)
-//         this.setLength(this.getSibling(node)!, rootLength - l)
+//         this.setBranchLength(node, l)
+//         this.setBranchLength(this.getSibling(node)!, rootLength - l)
 //     }

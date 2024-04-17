@@ -94,7 +94,7 @@ export function parseNewick(tree:ImmutableTree,newick: string,options?:newickPar
         else {
             // not any specific token so may be a label, a length, or an external node name
             if (lengthNext) {
-                tree.setLength(currentNode!,parseFloat(token));
+                tree.setBranchLength(currentNode!,parseFloat(token));
                 lengthNext = false;
             } else if (labelNext) {
                 

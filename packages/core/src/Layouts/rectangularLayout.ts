@@ -37,8 +37,6 @@ export class RectangularLayout extends AbstractLayout {
                 const x = tree.getDivergence(node)! + adjustedRootLength;
                 const y = children.reduce((acc, child) => acc + child.y, 0) / children.length;
 
-
-
                 vertices.vertices[node.number] = {
                     hidden:false,
                     labelHidden:false,

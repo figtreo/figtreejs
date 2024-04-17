@@ -53,21 +53,21 @@ describe("Test tree parsing and normalized Tree",()=>{
 
         const newickString = `((((((virus1:0.1,virus2:0.12):0.08,(virus3:0.011,virus4:0.0087):0.15):0.03,virus5:0.21):0.2,(virus6:0.45,virus7:0.4):0.02):0.1,virus8:0.4):0.1,(virus9:0.04,virus10:0.03):0.6);`;
 
-        const tree = ImmutableTree.fromNewick(newickString,{parseAnnotations:false});
+        const tree = ImmutableTree.fromNewick(newickString,{parseAnnotations:false, labelName:"probability"});
         expect(tree.toNewick()).toEqual(newickString);
 
     }); 
 
     it('height', function() {
         const newickString = `((((((virus1:0.1,virus2:0.12):0.08,(virus3:0.011,virus4:0.0087):0.15):0.03,virus5:0.21):0.2,(virus6:0.45,virus7:0.4):0.02):0.1,virus8:0.4):0.1,(virus9:0.04,virus10:0.03):0.6);`;
-        const tree = ImmutableTree.fromNewick(newickString);
+        const tree = ImmutableTree.fromNewick(newickString,{labelName:"prob"});
 
         const virus1Node = tree.getNodeByName("virus1")!
         expect(tree.getNodeHeight(virus1Node)).toBeCloseTo(0.06,1e-6)
   })
   it('divergence', function() {
     const newickString = `((((((virus1:0.1,virus2:0.12):0.08,(virus3:0.011,virus4:0.0087):0.15):0.03,virus5:0.21):0.2,(virus6:0.45,virus7:0.4):0.02):0.1,virus8:0.4):0.1,(virus9:0.04,virus10:0.03):0.6);`;
-    const tree = ImmutableTree.fromNewick(newickString);
+    const tree = ImmutableTree.fromNewick(newickString,{labelName:"prob"});
 
     const virus6Node = tree.getNodeByName("virus6")!
     expect(tree.getDivergence(virus6Node)).toBeCloseTo(0.67,1e-6)
@@ -75,7 +75,6 @@ describe("Test tree parsing and normalized Tree",()=>{
  it('general_parse', function() {
     const tree = ImmutableTree.fromNewick("(a:1,b:4)#l;"); 
     const root = tree.getRoot()!;
-    console.log(root);
     const label = tree.getLabel(root)
     expect(label).toEqual( "l");
 
@@ -101,7 +100,7 @@ describe("Test tree parsing and normalized Tree",()=>{
 })
 
 it('scientific notation', function() {
-    const tree = ImmutableTree.fromNewick("(a:1E1,b:2e-5)l;");
+    const tree = ImmutableTree.fromNewick("(a:1E1,b:2e-5);");
     const root = tree.getRoot()!;
     const bl = [];
     const count = tree.getChildCount(root);

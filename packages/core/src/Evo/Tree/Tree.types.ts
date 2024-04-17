@@ -26,7 +26,7 @@ export interface Annotation {
 
 
 export interface newickParsingOptions  {
-     labelName?: string,  parseAnnotations: boolean , tipNameMap?: Map<string, string>
+     labelName?: string,  parseAnnotations?: boolean , tipNameMap?: Map<string, string>
 }
 export interface Tree  {
     
@@ -57,9 +57,7 @@ export interface Tree  {
     getDivergence(node: NodeRef): number |undefined
     getNodeHeight(node:NodeRef):number |undefined
     getBranchLength(node: NodeRef): number |undefined
-    getChildCount(node: NodeRef): number 
     
-    getChild(node: NodeRef, index: number): NodeRef 
     getParent(node: NodeRef): NodeRef | undefined
     getChildren(node: NodeRef): NodeRef[] 
 
@@ -74,7 +72,7 @@ export interface Tree  {
 
     setHeight(node:NodeRef,height:number):void
     setDivergence(node:NodeRef,divergence:number):void
-    setLength(node:NodeRef,length:number):void
+    setBranchLength(node:NodeRef,length:number):void
     setName(node:NodeRef,name:string):void
     setLabel(node:NodeRef,label:string):void
     annotateNode(node:NodeRef,annotation:{name:string,value:any,type:AnnotationType}):void
