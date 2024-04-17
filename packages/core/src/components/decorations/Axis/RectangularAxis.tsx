@@ -115,7 +115,8 @@ function makeAxisScale(props: any, { width, height, domain,padding }: AxisScaleC
         offsetBy = defaultAxisProps.offsetBy,
         scaleBy = defaultAxisProps.scaleBy, 
         scale= defaultAxisProps.scale,
-        direction = defaultAxisProps.direction } = props;
+        direction = defaultAxisProps.direction 
+       } = props;
         
 //todo unify this code with the scale making code in layout
     const axisScale = (scale === undefined ? (direction === "horizontal" ? scaleLinear().domain([0,domain[1]]).range([padding, width-padding]) : scaleLinear().domain([0,domain[1]]).range([padding, height-padding])) : scale).copy();

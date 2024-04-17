@@ -3,6 +3,7 @@ import { scaleLinear } from "d3-scale";
 import { AbstractLayout, ArbitraryVertices, defaultInternalLayoutOptions, internalLayoutOptions,Vertices} from "./LayoutInterface";
 import { RectangularLayout, fishEyeTransform } from "./rectangularLayout";
 import { Tree } from "..";
+import { ImmutableTree } from "../Evo/Tree/normalizedTree/ImmutableTree";
 
 
 export class PolarLayout extends AbstractLayout {
@@ -12,25 +13,25 @@ export class PolarLayout extends AbstractLayout {
         const rectangularVerticies = RectangularLayout.getArbitraryLayout(tree,safeOpts);
         //remove root path if needed
         if(!safeOpts.showRoot){
-            rectangularVerticies.byId[tree.root!.id].pathPoints = [];
+            rectangularVerticies.vertices[tree.getRoot()!.number].pathPoints = [];
         }
         return rectangularVerticies;
     }
 
-    static finalizeArbitraryLayout(arbitraryLayout: ArbitraryVertices, treeStats:{tipCount:number,rootId:string}, opts: internalLayoutOptions):Vertices {
+    static finalizeArbitraryLayout(arbitraryLayout: ArbitraryVertices, treeStats:{tipCount:number,rootId:number}, opts: internalLayoutOptions):Vertices {
         const safeOpts = { ...defaultInternalLayoutOptions, ...opts };
         const {minRadius,padding,invert} = safeOpts;
         // Do fisheye thing assuming we are using the rectangular layout
 
         const y_og = scaleLinear()
             .domain(arbitraryLayout.extent.y)
-            .range([padding, opts.height - padding]);
+            .range([padding, safeOpts.height - padding]);
         const pointOfInterestY = y_og.invert(safeOpts.pointOfInterest.y)
 
         const transform = fishEyeTransform(safeOpts.fishEye,pointOfInterestY); //fish eye does  wierd things here when too big 10 m
             
 
-        const maxRadius = min([opts.width,opts.height])!/2;
+        const maxRadius = min([safeOpts.width,safeOpts.height])!/2;
 
         const angleRange = normalizeAngle(safeOpts.angleRange);
         // These scales adjust the x and y values from arbitrary layout to polar coordinates with r within the svg and theta between 0 and 2pi
@@ -49,8 +50,7 @@ export class PolarLayout extends AbstractLayout {
        
         const polarVertices = [];
         
-        for(const id of arbitraryLayout.allIds){
-            const vertex = arbitraryLayout.byId[id];
+        for(const vertex of arbitraryLayout.vertices){
             const r = rScale(vertex.x);
             const theta =  thetaScale(transform(vertex.y));
             const [x,y] = polarToCartesian(r,theta);// convert back to cartesian for x and y (will need to be scaled for svg coordinates)
@@ -77,7 +77,7 @@ export class PolarLayout extends AbstractLayout {
             //add step point so we can scale it later 
             pathPoints.push({x:stepPointX,y:stepPointY,r:stepPointR,theta:stepPointTheta});
         }
-            polarVertices.push({id:vertex.id,r,theta,x,y,pathPoints,level,nodeLabel:vertex.nodeLabel})
+            polarVertices.push({number:vertex.number,r,theta,x,y,pathPoints,level,nodeLabel:vertex.nodeLabel})
         };
         
 
@@ -118,17 +118,17 @@ export class PolarLayout extends AbstractLayout {
 
         const ratio = (xDomain[1]-xDomain[0])/(yDomain[1]-yDomain[0]);
 
-        const scaler = Math.min(opts.width,opts.height*ratio)
+        const scaler = Math.min(safeOpts.width,safeOpts.height*ratio)
         const width = scaler;
         const height = scaler/ratio;
 
-        const xShift = (opts.width-width)/2;
-        const yShift = (opts.height-height)/2;
+        const xShift = (safeOpts.width-width)/2;
+        const yShift = (safeOpts.height-height)/2;
 
 
 
-        const yRange = [yShift,opts.height-yShift];
-        const xRange = [xShift,opts.width-xShift];
+        const yRange = [yShift,safeOpts.height-yShift];
+        const xRange = [xShift,safeOpts.width-xShift];
         
 
 
@@ -138,8 +138,7 @@ export class PolarLayout extends AbstractLayout {
     
         
         const scaledVertices: Vertices = {
-            byId: {},
-            allIds: [],
+            vertices:[],
             type: "Polar",
         };
         for (const vertex of polarVertices) {
@@ -178,10 +177,10 @@ export class PolarLayout extends AbstractLayout {
 
             const scalePathPoints = vertex.pathPoints.map(d=>({...d,x:x(d.x),y:y(d.y)}));
 
-            scaledVertices.byId[vertex.id] = {
-                hidden:arbitraryLayout.byId[vertex.id].hidden,
-                labelHidden:arbitraryLayout.byId[vertex.id].labelHidden,
-                id: vertex.id,
+            scaledVertices.vertices[vertex.number] = {
+                hidden:arbitraryLayout.vertices[vertex.number].hidden,
+                labelHidden:arbitraryLayout.vertices[vertex.number].labelHidden,
+                number: vertex.number,
                 x: xpos,
                 y: ypos,
                 level: vertex.level,
@@ -195,7 +194,7 @@ export class PolarLayout extends AbstractLayout {
                     rotation:textSafeDegrees(vertex.theta),
                     alignedPos:{x:x(alignedX)+dx,y:y(alignedY)+dy}
                 },
-                branch:scalePathPoints.length>0 && ! arbitraryLayout.byId[vertex.id].hidden?{
+                branch:scalePathPoints.length>0 && ! arbitraryLayout.vertices[vertex.number].hidden?{
                     d: this.pathGenerator(scalePathPoints, opts), //transformes x and y
                     label:{
                         x: vertex.pathPoints.length>0? mean([xpos,x(vertex.pathPoints[2].x)])!+branchDx:xpos, // no path on root sometimes put this at the position  // want mean of step and final point
@@ -206,17 +205,16 @@ export class PolarLayout extends AbstractLayout {
                     }}:undefined,
                 
             };
-            if(vertex.id===treeStats.rootId){
+            if(vertex.number===treeStats.rootId){
                 if(scalePathPoints.length>0){
                     scaledVertices.origin = {x:scalePathPoints[1].x,y:scalePathPoints[1].y}
             }else{
                 scaledVertices.origin = {x:xpos,y:ypos}
             }
         }
-            scaledVertices.allIds.push(vertex.id);
 
         }      
-        const furthestNode = scaledVertices.byId[scaledVertices.allIds[maxIndex(scaledVertices.allIds.map(id=>scaledVertices.byId[id].r))]];
+        const furthestNode = scaledVertices.vertices[maxIndex(scaledVertices.vertices.map(sv=>sv.r))];
         scaledVertices.axisLength= distance (scaledVertices.origin!, furthestNode)
 
         scaledVertices.theta = [normlizedStart,normlizedEnd];

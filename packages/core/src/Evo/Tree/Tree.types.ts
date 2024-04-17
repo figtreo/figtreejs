@@ -14,6 +14,12 @@ export enum AnnotationType {
 
 }
 
+export interface Annotation {
+    id: string;
+    type: AnnotationType;
+    domain: [number, number] | string[] | number[] | [boolean, boolean] | undefined;
+}
+
 // For small standalone apps we want a OO model with a figure subscribing to the tree
 // for observable we want a functional, immutable approach. 
 // Does the functional immutable approach pretend to be a class
@@ -24,7 +30,7 @@ export interface newickParsingOptions  {
 }
 export interface Tree  {
     
-    getRoot():NodeRef|null
+    getRoot():NodeRef|undefined
     getNodeCount():number
     getInternalNodeCount():number
     getExternalNodeCount():number
@@ -34,12 +40,8 @@ export interface Tree  {
 
     getNodeTaxon(node:NodeRef):string
     hasNodeHeights():boolean
-    getNodeHeight(node:NodeRef):number
     hasBranchLength(node:NodeRef):number
-    getBranchLength(node:NodeRef):number
 
-    getNodeAttribute(node:NodeRef,name:string):Object
-    getNodeAttributeNames(node:NodeRef):Iterator<string>
 
     isExternal(node:NodeRef):boolean
     isRoot(node:NodeRef):boolean
@@ -47,36 +49,34 @@ export interface Tree  {
     getChildCount(node:NodeRef):number
     getChild(node:NodeRef,i:number):NodeRef
 
-    getNodeByName(name: string): NodeRef|null
-    getNodeByLabel(label: string): NodeRef|null
+    getNodeByName(name: string): NodeRef|undefined
+    getNodeByLabel(label: string): NodeRef|undefined
     getLevel(node:NodeRef):number;
    
     // getNode(id: string): NodeRef 
-    getDivergence(node: NodeRef): number 
-    getHeight(node:NodeRef):number 
-
-    getLength(node: NodeRef): number 
+    getDivergence(node: NodeRef): number |undefined
+    getNodeHeight(node:NodeRef):number |undefined
+    getBranchLength(node: NodeRef): number |undefined
     getChildCount(node: NodeRef): number 
     
     getChild(node: NodeRef, index: number): NodeRef 
-    getParent(node: NodeRef): NodeRef | null
+    getParent(node: NodeRef): NodeRef | undefined
     getChildren(node: NodeRef): NodeRef[] 
 
     getAnnotation(node: NodeRef, name: string): any | null 
-    getLabel(node: NodeRef): string | null 
+    getLabel(node: NodeRef): string | undefined 
 
     getAnnotationType(name: string): string |undefined
 
-    addNode(): NodeRef
+    addNode(n?:number): Tree
     removeChild(parent:NodeRef,child:NodeRef):void
-    getNextSibling(node:NodeRef):NodeRef|null
+    getNextSibling(node:NodeRef):NodeRef|undefined
 
     setHeight(node:NodeRef,height:number):void
     setDivergence(node:NodeRef,divergence:number):void
     setLength(node:NodeRef,length:number):void
     setName(node:NodeRef,name:string):void
     setLabel(node:NodeRef,label:string):void
-    annotateNodeUnknownType(node:NodeRef,annotations:{[key:string]:any}):void //types annotations as they come from Beast
     annotateNode(node:NodeRef,annotation:{name:string,value:any,type:AnnotationType}):void
 
     addChild(parent: NodeRef, child: NodeRef): void

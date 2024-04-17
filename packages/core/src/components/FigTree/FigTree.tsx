@@ -3,10 +3,10 @@ import { LayoutContext, TreeContext,AnimationContext,ScaleContext, scaleContextT
 import { NodeRef } from '../../Evo/Tree/Tree.types';
 import { RectangularLayout } from '../../Layouts/rectangularLayout';
 import { FigtreeProps } from './Figtree.types';
-import { NormalizedTree } from '../../Evo/Tree/normalizedTree';
-import {Branches, PolarLayout, defaultInternalLayoutOptions} from '../../index';
 import { extent, max } from 'd3-array';
-import { miniSerializeError } from '@reduxjs/toolkit';
+import { defaultInternalLayoutOptions } from '../../Layouts';
+import { ImmutableTree } from '../../Evo/Tree';
+import { Branches } from '../Baubles';
 
 
 
@@ -23,9 +23,10 @@ export const defaultOpts:FigtreeProps = {
     height:100,
     layout:RectangularLayout,
     margins:{top:10,right:10,bottom:10,left:10},
-    tree:NormalizedTree.fromNewick("((A:1,B:1):1,C:2);"),
+    tree:ImmutableTree.fromNewick("((A:1,B:1):1,C:2);"),
     children:[<Branches filter={(n)=>true} attrs={{fill:'none',stroke:"black",strokeWidth:1}} interactions={{}}/>],
     animated:false,
+    padding:20,
     tipSpace:(n:NodeRef,n2:NodeRef)=>1,
    
 }
@@ -39,6 +40,8 @@ function FigTree(props:FigtreeProps){
         tree = defaultOpts.tree,
         layout = defaultOpts.layout,
         animated=defaultOpts.animated,
+        padding = defaultOpts.padding!,
+
     } = props;
     let {vertices} = props;
     
@@ -52,7 +55,6 @@ function FigTree(props:FigtreeProps){
         fishEye = defaultOpts.opts.fishEye,
         cartoonedNodes: nodeDecorations = defaultOpts.opts.cartoonedNodes,
         pollard = defaultOpts.opts.pollard,
-        padding = defaultOpts.opts.padding,
         tipSpace = defaultOpts.opts.tipSpace,
         minRadius = defaultOpts.opts.minRadius,
         invert = defaultOpts.opts.invert
@@ -67,10 +69,10 @@ function FigTree(props:FigtreeProps){
     }
         
     const children = props.children?props.children:defaultOpts.children;
-    const maxD = tree.getHeight(tree.root!)+rootLength!;
+    const maxD = tree.getNodeHeight(tree.getRoot()!)!+rootLength!;
     // console.log(maxD)
     // console.log(maxD*pollard!)
-    const scaleContext:scaleContextType = {width:w,height:h,domain:[pollard!*maxD,maxD],padding,maxR : max(vertices.allIds,d=>vertices!.byId[d].r),theta :extent(vertices.allIds,d=>vertices!.byId[d].theta!) as [number,number]};
+    const scaleContext:scaleContextType = {width:w,height:h,domain:[pollard!*maxD,maxD],padding,maxR : max(vertices.vertices,d=>d.r),theta :extent(vertices.vertices,d=>d.theta!) as [number,number]};
 
     //context gives us a nicer api where the data don't need to be passed to the subcomponents of the figure and the subcomponents can be added by user with JSX
     //todo check clip path is working where expected.

@@ -19,13 +19,15 @@ export interface layoutOptions{
     spread?: number
     pointOfInterest?: { x: number; y: number; },
     fishEye?: number;
-    cartoonedNodes:{[key:string]:CartoonData}
+    cartoonedNodes?: Map<NodeRef,CartoonData>
     pollard?:number,
-    padding:number,
     invert?:boolean,
-    minRadius?:number
+    minRadius?:number,
+    padding?:number
 
 }
+
+
 
 export interface FigtreeProps {
     width:number,
@@ -36,6 +38,7 @@ export interface FigtreeProps {
     children:React.ReactNode,
     opts:layoutOptions
     animated:boolean,
+    padding?:number,
     tipSpace?: (tip1: NodeRef, tip2: NodeRef) => number,
     vertices?:Vertices
 }

@@ -20,14 +20,13 @@ export default function Branches(props:BranchProps) {
     const shapeProps = useAttributeMappers({attrs,interactions}); //TODO not obvious why in an object
     return (
         <g className={"branch-layer"}>
-            {vertices.allIds.filter(a=>!vertices.byId[a].hidden).sort((a,b)=>(vertices.byId[a].x-vertices.byId[b].x)).filter((vid:string)=>vertices.byId[vid].branch).reduce<React.ReactNode[]>( (all, id) => {
-                if (filter(tree.getNode(id))) {//filter needs to us tree api
+            {vertices.vertices.filter(a=>!a.hidden).sort((a,b)=>(a.x-a.x)).filter((v)=>v.branch).reduce<React.ReactNode[]>( (all, v) => {
+                if (filter(tree.getNode(v.number))) {//filter needs to us tree api
                 
-                    const v = vertices.byId[id];
                     const d = animated?normalizePath(v.branch!.d):v.branch!.d;
                     // const d = normalizePath(v.branch!.d);
 
-                    const element = <Branch key={id} {...rest}   {...shapeProps(v)} d={d} id={id}/> 
+                    const element = <Branch key={v.number} {...rest}   {...shapeProps(v)} d={d} id={v.number}/> 
                     // const element = <ShapeComponent key={v.id} {...rest}  {...shapeProps(v)}   vertex={v}  x={scales.x(v.x)} y={scales.y(v.y)}/> 
                         all.push(element)
                 }

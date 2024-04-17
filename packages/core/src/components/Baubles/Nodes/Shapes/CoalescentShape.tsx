@@ -4,7 +4,7 @@ import {extent, max, min} from "d3-array";
 import { useLayout,useTree} from "../../../../hooks";
 import { Vertex } from "../../../../Layouts/LayoutInterface";
 import withLinearGradient from "../../../HOC/WithLinearGradient";
-import { NodeRef } from "../../../../Evo/Tree";
+import { NodeRef, tipIterator } from "../../../../Evo/Tree";
 import { NodeProps } from "..";
 
 type genericAttr = {[key:string]:any};
@@ -19,8 +19,8 @@ export default function CoalescentShape (props:CoalescentProps){
 
     const {vertex,attrs,interactions,startWidth,FadeEndpoint,curveSlope} =props;
 
-    const targets:Vertex[] = [...tree.getTips(tree.getNode(vertex.id))].map( (decedent:NodeRef) => vertices.byId[decedent.id])
-        .concat(tree.getChildren(tree.getNode(vertex.id)).map( (decedent:NodeRef) => vertices.byId[decedent.id]));
+    const targets:Vertex[] = [...tipIterator(tree,tree.getNode(vertex.number))].map( (decedent:NodeRef) => vertices.vertices[decedent.number])
+        .concat(tree.getChildren(tree.getNode(vertex.number)).map( (decedent:NodeRef) => vertices.vertices[decedent.number]));
 
 
     const slope =calcSlope(targets,curveSlope);

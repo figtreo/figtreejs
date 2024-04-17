@@ -54,15 +54,15 @@ export function getTextFunction(tree: Tree, settings: any) {
     let textFunction;
     switch (settings.display) {
         case "Name":
-            textFunction = (node: NodeRef) => tree.getName(node);
+            textFunction = (node: NodeRef) => tree.getNodeTaxon(node);
             break;
         case "Node Heights":
-            textFunction = (node: NodeRef) => numericalFormatter(tree.getHeight(node));
+            textFunction = (node: NodeRef) => tree.getNodeHeight(node)? numericalFormatter(tree.getNodeHeight(node)!):'';
             break;
         case "Branch lengths":
             textFunction = (node: NodeRef) => {
-                if (tree.getLength(node)) {
-                   return  numericalFormatter(tree.getLength(node));
+                if (tree.getBranchLength(node)) {
+                   return  numericalFormatter(tree.getBranchLength(node)!);
                 }else{
                     return '';
                 }

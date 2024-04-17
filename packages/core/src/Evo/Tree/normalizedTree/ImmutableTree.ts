@@ -1,8 +1,7 @@
 
 import { extent } from "d3-array";
-import { AnnotationType, NodeRef, newickParsingOptions } from "../Tree.types"
+import { Annotation, AnnotationType, NodeRef, Tree, newickParsingOptions } from "../Tree.types"
 import { parseNewick, parseNexus, processAnnotationValue } from "../parsing";
-import { Annotation } from "./normalizedTree.types"
 import {createDraft, finishDraft, immerable, produce} from "immer"
 
 interface Node extends NodeRef{
@@ -34,7 +33,7 @@ interface ImmutableTreeData {
 }
 
 
-export class ImmutableTree   {
+export class ImmutableTree implements Tree  {
     [immerable]=true;
 
     _data: ImmutableTreeData;
@@ -144,7 +143,7 @@ export class ImmutableTree   {
     }
 
     hasNodeHeights(): boolean {
-        throw new Error("Method not implemented.");
+        throw new Error("hasNodeHeights not implemented.");
     }
     getNodeHeight(node: NodeRef): number|undefined {
         if(this._draft){
@@ -156,7 +155,7 @@ export class ImmutableTree   {
         return height;
     }
     hasBranchLength(node: NodeRef): number {
-        throw new Error("Method not implemented.");
+        throw new Error("hasBranchLength not implemented.");
     }
     getBranchLength(node: NodeRef): number|undefined {
         if(this._draft){
@@ -172,7 +171,7 @@ export class ImmutableTree   {
     return (this.getChildCount(node) > 0 ? `(${this.getChildren(node).map(child => this._toString(child)).join(",")})${this.getLabel(node) ? "#" + this.getLabel(node) : ""}` : `${this.getNodeTaxon(node) ? this.getNodeTaxon(node) : ""}`) + (this.getBranchLength(node) ? `:${this.getBranchLength(node)}` : "");
 }
 
-toNewick(node?: NodeRef, options?: { includeAnnotations: boolean; }): string {
+    toNewick(node?: NodeRef, options?: { includeAnnotations: boolean; }): string {
     if (options === undefined) {
         options = { includeAnnotations: false }
     }
@@ -187,7 +186,7 @@ toNewick(node?: NodeRef, options?: { includeAnnotations: boolean; }): string {
 }
 
     getMRCA(nodes: NodeRef[]): NodeRef {
-        throw new Error("Method not implemented.");
+        throw new Error("getMRCA not implemented.");
     }
 
 
@@ -329,11 +328,14 @@ toNewick(node?: NodeRef, options?: { includeAnnotations: boolean; }): string {
         return finishDraft(this._draft)
     }
 
-    addNode(n:number=1): ImmutableTree {
+    addNode(n?:number): ImmutableTree {
+        if(n===undefined){
+            n=1;
+        }
         if(!this._draft){
         return produce(this,draft=>{
-            const number = draft._data.nodes.allNodes.length-1
-            for (let i = 0; i < n; i++) {
+            const number = draft._data.nodes.allNodes.length
+            for (let i = 0; i < n!; i++) {
                 draft._data.nodes.allNodes.push({
                     number:number+i,
                     children: [],
@@ -510,18 +512,157 @@ toNewick(node?: NodeRef, options?: { includeAnnotations: boolean; }): string {
 
     // Topology changes 
 
-    orderNodesByDensity(increasing: boolean): void {
-        throw new Error("Method not implemented.");
+    orderNodesByDensity(increasing: boolean, node?: NodeRef): ImmutableTree {
+        if(!this._draft){
+            return produce(this,draft=>{
+                if (node === undefined) {
+                    if (draft._data.rootNode === undefined) {
+                        throw new Error("No root node and no node provided to density ordering")
+                    }
+                    node = draft._data.nodes.allNodes[draft._data.rootNode];
+                }
+                const factor = increasing ? 1 : -1;
+                 orderNodes(draft.data, node, (nodeA, countA, nodeB, countB) => {
+                    return (countA - countB) * factor;
+                });
+                
+            })
+        }else{
+            if (node === undefined) {
+                if (this._draft._data.rootNode === undefined) {
+                    throw new Error("No root node and no node provided to density ordering")
+                }
+                node = this._draft._data.nodes.allNodes[this._draft._data.rootNode];
+            }
+            const factor = increasing ? 1 : -1;
+            orderNodes(this._draft._data, node!, (nodeA, countA, nodeB, countB) => {
+                return (countA - countB) * factor;
+            });
+
+            return this;
+        }
     }
 
     rotate(node: NodeRef, recursive: boolean): void {
-        throw new Error("Method not implemented.");
+        throw new Error("rotate not implemented.");
     }
-    reroot(node: NodeRef, proportion: number): void {
-        throw new Error("Method not implemented.");
+    //TODO infinte loop
+    reroot(node: NodeRef, proportion: number): ImmutableTree {
+        if(!this._draft){
+            return produce(this,draft=>{
+                
+                if (node.number === draft._data.rootNode) {
+                    // the node is the root - nothing to do
+                    return draft ;
+                }
+                if(draft._data.rootNode===undefined){
+                    throw new Error("No root node in this tree to begin with")
+                }
+                const rootNode = draft.getRoot() as Node;
+                if(rootNode.children.length!==2){
+                    console.warn("Root node has more than two children and we are rerooting! There be dragons!")
+                }
+                const rootLength = rootNode.children.reduce((acc,child) => child.length! + acc,0)
+
+                const treeNode = draft.getNode(node.number) as Node; 
+                if (draft.getParent(node) !== rootNode) {
+                    // the node is not a child of the existing root so the root is actually changing
+
+                    let node0 = treeNode;
+                    let parent = draft.getParent(treeNode)! as Node;
+
+                    if(!parent){
+                        throw new Error("no parent")
+                    }
+
+                    // was the node the first child in the parent's children?
+                    const nodeAtTop = draft.getChild(parent, 0).number === node.number;
+
+                    const rootChild1 = treeNode;
+                    const rootChild2 = parent;
+
+                    let oldLength = draft.getBranchLength(parent)!;
+
+                    while (draft.getParent(parent) !== undefined) {
+
+                        // remove the node that will becoming the parent from the children 
+
+                        parent.children = parent.children.filter(n=>n.number!==node0.number)
+
+                        if (draft.getParent(parent)!.number === rootNode.number) {
+                            const sibling = draft.getNextSibling(parent)! as Node;
+                            
+                            if(!sibling){
+                                console.log(parent.number)
+                                console.log(draft.getChildren(draft.getParent(parent)!).map(d=>d.number))
+                                throw new Error("no sibling in rerooting")
+                            }
+                            parent.children.push(sibling);
+                            sibling.parent = parent.number;
+                            sibling.length=rootLength;
+
+                        } else {
+                            // swap the parent and parent's parent's length around
+                            const nan = draft.getParent(parent)! as Node; // your mammy's mammy
+                            if(!nan){
+                            throw new Error("no nan!")
+                            }
+                            const nanLength = draft.getBranchLength(nan)!;
+                            nan.length = oldLength;
+                            oldLength = nanLength;
+
+                            //
+
+                            // add the new child don't update the parent yet - need for loop.
+                            // nan.parent = parent.number;
+                            parent.children.push(nan);
+                        }
+
+                        node0=parent;
+                        
+                        parent = draft.getParent(parent)! as Node;
+                    }
+
+                    // Reuse the root node as root...
+
+                    // Set the order of the children to be the same as for the original parent of the node.
+                    // This makes for a more visually consistent rerooting graphically.
+                    rootChild1.parent = rootNode.number;
+                    rootChild2.parent = rootNode.number;
+                    rootNode.children = [rootChild1, rootChild2]
+
+                    if (!nodeAtTop) {
+                        rootNode.children = rootNode.children.reverse();
+                    }
+                    // connect all the children to their parents which we put off above
+                    this.getInternalNodes()
+                        .forEach((node) => {
+                            for (const child of draft.getChildren(node) as Node[]) {
+                                child.parent  = node.number;
+                            }
+                        });
+
+                    const l = draft.getBranchLength(rootChild1)! * proportion;
+                    rootChild2.length = l;
+                    rootChild1.length! -= l;
+
+                } else {
+                    // the root is staying the same, just the position of the root changing
+                    const l = draft.getBranchLength(node)! * (1.0 - proportion);
+                    treeNode.length = l;
+                    const sibling = draft.getNextSibling(node)! as Node;
+                    sibling.length = rootLength - l;
+                    draft._updateNodesToRoot(node.number);
+                }
+
+        });
+        }else{
+            throw new Error("reroot not implemented in draft")
+        }
+
+
     }
     removeChild(parent: NodeRef, child: NodeRef): ImmutableTree {
-
         if(!this._draft){
             return(produce(this,draft=>{
                 draft._data.nodes.allNodes[parent.number].children = draft._data.nodes.allNodes[parent.number].children.filter(n => n.number !== child.number)
@@ -532,16 +673,16 @@ toNewick(node?: NodeRef, options?: { includeAnnotations: boolean; }): string {
             this._draft._data.nodes.allNodes[child.number].parent=-1;
             return this;
         }
-
     }
     sortChildren(node: NodeRef, compare: (a: NodeRef, b: NodeRef) => number): ImmutableTree {
         if(!this._draft){
             return(produce(this,draft=>{
                 draft._data.nodes.allNodes[node.number].children = this._data.nodes.allNodes[node.number].children.sort(compare);
-
+                draft._updateNodesToRoot(node.number);
             }))
         }else{
             this._draft._data.nodes.allNodes[node.number].children = this._draft._data.nodes.allNodes[node.number].children.sort(compare);
+            this._draft._data.nodes.allNodes[node.number].children.forEach((n:NodeRef)=>{this._draft._changeLog.push(n.number)})
             return this;
         }
     }
@@ -613,6 +754,8 @@ toNewick(node?: NodeRef, options?: { includeAnnotations: boolean; }): string {
         
         throw new Error(`Annotation ${input.name} has type ${suggestedType} but previously seen as ${annotationType}`)
     }
+
+
     _getUpdatedDomain( annotation: { id: string; value: any;type:AnnotationType }): [number, number] | string[] | number[]|[boolean,boolean]  {
         const domain = this.getAnnotationDomain(annotation.id);
         // const type = this.getAnnotationType(annotation.id);
@@ -741,7 +884,36 @@ toNewick(node?: NodeRef, options?: { includeAnnotations: boolean; }): string {
     }
     
 }
+/**
+ * A private recursive function that rotates nodes to give an ordering provided
+ * by a function.
+ * @param node
+ * @param ordering function that takes (a,number of tips form a, b, number of tips from b) and sorts a and be by the output.
+ * @param callback an optional callback that is called each rotate
+ * @returns {number}
+ */
+//I don't think this needs to update to the root because it is a preorder traversal or is it postorder anyway it's a traversal that probably works
+function orderNodes(treeData: ImmutableTreeData, node: NodeRef, ordering: (a: NodeRef, numberOfATips: number, b: NodeRef, numberOfBTips: number) => number):number {
+    let count = 0;
+    if (treeData.nodes.allNodes[node.number].children.length > 0) {
+        // count the number of descendents for each child
+        const counts = new Map();
+        for (const child of treeData.nodes.allNodes[node.number].children) {
+            const value = orderNodes(treeData, child, ordering);
+            counts.set(child, value);
+            count += value;
+        }
 
+        // sort the children using the provided function
+        treeData.nodes.allNodes[node.number].children = treeData.nodes.allNodes[node.number].children.sort( (a, b) => {
+            return ordering(a, counts.get(a), b, counts.get(b))
+        });
+
+    } else {
+        count = 1
+    }
+    return count;
+}
 
 function annotateNodeHelper(tree:ImmutableTree,node:NodeRef,annotation:{name:string,value:any,type?:AnnotationType}):void{
     const suggestedType  = annotation.type? annotation: processAnnotationValue(annotation.value);
@@ -751,7 +923,7 @@ function annotateNodeHelper(tree:ImmutableTree,node:NodeRef,annotation:{name:str
     tree._data.annotations[annotation.name]={id:annotation.name,domain,type:checkedType}
 }
 
-export function* preOrderIterator(tree:ImmutableTree,node:NodeRef|undefined = undefined):Generator<NodeRef> {
+export function* preOrderIterator(tree:Tree,node:NodeRef|undefined = undefined):Generator<NodeRef> {
 
 
     const traverse = function* (node: NodeRef): Generator<NodeRef> {
@@ -778,7 +950,7 @@ export function* preOrderIterator(tree:ImmutableTree,node:NodeRef|undefined = un
 
 }
 
-export function* postOrderIterator(tree:ImmutableTree,node:NodeRef|undefined = undefined):Generator<NodeRef> {
+export function* postOrderIterator(tree:Tree,node:NodeRef|undefined = undefined):Generator<NodeRef> {
 
 
     const traverse = function* (node: NodeRef): Generator<NodeRef> {
@@ -802,3 +974,115 @@ export function* postOrderIterator(tree:ImmutableTree,node:NodeRef|undefined = u
     yield* traverse(node!);
 
 }
+
+export function* tipIterator(tree: Tree, node: NodeRef): Generator<NodeRef> {
+    const traverse = function* (node: NodeRef): Generator<NodeRef> {
+        const childCount = tree.getChildCount(node);;
+        if (childCount > 0) {
+            for (let i = 0; i < childCount; i++) {
+                const child = tree.getChild(node, i);
+                yield* traverse(child);
+            }
+        } else {
+            yield node;
+        }
+    };
+    yield* traverse(node);
+}
+
+// reroot(node: NodeRef, proportion: number): void {
+//     if (node === this.root) {
+//         // the node is the root - nothing to do
+//         return;
+//     }
+//     if(!this.root){
+//         throw new Error("No root node")
+//     }
+
+//     const rootLength = this.getLength(this.getChild(this.root!, 0)) + this.getLength(this.getChild(this.root!, 1))
+
+//     if (this.getParent(node) !== this.root) {
+//         // the node is not a child of the existing root so the root is actually changing
+
+//         let node0 = node;
+//         let parent = this.getParent(node)!;
+
+//         if(!parent){
+//             throw new Error("no parent")
+//         }
+//         let lineage: NodeRef[] = [];
+
+//         // was the node the first child in the parent's children?
+//         const nodeAtTop = this.getChild(parent, 0) === node;
+
+//         const rootChild1 = node;
+//         const rootChild2 = parent;
+
+//         let oldLength = this.getLength(parent);
+
+//         while (this.getParent(parent) !== null) {
+
+//             // remove the node that will becoming the parent from the children
+//             this.removeChild(parent, node0);
+
+//             if (this.getParent(parent) === this.root) {
+//                 const sibling = this.getSibling(parent)!;
+                
+//                 if(!sibling){
+//                     console.log(parent.id)
+//                     console.log(this.getChildren(this.getParent(parent)!).map(d=>d.id))
+//                     throw new Error("no sibling")
+//                 }
+//                 this.addChild(parent, sibling)
+//                 this.setLength(sibling, rootLength);
+
+//             } else {
+//                 // swap the parent and parent's parent's length around
+//                 const nan = this.getParent(parent)!;
+//                 if(!nan){
+//                 throw new Error("no nan!")
+//                 }
+//                 const nanLength = this.getLength(nan);
+//                 this.setLength(nan, oldLength);
+//                 this.setLength(parent, nanLength);
+
+//                 // add the new child
+//                 // parent._children.push(parent.parent);
+//                 this.addChild(parent, nan);
+//             }
+
+//             lineage = [parent, ...lineage];
+
+//             node0 = parent;
+//             parent = this.getParent(parent)!;
+//         }
+
+//         // Reuse the root node as root...
+
+//         // Set the order of the children to be the same as for the original parent of the node.
+//         // This makes for a more visually consistent rerooting graphically.
+//         this.removeAllChildren(this.root!)
+//         this.addChild(this.root!, rootChild1)
+//         this.addChild(this.root!, rootChild2)
+//         if (nodeAtTop) {
+//             this.rotate(this.root!, false)
+//         }
+//         // connect all the children to their parents
+//         this.internalNodes
+//             .forEach((node) => {
+//                 for (const child of this.getChildren(node)) {
+//                     this.setParent(child, node)
+//                 }
+
+//             });
+
+//         const l = this.getLength(rootChild1) * proportion;
+//         this.setLength(rootChild2, l)
+//         this.setLength(rootChild1, this.getLength(rootChild1) - l)
+
+//     } else {
+//         // the root is staying the same, just the position of the root changing
+//         const l = this.getLength(node) * (1.0 - proportion);
+//         this.setLength(node, l)
+//         this.setLength(this.getSibling(node)!, rootLength - l)
+//     }

@@ -138,11 +138,11 @@
 
     <script type="module">
 
-        import { NormalizedTree, ft} from "./dist/esm/index.js"
+        import { ImmutableTree, ft} from "./dist/esm/index.js"
         const newickString =
             '((((((virus1:0.1,virus2:0.12)0.95:0.08,(virus3:0.011,virus4:0.0087)1.0:0.15)0.65:0.03,virus5:0.21)1.0:0.2,(virus6:0.45,virus7:0.4)0.51:0.02)1.0:0.1,virus8:0.4)1.0:0.1,(virus9:0.04,virus10:0.03)1.0:0.6);';
 
-        const tree = NormalizedTree.fromNewick(newickString, { labelName: 'probability' });
+        let tree = ImmutableTree.fromNewick(newickString, { labelName: 'probability' });
         const virus1Node = tree.getNodeByName("virus1");
         const probability = tree.getAnnotation(tree.getParent(virus1Node), "probability");    // tree.annotateNode(tree.root,{root:true})
         const treeSVG = document.getElementById('phylogram_1a');
@@ -150,6 +150,8 @@
         const { width, height } = treeSVG.getBoundingClientRect();
         const margins = { top: 70, right: 70, bottom: 70, left: 70 }
 
+
+        console.log(ft.rectangularLayout.layout(tree));
         let figureOptions =
         {
             svg: treeSVG,
@@ -161,10 +163,10 @@
             baubles: [
             ft.Axis({bars:{}}),
             ft.Branches({ attrs: { stroke: "black", strokeWidth: 2, cursor:"pointer"}, interactions:{onClick:()=>console.log("clicked"), onMouseOver:()=>console.log("enter"), onMouseLeave:()=>console.log("leave")}}),
-            ft.NodeLabels({filter:(n)=>tree.isExternal(n), attrs: { fill: "black", fontSize: 12, fontWeight: 300 }, text: (n) => tree.getName(n),aligned:true  }),
+            ft.NodeLabels({filter:(n)=>tree.isExternal(n), attrs: { fill: "black", fontSize: 12, fontWeight: 300 }, text: (n) => tree.getNodeTaxon(n),aligned:true  }),
             ft.CircleNodes({ attrs: { r: 7, fill: (n) => tree.getChildCount(n) > "#005C68" } }),
             ft.CircleNodes({ attrs: { r: 5, fill: (n) => tree.getChildCount(n) > 0 ? tree.isRoot(n) ? "#e31e58" : "#29c5ef" : "#22b680" , cursor:"pointer"},interactions:{onClick:(n)=>console.log(n)}}),
-            ft.BranchLabels({ attrs: { fill: "black", fontSize: 8, fontWeight: 300 }, text: (n) => tree.getLength(n) }),
+            ft.BranchLabels({ attrs: { fill: "black", fontSize: 8, fontWeight: 300 }, text: (n) => tree.getBranchLength(n) }),
             ],
             opts: {} // todo remove the need for this empty options
 
@@ -202,12 +204,15 @@
         // ft.addToolTip('.internal-node.root .node-shape ', "The root node - represents the most recent<br>common ancestor of the whole tree");
 
         document.getElementById('sort_up_button').onclick = function () {
-            tree.orderNodesByDensity(false);
-            ft.figtree(figureOptions)
+            tree  = tree.orderNodesByDensity(false);
+            // console.log(tree.toNewick())
+            ft.figtree({...figureOptions,tree})
         };
         document.getElementById('sort_down_button').onclick = function () {
-            tree.orderNodesByDensity(true);
-            ft.figtree(figureOptions)
+            tree  = tree.orderNodesByDensity(true);
+            // console.log(tree.toNewick())
+
+            ft.figtree({...figureOptions,tree})
         };
 
         document.getElementById('rectangular_button').onclick = function () {

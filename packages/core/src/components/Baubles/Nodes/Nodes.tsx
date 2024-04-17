@@ -20,10 +20,9 @@ export function NodesHOC(ShapeComponent:React.ComponentType<any>) {
         
         return (
             <g className={"node-layer"}>
-                {vertices.allIds.filter(a=>!vertices.byId[a].hidden).sort((a,b)=>(vertices.byId[a].x-vertices.byId[b].x)).reduce<React.ReactNode[]>( (all, id) => {
-                    if (filter(tree.getNode(id))) {//filter needs to us tree api
-                        const v = vertices.byId[id];
-                        const element = <ShapeComponent key={id} {...rest} theta={v.theta} x={v.x} y={v.y} {...shapeProps(v)} id={id}/> 
+                {vertices.vertices.filter(v=>!v.hidden).sort((a,b)=>(a.x-b.x)).reduce<React.ReactNode[]>( (all, v) => {
+                    if (filter(tree.getNode(v.number))) {//filter needs to us tree api
+                        const element = <ShapeComponent key={v.number} {...rest} theta={v.theta} x={v.x} y={v.y} {...shapeProps(v)} id={v.number}/> 
                         // const element = <ShapeComponent key={v.id} {...rest}  {...shapeProps(v)}   vertex={v}  x={scales.x(v.x)} y={scales.y(v.y)}/> 
                             all.push(element)
                     }
@@ -44,14 +43,13 @@ function NodeLabels(props:any){
     const shapeProps = useAttributeMappers(props);
     return (
         <g className={"node-label-layer"}>
-            {vertices.allIds.filter(a=>!vertices.byId[a].hidden).sort((a,b)=>(vertices.byId[a].x-vertices.byId[b].x)).reduce<React.ReactNode[]>( (all, id) => {
-                if (filter(tree.getNode(id))) {//filter needs to us tree api
-                    const v = vertices.byId[id];
+                {vertices.vertices.filter(v=>!v.hidden).sort((a,b)=>(a.x-b.x)).reduce<React.ReactNode[]>( (all, v) => {
+                if (filter(tree.getNode(v.number))) {//filter needs to us tree api
                     const {alignmentBaseline,textAnchor,rotation} = v.nodeLabel;
                     const {x,y} = aligned &&  v.nodeLabel.alignedPos ? v.nodeLabel.alignedPos:v.nodeLabel;
                     const d =        
                     aligned &&  v.nodeLabel.alignedPos ?`M${v.x} ${v.y}L${x} ${y}`:`M${v.x} ${v.y}L${v.x} ${v.y}`
-                    const element = <Label key={id} {...rest}  node={tree.getNode(v.id)}  d={d} alignmentBaseline={alignmentBaseline} textAnchor={textAnchor} rotation={rotation}   x={x} y={y} {...shapeProps(v)}/> 
+                    const element = <Label key={v.number} {...rest}  node={tree.getNode(v.number)}  d={d} alignmentBaseline={alignmentBaseline} textAnchor={textAnchor} rotation={rotation}   x={x} y={y} {...shapeProps(v)}/> 
                     // const element = <ShapeComponent key={v.id} {...rest}  {...shapeProps(v)}   vertex={v}  x={scales.x(v.x)} y={scales.y(v.y)}/> 
                         all.push(element)
                 }

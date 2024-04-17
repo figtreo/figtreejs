@@ -39,7 +39,7 @@ export const defaultAxisProps: AxisProps = {
     ticks: { number: 5, format: format(".1f"), padding: 20, style: {}, length: 6 },
     direction: "horizontal",
     scale: undefined,
-    strokeWidth:1
+    strokeWidth:1,
 }
 
 export const defaultAxisBarsProps={
