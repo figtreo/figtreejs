@@ -141,6 +141,9 @@ export class Tree implements TreeInterface {
     getAnnotationType(name: string): string | undefined {
             throw new Error("Method not implemented.");
         }
+    getAnnotationKeys(): string[] {
+            return Object.keys(this.annotations);
+    }
     addNode(n?: number | undefined): TreeInterface {
             throw new Error("Method not implemented.");
         }
@@ -440,7 +443,7 @@ export class Tree implements TreeInterface {
             this.internalNodes
                 .forEach((node) => {
                     node.children.forEach((child) => {
-                        child._parent = node.id;
+                        child._parent = node.number;
                     })
                 });
 
@@ -530,7 +533,7 @@ export class Tree implements TreeInterface {
         const path1 = [...Tree.pathToRoot(node1)];
         const path2 = [...Tree.pathToRoot(node2)];
       
-        const sharedAncestors = path1.filter(n1=>path2.map(n2=>n2.id).indexOf(n1.id)>-1);
+        const sharedAncestors = path1.filter(n1=>path2.map(n2=>n2.number).indexOf(n1.number)>-1);
         return sharedAncestors[maxIndex(sharedAncestors, node => node.level)];
       
     }
@@ -672,7 +675,7 @@ export class Tree implements TreeInterface {
         if(node.children){
         node.children.forEach(child=>{
             child._length! += node.length!;
-            child._parent = parent.id;
+            child._parent = parent.number;
             parent.addChild(child);
             })
         }else{
@@ -680,7 +683,7 @@ export class Tree implements TreeInterface {
                 this._tipMap.delete(node.name);
             }
         }
-        this._nodeMap.delete(node.id);
+        this._nodeMap.delete(node.number);
         // if(parent._children.length===1){
         //     console.log("removing parent")
         //     this.removeNode(node.parent); // if it's a tip then remove it's parent which is now degree two;
@@ -692,7 +695,7 @@ export class Tree implements TreeInterface {
 
     newNode(nodeData={},external=false){
         const node = new Node({...nodeData, tree:this});
-        this._nodeMap.set(node.id, node);
+        this._nodeMap.set(node.number, node);
         if(external){
             if(node.name===null){
                 throw new Error("tips need names");
@@ -1239,7 +1242,7 @@ function orderNodes(node:Node, ordering:(nodeA_id:number,countA:number,nodeB_id:
         const counts = new Map();
         for (const child of node.children) {
             const value = orderNodes(child, ordering, callback);
-            counts.set(child.id, value);
+            counts.set(child.number, value);
             count += value;
         }
         // sort the children using the provided function
@@ -1421,7 +1424,7 @@ class Node implements NodeRef{
     _tree: Tree;
     _label: string|undefined;
     _clade: number[]|undefined;
-    number:number;
+    _number:number;
 
     static DEFAULT_NODE(){
         return{
@@ -1452,7 +1455,7 @@ class Node implements NodeRef{
         this._tree = data.tree;
         this._label = data.label;
         this._clade=data._clade;
-        this.number=data.tree.getNodeCount();
+        this._number=data.tree.getNodeCount();
 
     }
     get level() {
@@ -1537,7 +1540,7 @@ class Node implements NodeRef{
     }
     removeChild(n:NodeRef){
         const node = n as Node;
-        this._children= this._children!.filter(childId => childId !== node.id);
+        this._children= this._children!.filter(childId => childId !== node.number);
         node._parent=undefined;
     }
 
@@ -1546,8 +1549,8 @@ class Node implements NodeRef{
         if(this._children===null){
             this._children=[];
         }
-        this._children.push(node.id);
-        node._parent = this.id;
+        this._children.push(node.number);
+        node._parent = this.number;
     }
 
     get parent():Node | undefined{
@@ -1556,8 +1559,8 @@ class Node implements NodeRef{
     }
 
 
-    get id(){
-        return this.number;
+    get number(){
+        return this._number;
     }
     get tree(){
         return this._tree;

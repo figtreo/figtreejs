@@ -1,5 +1,5 @@
 import { format } from "d3-format";
-import { NodeRef, decimalToDate, Tree, AnnotationType } from "@figtreejs/core";
+import { NodeRef, decimalToDate, Tree, AnnotationType, TreeInterface } from "@figtreejs/core";
 import { timeFormat } from "d3-time-format";
 
 // a function that converts a number to roman numerals
@@ -49,7 +49,7 @@ export function getNumericalFormatter(formatString: string, sigDigs: number): (n
     }
 }
 
-export function getTextFunction(tree: Tree, settings: any) {
+export function getTextFunction(tree: TreeInterface, settings: any) {
     let numericalFormatter = getNumericalFormatter(settings.format, settings.sigDigs);
     let textFunction;
     switch (settings.display) {

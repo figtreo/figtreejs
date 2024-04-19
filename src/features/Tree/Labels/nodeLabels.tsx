@@ -1,7 +1,6 @@
 import { format } from "d3-format";
 import { getColorScale, useAppSelector } from "../../../app/hooks";
 import { selectLabelState } from "../../Settings/panels/label/labelSlice";
-import { Node } from "../treeSlice";
 import { Nodes,NodeRef} from "@figtreejs/core";
 import { selectTree } from '../../../app/hooks';
 import { getTextFunction } from "./labelUtils";
@@ -27,7 +26,7 @@ export function NodeLabels(props:{ attrs?:{[key:string]:any} }) {
       }
     }
 
-    const filter = (n: Node) => tree.getChildCount(n) > 0;
+    const filter = (n: NodeRef) => tree.getChildCount(n) > 0;
 
 
     if (settings.activated) {

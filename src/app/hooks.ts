@@ -1,7 +1,5 @@
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux"
 import type { RootState, AppDispatch } from "./store"
-import { TreeduxList, treeSelectorFactory } from "@figtreejs/core"
-import { store } from './store'
 import { createSelector } from "@reduxjs/toolkit"
 import { getScale } from "../features/Settings/panels/colorScales/colourSlice"
 
@@ -11,9 +9,9 @@ export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector
 //todo update this selector so we cache the tree instance if the tree data is not changed.
 
 
-// const treeSelector = (state: RootState) => state.treeStatus.present.tree
+export const selectTree = (state: RootState) => state.tree.present.tree
 
-export const selectTree = treeSelectorFactory(store, (state: any) => state.treeStatus.present.tree);
+// export const selectTree = treeSelectorFactory(store, (state: any) => state.treeStatus.present.tree);
 
 // export const seletTree = createSelector(
 //   [treeSelector],

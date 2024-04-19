@@ -1,4 +1,5 @@
 
+
 export interface NodeRef{
     number:number
 }
@@ -63,7 +64,7 @@ export interface TreeInterface  {
 
     getAnnotation(node: NodeRef, name: string): any | null 
     getLabel(node: NodeRef): string | undefined 
-
+    getAnnotationKeys(): string[]
     getAnnotationType(name: string): string |undefined
 
     addNode(n?:number): TreeInterface
@@ -90,6 +91,7 @@ export interface TreeInterface  {
     getAnnotationDomain(name:string):[number,number]|[boolean,boolean]|string[]|number[]|undefined;
     isExternal(node:NodeRef):boolean
     isInternal(node:NodeRef):boolean
+
 
 }
 

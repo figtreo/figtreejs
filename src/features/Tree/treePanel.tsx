@@ -27,7 +27,7 @@ export function TreePanel(){
                 const reader = new FileReader();
 		        reader.onload = function(e) {
                     tree.addFromString(e.target!.result as string);
-                    for(const annotation of tree.getAnnotations()){
+                    for(const annotation of tree.getAnnotationKeys()){
                       const data = tree.getAnnotationData(annotation)
                       const type = tree.getAnnotationType(annotation);
                       if(type===AnnotationType.DISCRETE||type===AnnotationType.CONTINUOUS){
@@ -45,7 +45,7 @@ export function TreePanel(){
             const reader = new FileReader();
             reader.onload = function(e) {
                 tree.addFromString(e.target!.result as string);
-                for(const annotation of tree.getAnnotations()){
+                for(const annotation of tree.getAnnotationKeys()){
                   const data = tree.getAnnotationData(annotation)
                   const type = tree.getAnnotationType(annotation);
                   if(type===AnnotationType.DISCRETE||type===AnnotationType.CONTINUOUS){

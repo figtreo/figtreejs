@@ -92,8 +92,19 @@ export class ImmutableTree implements TreeInterface  {
 
     }
 
+    getAnnotationKeys(): string[] {
+        if(this._draft){
+            return this._draft.getAnnotationKeys();
+        }
+        return Object.keys(this._data.annotations)
+    }
 
-
+    getAnnotationSummary(annotation:string):Annotation{
+        if(this._draft){
+            return this._draft.getAnnotationSummary(annotation);
+        }
+       return this._data.annotations[annotation] 
+    }
     getRoot(): NodeRef|undefined {
         if(this._draft){
             return this._draft.getRoot();

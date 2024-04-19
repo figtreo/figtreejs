@@ -10,7 +10,7 @@ import { TipLabels } from './Labels/tipLabel';
 import { NodeLabels } from './Labels/nodeLabels';
 import { BranchLabels } from './Labels/branchLabels';
 
-import { FigTree,Tanglegram,  Branches, RectangularLayout, PolarLayout, RadialLayout, NodeRef, Highlight, CartoonData, AnnotationType } from '@figtreejs/core'
+import { FigTree,Tanglegram,  Branches, RectangularLayout, PolarLayout, RadialLayout, NodeRef, Highlight, CartoonData, AnnotationType, postOrderIterator, tipIterator, ImmutableTree } from '@figtreejs/core'
 import { useAreaSelection } from '../../app/area-selection';
 import { select } from "d3-selection"
 import { selectSelectionMode, selectSelectionRoot, setSelectionRoot } from '../Header/headerSlice';
@@ -23,6 +23,7 @@ import { Legends } from './ColorLegend';
 import { selectTitle } from '../Settings/panels/title/titleSlice';
 import { saveSvg } from '../../app/utils';
 import { selectTanglegram } from '../Settings/panels/tanglegram/tangleSlice';
+import { setTree } from './treeSlice';
 
 const margins = { top: 80, bottom: 80, left: 50, right: 100 };
 //todo make zoom and expansion based on number of tips
@@ -147,9 +148,9 @@ export function Tree({ panelRef }: any) {
     if (brushedNodeIds.length === 0) {
       dispatch(setSelectionRoot(undefined))
     } else {
-      const nodes = brushedNodeIds.map(id => tree.getNode(id)).filter(n => n !== undefined);
+      const nodes = brushedNodeIds.map(id => tree.getNode(parseInt(id))).filter(n => n !== undefined);
       if (nodes.length === 1) {
-        dispatch(setSelectionRoot(nodes[0].id))
+        dispatch(setSelectionRoot(nodes[0].number))
         return;
       }
       if(nodes.length>0){
@@ -157,7 +158,7 @@ export function Tree({ panelRef }: any) {
       if (mrca === undefined) {
         throw new Error("Could not find mrca")
       }
-      dispatch(setSelectionRoot(mrca.id))
+      dispatch(setSelectionRoot(mrca.number))
     }
   }
   }
@@ -215,7 +216,7 @@ export function Tree({ panelRef }: any) {
   const { expansion, zoom, layout, rootAngle, rootLength, angleRange, showRoot, spread, curvature, fishEye, pointOfInterest, animate,pollard,minR,invert } = useAppSelector(selectLayout);
 
 
-  const cartoonedNodes:{[key:string]:CartoonData} ={};
+  const cartoonedNodes:Map<NodeRef,CartoonData>= new Map();
 
   //TODO mover to branch componet like tips
   const branchColorScale = useAppSelector( (state)=>getColorScale(state,branchSettings.colourBy));
@@ -239,13 +240,12 @@ export function Tree({ panelRef }: any) {
   const treeLayout = layout === "rectangular" ? RectangularLayout : layout === "circular" ? PolarLayout : RadialLayout;
   //
   const handlePaste = (event: any) => {
-    tree.addFromString(event.clipboardData.getData('text'),{parseAnnotations:true});
-    for(const annotation of tree.getAnnotations()){
-      const data = tree.getAnnotationData(annotation)
+    dispatch(setTree(ImmutableTree.fromString(event.clipboardData.getData('text'),{parseAnnotations:true})));
+    for(const annotation of tree.getAnnotationKeys()){
+      const data = tree.getAnnotationSummary(annotation)
       const type = tree.getAnnotationType(annotation);
       if(type===AnnotationType.DISCRETE||type===AnnotationType.CONTINUOUS){
         dispatch(addScaleFromAnnotation(data));
-
       }
   }
   }
@@ -376,29 +376,34 @@ useEffect(() => {
         selectedNodes.add(selectionRoot);
         break;
       case 'Taxa':
-        for (const node of tree.getTips(tree.getNode(selectionRoot))) {
-          selectedTaxa.add(node.id);
+        for (const node of tipIterator(tree,tree.getNode(selectionRoot))) {
+          selectedTaxa.add(node.number);
         }
         break;
       case 'Clade':
-        for (const node of tree.getPostorderNodes(tree.getNode(selectionRoot))) {
-          selectedNodes.add(node.id);
+        for (const node of postOrderIterator(tree,tree.getNode(selectionRoot))) {
+          selectedNodes.add(node.number);
         }
         break;
     }
   }
 
-  if (tree.getCurrentIndex() > -1) {
+  // if (tree.getCurrentIndex() > -1) {
+  if (tree.getNodeCount() > 0) {
 
-    for(const node of tree.getPostorderNodes()){
+    for(const node of postOrderIterator(tree)){
       const cartoon = tree.getAnnotation(node,CARTOON_ANNOTATION);
       if(cartoon){
-        cartoonedNodes[node.id]={
-                                  cartooned:(cartoon as boolean),
-                                  collapseFactor:(tree.getAnnotation(node,COLLAPSE_ANNOTATION) as number)
+        cartoonedNodes.set(node,
+          {
+            cartooned:(cartoon as boolean),
+            collapseFactor:(tree.getAnnotation(node,COLLAPSE_ANNOTATION) as number)
+          }
+        )
+        
           }
       }
-    }
+    
     
     const layoutOpts = {
       rootAngle, rootLength, angleRange, showRoot, spread, curvature, fishEye, pointOfInterest, cartoonedNodes,pollard,padding:50,minRadius:minR,invert
@@ -407,11 +412,11 @@ useEffect(() => {
     const figureElements =[            <AxisElement key={0} />,
     <Highlight key={1} attrs={{fill:(n:NodeRef)=> (tree.getAnnotation(n,HILIGHT_ANNOTATION)! as string), opacity:0.4}} filter={(n:NodeRef)=> tree.getAnnotation(n,HILIGHT_ANNOTATION)!==undefined}/>,            
     <Legends key={2} />,
-    <Branches key={3} attrs={{ fill:'none',strokeWidth: lineWidth + 4, stroke: "#959ABF", strokeLinecap: "round", strokeLinejoin: "round" }} filter={(n: NodeRef) => selectedNodes.has(n.id)} />, 
+    <Branches key={3} attrs={{ fill:'none',strokeWidth: lineWidth + 4, stroke: "#959ABF", strokeLinecap: "round", strokeLinejoin: "round" }} filter={(n: NodeRef) => selectedNodes.has(n.number)} />, 
     <Branches key={4} attrs={{fill:branchFiller, strokeWidth: lineWidth, stroke: branchColourur }} filter={(n: NodeRef) => true} />,
     <BranchLabels key={5}/>,
     <TipsBackground key={6}/>,
-    <TipLabels key={7} attrs={{ filter: (n: NodeRef) => selectedTaxa.has(n.id) ? 'url(#solid)' : null }} />,
+    <TipLabels key={7} attrs={{ filter: (n: NodeRef) => selectedTaxa.has(n.number) ? 'url(#solid)' : null }} />,
     <Tips key={8} />,
     <InternalNodes key={9}/>,
     <NodeLabels key={10} />]
@@ -435,7 +440,7 @@ useEffect(() => {
           {title.activated&&<text fontSize={title.fontSize} fill={title.color} fontWeight={title.fontWeight} x={margins.left+title.x} y={margins.top+title.y}>{title.text}</text>}
 
           {
-          tangle && tree.getTreeCount()>1? 
+          tangle && false? 
           null
           // <Tanglegram trees={[...tree.getTrees()]} layout={RectangularLayout} opts={layoutOpts} gap={20} totalWidth={width} totalHeight={height} margins={margins} animated={animate}>
           //   {figureElements}

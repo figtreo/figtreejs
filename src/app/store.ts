@@ -5,9 +5,11 @@ import headerReducer from '../features/Header/headerSlice';
 import colorScaleReducer from '../features/Settings/panels/colorScales/colourSlice'
 import undoable from 'redux-undo';
 
+
+
 export const store = configureStore({
   reducer: {
-    treeStatus: undoable(treeReducer,{limit:10}),
+    tree: undoable(treeReducer,{limit:10}),
     settings: settingReducer,
     header:headerReducer,
     colorScales:colorScaleReducer

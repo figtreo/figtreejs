@@ -9,9 +9,9 @@ type SelectionMode = "Node"|"Clade"|"Taxa"
 
 interface HeaderData{
     selectionMode:SelectionMode,
-    selectionRoot:string|undefined,
+    selectionRoot:number|undefined,
     nodeDecorations:{
-        [key:string]:NodeDecoration
+        [key:number]:NodeDecoration
     }
 }
 
@@ -27,7 +27,7 @@ export const HeaderSlice = createSlice({
     name:"header",
     initialState,
     reducers:{
-        setSelectionRoot:(state, action: PayloadAction<string|undefined>) => {
+        setSelectionRoot:(state, action: PayloadAction<number|undefined>) => {
                 state.selectionRoot = action.payload;
         },
         clearSelection:(state,action)=>{
@@ -36,12 +36,12 @@ export const HeaderSlice = createSlice({
         setSelectionMode:(state,action:PayloadAction<SelectionMode>)=>{
             state.selectionMode = action.payload;
         },
-        colourTaxa:(state,action:PayloadAction<{id:string,colour:string}[]>)=>{
+        colourTaxa:(state,action:PayloadAction<{number:number,colour:string}[]>)=>{
             for(const node of action.payload){
-                if(!state.nodeDecorations[node.id]){
-                    state.nodeDecorations[node.id]={} as NodeDecoration;
+                if(!state.nodeDecorations[node.number]){
+                    state.nodeDecorations[node.number]={} as NodeDecoration;
                 }
-                state.nodeDecorations[node.id].taxaCustomColor = node.colour
+                state.nodeDecorations[node.number].taxaCustomColor = node.colour
             }        }
     }
 
