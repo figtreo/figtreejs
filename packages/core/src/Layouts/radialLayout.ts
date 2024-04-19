@@ -26,7 +26,7 @@ import {  mean } from "d3-array";
 import { scaleLinear } from "d3-scale";
 import { AbstractLayout, ArbitraryVertex, ArbitraryVertices, defaultInternalLayoutOptions, internalLayoutOptions, Vertices } from "./LayoutInterface";
 import { textSafeDegrees } from "./polarLayout";
-import {  Tree } from "../Evo/Tree";
+import {  TreeInterface } from "../Evo/Tree";
 import {  preOrderIterator, tipIterator } from "../Evo/Tree/normalizedTree/ImmutableTree";
 
 type data = {
@@ -41,7 +41,7 @@ type data = {
 export class RadialLayout extends AbstractLayout {
 
 
-    static getArbitraryLayout(tree: Tree, option?:internalLayoutOptions): ArbitraryVertices {
+    static getArbitraryLayout(tree: TreeInterface, option?:internalLayoutOptions): ArbitraryVertices {
         const safeOpts = { ...defaultInternalLayoutOptions, ...option };
         const vertices: ArbitraryVertices = { vertices:[], extent: { x: [0, 0], y: [0, 0] } };
         let maxY = Number.NEGATIVE_INFINITY

@@ -1,5 +1,5 @@
 import { AbstractLayout } from "../../Layouts";
-import { NodeRef, Tree } from "../../Evo/Tree";
+import { NodeRef, TreeInterface } from "../../Evo/Tree";
 import { attrType } from "../Baubles";
 import { Margins, layoutOptions } from "../FigTree/Figtree.types";
 
@@ -9,7 +9,7 @@ export interface TanglegramProps {
     margins:Margins,
     gap:number|number[],
     layout:typeof AbstractLayout | typeof AbstractLayout[],
-    trees:Tree[],
+    trees:TreeInterface[],
     baubles:React.ReactNode[],
     opts:layoutOptions|layoutOptions[],
     animated:boolean,

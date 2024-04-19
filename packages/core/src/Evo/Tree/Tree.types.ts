@@ -28,13 +28,13 @@ export interface Annotation {
 export interface newickParsingOptions  {
      labelName?: string,  parseAnnotations?: boolean , tipNameMap?: Map<string, string>
 }
-export interface Tree  {
+export interface TreeInterface  {
     
     getRoot():NodeRef|undefined
     getNodeCount():number
     getInternalNodeCount():number
     getExternalNodeCount():number
-    getNode(i: number): NodeRef 
+    getNode(i: number|string): NodeRef 
     getInternalNodes():NodeRef[]
     getExternalNodes():NodeRef[]
 
@@ -66,7 +66,7 @@ export interface Tree  {
 
     getAnnotationType(name: string): string |undefined
 
-    addNode(n?:number): Tree
+    addNode(n?:number): TreeInterface
     removeChild(parent:NodeRef,child:NodeRef):void
     getNextSibling(node:NodeRef):NodeRef|undefined
 

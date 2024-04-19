@@ -1,5 +1,5 @@
 import { AbstractLayout, CartoonData, Vertices } from "../../Layouts/LayoutInterface";
-import { Tree,NodeRef } from "../../Evo/Tree/Tree.types";
+import { TreeInterface,NodeRef } from "../../Evo/Tree/Tree.types";
 
 export interface Margins{
     top:number,
@@ -33,7 +33,7 @@ export interface FigtreeProps {
     width:number,
     height:number,
     layout:typeof AbstractLayout,
-    tree:Tree,
+    tree:TreeInterface,
     margins:Margins,
     children:React.ReactNode,
     opts:layoutOptions

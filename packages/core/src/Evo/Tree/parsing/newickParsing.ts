@@ -1,4 +1,4 @@
-import { NodeRef, Tree, newickParsingOptions } from "../Tree.types";
+import { NodeRef, TreeInterface, newickParsingOptions } from "../Tree.types";
 import { ImmutableTree, postOrderIterator,  preOrderIterator } from "../normalizedTree/ImmutableTree";
 import { parseAnnotation } from "./AnnotationParser";
 

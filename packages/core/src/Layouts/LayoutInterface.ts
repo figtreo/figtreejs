@@ -2,7 +2,7 @@
 // calculating those layouts, but they should not create side effects. So each class here 
 // is should only use static methods. and store any state as static constants.
 
-import { NodeRef, Tree } from "../Evo/Tree"
+import { NodeRef, TreeInterface } from "../Evo/Tree"
 import { ImmutableTree } from "../Evo/Tree/normalizedTree/ImmutableTree"
 import { layoutOptions } from "../components/FigTree/Figtree.types"
 //TODO make tree
@@ -95,13 +95,13 @@ export const defaultInternalLayoutOptions = {
 
 
 export abstract class AbstractLayout {
-    static layout(tree: Tree, layoutOptions?: internalLayoutOptions): Vertices {
+    static layout(tree: TreeInterface, layoutOptions?: internalLayoutOptions): Vertices {
         const arbitraryLayout = this.getArbitraryLayout(tree, layoutOptions);
         const treeStats = { tipCount: tree.getExternalNodes().length,rootId:tree.getRoot()!.number } //todo cache this count
         return this.finalizeArbitraryLayout(arbitraryLayout, treeStats, layoutOptions);
     }
 
-    static getArbitraryLayout(tree: Tree, opts?: internalLayoutOptions): ArbitraryVertices {
+    static getArbitraryLayout(tree: TreeInterface, opts?: internalLayoutOptions): ArbitraryVertices {
         throw new Error("Method not implemented.")
     }
     static finalizeArbitraryLayout(arbitraryVertices: ArbitraryVertices, treeStats: { tipCount: number }, opts?: internalLayoutOptions): Vertices {

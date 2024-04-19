@@ -1,6 +1,6 @@
 
 import { extent } from "d3-array";
-import { Annotation, AnnotationType, NodeRef, Tree, newickParsingOptions } from "../Tree.types"
+import { Annotation, AnnotationType, NodeRef, TreeInterface, newickParsingOptions } from "../Tree.types"
 import { parseNewick, parseNexus, processAnnotationValue } from "../parsing";
 import {createDraft, finishDraft, immerable, produce} from "immer"
 import { symbol } from "d3-shape";
@@ -35,7 +35,7 @@ interface ImmutableTreeData {
 }
 
 
-export class ImmutableTree implements Tree  {
+export class ImmutableTree implements TreeInterface  {
     [immerable]=true;
 
     _data: ImmutableTreeData;
@@ -943,7 +943,7 @@ function annotateNodeHelper(tree:ImmutableTree,node:NodeRef,annotation:{name:str
     tree._data.annotations[annotation.name]={id:annotation.name,domain,type:checkedType}
 }
 
-export function* preOrderIterator(tree:Tree,node:NodeRef|undefined = undefined):Generator<NodeRef> {
+export function* preOrderIterator(tree:TreeInterface,node:NodeRef|undefined = undefined):Generator<NodeRef> {
 
 
     const traverse = function* (node: NodeRef): Generator<NodeRef> {
@@ -970,7 +970,7 @@ export function* preOrderIterator(tree:Tree,node:NodeRef|undefined = undefined):
 
 }
 
-export function* postOrderIterator(tree:Tree,node:NodeRef|undefined = undefined):Generator<NodeRef> {
+export function* postOrderIterator(tree:TreeInterface,node:NodeRef|undefined = undefined):Generator<NodeRef> {
 
 
     const traverse = function* (node: NodeRef): Generator<NodeRef> {
@@ -995,7 +995,7 @@ export function* postOrderIterator(tree:Tree,node:NodeRef|undefined = undefined)
 
 }
 
-export function* tipIterator(tree: Tree, node: NodeRef): Generator<NodeRef> {
+export function* tipIterator(tree: TreeInterface, node: NodeRef): Generator<NodeRef> {
     const traverse = function* (node: NodeRef): Generator<NodeRef> {
         const childCount = tree.getChildCount(node);;
         if (childCount > 0) {
