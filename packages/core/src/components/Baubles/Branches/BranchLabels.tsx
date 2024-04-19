@@ -21,7 +21,7 @@ export default function BranchLabels(props:any ) {
             {
             vertices.vertices.filter(v => v.branch).filter(v => !v.hidden && filter(tree.getNode(v.number))).map(v => {
                 const {alignmentBaseline,textAnchor,rotation,x,y} = v.branch!.label;
-                return (<Label key={v.number}   node={tree.getNode(v.number)} alignmentBaseline={alignmentBaseline} textAnchor={textAnchor} rotation={rotation}   x={x} y={y}  {...attrMapper(v)} {...rest}/>)
+                return (<Label key={v.number}   node={tree.getNode(v.number)} alignmentBaseline={alignmentBaseline} textAnchor={textAnchor} rotation={rotation}   x={x} y={y}  {...attrMapper(tree.getNode(v.number))} {...rest}/>)
             })
             }
         </g>

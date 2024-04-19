@@ -22,4 +22,4 @@ export const ft ={
 }
 
 //TODO mimic plot api have d3 return svg //how to handle animations?
-export {ImmutableTree} from "@figtreejs/core";
+export {ImmutableTree,Tree} from "@figtreejs/core";

@@ -133,11 +133,13 @@ export class RectangularLayout extends AbstractLayout {
 
 
     static finalizeArbitraryLayout(arbitraryLayout: ArbitraryVertices, treeStats: { tipCount: number }, opts: internalLayoutOptions): Vertices {
-
         const safeOpts = { ...defaultInternalLayoutOptions, ...opts };
         const padding = safeOpts.padding;
-
         const xRange = safeOpts.invert ? [padding, safeOpts.width - padding].reverse() : [padding, safeOpts.width - padding];
+        console.group("Finalize Arbitrary Layout")
+        console.log(arbitraryLayout)
+        console.log(xRange);
+        console.groupEnd();
         const x = scaleLinear()
             .domain(arbitraryLayout.extent.x)
             .range(xRange);

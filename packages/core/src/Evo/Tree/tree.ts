@@ -18,10 +18,11 @@ export const Type = {
  * The Tree class
  */
 export class Tree implements TreeInterface {
+    _maxDivergence: number=0;
 
     static DEFAULT_SETTINGS() {
         return {
-            lengthsKnown:true,
+            lengthsKnown:false,
             heightsKnown:false,
         }
     }
@@ -32,11 +33,11 @@ export class Tree implements TreeInterface {
      * @constructor
      * @param {object} rootNode - The root node of the tree as an object.
      */
-    heightsKnown:boolean;
+    divergenceKnown:boolean;
     lengthsKnown:boolean;
     annotations:{[key:string]:{type:any,values:any}};
     _tipMap:Map<string,Node>;
-    _nodeMap:Map<string,Node>;
+    _nodeMap:Map<number,Node>;;//Map<string,Node>;
     nodesUpdated:boolean;
     _shouldUpdate:boolean;
     _root:Node|undefined;
@@ -45,7 +46,7 @@ export class Tree implements TreeInterface {
 
         //TODO make private things private with symbols
 
-        this.heightsKnown = heightsKnown;
+        this.divergenceKnown = heightsKnown;
         this.lengthsKnown = !heightsKnown;
         // this._root = makeNode.call(this,{...rootNode,...{length:0,level:0}});
         // This converts all the json objects to Node instances
@@ -265,7 +266,7 @@ export class Tree implements TreeInterface {
      * @returns {object}
      */
     getNode(id:string|number) {
-        return this.nodeMap.get(id as string)!;
+        return this.nodeMap.get(id as number)!;
     }
 
     /**
@@ -348,9 +349,13 @@ export class Tree implements TreeInterface {
      * @param {object} node - The node of the tree to be written (defaults as the root).
      * @returns {string}
      */
+    _toString(node = this.root!):string {
+        return (node.children.length>0 ? `(${node.children.map(child => this._toString(child)).join(",")})${node.label ? node.label : ""}` : node.name) + (node.length ? `:${node.length}` : "");
+
+    }
     toNewick(node = this.root!):string {
-        return (node.children ? `(${node.children.map(child => this.toNewick(child)).join(",")})${node.label ? node.label : ""}` : node.name) + (node.length ? `:${node.length}` : "");
-    };
+        return this._toString(node) + ";";
+      };
 
     /**
      * Re-roots the tree at the midway point on the branch above the given node.
@@ -358,7 +363,8 @@ export class Tree implements TreeInterface {
      * @param {object} node - The node to be rooted on.
      * @param proportion - proportion along the branch to place the root (default 0.5)
      */
-    reroot(node:Node, proportion = 0.5) {
+    reroot(n:NodeRef, proportion = 0.5) {
+        const node = n as Node;
         if (node === this.root) {
             // the node is the root - nothing to do
             return;
@@ -449,7 +455,7 @@ export class Tree implements TreeInterface {
             this.getSiblings(node)![0]._length = rootLength - l;
         }
 
-        this.heightsKnown = false;
+        this.divergenceKnown = false;
         this.treeUpdateCallback();
     };
 
@@ -460,7 +466,8 @@ export class Tree implements TreeInterface {
      * @param node
      * @param recursive
      */
-    rotate(node:Node, recursive = false) {
+    rotate(n:NodeRef, recursive = false) {
+        const node = n as Node;
         if (node.children) {
             if (recursive) {
                 for (const child of node.children) {
@@ -502,12 +509,12 @@ export class Tree implements TreeInterface {
      *  Function signature: (nodeA, childCountNodeA, nodeB, childCountNodeB)
      * @returns {Tree} - the number of tips below this node
      */
-    order(ordering: (nodeA_id: string, countA: number, nodeB_id: string, countB: number) => number, node = this.root) {
+    order(ordering: (nodeA_id: number, countA: number, nodeB_id: number, countB: number) => number, node = this.root) {
         orderNodes.call(this, node!, ordering);
         this.treeUpdateCallback();
         return this;
     }
-    _order(ordering: (nodeA_id: string, countA: number, nodeB_id: string, countB: number) => number, node = this.root) {
+    _order(ordering: (nodeA_id: number, countA: number, nodeB_id: number, countB: number) => number, node = this.root) {
         orderNodes.call(this, node!, ordering);
         return this;
     }
@@ -586,28 +593,6 @@ export class Tree implements TreeInterface {
     // }
 
 
-    /**
-     * Gives the distance from the root to a given tip (external node).
-     * @param tip - the external node
-     * @returns {number}
-     */
-    rootToTipLength(tip:Node) {
-        let length = 0.0;
-        for (const node of Tree.pathToRoot(tip)) {
-            if (node.length) {
-                length += node.length;
-            }
-        }
-        return length;
-    }
-
-    /**
-     * Returns an array of root-to-tip distances for each tip in the tree.
-     * @returns {*}
-     */
-    rootToTipLengths() {
-        return this.externalNodes.map((tip) => this.rootToTipLength(tip));
-    }
 
     /**
      * Splits each branch in multiple segments inserting a new degree 2 nodes. If splitLocations is
@@ -666,7 +651,7 @@ export class Tree implements TreeInterface {
 
         node._length = oldLength-splitNode.length!;
         this.nodesUpdated=true;
-        this.heightsKnown=false;
+        this.divergenceKnown=false;
         return splitNode;
     }
 
@@ -695,7 +680,7 @@ export class Tree implements TreeInterface {
                 this._tipMap.delete(node.name);
             }
         }
-        this._nodeMap.delete(node._id);
+        this._nodeMap.delete(node.id);
         // if(parent._children.length===1){
         //     console.log("removing parent")
         //     this.removeNode(node.parent); // if it's a tip then remove it's parent which is now degree two;
@@ -1247,9 +1232,9 @@ export class Tree implements TreeInterface {
  * @param callback an optional callback that is called each rotate
  * @returns {number}
  */
-function orderNodes(node:Node, ordering:(nodeA_id:string,countA:number,nodeB_id:string,countB:number)=>number, callback:Function|null = null) {
+function orderNodes(node:Node, ordering:(nodeA_id:number,countA:number,nodeB_id:number,countB:number)=>number, callback:Function|null = null) {
     let count = 0;
-    if (node.children) {
+    if (node.children.length > 0) {
         // count the number of descendents for each child
         const counts = new Map();
         for (const child of node.children) {
@@ -1274,12 +1259,21 @@ function orderNodes(node:Node, ordering:(nodeA_id:string,countA:number,nodeB_id:
  * diverged tip from the root having height given by origin).
  */
 //TODO bug in node height when in observable
-function calculateHeights(tree:Tree) {
-
-    const maxRTT = max(tree.rootToTipLengths())!;
-    tree.nodeList.forEach((node) => node._height =  maxRTT - tree.rootToTipLength(node));
-    tree.heightsKnown = true;
-    tree.lengthsKnown=false;
+function calculateDivergence(tree:Tree) {
+    if(!tree.lengthsKnown) throw new Error("Bug! lengths must be known before divergence can be calculated");
+    tree._maxDivergence=0;
+    for(const node of tree.preorder()){
+        if(node.parent){
+            node._divergence = node.parent._divergence! + node.length!;
+            if(node._divergence>tree._maxDivergence){
+                tree._maxDivergence = node._divergence;
+            }
+        }else{
+            node._divergence = 0;
+        }
+    }
+    tree.divergenceKnown = true;
+    // tree.lengthsKnown=false;
     // this.treeUpdateCallback();
 }
 
@@ -1289,7 +1283,7 @@ function calculateHeights(tree:Tree) {
 function calculateLengths(tree:Tree){
     tree.nodeList.forEach((node)=> node._length =node.parent? node.parent.height- node.height:0);
     tree.lengthsKnown=true;
-    tree.heightsKnown=false;
+    // tree.divergenceKnown=false;
     // this.treeUpdateCallback();
 
 }
@@ -1416,16 +1410,18 @@ function reconstructInternalStates(name: string, parentStates: any[], acctran: b
 class Node implements NodeRef{
 
     _id: string;
-    _height: number|undefined;
+    _divergence: number|undefined;
     _length: number|undefined;
     _name: string|null;
     _annotations: {[key:string]:any};
-    _parent: string|undefined;
-    _children: string[];
+    _parent: number|undefined;
+    // _parent: string|undefined;
+    // _children: string[];
+    _children: number[];
     _tree: Tree;
     _label: string|undefined;
     _clade: number[]|undefined;
-    number:number=-1;
+    number:number;
 
     static DEFAULT_NODE(){
         return{
@@ -1447,7 +1443,7 @@ class Node implements NodeRef{
         //TODO like symbol here but need id's in figure
         // this._id = Symbol("node");
         this._id = ` node-${uuid()}`
-        this._height = data.height;
+        this._divergence = data.height;
         this._length = data.length;
         this._name = data.name;
         this._annotations= data.annotations;
@@ -1456,6 +1452,7 @@ class Node implements NodeRef{
         this._tree = data.tree;
         this._label = data.label;
         this._clade=data._clade;
+        this.number=data.tree.getNodeCount();
 
     }
     get level() {
@@ -1483,27 +1480,24 @@ class Node implements NodeRef{
         this._label = value;
     }
     get height() {
-        if(!this._tree.heightsKnown){
-            calculateHeights(this._tree);
+        if(!this._tree.divergenceKnown){
+            calculateDivergence(this._tree);
         }
-        return this._height!;
+        return this._tree._maxDivergence-this._divergence!;
     }
+//TODO replace recursion with a store of divergences
 
     get divergence():number{
-        if(this._tree.lengthsKnown){
-            if(this.parent){
-                return this.parent.divergence+this.length!
-            }else{
-                return 0
-            }
+        if(this._tree.divergenceKnown){
+            return this._divergence!;
         }else{
-            calculateLengths(this._tree);
+            calculateDivergence(this._tree);
             return this.divergence;
         }
     }
 
     set height(value) {
-        this._height = value;
+        this._divergence = this._tree._maxDivergence - value;
         this._tree.lengthsKnown=false;
         // this._tree.treeUpdateCallback();
     }
@@ -1519,6 +1513,7 @@ class Node implements NodeRef{
         if(!this._tree.lengthsKnown){
             calculateLengths(this._tree);
         }
+        this._tree.divergenceKnown=false;
         this._length = value;
         // this._tree.treeUpdateCallback();
     }
@@ -1552,7 +1547,7 @@ class Node implements NodeRef{
             this._children=[];
         }
         this._children.push(node.id);
-        node._parent = this._id;
+        node._parent = this.id;
     }
 
     get parent():Node | undefined{
@@ -1562,7 +1557,7 @@ class Node implements NodeRef{
 
 
     get id(){
-        return this._id;
+        return this.number;
     }
     get tree(){
         return this._tree;

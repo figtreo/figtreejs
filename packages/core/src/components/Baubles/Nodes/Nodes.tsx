@@ -22,7 +22,7 @@ export function NodesHOC(ShapeComponent:React.ComponentType<any>) {
             <g className={"node-layer"}>
                 {vertices.vertices.filter(v=>!v.hidden).sort((a,b)=>(a.x-b.x)).reduce<React.ReactNode[]>( (all, v) => {
                     if (filter(tree.getNode(v.number))) {//filter needs to us tree api
-                        const element = <ShapeComponent key={v.number} {...rest} theta={v.theta} x={v.x} y={v.y} {...shapeProps(v)} id={v.number}/> 
+                        const element = <ShapeComponent key={v.number} {...rest} theta={v.theta} x={v.x} y={v.y} {...shapeProps(tree.getNode(v.number))} id={v.number}/> 
                         // const element = <ShapeComponent key={v.id} {...rest}  {...shapeProps(v)}   vertex={v}  x={scales.x(v.x)} y={scales.y(v.y)}/> 
                             all.push(element)
                     }
