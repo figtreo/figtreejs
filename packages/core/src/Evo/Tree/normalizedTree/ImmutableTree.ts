@@ -1,9 +1,8 @@
 
 import { extent } from "d3-array";
-import { Annotation, AnnotationType, NodeRef, TreeInterface, newickParsingOptions } from "../Tree.types"
-import { parseNewick, parseNexus, processAnnotationValue } from "../parsing";
+import { Annotation, AnnotationType, NodeRef, Tree, newickParsingOptions } from "../Tree.types"
+import { parseNewick, parseNexus, processAnnotationValue } from "../Parsers";
 import {createDraft, finishDraft, immerable, produce} from "immer"
-import { symbol } from "d3-shape";
 
 interface Node extends NodeRef{
     number: number,
@@ -29,13 +28,14 @@ interface ImmutableTreeData {
             [label: string]: number
         },
     },
-    rootNode: number | undefined,
+    rootNode: number,
+    is_rooted:boolean
 
     annotations: {[annotation: string]: Annotation}
 }
 
 
-export class ImmutableTree implements TreeInterface  {
+export class ImmutableTree implements Tree  {
     [immerable]=true;
 
     _data: ImmutableTreeData;
@@ -45,12 +45,23 @@ export class ImmutableTree implements TreeInterface  {
         if (data === undefined) {
             data = {
                 nodes: {
-                    allNodes:[],
+                    allNodes:[{
+                        number:0,
+                        children: [],
+                        parent: undefined,
+                        label: '',
+                        length: undefined,
+                        divergence: undefined,
+                        height: undefined,
+                        name: undefined,
+                        level: undefined,
+                        annotations: {},
+                        _id: Symbol()}],
                     byName: {},
                     byLabel: {},
                 },
-                rootNode: undefined,
-
+                rootNode: 0,
+                is_rooted:true,
                 annotations: { },
             }
         }
@@ -81,6 +92,10 @@ export class ImmutableTree implements TreeInterface  {
 
 
     // ------------------ Getters ----------------------
+
+    isRooted(): boolean {
+        return this._data.is_rooted;
+    }
     getAnnotationType(name: string): AnnotationType|undefined {
         if(this._draft){
             return this._draft.getAnnotationType(name);
@@ -105,12 +120,11 @@ export class ImmutableTree implements TreeInterface  {
         }
        return this._data.annotations[annotation] 
     }
-    getRoot(): NodeRef|undefined {
+    getRoot(): NodeRef {
         if(this._draft){
             return this._draft.getRoot();
         }
-        if(this._data.rootNode!==undefined) return this._data.nodes.allNodes[this._data.rootNode];
-        return undefined
+        return this._data.nodes.allNodes[this._data.rootNode];
     }
     getNodeCount(): number {
         if(this._draft){
@@ -143,7 +157,7 @@ export class ImmutableTree implements TreeInterface  {
         }
         return this._data.nodes.allNodes.filter(n=>n.children.length==0)
     }
-    getNodeTaxon(node: NodeRef): string{
+    getTaxon(node: NodeRef): string{
         if(this._draft){
             return this._draft.getNodeTaxon(node)
         }
@@ -158,21 +172,21 @@ export class ImmutableTree implements TreeInterface  {
     hasNodeHeights(): boolean {
         throw new Error("hasNodeHeights not implemented.");
     }
-    getNodeHeight(node: NodeRef): number|undefined {
+    getHeight(node: NodeRef): number {
         if(this._draft){
             return this._draft.getNodeHeight(node);
         }
         const n = this.getNode(node.number) as Node;
         const height= (n as Node).height
 
-        return height;
+        return height!;
     }
     hasBranchLength(node: NodeRef): number {
         throw new Error("hasBranchLength not implemented.");
     }
-    getBranchLength(node: NodeRef): number|undefined {
+    getLength(node: NodeRef): number|undefined {
         if(this._draft){
-            return this._draft.getBranchLength(node);
+            return this._draft.getLength(node);
         }
         const n = this.getNode(node.number) as Node;
         const length= (node as Node).length
@@ -181,7 +195,7 @@ export class ImmutableTree implements TreeInterface  {
    }
 
    _toString(node: NodeRef): string {
-    return (this.getChildCount(node) > 0 ? `(${this.getChildren(node).map(child => this._toString(child)).join(",")})${this.getLabel(node) ? "#" + this.getLabel(node) : ""}` : `${this.getNodeTaxon(node) ? this.getNodeTaxon(node) : ""}`) + (this.getBranchLength(node) ? `:${this.getBranchLength(node)}` : "");
+    return (this.getChildCount(node) > 0 ? `(${this.getChildren(node).map(child => this._toString(child)).join(",")})${this.getLabel(node) ? "#" + this.getLabel(node) : ""}` : `${this.getTaxon(node) ? this.getTaxon(node) : ""}`) + (this.getLength(node) ? `:${this.getLength(node)}` : "");
 }
 
     toNewick(node?: NodeRef, options?: { includeAnnotations: boolean; }): string {
@@ -231,12 +245,6 @@ export class ImmutableTree implements TreeInterface  {
             return this._draft.getDivergence(node);
         }
         return this._data.nodes.allNodes[node.number].divergence!
-    }
-    getHeight(node: NodeRef): number {
-        if(this._draft){
-            return this._draft.getHeight(node);
-        }
-            return this._data.nodes.allNodes[node.number].height!
     }
 
     getChildCount(node: NodeRef): number {
@@ -307,7 +315,7 @@ export class ImmutableTree implements TreeInterface  {
         }
         return this._data.rootNode === node.number
     }
-    getNodeByName(name: string): NodeRef | undefined {
+    getNodeByTaxon(name: string): NodeRef | undefined {
         if(this._draft){
             return this._draft.getNodeByName(name);
         }
@@ -342,15 +350,17 @@ export class ImmutableTree implements TreeInterface  {
         return finishDraft(this._draft)
     }
 
-    addNode(n?:number): ImmutableTree {
+    addNodes(n?:number): [Tree,NodeRef[]] {
+        const newNodes:NodeRef[] =[]
         if(n===undefined){
             n=1;
         }
         if(!this._draft){
-        return produce(this,draft=>{
+
+        const tree =  produce(this,draft=>{
             const number = draft._data.nodes.allNodes.length
             for (let i = 0; i < n!; i++) {
-                draft._data.nodes.allNodes.push({
+                const newNode = {
                     number:number+i,
                     children: [],
                     parent: undefined,
@@ -362,32 +372,37 @@ export class ImmutableTree implements TreeInterface  {
                     level: undefined,
                     annotations: {},
                     _id: Symbol(),
-                })
+                }
+                newNodes.push(newNode);
+                draft._data.nodes.allNodes.push(newNode)
             }
         })
+        return [tree,newNodes];
     }else{
         const number = this._draft._data.nodes.allNodes.length
         for (let i = 0; i < n!; i++) {
-        this._draft._data.nodes.allNodes.push({
-            number:number+i,
-            children: [],
-            parent: undefined,
-            label: '',
-            length: undefined,
-            divergence: undefined,
-            height: undefined,
-            name: undefined,
-            level: undefined,
-            annotations: {},
-            _id: Symbol(),
-        })
+            const newNode = {
+                number:number+i,
+                children: [],
+                parent: undefined,
+                label: '',
+                length: undefined,
+                divergence: undefined,
+                height: undefined,
+                name: undefined,
+                level: undefined,
+                annotations: {},
+                _id: Symbol(),
+            }
+            newNodes.push(newNode);
+        this._draft._data.nodes.allNodes.push(newNode)
     }
-        return this;
+        return [this,newNodes];
     }
 }
 
 
-    setName(node: NodeRef, name: string): ImmutableTree {
+    setTaxon(node: NodeRef, name: string): ImmutableTree {
         if (this._data.nodes.byName[name] !== undefined) {
             throw new Error(`Duplicate node name ${name}`)
         }
@@ -431,11 +446,6 @@ export class ImmutableTree implements TreeInterface  {
         }
     }
    
-
-    get data() {
-        return this._data
-    }
-
 
     // ---------------- Setters ---------------------
 
@@ -494,7 +504,7 @@ export class ImmutableTree implements TreeInterface  {
     }
 
     
-    setBranchLength(node: NodeRef, length: number): ImmutableTree {
+    setLength(node: NodeRef, length: number): ImmutableTree {
         if(!this._draft){
         return produce(this,draft=>{
             const n = draft.getNode(node.number) as Node;
@@ -511,7 +521,9 @@ export class ImmutableTree implements TreeInterface  {
         }
     }
 
-    
+    treeSubscribeCallback(callback: (tree?: Tree | undefined, TreeEdits?: [] | undefined) => any): Tree {
+        throw new Error("Method not implemented.");
+    }
     
     // getAnnotationType(name: string): AnnotationType|undefined {
     //     if(this._data.annotations.allNodes[name]){
@@ -524,6 +536,21 @@ export class ImmutableTree implements TreeInterface  {
 
     // Topology changes 
 
+    root(n:NodeRef):ImmutableTree{
+        throw new Error("root not implemented in immutable tree");
+    }
+    unroot(n:NodeRef):ImmutableTree{
+        throw new Error("unroot not implemented in immutable tree");
+    }
+    deleteNode(n:NodeRef):ImmutableTree{
+        throw new Error("deleteNode not implemented in immutable tree");
+    }
+
+    deleteClade(n:NodeRef):ImmutableTree{
+        throw new Error("deleteClade not implemented in immutable tree");
+    }
+    
+
     orderNodesByDensity(increasing: boolean, node?: NodeRef): ImmutableTree {
         if(!this._draft){
             return produce(this,draft=>{
@@ -534,7 +561,7 @@ export class ImmutableTree implements TreeInterface  {
                     node = draft._data.nodes.allNodes[draft._data.rootNode];
                 }
                 const factor = increasing ? 1 : -1;
-                 orderNodes(draft.data, node, (nodeA, countA, nodeB, countB) => {
+                 orderNodes(draft._data, node, (nodeA, countA, nodeB, countB) => {
                     return (countA - countB) * factor;
                 });
                 
@@ -581,7 +608,7 @@ export class ImmutableTree implements TreeInterface  {
                 if(rootNode.children.length!==2){
                     console.warn("Root node has more than two children and we are rerooting! There be dragons!")
                 }
-                const rootLength = rootNode.children.map(n=>draft.getNode(n)).map(n=>draft.getBranchLength(n)).reduce((acc,l) => l! + acc!,0)!
+                const rootLength = rootNode.children.map(n=>draft.getNode(n)).map(n=>draft.getLength(n)).reduce((acc,l) => l! + acc!,0)!
 
                 const treeNode = draft.getNode(node.number) as Node; 
                 if (draft.getParent(node) !== rootNode) {
@@ -600,7 +627,7 @@ export class ImmutableTree implements TreeInterface  {
                     const rootChild1 = treeNode;
                     const rootChild2 = parent;
 
-                    let oldLength = draft.getBranchLength(parent)!;
+                    let oldLength = draft.getLength(parent)!;
 
                     while (draft.getParent(parent) !== undefined) {
 
@@ -626,7 +653,7 @@ export class ImmutableTree implements TreeInterface  {
                             if(!nan){
                             throw new Error("no nan!")
                             }
-                            const nanLength = draft.getBranchLength(nan)!;
+                            const nanLength = draft.getLength(nan)!;
                             nan.length = oldLength;
                             oldLength = nanLength;
 
@@ -661,13 +688,13 @@ export class ImmutableTree implements TreeInterface  {
                             }
                         });
 
-                    const l = draft.getBranchLength(rootChild1)! * proportion;
+                    const l = draft.getLength(rootChild1)! * proportion;
                     rootChild2.length = l;
                     rootChild1.length! -= l;
 
                 } else {
                     // the root is staying the same, just the position of the root changing
-                    const l = draft.getBranchLength(node)! * (1.0 - proportion);
+                    const l = draft.getLength(node)! * (1.0 - proportion);
                     treeNode.length = l;
                     const sibling = draft.getNextSibling(node)! as Node;
                     sibling.length = rootLength - l;
@@ -954,7 +981,7 @@ function annotateNodeHelper(tree:ImmutableTree,node:NodeRef,annotation:{name:str
     tree._data.annotations[annotation.name]={id:annotation.name,domain,type:checkedType}
 }
 
-export function* preOrderIterator(tree:TreeInterface,node:NodeRef|undefined = undefined):Generator<NodeRef> {
+export function* preOrderIterator(tree:Tree,node:NodeRef|undefined = undefined):Generator<NodeRef> {
 
 
     const traverse = function* (node: NodeRef): Generator<NodeRef> {
@@ -981,7 +1008,7 @@ export function* preOrderIterator(tree:TreeInterface,node:NodeRef|undefined = un
 
 }
 
-export function* postOrderIterator(tree:TreeInterface,node:NodeRef|undefined = undefined):Generator<NodeRef> {
+export function* postOrderIterator(tree:Tree,node:NodeRef|undefined = undefined):Generator<NodeRef> {
 
 
     const traverse = function* (node: NodeRef): Generator<NodeRef> {
@@ -1006,7 +1033,7 @@ export function* postOrderIterator(tree:TreeInterface,node:NodeRef|undefined = u
 
 }
 
-export function* tipIterator(tree: TreeInterface, node: NodeRef): Generator<NodeRef> {
+export function* tipIterator(tree: Tree, node: NodeRef): Generator<NodeRef> {
     const traverse = function* (node: NodeRef): Generator<NodeRef> {
         const childCount = tree.getChildCount(node);;
         if (childCount > 0) {

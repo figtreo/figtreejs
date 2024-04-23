@@ -2,13 +2,13 @@ import { extent,  maxIndex,  mean,  min } from "d3-array";
 import { scaleLinear } from "d3-scale";
 import { AbstractLayout, ArbitraryVertices, defaultInternalLayoutOptions, internalLayoutOptions,Vertices} from "./LayoutInterface";
 import { RectangularLayout, fishEyeTransform } from "./rectangularLayout";
-import { TreeInterface } from "..";
+import { Tree } from "..";
 import { ImmutableTree } from "../Evo/Tree/normalizedTree/ImmutableTree";
 
 
 export class PolarLayout extends AbstractLayout {
 
-    static getArbitraryLayout(tree: TreeInterface, opts:internalLayoutOptions): ArbitraryVertices {
+    static getArbitraryLayout(tree: Tree, opts:internalLayoutOptions): ArbitraryVertices {
         const safeOpts = { ...defaultInternalLayoutOptions, ...opts,pollard:0 };
         const rectangularVerticies = RectangularLayout.getArbitraryLayout(tree,safeOpts);
         //remove root path if needed

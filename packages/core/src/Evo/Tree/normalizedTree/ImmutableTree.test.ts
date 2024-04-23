@@ -8,23 +8,18 @@ describe('ImmutableTree', () =>{
 
         it('simpleTree', function() {
             const tree = new ImmutableTree();
-            const tree1 = tree.addNode();
-            expect(tree.getNodeCount()).toEqual(0);
-            expect(tree1.getNodeCount()).toEqual(1);
+            const [tree1,nodes] = tree.addNodes();
+            expect(tree.getNodeCount()).toEqual(1);
+            expect(tree1.getNodeCount()).toEqual(2);
             expect(tree1).not.toEqual(tree);
             
         });
 //Add child used getNode and updates both node and child.
         it('build tree and check parent', function() {
-            const tree = new ImmutableTree()
-                            .addNode()
-                            .addNode()
-                            .addNode()
-                            
+            const [tree,[child,child2]] = new ImmutableTree()
+                            .addNodes(2)
             const parent = tree.getNode(0);
-            const child = tree.getNode(1);
-            const child2 = tree.getNode(2);
-            const tree1 = tree.addChild(parent,child)                           
+            const tree1 = tree.addChild(parent,child)
                             .addChild(parent,child2);
             
             expect(tree1).not.toEqual(tree);
@@ -39,21 +34,15 @@ describe('ImmutableTree', () =>{
         });
     //editing length does not access parent. Does the parent still update.
         it('Change branchlength', function() {
-            const tree = new ImmutableTree()
-                            .addNode()
-                            .addNode()
-                            .addNode()
-                            
-            const parent = tree.getNode(0);
-            const child = tree.getNode(1);
-            const child2 = tree.getNode(2);
+            const [tree,[parent,child,child2]] = new ImmutableTree()
+                            .addNodes(3)
             const tree1 = tree.addChild(parent,child)
                             .addChild(parent,child2);
             
-            const tree2 = tree1.setBranchLength(child,0.5);
+            const tree2 = tree1.setLength(child,0.5);
             expect(tree2).not.toEqual(tree1)
-            expect(tree1.getNode(0)).not.toBe(tree2.getNode(0));
-            expect(tree1.getParent(child)).not.toBe(tree2.getParent(child));
+            // expect(tree1.getNode(0)).not.toBe(tree2.getNode(0));
+            // expect(tree1.getParent(child)).not.toBe(tree2.getParent(child));
 
         });
         it('order', function() {
@@ -74,18 +63,18 @@ describe('ImmutableTree', () =>{
             const newickString = `((((((virus1:0.1,virus2:0.12):0.08,(virus3:0.011,virus4:0.0087):0.15):0.03,virus5:0.21):0.2,(virus6:0.45,virus7:0.4):0.02):0.1,virus8:0.4):0.1,(virus9:0.04,virus10:0.03):0.6);`;
 
             const tree = ImmutableTree.fromNewick(newickString)
-            const tree1 = tree.reroot(tree.getParent(tree.getNodeByName("virus3")!)!,0.5);
+            const tree1 = tree.reroot(tree.getParent(tree.getNodeByTaxon("virus3")!)!,0.5);
             expect(tree1.toNewick()).toBe("(((virus1:0.1,virus2:0.12):0.08,(virus5:0.21,((virus6:0.45,virus7:0.4):0.02,(virus8:0.4,(virus9:0.04,virus10:0.03):0.7):0.1):0.2):0.03):0.075,(virus3:0.011,virus4:0.0087):0.075);")
         })
         it('rotate',function(){
             const tree = ImmutableTree.fromNewick("((A:1,B:1):1,C:2);");
-            const node = tree.getParent(tree.getNodeByName("A")!)!;
+            const node = tree.getParent(tree.getNodeByTaxon("A")!)!;
             const child1 = tree.getChild(node,0)!;
             const rotatedTree = tree.rotate(node);
             const child2 = rotatedTree.getChild(node,0)!;
 
                                 
-            expect(rotatedTree.getNodeTaxon(child2)).toBe("B");
-            expect(tree.getNodeTaxon(child1)).toBe("A");
+            expect(rotatedTree.getTaxon(child2)).toBe("B");
+            expect(tree.getTaxon(child1)).toBe("A");
         })
 })

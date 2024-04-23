@@ -29,9 +29,10 @@ export interface Annotation {
 export interface newickParsingOptions  {
      labelName?: string,  parseAnnotations?: boolean , tipNameMap?: Map<string, string>
 }
-export interface TreeInterface  {
+export interface Tree  {
     
-    getRoot():NodeRef|undefined
+    getRoot():NodeRef
+    isRooted():boolean
     getNodeCount():number
     getInternalNodeCount():number
     getExternalNodeCount():number
@@ -39,25 +40,22 @@ export interface TreeInterface  {
     getInternalNodes():NodeRef[]
     getExternalNodes():NodeRef[]
 
-    getNodeTaxon(node:NodeRef):string
-    hasNodeHeights():boolean
-    hasBranchLength(node:NodeRef):number
-
+    getTaxon(node:NodeRef):string
 
     isExternal(node:NodeRef):boolean
+    isInternal(node:NodeRef):boolean
     isRoot(node:NodeRef):boolean
 
     getChildCount(node:NodeRef):number
     getChild(node:NodeRef,i:number):NodeRef
 
-    getNodeByName(name: string): NodeRef|undefined
+    getNodeByTaxon(name: string): NodeRef|undefined
     getNodeByLabel(label: string): NodeRef|undefined
     getLevel(node:NodeRef):number;
    
-    // getNode(id: string): NodeRef 
     getDivergence(node: NodeRef): number |undefined
-    getNodeHeight(node:NodeRef):number |undefined
-    getBranchLength(node: NodeRef): number |undefined
+    getHeight(node:NodeRef):number |undefined
+    getLength(node: NodeRef): number |undefined
     
     getParent(node: NodeRef): NodeRef | undefined
     getChildren(node: NodeRef): NodeRef[] 
@@ -67,31 +65,33 @@ export interface TreeInterface  {
     getAnnotationKeys(): string[]
     getAnnotationType(name: string): string |undefined
 
-    addNode(n?:number): TreeInterface
-    removeChild(parent:NodeRef,child:NodeRef):void
+    addNodes(n?:number): [Tree,NodeRef[]] 
+    deleteNode(n:NodeRef):Tree
+    removeChild(parent:NodeRef,child:NodeRef):Tree
+    deleteClade(n:NodeRef):Tree
     getNextSibling(node:NodeRef):NodeRef|undefined
 
-    setHeight(node:NodeRef,height:number):void
-    setDivergence(node:NodeRef,divergence:number):void
-    setBranchLength(node:NodeRef,length:number):void
-    setName(node:NodeRef,name:string):void
-    setLabel(node:NodeRef,label:string):void
-    annotateNode(node:NodeRef,annotation:{name:string,value:any,type:AnnotationType}):void
+    setHeight(node:NodeRef,height:number):Tree
+    setDivergence(node:NodeRef,divergence:number):Tree
+    setLength(node:NodeRef,length:number):Tree
+    setTaxon(node:NodeRef,name:string):Tree
+    setLabel(node:NodeRef,label:string):Tree
+    annotateNode(node:NodeRef,annotation:{name:string,value:any,type:AnnotationType}):Tree
 
-    addChild(parent: NodeRef, child: NodeRef): void
-    setRoot(node: NodeRef): void
+    addChild(parent: NodeRef, child: NodeRef): Tree
+    root(node: NodeRef,portion:number): Tree
+    unroot(node:NodeRef):Tree
     toNewick(node?:NodeRef,options?:{includeAnnotations:boolean}): string;
     orderNodesByDensity(increasing:boolean):void
-    sortChildren(node:NodeRef,compare:(a:NodeRef,b:NodeRef)=>number):void
+    sortChildren(node:NodeRef,compare:(a:NodeRef,b:NodeRef)=>number):Tree
     isRoot(node:NodeRef):boolean;
     getMRCA(nodes:NodeRef[]):NodeRef;
-    rotate(node:NodeRef,recursive:boolean):void;
-    reroot(node:NodeRef,proportion:number):void;
+    rotate(node:NodeRef,recursive:boolean):Tree;
+    reroot(node:NodeRef,proportion:number):Tree;
     //TODO decide if we want to keep integers different from continuous
     getAnnotationDomain(name:string):[number,number]|[boolean,boolean]|string[]|number[]|undefined;
-    isExternal(node:NodeRef):boolean
-    isInternal(node:NodeRef):boolean
 
+    treeSubscribeCallback(callback:(tree?:Tree,TreeEdits?:[])=>any):Tree
 
 }
 

@@ -69,7 +69,7 @@ function FigTree(props:FigtreeProps){
     }
         
     const children = props.children?props.children:defaultOpts.children;
-    const maxD = tree.getNodeHeight(tree.getRoot()!)!+rootLength!;
+    const maxD = tree.getHeight(tree.getRoot()!)!+rootLength!;
     // console.log(maxD)
     // console.log(maxD*pollard!)
     const scaleContext:scaleContextType = {width:w,height:h,domain:[pollard!*maxD,maxD],padding,maxR : max(vertices.vertices,d=>d.r),theta :extent(vertices.vertices,d=>d.theta!) as [number,number]};

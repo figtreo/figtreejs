@@ -1,7 +1,7 @@
 import React from "react";
 import { ImmutableTree } from "../Evo/Tree";
 import { Vertices } from "../Layouts/LayoutInterface";
-import { TreeInterface } from "../Evo/Tree/Tree.types";
+import { Tree } from "../Evo/Tree/Tree.types";
 
 
 export const InteractionStateContext = React.createContext(false);
@@ -9,7 +9,7 @@ export const InteractionDispatchContext = React.createContext(false);
 
 
 export const DataContext = React.createContext<{x:number,y:number}[]>([{x:1,y:1},{x:3,y:3}]);
-export const TreeContext = React.createContext<TreeInterface>( ImmutableTree.fromNewick('(A:1,B:1,(C:1,D:1):1)F;'));
+export const TreeContext = React.createContext<Tree>( ImmutableTree.fromNewick('(A:1,B:1,(C:1,D:1):1)F;'));
 export const LayoutContext = React.createContext<Vertices>({
     vertices:[],
     type: "Rectangular"

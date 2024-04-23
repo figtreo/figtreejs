@@ -62,14 +62,14 @@ describe("Test tree parsing and normalized Tree",()=>{
         const newickString = `((((((virus1:0.1,virus2:0.12):0.08,(virus3:0.011,virus4:0.0087):0.15):0.03,virus5:0.21):0.2,(virus6:0.45,virus7:0.4):0.02):0.1,virus8:0.4):0.1,(virus9:0.04,virus10:0.03):0.6);`;
         const tree = ImmutableTree.fromNewick(newickString,{labelName:"prob"});
 
-        const virus1Node = tree.getNodeByName("virus1")!
-        expect(tree.getNodeHeight(virus1Node)).toBeCloseTo(0.06,1e-6)
+        const virus1Node = tree.getNodeByTaxon("virus1")!
+        expect(tree.getHeight(virus1Node)).toBeCloseTo(0.06,1e-6)
   })
   it('divergence', function() {
     const newickString = `((((((virus1:0.1,virus2:0.12):0.08,(virus3:0.011,virus4:0.0087):0.15):0.03,virus5:0.21):0.2,(virus6:0.45,virus7:0.4):0.02):0.1,virus8:0.4):0.1,(virus9:0.04,virus10:0.03):0.6);`;
     const tree = ImmutableTree.fromNewick(newickString,{labelName:"prob"});
 
-    const virus6Node = tree.getNodeByName("virus6")!
+    const virus6Node = tree.getNodeByTaxon("virus6")!
     expect(tree.getDivergence(virus6Node)).toBeCloseTo(0.67,1e-6)
 })
  it('general_parse', function() {
@@ -85,14 +85,14 @@ describe("Test tree parsing and normalized Tree",()=>{
     const   bl = [];
 
     const count = tree.getChildCount(root);
-    const rootLength = tree.getBranchLength(root);
+    const rootLength = tree.getLength(root);
     if(rootLength) {
-        bl.push(tree.getBranchLength(root))
+        bl.push(tree.getLength(root))
     }
     for (let i = 0; i < count; i++) {
         const child=  tree.getChild(root, i);
-        names.push(tree.getNodeTaxon(child)!);
-        bl.push(tree.getBranchLength(child))
+        names.push(tree.getTaxon(child)!);
+        bl.push(tree.getLength(child))
     }
     expect(names).toEqual(["a", "b"]);
 
@@ -104,13 +104,13 @@ it('scientific notation', function() {
     const root = tree.getRoot()!;
     const bl = [];
     const count = tree.getChildCount(root);
-    const rootLength = tree.getBranchLength(root);
+    const rootLength = tree.getLength(root);
     if (rootLength) {
-        bl.push(tree.getBranchLength(root));
+        bl.push(tree.getLength(root));
     }
     for (let i = 0; i < count; i++) {
         const child = tree.getChild(root, i);
-        bl.push(tree.getBranchLength(child));
+        bl.push(tree.getLength(child));
     }
     expect(bl[0]).toBeCloseTo(10.0, 1e-6);
     expect(bl[1]).toBeCloseTo(0.00002, 1e-6);
@@ -120,7 +120,7 @@ it('scientific notation', function() {
 it('quoted taxa', function() {
 
    const tree =  ImmutableTree.fromNewick("('234] ':1,'here a *':1);")
-   const names = [...tree.getExternalNodes()].map((node) => tree.getNodeTaxon(node));
+   const names = [...tree.getExternalNodes()].map((node) => tree.getTaxon(node));
    expect(names).toEqual(["234]", "here a *"])
 })
 
@@ -131,7 +131,7 @@ it('whitespace', function() {
 it('node id', function() {
     const tree = ImmutableTree.fromNewick("((A,T)#Node_1:1,(a,b:1));")
     
-    const A = tree.getNodeByName("A")!;
+    const A = tree.getNodeByTaxon("A")!;
     const node1 = tree.getNodeByLabel("Node_1")!;
     const parent = tree.getParent(A);
 
@@ -142,7 +142,7 @@ it('node id', function() {
 it('root length and label', function() {
     const tree = ImmutableTree.fromNewick("((A,T)#Node_1:1,(a,b:1))#root:0.1;")
     const root = tree.getRoot()!;
-    const rootLength = tree.getBranchLength(root);
+    const rootLength = tree.getLength(root);
     expect(rootLength).toEqual(0.1);
     const label = tree.getLabel(root);
     expect(label).toEqual("root");
@@ -164,7 +164,7 @@ it('fail unbalanced (', function(){
 
 it('comment', function() {
     const tree = ImmutableTree.fromNewick("(a[&test=ok],b:1);",{parseAnnotations:true})
-    const a = tree.getNodeByName("a")!;
+    const a = tree.getNodeByTaxon("a")!;
     const testAnnotation =    tree.getAnnotation(a, "test");
     expect(testAnnotation).toEqual( "ok" );
 });
@@ -172,8 +172,8 @@ it('comment', function() {
 
 it('markov jump comment', function() {
     const tree = ImmutableTree.fromNewick("(a[&test=ok],b[&jump={{0.1,U,me}}]);",{parseAnnotations:true})
-    const a = tree.getNodeByName("a")!;
-    const b = tree.getNodeByName("b")!;
+    const a = tree.getNodeByTaxon("a")!;
+    const b = tree.getNodeByTaxon("b")!;
     const testAnnotation =    tree.getAnnotation(a, "test");
     expect(testAnnotation).toEqual("ok");
     const jumpAnnotation =    tree.getAnnotation(b, "jump");
@@ -183,7 +183,7 @@ it('markov jump comment', function() {
 
 it('double comment', function() {
     const tree = ImmutableTree.fromNewick("(a[&test=ok,other test = 1],b:1);",{parseAnnotations:true})
-    const a = tree.getNodeByName("a")!;
+    const a = tree.getNodeByTaxon("a")!;
     const testAnnotation =    tree.getAnnotation(a, "test");
     expect(testAnnotation).toEqual("ok");
     const otherTestAnnotation =    tree.getAnnotation(a, "other test");
@@ -194,7 +194,7 @@ it('label annotation', function(){
     const tree = ImmutableTree.fromNewick('((((((virus1:0.1,virus2:0.12)0.95:0.08,(virus3:0.011,virus4:0.0087)1.0:0.15)0.65:0.03,virus5:0.21)1.0:0.2,(virus6:0.45,virus7:0.4)0.51:0.02)1.0:0.1,virus8:0.4)1.0:0.1,(virus9:0.04,virus10:0.03)1.0:0.6);',
     {parseAnnotations:true,labelName:"probability"});
 
-    const virus1Node = tree.getNodeByName("virus1")!;
+    const virus1Node = tree.getNodeByTaxon("virus1")!;
     const probability = tree.getAnnotation(tree.getParent(virus1Node)!, "probability");
     
     expect(probability).toEqual(0.95);

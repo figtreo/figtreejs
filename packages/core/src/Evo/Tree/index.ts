@@ -1,5 +1,4 @@
 export * from "./normalizedTree"
 export * from "./Tree.types"
-export * from "./parsing"
-export * from "./tree"
+export * from "./Parsers"
 // export * from "./Treedux"

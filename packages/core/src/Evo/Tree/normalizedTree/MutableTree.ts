@@ -1,7 +1,7 @@
 import { v4 as uuid } from 'uuid';
 import {maxIndex,max} from "d3-array";
-import {dateToDecimal} from "./utilities";
-import { NodeRef, TreeInterface } from "./Tree.types";
+import {dateToDecimal} from "../utilities";
+import { NodeRef, Tree } from "../Tree.types";
 import { timeParse } from "d3-time-format";
 // import * as BitSetModule from "bitset";
 // const BitSet =BitSetModule.__moduleExports;
@@ -17,7 +17,10 @@ export const Type = {
 /**
  * The Tree class
  */
-export class Tree implements TreeInterface {
+
+//TODO make a root node that can be used or not depending on if tree
+// rooted or unrooted.
+export class MutableTree implements Tree {
     _maxDivergence: number=0;
 
     static DEFAULT_SETTINGS() {
@@ -40,8 +43,10 @@ export class Tree implements TreeInterface {
     _nodeMap:Map<number,Node>;;//Map<string,Node>;
     nodesUpdated:boolean;
     _shouldUpdate:boolean;
-    _root:Node|undefined;
-
+    _root:NodeRef;
+    _callbacks:Function[];
+    _isRooted:boolean;
+    
     constructor(heightsKnown=false) {
 
         //TODO make private things private with symbols
@@ -50,7 +55,7 @@ export class Tree implements TreeInterface {
         this.lengthsKnown = !heightsKnown;
         // this._root = makeNode.call(this,{...rootNode,...{length:0,level:0}});
         // This converts all the json objects to Node instances
-        // setUpNodes.call(this,this.root);
+        // setUpNodes.call(this,this.getRoot);
         this.annotations = {};
         // for(const node of this.preorder()){
         //     if (node.label && node.label.startsWith("#")) {
@@ -66,11 +71,15 @@ export class Tree implements TreeInterface {
         this.nodesUpdated = false;
         // a callback function that is called whenever the tree is changed
         this._shouldUpdate=true
-
+        this._callbacks = [];
+        this._isRooted=true; //TODO maybe not
+        this.addNodes(1);
+        this._root = this.getNode(0)!;
+        
     }
     // just to make compiler happy
-    getRoot(): NodeRef | undefined {
-        return this._root;
+    getRoot(): NodeRef  {
+        return this._root!;
     }
     getNodeCount(): number {
             return this._nodeMap.size;
@@ -87,14 +96,8 @@ export class Tree implements TreeInterface {
     getExternalNodes(): NodeRef[] {
         return this.nodeList.filter(node=>node.children.length==0)
         }
-    getNodeTaxon(node: NodeRef): string {
+    getTaxon(node: NodeRef): string {
             return (node as Node).name!
-        }
-    hasNodeHeights(): boolean {
-            return true;
-        }
-    hasBranchLength(node: NodeRef): number {
-            throw new Error("Method not implemented.");
         }
     isExternal(node: NodeRef): boolean{
             return (node as Node).children.length===0;
@@ -108,7 +111,7 @@ export class Tree implements TreeInterface {
     getChild(node: NodeRef, i: number): NodeRef {
             return (node as Node).children[i];
         }
-    getNodeByName(name: string): NodeRef | undefined {
+    getNodeByTaxon(name: string): NodeRef | undefined {
             return this._tipMap.get(name);
         }
     getNodeByLabel(label: string): NodeRef | undefined {
@@ -120,10 +123,7 @@ export class Tree implements TreeInterface {
     getDivergence(node: NodeRef): number | undefined {
             return (node as Node).divergence;
         }
-    getNodeHeight(node: NodeRef): number | undefined {
-            return (node as Node).height;
-        }
-    getBranchLength(node: NodeRef): number | undefined {
+    getLength(node: NodeRef): number | undefined {
             return (node as Node).length;
         }
     getParent(node: NodeRef): NodeRef | undefined {
@@ -136,7 +136,7 @@ export class Tree implements TreeInterface {
             return (node as Node).annotations[name];
         }
     getLabel(node: NodeRef): string | undefined {
-            return (node as Node).name!;
+            return (node as Node).label!;
         }
     getAnnotationType(name: string): string | undefined {
             throw new Error("Method not implemented.");
@@ -144,40 +144,56 @@ export class Tree implements TreeInterface {
     getAnnotationKeys(): string[] {
             return Object.keys(this.annotations);
     }
-    addNode(n?: number | undefined): TreeInterface {
-            throw new Error("Method not implemented.");
+    addNodes(n: number=1): [Tree,NodeRef[]] {
+        const newNodes = [];
+        for(let i=0;i<n;i++){
+            const node = new Node({tree:this});
+            newNodes.push(node)
+            node.name&& this._tipMap.set(node.name,node);
+            this._nodeMap.set(node.number,node);
         }
-    removeChild(parent: NodeRef, child: NodeRef): void {
+        return [this,newNodes]
+    }
+    removeChild(parent: NodeRef, child: NodeRef): Tree {
             this.removeChild(parent, child);
+            return this;
         }
     getNextSibling(node: NodeRef): NodeRef | undefined {
             return this.getSiblings(node as Node)![0];
         }
-    setHeight(node: NodeRef, height: number): void {
+    setHeight(node: NodeRef, height: number): Tree {
             (node as Node).height = height;
+            return this;
         }
-    setDivergence(node: NodeRef, divergence: number): void {
-        throw new Error("Method not implemented.");
+    setDivergence(node: NodeRef, divergence: number): Tree {
+            (node as Node).divergence = divergence
+            return this;
         }
-    setBranchLength(node: NodeRef, length: number): void {
+    setLength(node: NodeRef, length: number): Tree {
             (node as Node).length = length;
+            return this;
         }
-    setName(node: NodeRef, name: string): void {
+    setTaxon(node: NodeRef, name: string): Tree {
             (node as Node).name = name;
+            return this;
         }
-    setLabel(node: NodeRef, label: string): void {
+    setLabel(node: NodeRef, label: string): Tree {
             (node as Node).label = label;
+            return this;
         }
-    addChild(parent: NodeRef, child: NodeRef): void {
+    addChild(parent: NodeRef, child: NodeRef): Tree {
             (parent as Node).addChild(child as Node);
+            return this;
         }
-    setRoot(node: NodeRef): void {
-            this.root=node as Node;
+    orderNodesByDensity(increasing = true, node:NodeRef = this.getRoot() ) {
+            const factor = increasing ? 1 : -1;
+            orderNodes.call(this, (node as Node), (nodeA, countA:number, nodeB, countB:number) => {
+                return (countA - countB) * factor;
+            });
+            this._fireTreeUpdate();
+            return this;        
         }
-    orderNodesByDensity(increasing: boolean): void {
-            this.orderByNodeDensity(increasing);
-        }
-    sortChildren(node: NodeRef, compare: (a: NodeRef, b: NodeRef) => number): void {
+    sortChildren(node: NodeRef, compare: (a: NodeRef, b: NodeRef) => number): Tree {
             throw new Error("Method not implemented.");
         }
     getMRCA(nodes: NodeRef[]): NodeRef {
@@ -190,19 +206,10 @@ export class Tree implements TreeInterface {
             throw new Error("Method not implemented.");
         }
 
-    treeUpdateCallback(){};
-    /**
-     * Gets the root node of the Tree
-     *
-     * @returns {Object|*}
-     */
-    get root() {
-        return this._root;
+    treeSubscribeCallback(callback:(tree?:Tree,TreeEdits?:[])=>any):Tree{
+        this._callbacks.push(callback);
+        return this;
     };
-
-    set root(node){
-        this._root=node;
-    }
 
     /**
      * Gets an array containing all the node objects
@@ -268,7 +275,7 @@ export class Tree implements TreeInterface {
      * @param id
      * @returns {object}
      */
-    getNode(id:string|number) {
+    getNode(id:string|number): NodeRef {
         return this.nodeMap.get(id as number)!;
     }
 
@@ -297,7 +304,7 @@ export class Tree implements TreeInterface {
      *
      * @returns {IterableIterator<IterableIterator<*|*>>}
      */
-    *preorder(startNode=this.root,filter:Function=()=>true):Generator<Node> {
+    *preorder(startNode=this.getRoot(),filter:Function=()=>true):Generator<Node> {
         const traverse= function* (node: Node,filter:Function): Generator<Node>{
             if(filter(node)) {
                 yield node;
@@ -309,7 +316,7 @@ export class Tree implements TreeInterface {
             }
         };
 
-        yield* traverse(startNode!,filter);
+        yield* traverse((startNode as Node),filter);
     }
 
     /**
@@ -317,7 +324,7 @@ export class Tree implements TreeInterface {
      *
      * @returns {IterableIterator<IterableIterator<*|*>>}
      */
-    *postorder(startNode=this.root,filter=()=>true) {
+    *postorder(startNode=this.getRoot(),filter=()=>true) {
         const traverse= function* (node: Node,filter:Function): Generator<Node>{
             if(filter(node)) {
                 if (node.children!=null) {
@@ -329,7 +336,7 @@ export class Tree implements TreeInterface {
             }
         };
 
-        yield* traverse(startNode!,filter);
+        yield* traverse((startNode as Node),filter);
     }
 
     /**
@@ -352,35 +359,52 @@ export class Tree implements TreeInterface {
      * @param {object} node - The node of the tree to be written (defaults as the root).
      * @returns {string}
      */
-    _toString(node = this.root!):string {
+    _toString(node:Node):string {
         return (node.children.length>0 ? `(${node.children.map(child => this._toString(child)).join(",")})${node.label ? node.label : ""}` : node.name) + (node.length ? `:${node.length}` : "");
 
     }
-    toNewick(node = this.root!):string {
-        return this._toString(node) + ";";
+    toNewick(node:NodeRef = this.getRoot()):string {
+        return this._toString((node as Node)) + ";";
       };
 
+    isRooted():boolean {
+        return this._isRooted;
+    }
+    root(n:NodeRef,portion=0.5):Tree {
+        if (this._isRooted) {
+            throw new Error("Tree is already rooted, use reroot instead");
+        }
+        const [me,root] =this.splitBranch(n,portion);
+        this._isRooted = true;
+
+        throw new Error("root not impelemented")
+    }
+
+    unroot(node: NodeRef): Tree {
+        throw new Error("unroot not impelemented")
+
+    }
     /**
      * Re-roots the tree at the midway point on the branch above the given node.
      *
      * @param {object} node - The node to be rooted on.
      * @param proportion - proportion along the branch to place the root (default 0.5)
      */
-    reroot(n:NodeRef, proportion = 0.5) {
+    reroot(n:NodeRef, proportion = 0.5):Tree {
         const node = n as Node;
-        if (node === this.root) {
+        if (!this._isRooted) {
             // the node is the root - nothing to do
-            return;
+            throw new Error("Tree is unrooted use root not reroot");
         }
-
-        const rootLength = this.root!.children[0].length! + this.root!.children[1].length!;
+        const rootNode = this.getRoot() as Node;
+        const rootLength = rootNode.children[0].length! + rootNode.children[1].length!;
 
 
         const rootChild1 = node;
         const rootChild2 = node.parent!;
         const nodeAtTop = node.parent!.children[0] === node;
 
-        if (node.parent !== this.root) {
+        if (node.parent !== rootNode) {
             // the node is not a child of the existing root so the root is actually changing
             let node0 = node;
             let parent = node.parent!;
@@ -394,9 +418,9 @@ export class Tree implements TreeInterface {
             parent.removeChild(node0)
 
             while (!done) {
-                if (gp === this.root) {
+                if (gp === rootNode) {
                     //root should only have 1 child or we arive right away and need to get the sibling
-                    const sibling = this.root!.children.length===1? this.root!.children[0]:this.getSiblings(parent)![0] ;
+                    const sibling = rootNode.children.length===1? rootNode.children[0]:this.getSiblings(parent)![0] ;
                     gp.removeChild(sibling);
                     gp.removeChild(parent); // just ncase we got here right away
                     parent.addChild(sibling)
@@ -432,11 +456,11 @@ export class Tree implements TreeInterface {
             // This makes for a more visually consistent rerooting graphically.
 
             if(nodeAtTop){
-                this.root!.addChild(rootChild1);
-                this.root!.addChild(rootChild2);
+                rootNode.addChild(rootChild1);
+                rootNode.addChild(rootChild2);
             }else{
-                this.root!.addChild(rootChild2);
-                this.root!.addChild(rootChild1);
+                rootNode.addChild(rootChild2);
+                rootNode.addChild(rootChild1);
             }
 
             // connect all the children to their parents
@@ -459,7 +483,8 @@ export class Tree implements TreeInterface {
         }
 
         this.divergenceKnown = false;
-        this.treeUpdateCallback();
+        this._fireTreeUpdate();
+        return this;
     };
 
     /**
@@ -469,7 +494,7 @@ export class Tree implements TreeInterface {
      * @param node
      * @param recursive
      */
-    rotate(n:NodeRef, recursive = false) {
+    rotate(n:NodeRef, recursive = false):Tree {
         const node = n as Node;
         if (node.children) {
             if (recursive) {
@@ -479,8 +504,8 @@ export class Tree implements TreeInterface {
             }
             node._children.reverse();
         }
-
-        this.treeUpdateCallback();
+        this._fireTreeUpdate();
+        return this;
     };
 
     /**
@@ -489,16 +514,16 @@ export class Tree implements TreeInterface {
      *
      * @param node - the node to start sorting from
      * @param {boolean} increasing - sorting in increasing node order or decreasing?
-     * @returns {Tree} - the number of tips below this node
+     * @returns {MutableTree} - the number of tips below this node
      */
 
 
-    orderByNodeDensity(increasing = true, node = this.root) {
+    orderByNodeDensity(increasing = true, node:NodeRef = this.getRoot() ) {
         const factor = increasing ? 1 : -1;
-        orderNodes.call(this, node!, (nodeA, countA:number, nodeB, countB:number) => {
+        orderNodes.call(this, (node as Node), (nodeA, countA:number, nodeB, countB:number) => {
             return (countA - countB) * factor;
         });
-        this.treeUpdateCallback();
+        this._fireTreeUpdate();
         return this;
     }
 
@@ -510,15 +535,15 @@ export class Tree implements TreeInterface {
      * @param node - the node to start sorting from
      * @param {function} ordering - provides a pairwise sorting order.
      *  Function signature: (nodeA, childCountNodeA, nodeB, childCountNodeB)
-     * @returns {Tree} - the number of tips below this node
+     * @returns {MutableTree} - the number of tips below this node
      */
-    order(ordering: (nodeA_id: number, countA: number, nodeB_id: number, countB: number) => number, node = this.root) {
-        orderNodes.call(this, node!, ordering);
-        this.treeUpdateCallback();
+    order(ordering: (nodeA_id: number, countA: number, nodeB_id: number, countB: number) => number, node:NodeRef = this.getRoot()) {
+        orderNodes.call(this, (node as Node), ordering);
+        this._fireTreeUpdate();
         return this;
     }
-    _order(ordering: (nodeA_id: number, countA: number, nodeB_id: number, countB: number) => number, node = this.root) {
-        orderNodes.call(this, node!, ordering);
+    _order(ordering: (nodeA_id: number, countA: number, nodeB_id: number, countB: number) => number, node:NodeRef = this.getRoot()) {
+        orderNodes.call(this, (node as Node), ordering);
         return this;
     }
 
@@ -530,8 +555,8 @@ export class Tree implements TreeInterface {
      */
     lastCommonAncestor(node1:Node, node2:Node) {
 
-        const path1 = [...Tree.pathToRoot(node1)];
-        const path2 = [...Tree.pathToRoot(node2)];
+        const path1 = [...MutableTree.pathToRoot(node1)];
+        const path2 = [...MutableTree.pathToRoot(node2)];
       
         const sharedAncestors = path1.filter(n1=>path2.map(n2=>n2.number).indexOf(n1.number)>-1);
         return sharedAncestors[maxIndex(sharedAncestors, node => node.level)];
@@ -565,7 +590,7 @@ export class Tree implements TreeInterface {
      * The nodes of the new tree will be copies of the those in the original, but they will share
      * ids, annotations, and names.
      * @param chosenNodes
-     * @return {Tree}
+     * @return {MutableTree}
      */
     // need to make a constructor that takes a node and a tree and makes a new tree with that node as the root
     // subTree(chosenNodes: Node[]){
@@ -623,7 +648,7 @@ export class Tree implements TreeInterface {
     //             }
     //         });
     //     this.nodesUpdated=true;
-    //     this.treeUpdateCallback();
+    //     this._fireTreeUpdate();
 
     // }
 
@@ -633,29 +658,27 @@ export class Tree implements TreeInterface {
      * @param node
      * @param splitLocation - proportion of branch to split at.
      */
-    splitBranch(node:Node, splitLocation=0.5) {
+    splitBranch(n:NodeRef, splitLocation=0.5):[Tree,NodeRef] {
+        const node = (n as Node);
         const oldLength = node.length!;
 
         const splitNode = this.newNode(
             {
             length: oldLength!*splitLocation,
-            annotations: {
-                insertedNode: true
-            }
         });
         if (node.parent) {
             node.parent.addChild(splitNode);
             node.parent.removeChild(node);
         } else {
             // node is the root so make splitNode the root
-            this.root = splitNode;
+            this._root = splitNode;
         }
         splitNode.addChild(node)
 
         node._length = oldLength-splitNode.length!;
         this.nodesUpdated=true;
         this.divergenceKnown=false;
-        return splitNode;
+        return [this,splitNode];
     }
 
     /**
@@ -664,9 +687,10 @@ export class Tree implements TreeInterface {
      * The root node can not be deleted.
      * @param node
      */
-    removeNode(node:Node){
-        if(node===this.root){
-            return;
+    deleteNode(n:NodeRef):Tree{
+        const node = n as Node;
+        if(node===this.getRoot()){
+            return this;
         }
         // remove the node from it's parent's children
         const parent = node.parent!;
@@ -689,6 +713,7 @@ export class Tree implements TreeInterface {
         //     this.removeNode(node.parent); // if it's a tip then remove it's parent which is now degree two;
         // }
         this.nodesUpdated = true;
+        return this;
     }
     
 
@@ -714,15 +739,15 @@ export class Tree implements TreeInterface {
      * @param node
      * @return {*}
      */
-    removeClade(node:Node) {
-        if(node===this.root){
-            return;
+    deleteClade(n:NodeRef):Tree {
+        if(n===this.getRoot()){
+            throw new Error("can't delete the root node");
         }
-        for(const descendent of this.postorder(node)){
-            this.removeNode(descendent)
+        for(const descendent of this.postorder(n)){
+            this.deleteNode(descendent)
         }
         this.nodesUpdated=true;
-        this.treeUpdateCallback();
+        this._fireTreeUpdate();
         return this;
     }
 
@@ -742,7 +767,7 @@ export class Tree implements TreeInterface {
 
             this.annotateNode(tip, values);
         }
-        this.treeUpdateCallback();
+        this._fireTreeUpdate();
     }
 
     /**
@@ -760,7 +785,7 @@ export class Tree implements TreeInterface {
 
             this.annotateNode(node, values);
         }
-        this.treeUpdateCallback();
+        this._fireTreeUpdate();
 
     }
 
@@ -798,11 +823,12 @@ export class Tree implements TreeInterface {
      * @param node
      * @param annotations a dictionary of annotations keyed by the annotation name.
      */
-    annotateNode(node:Node, annotations:{}) {
+    annotateNode(n:NodeRef, annotations:{}):Tree {
+        const node = n as Node;
         this.addAnnotations(annotations);
-
         // add the annotations to the existing annotations object for the node object
         node.annotations = {...(node.annotations === undefined ? {} : node.annotations), ...annotations};
+        return this;
     }
 
     /**
@@ -936,11 +962,11 @@ export class Tree implements TreeInterface {
      * @param node
      */
     annotateNodesFromTips(name:string, acctran = true) {
-        fitchParsimony(name, this.root!);
+        fitchParsimony(name, this.getRoot() as Node);
 
-        reconstructInternalStates(name, [], acctran, this.root!);
+        reconstructInternalStates(name, [], acctran, this.getRoot() as Node);
 
-        this.treeUpdateCallback();
+        this._fireTreeUpdate();
 
     }
 
@@ -949,8 +975,8 @@ export class Tree implements TreeInterface {
      * @param func - function to be called when the tree updates
      */
     subscribeCallback(func:Function){
-        const currentCallback = this.treeUpdateCallback;
-        this.treeUpdateCallback = ()=>{
+        const currentCallback = this._fireTreeUpdate;
+        this._fireTreeUpdate = ()=>{
             if(!this._shouldUpdate){return}
             currentCallback();
             func();
@@ -966,8 +992,14 @@ export class Tree implements TreeInterface {
     }
     batchUpdateOff(){
         this._shouldUpdate=true;
-        this.treeUpdateCallback()
+        this._fireTreeUpdate()
     }
+    _fireTreeUpdate(){
+        if(this._shouldUpdate){
+            this._callbacks.forEach(callback=>callback(this));
+        }
+    }
+
     /**
      * A class method to create a Tree instance from a Newick format string (potentially with node
      * labels and branch lengths). Taxon labels should be quoted (either " or ') if they contain whitespace
@@ -976,14 +1008,14 @@ export class Tree implements TreeInterface {
      * @param newickString - the Newick format tree as a string
      * @param labelName
      * @param datePrefix
-     * @returns {Tree} - an instance of the Tree class
+     * @returns {MutableTree} - an instance of the Tree class
      */
     static parseNewick(newickString:string, options:{[key:string]:any}={}) {
         options ={...{labelName: "label",datePrefix:undefined,dateFormat:"decimal",tipNameMap:null},...options}
 
         const tokens = newickString.split(/\s*('[^']+'|"[^"]+"|;|\(|\)|,|:|=|\[&|\]|\{|\})\s*/);
         let level = 0;
-        let currentNode = null;
+        let currentNode:Node|undefined = undefined;
         let nodeStack:Node[] = [];
         let labelNext = false;
         let lengthNext = false;
@@ -992,7 +1024,7 @@ export class Tree implements TreeInterface {
         let annotationKey;
         let isAnnotationARange=false;
         let annotations:{[key:string]:any}={};
-        const tree = new Tree();
+        const tree = new MutableTree();
 
         for (const token of tokens.filter(token => token.length > 0)) {
             // console.log(`Token ${i}: ${token}, level: ${level}`);
@@ -1050,13 +1082,15 @@ export class Tree implements TreeInterface {
                     throw new Error("expecting a comma");
                 }
 
-                let node = tree.newNode();
-
+                let node:Node;
                 level += 1;
-                if (currentNode) {
-                    nodeStack.push(currentNode);
-                }else{
-                    tree.root=node;
+                if (currentNode!==undefined) {
+                    tree.addNodes(1);
+                    node = tree.getNode(tree.getNodeCount()-1) as Node;
+                    nodeStack.push(currentNode!);
+                } else { //at root
+                    // tree.setRoot(node);
+                    node = tree.getRoot() as Node;
                 }
                 currentNode = node;
 
@@ -1206,10 +1240,10 @@ export class Tree implements TreeInterface {
                         }else{
                                 const treeString = token.substring(token.indexOf("("));
                             if(tipNameMap.size>0) {
-                                const thisTree = Tree.parseNewick(treeString, {...options, tipNameMap: tipNameMap});
+                                const thisTree = MutableTree.parseNewick(treeString, {...options, tipNameMap: tipNameMap});
                                 trees.push(thisTree);
                             }else{
-                                const thisTree = Tree.parseNewick(treeString, {...options});
+                                const thisTree = MutableTree.parseNewick(treeString, {...options});
                                 trees.push(thisTree);
                             }
                         }
@@ -1262,7 +1296,7 @@ function orderNodes(node:Node, ordering:(nodeA_id:number,countA:number,nodeB_id:
  * diverged tip from the root having height given by origin).
  */
 //TODO bug in node height when in observable
-function calculateDivergence(tree:Tree) {
+function calculateDivergence(tree:MutableTree) {
     if(!tree.lengthsKnown) throw new Error("Bug! lengths must be known before divergence can be calculated");
     tree._maxDivergence=0;
     for(const node of tree.preorder()){
@@ -1277,17 +1311,17 @@ function calculateDivergence(tree:Tree) {
     }
     tree.divergenceKnown = true;
     // tree.lengthsKnown=false;
-    // this.treeUpdateCallback();
+    // this._fireTreeUpdate();
 }
 
 /**
  * A private recursive function that calculates the length of the branch below each node
  */
-function calculateLengths(tree:Tree){
+function calculateLengths(tree:MutableTree){
     tree.nodeList.forEach((node)=> node._length =node.parent? node.parent.height- node.height:0);
     tree.lengthsKnown=true;
     // tree.divergenceKnown=false;
-    // this.treeUpdateCallback();
+    // this._fireTreeUpdate();
 
 }
 
@@ -1421,7 +1455,7 @@ class Node implements NodeRef{
     // _parent: string|undefined;
     // _children: string[];
     _children: number[];
-    _tree: Tree;
+    _tree: MutableTree;
     _label: string|undefined;
     _clade: number[]|undefined;
     _number:number;
@@ -1441,7 +1475,7 @@ class Node implements NodeRef{
     }
 
 
-    constructor(nodeData:{tree:Tree,[key:string]:any} ){
+    constructor(nodeData:{tree:MutableTree,[key:string]:any} ){
         const data = {...Node.DEFAULT_NODE(),...nodeData};
         //TODO like symbol here but need id's in figure
         // this._id = Symbol("node");
@@ -1490,6 +1524,14 @@ class Node implements NodeRef{
     }
 //TODO replace recursion with a store of divergences
 
+    set divergence(value:number) {
+       this._tree._maxDivergence = max([this._tree._maxDivergence, value])!;
+       if(value>this._tree._maxDivergence){
+        this._tree._maxDivergence = value;
+    }
+    this._tree.lengthsKnown=false;
+        this._divergence = value;
+    }
     get divergence():number{
         if(this._tree.divergenceKnown){
             return this._divergence!;
@@ -1502,7 +1544,7 @@ class Node implements NodeRef{
     set height(value) {
         this._divergence = this._tree._maxDivergence - value;
         this._tree.lengthsKnown=false;
-        // this._tree.treeUpdateCallback();
+        // this._tree._fireTreeUpdate();
     }
 
     get length() {
@@ -1518,7 +1560,7 @@ class Node implements NodeRef{
         }
         this._tree.divergenceKnown=false;
         this._length = value;
-        // this._tree.treeUpdateCallback();
+        // this._tree._fireTreeUpdate();
     }
 
     get annotations() {
@@ -1536,7 +1578,7 @@ class Node implements NodeRef{
      */
     //TODO return empty not null
     get children():Node[] {
-        return this._children.map(childId=>this._tree.getNode(childId)!);
+        return this._children.map(childId=>this._tree.getNode(childId)! as Node);
     }
     removeChild(n:NodeRef){
         const node = n as Node;
@@ -1555,7 +1597,7 @@ class Node implements NodeRef{
 
     get parent():Node | undefined{
         if(this._parent===undefined) return undefined;
-        return this._tree.getNode(this._parent);
+        return this._tree.getNode(this._parent) as Node;
     }
 
 

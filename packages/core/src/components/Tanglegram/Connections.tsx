@@ -1,13 +1,13 @@
 import React from "react";
 import { Vertices } from "../../Layouts";
-import { TreeInterface } from "../../Evo/Tree";
+import { Tree } from "../../Evo/Tree";
 import { BranchProps } from "../../../dist";
 import { useAttributeMappers } from "../../hooks";
 import { Branch } from "../Baubles/Branches/Branch";
 
 interface ConnectionsProps extends BranchProps {
     vertices: Vertices[];
-    trees: TreeInterface[];
+    trees: Tree[];
     figurePositions: {start:number,end:number}[];
 }
 

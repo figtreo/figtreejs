@@ -1,13 +1,13 @@
 import {  max, mean } from "d3-array";
 import { scaleLinear } from "d3-scale";
 import { AbstractLayout, ArbitraryVertex, ArbitraryVertices, defaultInternalLayoutOptions, internalLayoutOptions, Vertices } from "./LayoutInterface";
-import { NodeRef, TreeInterface } from "../Evo/Tree";
+import { NodeRef, Tree } from "../Evo/Tree";
 import { ImmutableTree, postOrderIterator } from "../Evo/Tree/normalizedTree/ImmutableTree";
 
 
 export class RectangularLayout extends AbstractLayout {
 
-    static getArbitraryLayout(tree: TreeInterface, opts?: internalLayoutOptions): ArbitraryVertices {
+    static getArbitraryLayout(tree: Tree, opts?: internalLayoutOptions): ArbitraryVertices {
         const safeOpts = { ...defaultInternalLayoutOptions, ...opts };
         const { rootLength, tipSpace } = safeOpts;
         if(safeOpts.pollard>1 || safeOpts.pollard<0) throw new Error("Pollard must be between 0 and 1");
@@ -136,10 +136,6 @@ export class RectangularLayout extends AbstractLayout {
         const safeOpts = { ...defaultInternalLayoutOptions, ...opts };
         const padding = safeOpts.padding;
         const xRange = safeOpts.invert ? [padding, safeOpts.width - padding].reverse() : [padding, safeOpts.width - padding];
-        console.group("Finalize Arbitrary Layout")
-        console.log(arbitraryLayout)
-        console.log(xRange);
-        console.groupEnd();
         const x = scaleLinear()
             .domain(arbitraryLayout.extent.x)
             .range(xRange);

@@ -61,8 +61,8 @@ export function getTextFunction(tree: TreeInterface, settings: any) {
             break;
         case "Branch lengths":
             textFunction = (node: NodeRef) => {
-                if (tree.getBranchLength(node)) {
-                   return  numericalFormatter(tree.getBranchLength(node)!);
+                if (tree.getLength(node)) {
+                   return  numericalFormatter(tree.getLength(node)!);
                 }else{
                     return '';
                 }

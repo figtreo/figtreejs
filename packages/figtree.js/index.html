@@ -152,7 +152,7 @@
         const margins = { top: 70, right: 70, bottom: 70, left: 70 }
 
         console.group("Before")
-        console.log(tree.nodes.map(n=>tree.getBranchLength(n))) ;
+        console.log(tree.nodes.map(n=>tree.getLength(n))) ;
         console.log(ft.polarLayout.layout(tree))
         console.log(ft.rectangularLayout.layout(tree))  
         console.groupEnd("Before")
@@ -171,7 +171,7 @@
             ft.NodeLabels({filter:(n)=>tree.isExternal(n), attrs: { fill: "black", fontSize: 12, fontWeight: 300 }, text: (n) => tree.getNodeTaxon(n),aligned:true  }),
             ft.CircleNodes({ attrs: { r: 7, fill: (n) => tree.getChildCount(n) > "#005C68" } }),
             ft.CircleNodes({ attrs: { r: 5, fill: (n) => tree.getChildCount(n) > 0 ? tree.isRoot(n) ? "#e31e58" : "#29c5ef" : "#22b680" , cursor:"pointer"},interactions:{onClick:(n)=>console.log(n)}}),
-            ft.BranchLabels({ attrs: { fill: "black", fontSize: 8, fontWeight: 300 }, text: (n) => tree.getBranchLength(n) }),
+            ft.BranchLabels({ attrs: { fill: "black", fontSize: 8, fontWeight: 300 }, text: (n) => tree.getLength(n) }),
             ],
             opts: {} // todo remove the need for this empty options
 

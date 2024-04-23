@@ -1,4 +1,4 @@
-import { NodeRef, TreeInterface, newickParsingOptions } from "../Tree.types";
+import { NodeRef, Tree, newickParsingOptions } from "../Tree.types";
 import { ImmutableTree, postOrderIterator,  preOrderIterator } from "../normalizedTree/ImmutableTree";
 import { parseAnnotation } from "./AnnotationParser";
 
@@ -38,13 +38,16 @@ export function parseNewick(tree:ImmutableTree,newick: string,options?:newickPar
                 throw new Error("expecting a comma");
             }
 
-            tree.addNode();
-            let node = tree.getNode(tree.getNodeCount()-1);
+           
+            let node
             level += 1;
             if (currentNode!==undefined) {
+                tree.addNodes(1);
+                node = tree.getNode(tree.getNodeCount()-1);
                 nodeStack.push(currentNode);
             } else {
-                tree.setRoot(node);
+                // tree.setRoot(node);
+                node = tree.getRoot();
             }
             currentNode = node;
 
@@ -94,7 +97,7 @@ export function parseNewick(tree:ImmutableTree,newick: string,options?:newickPar
         else {
             // not any specific token so may be a label, a length, or an external node name
             if (lengthNext) {
-                tree.setBranchLength(currentNode!,parseFloat(token));
+                tree.setLength(currentNode!,parseFloat(token));
                 lengthNext = false;
             } else if (labelNext) {
                 
@@ -131,7 +134,7 @@ export function parseNewick(tree:ImmutableTree,newick: string,options?:newickPar
                 name = name.trim();
 
 
-               tree.addNode();
+               tree.addNodes();
                const externalNode = tree.getNode(tree.getNodeCount()-1);
                 if(options.tipNameMap && options.tipNameMap.keys().next().value !== undefined ){
                     if(options.tipNameMap.has(name)){
@@ -140,7 +143,7 @@ export function parseNewick(tree:ImmutableTree,newick: string,options?:newickPar
                         console.warn(`No mapping found for ${name} in tipNameMap. It's name will not be updated`)
                     }
                 }
-                tree.setName(externalNode,name)
+                tree.setTaxon(externalNode,name)
                 // externalNode.label = taxon.id;
                 // externalNode.name = taxon.id;
 
@@ -169,7 +172,7 @@ function setDivergence(tree: ImmutableTree): number {
 let maxDivergence = 0;
 for (const node of preOrderIterator(tree)) {
     if (tree.getParent(node)) {
-        tree.setDivergence(node,tree.getBranchLength( node)! + tree.getDivergence(tree.getParent(node)!)!);
+        tree.setDivergence(node,tree.getLength( node)! + tree.getDivergence(tree.getParent(node)!)!);
     } else {
         tree.setDivergence(node,0);
     }

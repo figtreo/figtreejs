@@ -26,7 +26,7 @@ import {  mean } from "d3-array";
 import { scaleLinear } from "d3-scale";
 import { AbstractLayout, ArbitraryVertex, ArbitraryVertices, defaultInternalLayoutOptions, internalLayoutOptions, Vertices } from "./LayoutInterface";
 import { textSafeDegrees } from "./polarLayout";
-import {  TreeInterface } from "../Evo/Tree";
+import {  Tree } from "../Evo/Tree";
 import {  preOrderIterator, tipIterator } from "../Evo/Tree/normalizedTree/ImmutableTree";
 
 type data = {
@@ -41,7 +41,7 @@ type data = {
 export class RadialLayout extends AbstractLayout {
 
 
-    static getArbitraryLayout(tree: TreeInterface, option?:internalLayoutOptions): ArbitraryVertices {
+    static getArbitraryLayout(tree: Tree, option?:internalLayoutOptions): ArbitraryVertices {
         const safeOpts = { ...defaultInternalLayoutOptions, ...option };
         const vertices: ArbitraryVertices = { vertices:[], extent: { x: [0, 0], y: [0, 0] } };
         let maxY = Number.NEGATIVE_INFINITY
@@ -62,7 +62,7 @@ export class RadialLayout extends AbstractLayout {
             }
             const branchAngle = (angleStart + angleEnd) / 2.0;
 
-            const length = tree.getBranchLength(node)!==undefined ? tree.getBranchLength(node) : 0;
+            const length = tree.getLength(node)!==undefined ? tree.getLength(node) : 0;
 
             const directionX = Math.cos(branchAngle);
             const directionY = Math.sin(branchAngle);
