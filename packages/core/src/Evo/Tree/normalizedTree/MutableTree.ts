@@ -1,7 +1,7 @@
 import { v4 as uuid } from 'uuid';
 import {maxIndex,max} from "d3-array";
 import {dateToDecimal} from "../utilities";
-import { NodeRef, Tree } from "../Tree.types";
+import { NodeRef, Tree, TreeListener } from "../Tree.types";
 import { timeParse } from "d3-time-format";
 // import * as BitSetModule from "bitset";
 // const BitSet =BitSetModule.__moduleExports;
@@ -206,7 +206,7 @@ export class MutableTree implements Tree {
             throw new Error("Method not implemented.");
         }
 
-    treeSubscribeCallback(callback:(tree?:Tree,TreeEdits?:[])=>any):Tree{
+    treeSubscribeCallback(callback:TreeListener):Tree{
         this._callbacks.push(callback);
         return this;
     };

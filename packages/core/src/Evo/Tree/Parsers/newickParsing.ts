@@ -42,8 +42,7 @@ export function parseNewick(tree:ImmutableTree,newick: string,options?:newickPar
             let node
             level += 1;
             if (currentNode!==undefined) {
-                tree.addNodes(1);
-                node = tree.getNode(tree.getNodeCount()-1);
+                 [node] = tree.addNodes(1);
                 nodeStack.push(currentNode);
             } else {
                 // tree.setRoot(node);
@@ -134,8 +133,7 @@ export function parseNewick(tree:ImmutableTree,newick: string,options?:newickPar
                 name = name.trim();
 
 
-               tree.addNodes();
-               const externalNode = tree.getNode(tree.getNodeCount()-1);
+               const [externalNode]=tree.addNodes();
                 if(options.tipNameMap && options.tipNameMap.keys().next().value !== undefined ){
                     if(options.tipNameMap.has(name)){
                         name=options.tipNameMap.get(name)!
@@ -168,7 +166,7 @@ export function parseNewick(tree:ImmutableTree,newick: string,options?:newickPar
 }
 
 
-function setDivergence(tree: ImmutableTree): number {
+export function setDivergence(tree: ImmutableTree): number {
 let maxDivergence = 0;
 for (const node of preOrderIterator(tree)) {
     if (tree.getParent(node)) {

@@ -74,6 +74,8 @@ function FigTree(props:FigtreeProps){
     // console.log(maxD*pollard!)
     const scaleContext:scaleContextType = {width:w,height:h,domain:[pollard!*maxD,maxD],padding,maxR : max(vertices.vertices,d=>d.r),theta :extent(vertices.vertices,d=>d.theta!) as [number,number]};
 
+
+    
     //context gives us a nicer api where the data don't need to be passed to the subcomponents of the figure and the subcomponents can be added by user with JSX
     //todo check clip path is working where expected.
     return (
@@ -81,6 +83,7 @@ function FigTree(props:FigtreeProps){
                     <LayoutContext.Provider value={vertices}>
                         <AnimationContext.Provider value={animated}>
                             <ScaleContext.Provider value={scaleContext}>
+
                                 <defs>
                                 <clipPath id="clip">
                                     <rect x={-margins.left} y={-margins.top} width={width} height={height} /> 

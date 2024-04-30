@@ -7,8 +7,9 @@ import { ImmutableTree } from "./ImmutableTree";
 describe('ImmutableTree', () =>{
 
         it('simpleTree', function() {
-            const tree = new ImmutableTree();
-            const [tree1,nodes] = tree.addNodes();
+            const tree = new ImmutableTree().beginBatchedEdits();
+            const [node] = tree.addNodes();
+            const tree1  = tree.endBatchedEdits();
             expect(tree.getNodeCount()).toEqual(1);
             expect(tree1.getNodeCount()).toEqual(2);
             expect(tree1).not.toEqual(tree);
@@ -16,8 +17,9 @@ describe('ImmutableTree', () =>{
         });
 //Add child used getNode and updates both node and child.
         it('build tree and check parent', function() {
-            const [tree,[child,child2]] = new ImmutableTree()
-                            .addNodes(2)
+            const prototree = new ImmutableTree().beginBatchedEdits()
+            const [child,child2]=prototree.addNodes(2)
+            const tree = prototree.endBatchedEdits();
             const parent = tree.getNode(0);
             const tree1 = tree.addChild(parent,child)
                             .addChild(parent,child2);
@@ -34,10 +36,14 @@ describe('ImmutableTree', () =>{
         });
     //editing length does not access parent. Does the parent still update.
         it('Change branchlength', function() {
-            const [tree,[parent,child,child2]] = new ImmutableTree()
-                            .addNodes(3)
+            const tree = new ImmutableTree().beginBatchedEdits();
+                            
+            const [parent,child,child2] = tree.addNodes(3)
+
+
             const tree1 = tree.addChild(parent,child)
-                            .addChild(parent,child2);
+                            .addChild(parent,child2)
+                            .endBatchedEdits();
             
             const tree2 = tree1.setLength(child,0.5);
             expect(tree2).not.toEqual(tree1)

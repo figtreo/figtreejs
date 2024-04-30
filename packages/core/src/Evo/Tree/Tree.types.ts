@@ -65,12 +65,13 @@ export interface Tree  {
     getAnnotationKeys(): string[]
     getAnnotationType(name: string): string |undefined
 
-    addNodes(n?:number): [Tree,NodeRef[]] 
+    addNodes(n?:number): NodeRef[] 
     deleteNode(n:NodeRef):Tree
     removeChild(parent:NodeRef,child:NodeRef):Tree
     deleteClade(n:NodeRef):Tree
     getNextSibling(node:NodeRef):NodeRef|undefined
-
+    getRightSibling(node:NodeRef):NodeRef|undefined
+    getLeftSibling(node:NodeRef):NodeRef|undefined
     setHeight(node:NodeRef,height:number):Tree
     setDivergence(node:NodeRef,divergence:number):Tree
     setLength(node:NodeRef,length:number):Tree
@@ -91,9 +92,9 @@ export interface Tree  {
     //TODO decide if we want to keep integers different from continuous
     getAnnotationDomain(name:string):[number,number]|[boolean,boolean]|string[]|number[]|undefined;
 
-    treeSubscribeCallback(callback:(tree?:Tree,TreeEdits?:[])=>any):Tree
+    treeSubscribeCallback(callback:TreeListener):Tree
 
 }
-
+export type TreeListener = (tree:Tree,node:NodeRef)=> void;
 
 //TODO abstact Tree with parsing implementations

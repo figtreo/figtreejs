@@ -1,8 +1,8 @@
 
 import { extent } from "d3-array";
-import { Annotation, AnnotationType, NodeRef, Tree, newickParsingOptions } from "../Tree.types"
+import { Annotation, AnnotationType, NodeRef, Tree, TreeListener, newickParsingOptions } from "../Tree.types"
 import { parseNewick, parseNexus, processAnnotationValue } from "../Parsers";
-import {createDraft, finishDraft, immerable, produce} from "immer"
+import {createDraft, finishDraft, immerable, original, produce} from "immer"
 
 interface Node extends NodeRef{
     number: number,
@@ -41,6 +41,7 @@ export class ImmutableTree implements Tree  {
     _data: ImmutableTreeData;
     _draft:any|undefined;
     _changeLog:number[] = [];
+    _listeners:TreeListener[];
     constructor(data?: ImmutableTreeData) {
         if (data === undefined) {
             data = {
@@ -66,6 +67,7 @@ export class ImmutableTree implements Tree  {
             }
         }
         this._data = data;
+        this._listeners=[];
     }
 
 
@@ -233,6 +235,36 @@ export class ImmutableTree implements Tree  {
         }
     }
 
+    getRightSibling(node:NodeRef):NodeRef|undefined{
+        if(this._draft){
+            return this._draft.getRightSibling(node)
+        }
+        const parent = this._data.nodes.allNodes[this._data.nodes.allNodes[node.number].parent!]
+        const index = parent.children.map(c=>c).indexOf(node.number);
+        if (this.getChildCount(this.getParent(node)!) === 1) {
+            console.warn(`Node ${node.number} has no sibling`)
+            return undefined
+        } else if (index === this.getChildCount(this.getParent(node)!) - 1) {
+            return undefined
+        } else {
+            return this.getChild(this.getParent(node)!, index + 1)
+        }
+    }
+    getLeftSibling(node:NodeRef):NodeRef|undefined{
+        if(this._draft){
+            return this._draft.getLeftSibling(node)
+        }
+        const parent = this._data.nodes.allNodes[this._data.nodes.allNodes[node.number].parent!]
+        const index = parent.children.map(c=>c).indexOf(node.number);
+        if (this.getChildCount(this.getParent(node)!) === 1) {
+            console.warn(`Node ${node.number} has no sibling`)
+            return undefined
+        } else if (index === 0) {
+            return undefined
+        } else {
+            return this.getChild(this.getParent(node)!, index - 1)
+        }
+    }
 
     getNode(number: number): NodeRef {
         if(this._draft){
@@ -343,42 +375,18 @@ export class ImmutableTree implements Tree  {
         this._draft._draft=undefined;
         //update all other nodes 
         this._draft._changeLog.forEach((n:number)=>{
-            const node = this._draft.getNode(n) as Node;
-            this._draft._updateNodesToRoot(node)
+            const node = this.getNode(n) as Node;
+            this.fireCallBack(node)
         })
         this._draft._changeLog = [];
         return finishDraft(this._draft)
     }
 
-    addNodes(n?:number): [Tree,NodeRef[]] {
+    addNodes(n:number=1): NodeRef[] {
         const newNodes:NodeRef[] =[]
-        if(n===undefined){
-            n=1;
-        }
         if(!this._draft){
-
-        const tree =  produce(this,draft=>{
-            const number = draft._data.nodes.allNodes.length
-            for (let i = 0; i < n!; i++) {
-                const newNode = {
-                    number:number+i,
-                    children: [],
-                    parent: undefined,
-                    label: '',
-                    length: undefined,
-                    divergence: undefined,
-                    height: undefined,
-                    name: undefined,
-                    level: undefined,
-                    annotations: {},
-                    _id: Symbol(),
-                }
-                newNodes.push(newNode);
-                draft._data.nodes.allNodes.push(newNode)
-            }
-        })
-        return [tree,newNodes];
-    }else{
+       throw new Error("Can not add nodes when not in tree edit");
+        }else{
         const number = this._draft._data.nodes.allNodes.length
         for (let i = 0; i < n!; i++) {
             const newNode = {
@@ -397,7 +405,7 @@ export class ImmutableTree implements Tree  {
             newNodes.push(newNode);
         this._draft._data.nodes.allNodes.push(newNode)
     }
-        return [this,newNodes];
+        return newNodes;
     }
 }
 
@@ -445,19 +453,26 @@ export class ImmutableTree implements Tree  {
             }
         }
     }
-   
+   //To be called in the draft so we clear updates
+    fireCallBack(node:NodeRef){
+        for(const callback of this._listeners){
+           callback(this,node)
+        }
+    }
+
 
     // ---------------- Setters ---------------------
 
+//TODO handle height and divergence changes
 
     setHeight(node: NodeRef, height: number): ImmutableTree {
         if(!this._draft){
             return produce(this,draft=>{
                 const n = draft.getNode(node.number) as Node;
                 n.height = height;
+                //update divergence and branchlengths
                 //update all nodes to root
-                draft._updateNodesToRoot(node);
-    
+                this.fireCallBack(node);
             })
             }else{
                 const n = this._draft.getNode(node.number) as Node;
@@ -473,7 +488,7 @@ export class ImmutableTree implements Tree  {
                 const n = draft.getNode(node.number) as Node;
                 n.divergence = divergence;
                 //update all nodes to root
-                draft._updateNodesToRoot(node);
+                this.fireCallBack(node);
     
             })
             }else{
@@ -521,8 +536,20 @@ export class ImmutableTree implements Tree  {
         }
     }
 
-    treeSubscribeCallback(callback: (tree?: Tree | undefined, TreeEdits?: [] | undefined) => any): Tree {
-        throw new Error("Method not implemented.");
+    treeSubscribeCallback(callback:TreeListener): Tree {
+        if(!this._draft){
+            return produce(this,draft=>{
+                if(!draft._listeners.includes(callback)){ //mutations!
+                    draft._listeners.push(callback)
+                }
+            })
+        }else{
+            if(!this._draft._listeners.includes(callback)){ //mutations!
+                this._draft._listeners.push(callback)
+            }
+            return this;
+        }
+       
     }
     
     // getAnnotationType(name: string): AnnotationType|undefined {
@@ -636,7 +663,8 @@ export class ImmutableTree implements Tree  {
                         parent.children = parent.children.filter(n=>n!==node0.number)
 
                         if (draft.getParent(parent)!.number === rootNode.number) {
-                            const sibling = draft.getNextSibling(parent)! as Node;
+                            const ls = draft.getLeftSibling(parent);
+                            const sibling = ls?ls as Node: draft.getRightSibling(parent) as Node;
                             
                             if(!sibling){
                                 console.log(parent.number)
@@ -698,7 +726,11 @@ export class ImmutableTree implements Tree  {
                     treeNode.length = l;
                     const sibling = draft.getNextSibling(node)! as Node;
                     sibling.length = rootLength - l;
-                    draft._updateNodesToRoot(node);
+                    // draft.fireCallBackCallBack(draft,node);
+                }
+                const maxDivergence = setDivergence(draft);
+                for (const node  of postOrderIterator(draft) ) {
+                    (node as Node).height = maxDivergence - (node as Node).divergence!
                 }
 
         });
@@ -724,7 +756,7 @@ export class ImmutableTree implements Tree  {
         if(!this._draft){
             return(produce(this,draft=>{
                 draft._data.nodes.allNodes[node.number].children = this._data.nodes.allNodes[node.number].children.map(n=>draft.getNode(n)).sort(compare).map(n=>n.number);
-                draft._updateNodesToRoot(node);
+                this.fireCallBack(node);
             }))
         }else{
             this._draft._data.nodes.allNodes[node.number].children = this._draft._data.nodes.allNodes[node.number].children.map((n:number)=>this._draft.getNode(n)).sort(compare).map((n:NodeRef)=>n.number);
@@ -1144,3 +1176,18 @@ export function* tipIterator(tree: Tree, node: NodeRef): Generator<NodeRef> {
 //         this.setBranchLength(node, l)
 //         this.setBranchLength(this.getSibling(node)!, rootLength - l)
 //     }
+
+function setDivergence(tree: ImmutableTree): number {
+    let maxDivergence = 0;
+    for (const node of preOrderIterator(tree)) {
+        if (tree.getParent(node)) {
+            (node as Node).divergence =  tree.getDivergence(tree.getParent(node)!)! +tree.getLength( node)! 
+        } else {
+            (node as Node).divergence = 0;
+        }
+        if (tree.getDivergence(node) > maxDivergence) {
+            maxDivergence = tree.getDivergence(node);
+        }
+    }
+    return maxDivergence;
+    }
