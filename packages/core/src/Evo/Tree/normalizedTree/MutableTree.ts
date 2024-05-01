@@ -77,6 +77,35 @@ export class MutableTree implements Tree {
         this._root = this.getNode(0)!;
         
     }
+    getRightSibling(node: NodeRef): NodeRef | undefined {
+        const parent = this.getParent(node)!;
+        if(parent===undefined)return undefined;
+
+        const index = this.getChildren(parent).map(n=>n.number).indexOf(node.number);
+        if (this.getChildCount(this.getParent(node)!) === 1) {
+            console.warn(`Node ${node.number} has no sibling`)
+            return undefined
+        } else if (index === this.getChildCount(this.getParent(node)!) - 1) {
+            return undefined
+        } else {
+            return this.getChild(this.getParent(node)!, index + 1)
+        }
+    }
+    getLeftSibling(node: NodeRef): NodeRef | undefined {
+        const parent = this.getParent(node)!;
+        if(parent===undefined)return undefined;
+
+        const index = this.getChildren(parent).map(n=>n.number).indexOf(node.number);
+        
+        if (this.getChildCount(this.getParent(node)!) === 1) {
+            console.warn(`Node ${node.number} has no sibling`)
+            return undefined
+        } else if (index === 0) {
+            return undefined
+        } else {
+            return this.getChild(this.getParent(node)!, index - 1)
+        }
+    }
     // just to make compiler happy
     getRoot(): NodeRef  {
         return this._root!;
@@ -144,7 +173,7 @@ export class MutableTree implements Tree {
     getAnnotationKeys(): string[] {
             return Object.keys(this.annotations);
     }
-    addNodes(n: number=1): [Tree,NodeRef[]] {
+    addNodes(n: number=1): NodeRef[] {
         const newNodes = [];
         for(let i=0;i<n;i++){
             const node = new Node({tree:this});
@@ -152,7 +181,7 @@ export class MutableTree implements Tree {
             node.name&& this._tipMap.set(node.name,node);
             this._nodeMap.set(node.number,node);
         }
-        return [this,newNodes]
+        return newNodes
     }
     removeChild(parent: NodeRef, child: NodeRef): Tree {
             this.removeChild(parent, child);
@@ -185,8 +214,8 @@ export class MutableTree implements Tree {
             (parent as Node).addChild(child as Node);
             return this;
         }
-    orderNodesByDensity(increasing = true, node:NodeRef = this.getRoot() ) {
-            const factor = increasing ? 1 : -1;
+    orderNodesByDensity(down = true, node:NodeRef = this.getRoot() ):Tree {
+            const factor = down ? 1 : -1;
             orderNodes.call(this, (node as Node), (nodeA, countA:number, nodeB, countB:number) => {
                 return (countA - countB) * factor;
             });

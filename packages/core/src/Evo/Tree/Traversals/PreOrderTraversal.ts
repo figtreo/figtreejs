@@ -34,7 +34,8 @@ export class PreOrderTraversalCache implements TreeTraversal{
     }
     
     handleUpdate(tree:Tree,node:NodeRef):void{ 
-
+//TODO begin again here and provide tree with nodes to mark as new. 
+        console.log(`Handling update for node ${node.number}`)
         let n:NodeRef|undefined = node
         while(n!==undefined){
             this.cache.delete(n)

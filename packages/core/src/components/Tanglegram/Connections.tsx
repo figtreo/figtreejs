@@ -1,9 +1,9 @@
 import React from "react";
 import { Vertices } from "../../Layouts";
 import { Tree } from "../../Evo/Tree";
-import { BranchProps } from "../../../dist";
 import { useAttributeMappers } from "../../hooks";
 import { Branch } from "../Baubles/Branches/Branch";
+import { BranchProps } from "../Baubles";
 
 interface ConnectionsProps extends BranchProps {
     vertices: Vertices[];

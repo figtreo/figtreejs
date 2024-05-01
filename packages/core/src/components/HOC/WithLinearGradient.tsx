@@ -8,7 +8,7 @@ let counter =1;
  */
 const withLinearGradient = (WrappedContainer:React.ComponentType<any>)=>{
     function WithLinearGradient(props:any){
-        props = {...defaultProps(),...props};
+        // props = {...defaultProps(),...props};
         const {startingX,endingX,staringY,endingY,colorRamper,opacityRamper,n,gradientAttribute,attrs,...restProps} = props;
         const colorStops = [];
         for( let i=0;i<n;i++){

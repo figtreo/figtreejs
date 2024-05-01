@@ -2,7 +2,6 @@ import React from "react";
 import withLinearGradient from "../../HOC/WithLinearGradient";
 
 
-//TODO move to bauble
 function Rect(props:{width:number,height:number,attrs:{[key:string]:any}}){
     const {width,height,attrs} = props;
     return  <rect width={width} height={height} {...attrs}/>

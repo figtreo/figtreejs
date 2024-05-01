@@ -1,12 +1,9 @@
 import React from 'react';
-import { LayoutContext, TreeContext,AnimationContext,ScaleContext, scaleContextType } from '../../Context/context';
-import { NodeRef } from '../../Evo/Tree/Tree.types';
-import { RectangularLayout } from '../../Layouts/rectangularLayout';
 import { FigtreeProps } from './Figtree.types';
-import { extent, max } from 'd3-array';
-import { defaultInternalLayoutOptions } from '../../Layouts';
+import { defaultInternalLayoutOptions, rectangularLayout } from '../../Layouts';
 import { ImmutableTree } from '../../Evo/Tree';
 import { Branches } from '../Baubles';
+import { useFigtreeStore } from '../../store';
 
 
 
@@ -21,17 +18,16 @@ export const defaultOpts:FigtreeProps = {
     opts:defaultInternalLayoutOptions,
     width:100,
     height:100,
-    layout:RectangularLayout,
+    layout:rectangularLayout(),
     margins:{top:10,right:10,bottom:10,left:10},
     tree:ImmutableTree.fromNewick("((A:1,B:1):1,C:2);"),
     children:[<Branches filter={(n)=>true} attrs={{fill:'none',stroke:"black",strokeWidth:1}} interactions={{}}/>],
     animated:false,
-    padding:20,
-    tipSpace:(n:NodeRef,n2:NodeRef)=>1,
    
 }
 
 function FigTree(props:FigtreeProps){
+
 
 
     const {width =defaultOpts.width,
@@ -40,50 +36,52 @@ function FigTree(props:FigtreeProps){
         tree = defaultOpts.tree,
         layout = defaultOpts.layout,
         animated=defaultOpts.animated,
-        padding = defaultOpts.padding!,
 
     } = props;
-    let {vertices} = props;
     
     const {rootAngle = defaultOpts.opts.rootAngle,
         rootLength = defaultOpts.opts.rootLength,
         angleRange = defaultOpts.opts.angleRange,
-        curvature = defaultOpts.opts.curvature,
         showRoot = defaultOpts.opts.showRoot,
         spread = defaultOpts.opts.spread,
         pointOfInterest = defaultOpts.opts.pointOfInterest,
         fishEye = defaultOpts.opts.fishEye,
-        cartoonedNodes: nodeDecorations = defaultOpts.opts.cartoonedNodes,
         pollard = defaultOpts.opts.pollard,
-        tipSpace = defaultOpts.opts.tipSpace,
         minRadius = defaultOpts.opts.minRadius,
         invert = defaultOpts.opts.invert
     } = props.opts; //todo this requires opts to not be undefined even though all the values are optional.
 
-    const w = width - margins.left - margins.right;
-    const h = height - margins.top - margins.bottom;
-    const point = pointOfInterest?pointOfInterest: {x:(margins.left+w)/2,y:(margins.top+height)/2};
-    //handle defaults once not here and in layout methods
-    if(!vertices){
-        vertices = layout.layout(tree,{showRoot,width:w,height:h,rootLength,rootAngle,angleRange,curvature,spread,pollard,padding,tipSpace,fishEye,pointOfInterest:point,cartoonedNodes: nodeDecorations,invert,minRadius});
-    }
+    const setXScale = useFigtreeStore((state)=>state.setXScale);
+    const setYScale = useFigtreeStore((state)=>state.setYScale);
+    const setAnimated = useFigtreeStore((state)=>state.setAnimated);
+    const setTree = useFigtreeStore((state)=>state.setTree);
+    const setLayout = useFigtreeStore((state)=>state.setLayout);
+    
+    const canvasWidth = width - margins.left - margins.right;
+    const figureHeight = height - margins.top - margins.bottom;
+
+    const point = pointOfInterest?pointOfInterest: {x:(margins.left+canvasWidth)/2,y:(margins.top+height)/2};
+
         
     const children = props.children?props.children:defaultOpts.children;
-    const maxD = tree.getHeight(tree.getRoot()!)!+rootLength!;
-    // console.log(maxD)
-    // console.log(maxD*pollard!)
-    const scaleContext:scaleContextType = {width:w,height:h,domain:[pollard!*maxD,maxD],padding,maxR : max(vertices.vertices,d=>d.r),theta :extent(vertices.vertices,d=>d.theta!) as [number,number]};
+   
+    
+    const {maxX,maxY,layoutClass} = layout(tree.getRoot(),tree,);
+
+
+    //TODO hook to get scales
+    setXScale(maxX,canvasWidth,layoutClass);
+    setYScale(maxY,figureHeight,layoutClass);
+    setAnimated(animated);
+    setTree(tree);
+    setLayout(layout);
 
 
     
-    //context gives us a nicer api where the data don't need to be passed to the subcomponents of the figure and the subcomponents can be added by user with JSX
+    //state gives us a nicer api where the data don't need to be passed to the subcomponents of the figure and the subcomponents can be added by user with JSX
     //todo check clip path is working where expected.
     return (
-                <TreeContext.Provider value={tree}>
-                    <LayoutContext.Provider value={vertices}>
-                        <AnimationContext.Provider value={animated}>
-                            <ScaleContext.Provider value={scaleContext}>
-
+                <g>
                                 <defs>
                                 <clipPath id="clip">
                                     <rect x={-margins.left} y={-margins.top} width={width} height={height} /> 
@@ -95,14 +93,14 @@ function FigTree(props:FigtreeProps){
                         <g transform={`translate(${margins.left},${margins.top})`} clipPath={'url(#clip)'} >
                             {children}
                         </g>
-                            </ScaleContext.Provider>
-                        </AnimationContext.Provider>
-                    </LayoutContext.Provider>
-                </TreeContext.Provider>
+                </g>
+
             )
 }
 
 export default FigTree; // ; withConditionalInteractionProvider(FigTree);
+
+
 // export default FigTree;
 
 

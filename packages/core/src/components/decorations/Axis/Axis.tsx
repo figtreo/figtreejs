@@ -1,6 +1,5 @@
 import React from 'react'
 
-import { useLayout, useScale } from "../../../hooks";
 
 import PolarAxis from './PolarAxis';
 import RectangularAxis from './RectangularAxis';
@@ -11,10 +10,10 @@ import { AxisProps } from './Axis.types';
 
 export default function Axis(props: AxisProps) {
 
-    const {type} = useLayout(); 
+    const {type} = props; 
  
     if(type === "Polar"){
-        return <PolarAxis {...props}/>
+        return null; //<PolarAxis {...props}/>
     }else if (type === "Rectangular"){
         return <RectangularAxis {...props}/>
     }else{

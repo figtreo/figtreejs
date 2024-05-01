@@ -2,7 +2,6 @@ import React from "react"
 import ColorRamp from "./ColorRamp";
 import {format} from "d3-format";
 import {quantize, interpolate, interpolateRound} from "d3-interpolate";
-import{ScaleContext} from "../../../Context/context";
 import RectangularAxis from "../Axis/RectangularAxis";
 
 /**
@@ -45,9 +44,7 @@ export default function ContinuousLegend(props:{scale:any,pos:{x:number,y:number
         <g className={"legend"} transform={`translate(${pos.x},${pos.y})`}>
             <text transform={`translate(0,-6)`}>{title}</text>
             <ColorRamp {...{colorRamper: colorRamper,width,height}}/>
-            <ScaleContext.Provider value={{domain:scale.domain,width,height, padding:0}}> 
-                <RectangularAxis x={0} y={height} {...{width,height,direction,ticks}} scale={x} />
-            </ScaleContext.Provider>
+            <RectangularAxis x={0} y={height} {...{width,height,direction,ticks}} scale={x} />
         </g>
     )
 

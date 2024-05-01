@@ -2,6 +2,7 @@ import React from "react";
 import { animated} from "@react-spring/web";
 import withAnimation from "../../HOC/withAnimation";
 import { BaseShapeProps } from "..";
+import withBranch from "../../HOC/withBranch";
 
 
 //props types
@@ -24,4 +25,4 @@ interface BaseBranchProps extends BaseShapeProps{
         stroke:string
     }
 }
-export const Branch= withAnimation(BaseBranch);
+export const Branch= withBranch(withAnimation(BaseBranch));

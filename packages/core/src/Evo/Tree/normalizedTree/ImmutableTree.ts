@@ -161,7 +161,7 @@ export class ImmutableTree implements Tree  {
     }
     getTaxon(node: NodeRef): string{
         if(this._draft){
-            return this._draft.getNodeTaxon(node)
+            return this._draft.getTaxon(node)
         }
         const n = this._data.nodes.allNodes[node.number] as Node;
         const name= n.name
@@ -372,14 +372,15 @@ export class ImmutableTree implements Tree  {
         return this;
     }
     endBatchedEdits(){
-        this._draft._draft=undefined;
         //update all other nodes 
         this._draft._changeLog.forEach((n:number)=>{
             const node = this.getNode(n) as Node;
             this.fireCallBack(node)
         })
         this._draft._changeLog = [];
-        return finishDraft(this._draft)
+        const draft = this._draft;
+        this._draft = undefined; // reset so can refer to original tree again
+        return finishDraft(draft)
     }
 
     addNodes(n:number=1): NodeRef[] {
@@ -453,7 +454,7 @@ export class ImmutableTree implements Tree  {
             }
         }
     }
-   //To be called in the draft so we clear updates
+    //listeners provide nodes to mark as updated. 
     fireCallBack(node:NodeRef){
         for(const callback of this._listeners){
            callback(this,node)
@@ -578,7 +579,7 @@ export class ImmutableTree implements Tree  {
     }
     
 
-    orderNodesByDensity(increasing: boolean, node?: NodeRef): ImmutableTree {
+    orderNodesByDensity(down: boolean, node?: NodeRef): ImmutableTree {
         if(!this._draft){
             return produce(this,draft=>{
                 if (node === undefined) {
@@ -587,10 +588,10 @@ export class ImmutableTree implements Tree  {
                     }
                     node = draft._data.nodes.allNodes[draft._data.rootNode];
                 }
-                const factor = increasing ? 1 : -1;
+                const factor = down ? 1 : -1;
                  orderNodes(draft._data, node, (nodeA, countA, nodeB, countB) => {
                     return (countA - countB) * factor;
-                });
+                }, (n:NodeRef)=>this.fireCallBack(n));
                 
             })
         }else{
@@ -600,10 +601,10 @@ export class ImmutableTree implements Tree  {
                 }
                 node = this._draft._data.nodes.allNodes[this._draft._data.rootNode];
             }
-            const factor = increasing ? 1 : -1;
+            const factor = down ? 1 : -1;
             orderNodes(this._draft._data, node!, (nodeA, countA, nodeB, countB) => {
                 return (countA - countB) * factor;
-            });
+            },(n:NodeRef)=>this._draft._changeLog.push(n.number));
 
             return this;
         }
@@ -756,7 +757,7 @@ export class ImmutableTree implements Tree  {
         if(!this._draft){
             return(produce(this,draft=>{
                 draft._data.nodes.allNodes[node.number].children = this._data.nodes.allNodes[node.number].children.map(n=>draft.getNode(n)).sort(compare).map(n=>n.number);
-                this.fireCallBack(node);
+                draft._data.nodes.allNodes[node.number].children.forEach((n:number)=>{draft.fireCallBack(draft.getNode(n))})
             }))
         }else{
             this._draft._data.nodes.allNodes[node.number].children = this._draft._data.nodes.allNodes[node.number].children.map((n:number)=>this._draft.getNode(n)).sort(compare).map((n:NodeRef)=>n.number);
@@ -983,21 +984,32 @@ function rotate(draft:ImmutableTree,n:NodeRef,recursive:boolean): void{
  * @returns {number}
  */
 //I don't think this needs to update to the root because it is a preorder traversal or is it postorder anyway it's a traversal that probably works
-function orderNodes(treeData: ImmutableTreeData, node: NodeRef, ordering: (a: NodeRef, numberOfATips: number, b: NodeRef, numberOfBTips: number) => number):number {
+function orderNodes(treeData: ImmutableTreeData, node: NodeRef, ordering: (a: NodeRef, numberOfATips: number, b: NodeRef, numberOfBTips: number) => number,callback:Function):number {
     let count = 0;
     if (treeData.nodes.allNodes[node.number].children.length > 0) {
         // count the number of descendents for each child
         const counts = new Map();
         for (const child of treeData.nodes.allNodes[node.number].children.map(n=>treeData.nodes.allNodes[n])) {
-            const value = orderNodes(treeData, child, ordering);
-            counts.set(child, value);
+            const value = orderNodes(treeData, child, ordering,callback);
+            counts.set(child.number, value);
             count += value;
         }
-
-        // sort the children using the provided function
-        treeData.nodes.allNodes[node.number].children = treeData.nodes.allNodes[node.number].children.sort( (a, b) => {
+        // sort the children using the provided function        
+        const reorderedChildren = treeData.nodes.allNodes[node.number].children.sort( (a, b) => {
             return ordering(treeData.nodes.allNodes[a], counts.get(a), treeData.nodes.allNodes[b], counts.get(b))
         });
+
+        let changed = false;
+        reorderedChildren.forEach((n:number, i:number) => {
+            if (n !== treeData.nodes.allNodes[node.number].children[i]) {
+                changed = true;
+            }
+        });
+        if (changed){
+            treeData.nodes.allNodes[node.number].children = reorderedChildren;
+            console.log('changed')
+            reorderedChildren.forEach((n:number)=>callback( treeData.nodes.allNodes[n]))
+        }
 
     } else {
         count = 1

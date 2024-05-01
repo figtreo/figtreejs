@@ -17,7 +17,8 @@ export interface AxisProps {
     strokeWidth?: number,
     x?: number,
     y?: number,
-    children?: React.ReactNode
+    children?: React.ReactNode,
+    type?: "Polar" | "Rectangular" //yuck
 }
 
 
@@ -40,6 +41,7 @@ export const defaultAxisProps: AxisProps = {
     direction: "horizontal",
     scale: undefined,
     strokeWidth:1,
+    type: "Rectangular"
 }
 
 export const defaultAxisBarsProps={
@@ -57,6 +59,7 @@ export interface AxisBarsProps{
     oddFill?:string,
     attrs?:{[key:string]:any},
     lift?:number,
+    type?:"Rectangular"|"Polar"
 
 
 

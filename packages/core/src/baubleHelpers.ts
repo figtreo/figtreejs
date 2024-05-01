@@ -8,7 +8,6 @@
  * @param attrs - values can be primitives or functions. if primitive it will apply the attribute to all baubles
  * @return {function(*=): {}}
  */
-
 export function mapAttrsToProps(attrs:any):Function {
     return function (data:any) {
         const props:{[key:string]:any} = {};

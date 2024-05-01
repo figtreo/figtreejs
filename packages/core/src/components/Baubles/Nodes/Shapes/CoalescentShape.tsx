@@ -1,7 +1,7 @@
 import React from "react"
 import {linkHorizontal} from "d3-shape";
 import {extent, max, min} from "d3-array";
-import { useLayout,useTree} from "../../../../hooks";
+// import { useLayout,useTree} from "../../../../hooks";
 import { Vertex } from "../../../../Layouts/LayoutInterface";
 import withLinearGradient from "../../../HOC/WithLinearGradient";
 import { NodeRef, tipIterator } from "../../../../Evo/Tree";
@@ -14,21 +14,21 @@ const pathComponent=({attrs,interactions}:{attrs:genericAttr,interactions:generi
 export const FadedPath=withLinearGradient(pathComponent);
 
 export default function CoalescentShape (props:CoalescentProps){
-    const vertices =  useLayout();
-    const tree = useTree();
 
-    const {vertex,attrs,interactions,startWidth,FadeEndpoint,curveSlope} =props;
+    throw new Error("CoalescentShape is not implemented");
 
-    const targets:Vertex[] = [...tipIterator(tree,tree.getNode(vertex.number))].map( (decedent:NodeRef) => vertices.vertices[decedent.number])
-        .concat(tree.getChildren(tree.getNode(vertex.number)).map( (decedent:NodeRef) => vertices.vertices[decedent.number]));
+    // const {vertex,attrs,interactions,startWidth,FadeEndpoint,curveSlope} =props;
+
+    // const targets:Vertex[] = [...tipIterator(tree,tree.getNode(vertex.number))].map( (decedent:NodeRef) => vertices.vertices[decedent.number])
+    //     .concat(tree.getChildren(tree.getNode(vertex.number)).map( (decedent:NodeRef) => vertices.vertices[decedent.number]));
 
 
-    const slope =calcSlope(targets,curveSlope);
+    // const slope =calcSlope(targets,curveSlope);
 
-    const d=makeCoalescent(vertex,targets,slope,startWidth);
-    const endingX= FadeEndpoint==="min"?100/slope:FadeEndpoint==="max"?100:parseFloat(FadeEndpoint)?parseFloat(FadeEndpoint):100/slope;
+    // const d=makeCoalescent(vertex,targets,slope,startWidth);
+    // const endingX= FadeEndpoint==="min"?100/slope:FadeEndpoint==="max"?100:parseFloat(FadeEndpoint)?parseFloat(FadeEndpoint):100/slope;
 
-    return  <FadedPath className="node-shape" attrs={{...attrs,d:d}} interactions={interactions} endingX={`${endingX}%`} colorRamper={()=>attrs.fill} opacityRamper={(i:number)=>1-i*1} />
+    // return  <FadedPath className="node-shape" attrs={{...attrs,d:d}} interactions={interactions} endingX={`${endingX}%`} colorRamper={()=>attrs.fill} opacityRamper={(i:number)=>1-i*1} />
 };
 
 
@@ -61,16 +61,16 @@ export interface CoalescentNodeProps extends NodeProps{
     curveSlope:"min"    |"max" |number,
 }
 
-CoalescentShape.defaultProps= {
-    attrs: {
-        fill: "steelblue",
-        strokeWidth: 1,
-        stroke: 'black'
-    },
-    startWidth:2,
-    FadeEndpoint:"min",
-    curveSlope:"min"
-};
+// CoalescentShape.defaultProps= {
+//     attrs: {
+//         fill: "steelblue",
+//         strokeWidth: 1,
+//         stroke: 'black'
+//     },
+//     startWidth:2,
+//     FadeEndpoint:"min",
+//     curveSlope:"min"
+// };
 type linkData = {source:point,target:point};
 const link = linkHorizontal<linkData,point>()
     .x((d:point) => d.x )

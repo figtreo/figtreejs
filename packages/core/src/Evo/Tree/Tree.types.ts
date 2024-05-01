@@ -83,7 +83,7 @@ export interface Tree  {
     root(node: NodeRef,portion:number): Tree
     unroot(node:NodeRef):Tree
     toNewick(node?:NodeRef,options?:{includeAnnotations:boolean}): string;
-    orderNodesByDensity(increasing:boolean):void
+    orderNodesByDensity(down:boolean):Tree
     sortChildren(node:NodeRef,compare:(a:NodeRef,b:NodeRef)=>number):Tree
     isRoot(node:NodeRef):boolean;
     getMRCA(nodes:NodeRef[]):NodeRef;

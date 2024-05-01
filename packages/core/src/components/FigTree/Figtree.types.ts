@@ -1,5 +1,6 @@
-import { AbstractLayout, CartoonData, Vertices } from "../../Layouts/LayoutInterface";
 import { Tree,NodeRef } from "../../Evo/Tree/Tree.types";
+import { FunctionalVertex } from "../../Layouts";
+import { ImmutableTree } from "../../Evo/Tree";
 
 export interface Margins{
     top:number,
@@ -13,32 +14,25 @@ export interface layoutOptions{
     rootLength?: number,
     rootAngle?: number,
     angleRange?: number,
-    tipSpace?: (tip1: NodeRef, tip2: NodeRef) => number, //Todo make arguements nodeRefs
-    curvature?: number,
     showRoot?: boolean,
     spread?: number
     pointOfInterest?: { x: number; y: number; },
     fishEye?: number;
-    cartoonedNodes?: Map<NodeRef,CartoonData>
     pollard?:number,
     invert?:boolean,
     minRadius?:number,
     padding?:number
-
 }
 
-
+type layout=(node:NodeRef,tree?:Tree)=>FunctionalVertex;
 
 export interface FigtreeProps {
     width:number,
     height:number,
-    layout:typeof AbstractLayout,
+    layout:layout,
     tree:Tree,
     margins:Margins,
     children:React.ReactNode,
     opts:layoutOptions
     animated:boolean,
-    padding?:number,
-    tipSpace?: (tip1: NodeRef, tip2: NodeRef) => number,
-    vertices?:Vertices
 }

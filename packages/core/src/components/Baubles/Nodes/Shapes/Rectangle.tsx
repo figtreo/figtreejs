@@ -1,9 +1,8 @@
 import React, {useContext,useMemo} from "react"
-import {sameAttributes} from "./Circle";
-import { Vertex } from "../../../../Layouts/LayoutInterface";
 import { animated } from "@react-spring/web";
 import withAnimation from "../../../HOC/withAnimation";
 import { BaseShapeProps, NodeProps } from "..";
+import withNode from "../../../HOC/withNode";
 const BaseRect = React.memo<RectangleProps>( (props)=>{
     
 	const {attrs,interactions,id} = props;
@@ -11,16 +10,18 @@ const BaseRect = React.memo<RectangleProps>( (props)=>{
         <animated.rect  node-id={id} className={"node-shape"} {...attrs} {...interactions} />
     );
 
-},sameAttributes);
+});
 
 
-const Rectangle =withAnimation(BaseRect);
+const Rectangle = withNode(withAnimation(BaseRect));
 
 export interface RectangleProps extends BaseShapeProps{
 	attrs:{
 		fill:string,
 		strokeWidth:number,
 		stroke:string,
+		width:number,
+		height:number
 	}
 }
 export interface RectangleNodeProps extends NodeProps{

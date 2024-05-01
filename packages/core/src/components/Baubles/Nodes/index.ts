@@ -4,7 +4,7 @@ export {default as Nodes} from './Nodes';
 
 export {NodeProps} from './Node.types';
 
-export * from "./Shapes"
+export * from "./Shapes/index"
 //TODO separate exposed props from required
 
 

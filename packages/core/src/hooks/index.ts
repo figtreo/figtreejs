@@ -1,13 +1,5 @@
 import {useCallback,useContext} from "react";
 import {applyInteractions, mapAttrsToProps} from "../baubleHelpers";
-import {
-    DataContext,
-    AnimationContext,
-    InteractionDispatchContext,
-    InteractionStateContext, LayoutContext,
-     TreeContext,
-     ScaleContext
-} from "../Context/context";
 
 /*
 This function takes props which define the attributes of an element and provide information about how to update
@@ -70,42 +62,12 @@ export function useAttributeMappers(props:any,hoverKey="id",selectionKey="id"){
 
 }
 
-export  function useInteractions(){
-    const state = useInteractionsState();
-    const dispatch = useInteractionsDispatch();
-    return {state,dispatch}
-}
-export function useInteractionsState(){
-    return useContext(InteractionStateContext)
-}
-export function useInteractionsDispatch(){
-    return useContext(InteractionDispatchContext)
-}
 
 // export  function useScales(){
 //     return useContext(ScaleContext)
 // }
-export function useData(){
-    return useContext(DataContext);
-}
-export function useLayout(){
-    return useContext(LayoutContext);
-}
-export function useTree(){
-    return useContext(TreeContext);
-}
 
 
-
-export function useAnimation(){
-    return useContext(AnimationContext);
-}
-export const useFigtreeContext={layout:useLayout,tree:useTree};
-
-//TODO remove and make this a prop for each axis. 
-export function useScale(){
-    return useContext(ScaleContext);
-}
 //Dispatch a hover action are we hovering by id (just this node) or by annotation all nodes with this annotation value?
 // function hoverAction(dataEntry,key){
 //     const value = key==="id"?dataEntry.id:dataEntry.annotations[key];

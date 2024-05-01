@@ -1,17 +1,17 @@
 import React from 'react'
 import { line } from "d3-shape"
 import { mean, quantile, range } from "d3-array"
-import { useScale } from "../../../hooks";
 import { ScaleContinuousNumeric, scaleLinear } from 'd3-scale';
 import { AxisOrientation, AxisProps, AxisScaleContext, defaultAxisProps } from './Axis.types';
 import { AxisContext } from './Axis.context';
+import { dimensionState, useFigtreeStore } from '../../../store';
 
 //TODO do things to scale and allow date as origin not maxD.
 
 
 export default function Axis(props: AxisProps) {
 
-    const scaleContext = useScale();
+    const dimensions = useFigtreeStore(state=>state.dimensions);
     const { direction = defaultAxisProps.direction!, 
         gap = defaultAxisProps.gap!,
         strokeWidth = defaultAxisProps.strokeWidth!,
@@ -20,7 +20,7 @@ export default function Axis(props: AxisProps) {
     const ticks = props.ticks?{...defaultAxisProps.ticks!,...props.ticks}:defaultAxisProps.ticks!;
     const title = props.title?{...defaultAxisProps.title!, ...props.title}:defaultAxisProps.title!;
 
-    const scale = makeAxisScale(props, scaleContext);
+    const scale = makeAxisScale(props, dimensions);
 
     // scaleSequentialQuantile doesn’t implement tickValues or tickFormat.
     let tickValues: number[];
@@ -37,7 +37,7 @@ export default function Axis(props: AxisProps) {
         transform = `translate(${x},${y})`;
 
     }else{
-        transform = direction === "horizontal" ? `translate(${0},${scaleContext.height + gap})` : `translate(${-1 * gap},${0})`;
+        transform = direction === "horizontal" ? `translate(${0},${dimensions.canvasHeight + gap})` : `translate(${-1 * gap},${0})`;
     }
 
 
@@ -110,7 +110,7 @@ function getTickLine(length: number, direction: AxisOrientation) {
 
 
 
-function makeAxisScale(props: any, { width, height, domain,padding }: AxisScaleContext) {
+function makeAxisScale(props: any, { canvasWidth, canvasHeight, domain }:dimensionState ) {
     const { reverse = defaultAxisProps.reverse,
         offsetBy = defaultAxisProps.offsetBy,
         scaleBy = defaultAxisProps.scaleBy, 
@@ -119,7 +119,7 @@ function makeAxisScale(props: any, { width, height, domain,padding }: AxisScaleC
        } = props;
         
 //todo unify this code with the scale making code in layout
-    const axisScale = (scale === undefined ? (direction === "horizontal" ? scaleLinear().domain([0,domain[1]]).range([padding, width-padding]) : scaleLinear().domain([0,domain[1]]).range([padding, height-padding])) : scale).copy();
+    const axisScale = (scale === undefined ? (direction === "horizontal" ? scaleLinear().domain([0,domain[1]]).range([0, canvasWidth]) : scaleLinear().domain([0,domain[1]]).range([0, canvasHeight])) : scale).copy();
     if (scale === undefined) {
         // assume domain goes 0 to max divergence make adjustments on this scale and then update min if it is not 0
         const offset = domain.map(d=>d+offsetBy)

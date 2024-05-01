@@ -1,11 +1,14 @@
 import { NodeRef, tipIterator } from "../../../Evo/Tree";
-import { useLayout, useTree } from "../../../hooks";
 import React from "react";
+import { useFigtreeStore } from "../../../store";
 export function RectangularHighlight(props:{attrs:{[key:string]:any},node:NodeRef}){
     const {attrs,node}=props;
-    const tree = useTree ();
-    const verticies = useLayout();
-    const minX = tree.getParent(node)? (verticies.vertices[node.number].x +verticies.vertices[tree.getParent(node)!.number].x)/2:0;
+    const tree = useFigtreeStore(state=>state.tree);
+    const layout = useFigtreeStore(state=>state.layout);   
+    const x = useFigtreeStore(state=>state.scaleX);   
+    const y = useFigtreeStore(state=>state.scaleY);   
+
+    const minX = tree.getParent(node)? (x(layout(node).x) +x(layout(tree.getParent(node)!).x))/2:0;
         
         let maxX = -Infinity;
         let maxY=-Infinity;
@@ -13,7 +16,7 @@ export function RectangularHighlight(props:{attrs:{[key:string]:any},node:NodeRe
         let lastY;
         let padding = 0;
         for(const tip of tipIterator(tree,node) ){
-            const v = verticies.vertices[tip.number];
+            const v = layout(tip);
             if(v.x>maxX) maxX=v.x;
             if(v.y>maxY) maxY=v.y;
             if(v.y<minY) minY=v.y

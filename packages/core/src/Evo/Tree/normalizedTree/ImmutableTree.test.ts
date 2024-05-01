@@ -10,6 +10,7 @@ describe('ImmutableTree', () =>{
             const tree = new ImmutableTree().beginBatchedEdits();
             const [node] = tree.addNodes();
             const tree1  = tree.endBatchedEdits();
+            
             expect(tree.getNodeCount()).toEqual(1);
             expect(tree1.getNodeCount()).toEqual(2);
             expect(tree1).not.toEqual(tree);
@@ -56,8 +57,9 @@ describe('ImmutableTree', () =>{
             const newickString = `((((((virus1:0.1,virus2:0.12):0.08,(virus3:0.011,virus4:0.0087):0.15):0.03,virus5:0.21):0.2,(virus6:0.45,virus7:0.4):0.02):0.1,virus8:0.4):0.1,(virus9:0.04,virus10:0.03):0.6);`;
     
             const tree = ImmutableTree.fromNewick(newickString,{parseAnnotations:false});
-            const orderedTree = tree.orderNodesByDensity(false)
-    
+            const orderedTree = tree.orderNodesByDensity(true)
+            
+            expect(orderedTree.toNewick()).toBe(`((virus9:0.04,virus10:0.03):0.6,(virus8:0.4,((virus6:0.45,virus7:0.4):0.02,(virus5:0.21,((virus1:0.1,virus2:0.12):0.08,(virus3:0.011,virus4:0.0087):0.15):0.03):0.2):0.1):0.1);`)
         }); 
 
         // it('reroot',function(){
@@ -78,8 +80,6 @@ describe('ImmutableTree', () =>{
             const child1 = tree.getChild(node,0)!;
             const rotatedTree = tree.rotate(node);
             const child2 = rotatedTree.getChild(node,0)!;
-
-                                
             expect(rotatedTree.getTaxon(child2)).toBe("B");
             expect(tree.getTaxon(child1)).toBe("A");
         })
