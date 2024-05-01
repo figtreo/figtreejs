@@ -2,20 +2,18 @@ import { NodeRef, tipIterator } from "../../../Evo/Tree";
 import React from "react";
 import { NodesHOC } from "../../Baubles/Nodes/Nodes";
 import {arc as arcgen} from "d3-shape"
-import { useFigtreeStore } from "../../../store";
+import { useFigtreeStore, useVertex } from "../../../store";
 const arc = arcgen();
 
 function CladeHighlight(props:{attrs:{[key:string]:any},node:NodeRef}){
 
     const {attrs,node} = props;
-    const tree = useFigtreeStore(state=>state.tree);
-    const layout = useFigtreeStore(state=>state.layout);   
     const x = useFigtreeStore(state=>state.scaleX);   
     const y = useFigtreeStore(state=>state.scaleY); 
     
-    const v = layout(node);
+    const v = useVertex(node);
     if(v.layoutClass==="Rectangular"){
-        const minX = tree.getParent(node)? (x(layout(node).x) +x(layout(tree.getParent(node)!).x))/2:0;
+        const minX = x(v.x) - 5; //padding
         let maxX = x(v.maxX);
         let maxY=y(v.maxY);
         let minY = y(v.minY);

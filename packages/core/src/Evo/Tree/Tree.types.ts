@@ -92,7 +92,6 @@ export interface Tree  {
     //TODO decide if we want to keep integers different from continuous
     getAnnotationDomain(name:string):[number,number]|[boolean,boolean]|string[]|number[]|undefined;
 
-    treeSubscribeCallback(callback:TreeListener):Tree
 
 }
 export type TreeListener = (tree:Tree,node:NodeRef)=> void;

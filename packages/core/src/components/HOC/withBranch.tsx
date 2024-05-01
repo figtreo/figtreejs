@@ -1,16 +1,16 @@
 import React from "react";
-import { useFigtreeStore } from "../../store";
+import { useFigtreeStore, useVertex } from "../../store";
 import { normalizePath } from "../../path.helpers";
 const withBranch = (WrappedComponent: React.ComponentType<any>) => {
     function BranchedComponent(props:any){
         
         const {parent,node,shapeProps,curvature=0,...rest} = props
-        const layout = useFigtreeStore(state=>state.layout);
         const x = useFigtreeStore(state=>state.scaleX);
         const y = useFigtreeStore(state=>state.scaleY);
         const animated = useFigtreeStore(state=>state.animated);
-        const vP = layout(parent);
-        const nP = layout(node);
+
+        const vP = useVertex(parent);
+        const nP =  useVertex(node);
         const points = [{x:x(vP.x),y:y(vP.y)},{x:x(nP.x),y:y(nP.y)}]
 
         const d = animated?normalizePath(pathGenerator(points,curvature)):pathGenerator(points,curvature);

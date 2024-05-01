@@ -5,42 +5,42 @@ import { rectangularLayout } from "./rectangularLayout";
 describe("Test rectangular layout",()=>{
     it('check x and y on root', function() {
         const tree = ImmutableTree.fromNewick("((a:1,b:1):1,c:1);");
-        const layout = rectangularLayout();
-        const root = layout(tree.getRoot(),tree);
+        const layout = rectangularLayout(tree);
+        const root = layout.get(tree.getRoot())!;
         expect(root.x).toBeCloseTo(0);
         expect(root.y).toBeCloseTo(1.25); 
 
         // //a
         const a = tree.getNodeByTaxon("a")!;
-        const aV = layout(a,tree)
+        const aV = layout.get(a)!;
         expect(aV.x).toBeCloseTo(2);
         expect(aV.y).toBeCloseTo(0); 
 
         // //c
         const c = tree.getNodeByTaxon("c")!;
-        const cV = layout(c,tree)
+        const cV = layout.get(c)!;
         expect(cV.x).toBeCloseTo(1);
         expect(cV.y).toBeCloseTo(2); 
     });
     it('check x and y on root - tree', function() {
        
-        const cache = new PreOrderTraversalCache();
         
         const tree = ImmutableTree.fromNewick("((a:1,b:1):1,c:1);")
-                                    .treeSubscribeCallback((tree,node)=>cache.handleUpdate(tree,node));
-        const layout = rectangularLayout(cache);
-        const root = layout(tree.getRoot(),tree);
+
+        const layout = rectangularLayout(tree);
+        const root = layout.get(tree.getRoot());
         const c = tree.getNodeByTaxon("c")!;
-        const cV = layout(c,tree)
+        const cV = layout.get(c) 
         const tree2 = tree.setDivergence(tree.getNodeByTaxon('a')!,3.0)
 
-        const root2 = layout(tree2.getRoot(),tree2);
+        const layout2 =rectangularLayout(tree2);
+        const root2 = layout2.get(tree2.getRoot())!;
         const c2 = tree2.getNodeByTaxon("c")!;
-        const cV2 = layout(c2,tree2)
+        const cV2 = layout2.get(c2);
         expect(c2).toStrictEqual(c)
         expect(cV2).toStrictEqual(cV)
         // check a parent should 
-        expect(tree.getRoot()).toStrictEqual(tree2.getRoot())
+        expect(tree.getRoot()).not.toStrictEqual(tree2.getRoot())
         expect(root2).not.toStrictEqual(root) //these are vertexes
         expect(root2.maxX).toBeCloseTo(3);
 
@@ -48,19 +48,20 @@ describe("Test rectangular layout",()=>{
 
     it('check after reordering', function() {
     // check above but with rotations
-    const cache = new PreOrderTraversalCache();
         
     const tree = ImmutableTree.fromNewick("((a:1,b:1):1,c:1);")
-                                .treeSubscribeCallback((tree,node)=>cache.handleUpdate(tree,node));
-    const layout = rectangularLayout(cache);
-    const reoredered = tree.orderNodesByDensity(true)
-    const root = layout(reoredered.getRoot(),reoredered);
-    const c = reoredered.getNodeByTaxon("c")!;
-    const c1 = tree.getNodeByTaxon("c")!;
+                               
+    const layout = rectangularLayout(tree);
+    const reordered = tree.orderNodesByDensity(true)
+    const reorderedLayout = rectangularLayout(reordered);
+    const reordededC = reordered.getNodeByTaxon("c")!;
+    const ogC = tree.getNodeByTaxon("c")!;
 
-    const cV = layout(c)
-    const c1V = layout(c1,tree)
-    expect(c).toBe(c1)
+    const ogCvertext = layout.get(ogC)
+    const reorderedCVertex = reorderedLayout.get(reordededC);
+        expect(ogC).not.toBe(reordededC)
+
+        expect(ogCvertext).not.toBe(reorderedCVertex)
     });
     
 

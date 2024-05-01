@@ -1,9 +1,9 @@
 import React from 'react';
 import { FigtreeProps } from './Figtree.types';
 import { defaultInternalLayoutOptions, rectangularLayout } from '../../Layouts';
-import { ImmutableTree } from '../../Evo/Tree';
 import { Branches } from '../Baubles';
 import { useFigtreeStore } from '../../store';
+import { ImmutableTree } from '../../Evo/Tree';
 
 
 
@@ -18,7 +18,7 @@ export const defaultOpts:FigtreeProps = {
     opts:defaultInternalLayoutOptions,
     width:100,
     height:100,
-    layout:rectangularLayout(),
+    layout:rectangularLayout,
     margins:{top:10,right:10,bottom:10,left:10},
     tree:ImmutableTree.fromNewick("((A:1,B:1):1,C:2);"),
     children:[<Branches filter={(n)=>true} attrs={{fill:'none',stroke:"black",strokeWidth:1}} interactions={{}}/>],
@@ -65,16 +65,15 @@ function FigTree(props:FigtreeProps){
         
     const children = props.children?props.children:defaultOpts.children;
    
-    
-    const {maxX,maxY,layoutClass} = layout(tree.getRoot(),tree,);
-
+    const layoutMap = layout(tree);
+    const {maxX,maxY,layoutClass} = layoutMap.get(tree.getRoot())!;
 
     //TODO hook to get scales
     setXScale(maxX,canvasWidth,layoutClass);
     setYScale(maxY,figureHeight,layoutClass);
     setAnimated(animated);
     setTree(tree);
-    setLayout(layout);
+    setLayout(layoutMap);
 
 
     

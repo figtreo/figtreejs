@@ -1,8 +1,8 @@
 
 import { extent } from "d3-array";
-import { Annotation, AnnotationType, NodeRef, Tree, TreeListener, newickParsingOptions } from "../Tree.types"
+import { Annotation, AnnotationType, NodeRef, Tree,  newickParsingOptions } from "../Tree.types"
 import { parseNewick, parseNexus, processAnnotationValue } from "../Parsers";
-import {createDraft, finishDraft, immerable, original, produce} from "immer"
+import {createDraft, finishDraft, immerable,  produce} from "immer"
 
 interface Node extends NodeRef{
     number: number,
@@ -40,8 +40,6 @@ export class ImmutableTree implements Tree  {
 
     _data: ImmutableTreeData;
     _draft:any|undefined;
-    _changeLog:number[] = [];
-    _listeners:TreeListener[];
     constructor(data?: ImmutableTreeData) {
         if (data === undefined) {
             data = {
@@ -67,7 +65,6 @@ export class ImmutableTree implements Tree  {
             }
         }
         this._data = data;
-        this._listeners=[];
     }
 
 
@@ -371,13 +368,7 @@ export class ImmutableTree implements Tree  {
     
         return this;
     }
-    endBatchedEdits(){
-        //update all other nodes 
-        this._draft._changeLog.forEach((n:number)=>{
-            const node = this.getNode(n) as Node;
-            this.fireCallBack(node)
-        })
-        this._draft._changeLog = [];
+    endBatchedEdits(){        
         const draft = this._draft;
         this._draft = undefined; // reset so can refer to original tree again
         return finishDraft(draft)
@@ -454,13 +445,6 @@ export class ImmutableTree implements Tree  {
             }
         }
     }
-    //listeners provide nodes to mark as updated. 
-    fireCallBack(node:NodeRef){
-        for(const callback of this._listeners){
-           callback(this,node)
-        }
-    }
-
 
     // ---------------- Setters ---------------------
 
@@ -473,12 +457,12 @@ export class ImmutableTree implements Tree  {
                 n.height = height;
                 //update divergence and branchlengths
                 //update all nodes to root
-                this.fireCallBack(node);
+                draft._updateNodesToRoot(node);    
             })
             }else{
                 const n = this._draft.getNode(node.number) as Node;
                 n.height = height;
-                this._draft._changeLog.push(n.number);
+                this._updateNodesToRoot(node);    
                 return this;
             }
     }
@@ -489,13 +473,12 @@ export class ImmutableTree implements Tree  {
                 const n = draft.getNode(node.number) as Node;
                 n.divergence = divergence;
                 //update all nodes to root
-                this.fireCallBack(node);
-    
+                draft._updateNodesToRoot(node);    
             })
             }else{
                 const n = this._draft.getNode(node.number) as Node;
                 n.divergence = divergence;
-                this._draft._changeLog.push(n.number);
+                this._draft._updateNodesToRoot(node);    
                 return this;
             }
         }   
@@ -532,28 +515,12 @@ export class ImmutableTree implements Tree  {
         }else{
             const n = this._draft.getNode(node.number) as Node;
             n.length = length;
-            this._draft._changeLog.push(n.number);
+            this._draft._updateNodesToRoot(node)
             return this;
         }
     }
 
-    treeSubscribeCallback(callback:TreeListener): Tree {
-        if(!this._draft){
-            return produce(this,draft=>{
-                if(!draft._listeners.includes(callback)){ //mutations!
-                    draft._listeners.push(callback)
-                }
-            })
-        }else{
-            if(!this._draft._listeners.includes(callback)){ //mutations!
-                this._draft._listeners.push(callback)
-            }
-            return this;
-        }
-       
-    }
     
-
     // Topology changes  - updates to root and descendants
 
     root(n:NodeRef):ImmutableTree{
@@ -804,7 +771,7 @@ export class ImmutableTree implements Tree  {
             return this;
         }
     }
-    
+
     setRoot(node: NodeRef): ImmutableTree {
         if(!this._draft){
         return produce(this,draft=>{
@@ -1025,7 +992,6 @@ function orderNodes(treeData: ImmutableTreeData, node: NodeRef, ordering: (a: No
                 
             }
         });
-        console.log(changed)
         if (changed){
             treeData.nodes.allNodes[node.number].children = reorderedChildren;
              callback(node);
@@ -1049,7 +1015,7 @@ export function* preOrderIterator(tree:Tree,node:NodeRef|undefined = undefined):
 
 
     const traverse = function* (node: NodeRef): Generator<NodeRef> {
-        yield node;
+        yield tree.getNode(node.number); // get from tree so we keep proxy when used in draft
         const childCount = tree.getChildCount(node);
         if (childCount > 0) {
             for (let i = 0; i < childCount; i++) {
@@ -1111,103 +1077,6 @@ export function* tipIterator(tree: Tree, node: NodeRef): Generator<NodeRef> {
     };
     yield* traverse(node);
 }
-
-// reroot(node: NodeRef, proportion: number): void {
-//     if (node === this.root) {
-//         // the node is the root - nothing to do
-//         return;
-//     }
-//     if(!this.root){
-//         throw new Error("No root node")
-//     }
-
-//     const rootLength = this.getLength(this.getChild(this.root!, 0)) + this.getLength(this.getChild(this.root!, 1))
-
-//     if (this.getParent(node) !== this.root) {
-//         // the node is not a child of the existing root so the root is actually changing
-
-//         let node0 = node;
-//         let parent = this.getParent(node)!;
-
-//         if(!parent){
-//             throw new Error("no parent")
-//         }
-//         let lineage: NodeRef[] = [];
-
-//         // was the node the first child in the parent's children?
-//         const nodeAtTop = this.getChild(parent, 0) === node;
-
-//         const rootChild1 = node;
-//         const rootChild2 = parent;
-
-//         let oldLength = this.getLength(parent);
-
-//         while (this.getParent(parent) !== null) {
-
-//             // remove the node that will becoming the parent from the children
-//             this.removeChild(parent, node0);
-
-//             if (this.getParent(parent) === this.root) {
-//                 const sibling = this.getSibling(parent)!;
-                
-//                 if(!sibling){
-//                     console.log(parent.id)
-//                     console.log(this.getChildren(this.getParent(parent)!).map(d=>d.id))
-//                     throw new Error("no sibling")
-//                 }
-//                 this.addChild(parent, sibling)
-//                 this.setBranchLength(sibling, rootLength);
-
-//             } else {
-//                 // swap the parent and parent's parent's length around
-//                 const nan = this.getParent(parent)!;
-//                 if(!nan){
-//                 throw new Error("no nan!")
-//                 }
-//                 const nanLength = this.getLength(nan);
-//                 this.setBranchLength(nan, oldLength);
-//                 this.setBranchLength(parent, nanLength);
-
-//                 // add the new child
-//                 // parent._children.push(parent.parent);
-//                 this.addChild(parent, nan);
-//             }
-
-//             lineage = [parent, ...lineage];
-
-//             node0 = parent;
-//             parent = this.getParent(parent)!;
-//         }
-
-//         // Reuse the root node as root...
-
-//         // Set the order of the children to be the same as for the original parent of the node.
-//         // This makes for a more visually consistent rerooting graphically.
-//         this.removeAllChildren(this.root!)
-//         this.addChild(this.root!, rootChild1)
-//         this.addChild(this.root!, rootChild2)
-//         if (nodeAtTop) {
-//             this.rotate(this.root!, false)
-//         }
-//         // connect all the children to their parents
-//         this.internalNodes
-//             .forEach((node) => {
-//                 for (const child of this.getChildren(node)) {
-//                     this.setParent(child, node)
-//                 }
-
-//             });
-
-//         const l = this.getLength(rootChild1) * proportion;
-//         this.setBranchLength(rootChild2, l)
-//         this.setBranchLength(rootChild1, this.getLength(rootChild1) - l)
-
-//     } else {
-//         // the root is staying the same, just the position of the root changing
-//         const l = this.getLength(node) * (1.0 - proportion);
-//         this.setBranchLength(node, l)
-//         this.setBranchLength(this.getSibling(node)!, rootLength - l)
-//     }
 
 function setDivergence(tree: ImmutableTree): number {
     let maxDivergence = 0;

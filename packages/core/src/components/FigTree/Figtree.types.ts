@@ -1,6 +1,5 @@
-import { Tree,NodeRef } from "../../Evo/Tree/Tree.types";
+import { ImmutableTree,NodeRef } from "../../Evo/Tree";
 import { FunctionalVertex } from "../../Layouts";
-import { ImmutableTree } from "../../Evo/Tree";
 
 export interface Margins{
     top:number,
@@ -24,13 +23,13 @@ export interface layoutOptions{
     padding?:number
 }
 
-type layout=(node:NodeRef,tree?:Tree)=>FunctionalVertex;
+type layoutFunction=(tree:ImmutableTree,node?:NodeRef,)=>Map<NodeRef,FunctionalVertex>;
 
 export interface FigtreeProps {
     width:number,
     height:number,
-    layout:layout,
-    tree:Tree,
+    layout:layoutFunction,
+    tree:ImmutableTree,
     margins:Margins,
     children:React.ReactNode,
     opts:layoutOptions

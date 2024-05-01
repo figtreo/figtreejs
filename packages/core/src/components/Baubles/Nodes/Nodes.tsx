@@ -8,7 +8,7 @@ import {  Circle } from "./Shapes/Circle";
 import Rectangle from "./Shapes/Rectangle";
 // import CoalescentShape from "./Shapes/CoalescentShape";
 import { NodeProps } from "./Node.types";
-import { useFigtreeStore } from "../../../store";
+import { useFigtreeStore, useVertex } from "../../../store";
 import { preOrderIterator } from "../../../Evo/Tree";
 
 // todo don't expose in index
@@ -44,11 +44,11 @@ function NodeLabels(props:any){
         const layout = useFigtreeStore(state=>state.layout);
         const x = useFigtreeStore(state=>state.scaleX);
         const y = useFigtreeStore(state=>state.scaleY);
-        const {maxX} = layout(tree.getRoot());
+        const {maxX} = useVertex(tree.getRoot());
     return (
         <g className={"node-label-layer"}>
             {[...preOrderIterator(tree)].filter(filter).map((node) => { 
-                    const v = layout(node);
+                    const v = useVertex(node);
                     const {alignmentBaseline,textAnchor,rotation} = v.nodeLabel;
                     const xpos = aligned? x(maxX)+6 :x(v.x)+v.nodeLabel.dx;
                     const ypos = y(v.y)+v.nodeLabel.dy

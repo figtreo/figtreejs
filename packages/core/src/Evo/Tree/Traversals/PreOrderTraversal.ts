@@ -33,30 +33,9 @@ export class PreOrderTraversalCache implements TreeTraversal{
         yield* traverse(node!);
     }
     
-    handleUpdate(tree:Tree,node:NodeRef):void{ 
-//TODO begin again here and provide tree with nodes to mark as new. 
-        console.log(`Handling update for node ${node.number}`)
-        let n:NodeRef|undefined = node
-        while(n!==undefined){
-            this.cache.delete(n)
-            this._reverseCache.delete(n)
-            this._forwardCache.delete(n)
-
-            const preceding = this._reverseCache.get(node);
-            const next  = this._forwardCache.get(node)
-            if(preceding){
-               this._forwardCache.delete(preceding)
-            }
-            if(next){
-                this._reverseCache.delete(next)
-            }
-            n = tree.getParent(n)
-        }
-    }
-
 //Check we've been to next otherwise we need to update again.
     getNext(tree: Tree, node: NodeRef): NodeRef|undefined{
-        if(this._forwardCache.has(node)) return this._forwardCache.get(node)!
+        if(this._forwardCache.has(node) && this._forwardCache.has(this._forwardCache.get(node)!)) return this._forwardCache.get(node)! //if this node hasn't changed nor the next
         if(tree.isRoot(node)){ //start over
            return undefined;
         }
@@ -73,7 +52,7 @@ export class PreOrderTraversalCache implements TreeTraversal{
       
     }
     getPrevious(tree: Tree, node: NodeRef): NodeRef|undefined {
-        if(this._reverseCache.has(node)) return this._reverseCache.get(node);
+        if(this._reverseCache.has(node) && this._reverseCache.has(this._reverseCache.get(node)!)) return this._reverseCache.get(node); //if this node hasn't changed nor the next
         if(node ===this.traverse(tree).next().value){
             return undefined;
         }
