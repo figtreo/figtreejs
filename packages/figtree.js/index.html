@@ -138,7 +138,7 @@
 
     <script type="module">
 
-        import { ImmutableTree  , ft,PreOrderTraversalCache} from "./dist/esm/index.js"
+        import { ImmutableTree  , ft} from "./dist/esm/index.js"
         const newickString =
             '((((((virus1:0.1,virus2:0.12)0.95:0.08,(virus3:0.011,virus4:0.0087)1.0:0.15)0.65:0.03,virus5:0.21)1.0:0.2,(virus6:0.45,virus7:0.4)0.51:0.02)1.0:0.1,virus8:0.4)1.0:0.1,(virus9:0.04,virus10:0.03)1.0:0.6);';
 
@@ -151,11 +151,16 @@
         const { width, height } = treeSVG.getBoundingClientRect();
         const margins = { top: 70, right: 70, bottom: 70, left: 70 }
         let curvature = 0;
+        let layout = ft.rectangularLayout
+        console.group("polar test")
+        console.log(ft.polarLayout(tree))
+        console.groupEnd("polar test")
+
         const  figureOptions =()=>       {
             return {
             svg: treeSVG,
             tree: tree,
-            layout:ft.rectangularLayout,
+            layout:layout,
             width, height, //TODO get width and height if not supplied
             margins,
             animated:true,
@@ -200,15 +205,14 @@
         };
 
 
-        // document.getElementById('rectangularLayout_button').onclick = function () {
-        //     console.log(ft.rectangularLayout.layout(tree))
-        //     figureOptions = { ...figureOptions, layout:ft.rectangularLayout }
-        //     ft.figtree(figureOptions)
-        // };
-        // document.getElementById('circularLayout_button').onclick = function () {
-        //     figureOptions = { ...figureOptions, layout:ft.polarLayout}
-        //     ft.figtree(figureOptions)
-        // };
+        document.getElementById('rectangularLayout_button').onclick = function () {
+            layout = ft.rectangularLayout
+            ft.figtree(figureOptions())
+        };
+        document.getElementById('circularLayout_button').onclick = function () {
+            layout = ft.polarLayout
+            ft.figtree(figureOptions())
+        };
         // document.getElementById('radialLayout_button').onclick = function () {
         //     figureOptions = { ...figureOptions, layout:ft.radialLayout }
         //     ft.figtree(figureOptions)

@@ -4,7 +4,7 @@ import { mean, quantile, range } from "d3-array"
 import { ScaleContinuousNumeric, scaleLinear } from 'd3-scale';
 import { AxisOrientation, AxisProps, AxisScaleContext, defaultAxisProps } from './Axis.types';
 import { AxisContext } from './Axis.context';
-import { dimensionState, useFigtreeStore } from '../../../store';
+import { dimensionState, useFigtreeStore } from '../../../store/store';
 
 //TODO do things to scale and allow date as origin not maxD.
 

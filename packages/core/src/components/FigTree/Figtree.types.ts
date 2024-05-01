@@ -1,5 +1,5 @@
 import { ImmutableTree,NodeRef } from "../../Evo/Tree";
-import { FunctionalVertex } from "../../Layouts";
+import { FunctionalVertex } from "../../Layouts/functional/rectangularLayout";
 
 export interface Margins{
     top:number,

@@ -1,5 +1,5 @@
 import React, { ReactElement } from "react";
-import { useFigtreeStore, useVertex } from "../../store";
+import { useFigtreeStore, useVertex } from "../../store/store";
 /** an HOC that capture the layout logic around a node
  * 
  */
@@ -8,11 +8,10 @@ const withNode = (WrappedComponent: React.ComponentType<any>) => {
     function NodedComponent(props:any){
         
         const {node,shapeProps,...rest} = props
-        const x = useFigtreeStore(state=>state.scaleX);
-        const y = useFigtreeStore(state=>state.scaleY);
-        const v = useVertex(node);
+        const scale = useFigtreeStore(state=>state.scale);
+        const v = scale(useVertex(node));
 
-        return <WrappedComponent {...rest} {...shapeProps(node)} x={x(v.x)} y={y(v.y)} id={node.number}/>
+        return <WrappedComponent {...rest} {...shapeProps(node)} x={v.x} y={v.y} id={node.number}/>
     } 
     return NodedComponent;
 }

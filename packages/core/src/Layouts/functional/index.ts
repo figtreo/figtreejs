@@ -1,1 +1,2 @@
-export * from './rectangularLayout';
+export { rectangularLayout,layoutClass } from "./rectangularLayout";
+export { polarLayout } from "./polarLayout"; 

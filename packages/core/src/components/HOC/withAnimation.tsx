@@ -1,6 +1,6 @@
 import { useSpring } from "@react-spring/web";
 import React from "react";
-import { useFigtreeStore } from "../../store";
+import { useFigtreeStore } from "../../store/store";
 
 /**
  * This is a HOC that wraps a bauble and applies a string to it's visible attributes if the animation is true.

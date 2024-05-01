@@ -1,7 +1,7 @@
 import React from 'react'
 import { AxisBarsProps, defaultAxisBarsProps } from './Axis.types';
 import { useAxisContext } from './Axis.context';
-import { useFigtreeStore } from '../../../store';
+import { useFigtreeStore } from '../../../store/store';
 
 /**
  * This component adds vertical bars to the backgound of a figure. It is used a child of an Axis component and gets

@@ -4,7 +4,7 @@ import withAnimation from "../../../HOC/withAnimation";
 import { BaseShapeProps } from "../";
 import { NodeProps } from "../Node.types";
 import { NodeRef } from "../../../../Evo/Tree";
-import { useFigtreeStore } from "../../../../store";
+import { useFigtreeStore } from "../../../../store/store";
 import withNode from "../../../HOC/withNode";
 
 

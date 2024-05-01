@@ -2,7 +2,7 @@ import React from 'react';
 import { FigtreeProps } from './Figtree.types';
 import { defaultInternalLayoutOptions, rectangularLayout } from '../../Layouts';
 import { Branches } from '../Baubles';
-import { useFigtreeStore } from '../../store';
+import { useFigtreeStore } from '../../store/store';
 import { ImmutableTree } from '../../Evo/Tree';
 
 
@@ -51,14 +51,13 @@ function FigTree(props:FigtreeProps){
         invert = defaultOpts.opts.invert
     } = props.opts; //todo this requires opts to not be undefined even though all the values are optional.
 
-    const setXScale = useFigtreeStore((state)=>state.setXScale);
-    const setYScale = useFigtreeStore((state)=>state.setYScale);
+    const setScale = useFigtreeStore((state)=>state.setScale);
     const setAnimated = useFigtreeStore((state)=>state.setAnimated);
     const setTree = useFigtreeStore((state)=>state.setTree);
     const setLayout = useFigtreeStore((state)=>state.setLayout);
     
     const canvasWidth = width - margins.left - margins.right;
-    const figureHeight = height - margins.top - margins.bottom;
+    const canvasHeight = height - margins.top - margins.bottom;
 
     const point = pointOfInterest?pointOfInterest: {x:(margins.left+canvasWidth)/2,y:(margins.top+height)/2};
 
@@ -67,10 +66,9 @@ function FigTree(props:FigtreeProps){
    
     const layoutMap = layout(tree);
     const {maxX,maxY,layoutClass} = layoutMap.get(tree.getRoot())!;
-
+    console.log(layoutMap);
     //TODO hook to get scales
-    setXScale(maxX,canvasWidth,layoutClass);
-    setYScale(maxY,figureHeight,layoutClass);
+    setScale(maxX,maxY,canvasWidth,canvasHeight,layoutClass);
     setAnimated(animated);
     setTree(tree);
     setLayout(layoutMap);

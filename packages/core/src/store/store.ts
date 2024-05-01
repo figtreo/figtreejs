@@ -1,6 +1,7 @@
 import {create}  from 'zustand'
-import { FunctionalVertex, layoutClass } from './Layouts'
-import { ImmutableTree, NodeRef, Tree } from './Evo/Tree'
+import { ImmutableTree, NodeRef, Tree } from '../Evo/Tree'
+import { FunctionalVertex,layoutClass } from '../Layouts/functional/rectangularLayout'
+import { polarScaleMaker } from './polarScale'
 
 //todo remove props that are just the getting passed to children and use render props instead
 
@@ -8,14 +9,12 @@ export type dimensionState = {canvasWidth:number,canvasHeight:number,domain:[num
 interface FigtreeState {
     tree:Tree,
     layout:Map<NodeRef,FunctionalVertex>,
-    scaleX:(x:number)=>number,
-    scaleY:(y:number)=>number,
+    scale:(v:{x:number,y:number})=>{x:number,y:number,r?:number,theta?:number},    
     animated:boolean,
     dimensions:dimensionState,
     setTree:(tree:Tree)=>void,
     setLayout:(layout:Map<NodeRef,FunctionalVertex>)=>void,
-    setXScale: (maxX:number,canvasWidth:number,layoutClass:layoutClass)=>void,
-    setYScale: (maxX:number,canvasWidth:number,layoutClass:layoutClass)=>void,
+    setScale: (maxX:number,maxY:number,canvasWidth:number,canvaseHeight:number,layoutClass:layoutClass)=>void,
     setAnimated:(animated:boolean)=>void
 }
 
@@ -29,36 +28,32 @@ export const useVertex = (node:NodeRef):FunctionalVertex=>{
 }
 
 export const useFigtreeStore = create<FigtreeState>()((set) => ({
-    scaleX:x=>x ,
-    scaleY:y=>y,
+    scale:(v:{x:number,y:number})=>v,
     animated:false,
     tree:new ImmutableTree(),
     layout: new Map<NodeRef,FunctionalVertex>(),
     dimensions:{canvasWidth:0,canvasHeight:0,domain:[0,0]},
 
-
-    setXScale: (maxX,canvasWidth,layoutClass)=>set(()=> ({scaleX:calcX(maxX,canvasWidth,layoutClass)})),
-    setYScale: (maxY,figureHeight,layoutClass)=>set(()=>({scaleY:calcY(maxY,figureHeight,layoutClass)})),
+    setScale: (maxX,maxY,canvasWidth,canvasHeight,layoutClass)=>set(()=> ({scale:getScale(maxX,maxY,canvasWidth,canvasHeight,layoutClass)})),
     setAnimated:(animated)=>set(()=>({animated})),
     setTree:(tree)=>set(()=>({tree:tree})),
     setLayout:(layout)=>set(()=>({layout})),
     setDimensions:(canvasWidth:number,canvasHeight:number,domain:[number,number])=>set(()=>({dimensions:{canvasWidth,canvasHeight,domain}})) //TODO cache these
 }))
 //Todo cache these
-function calcX(maxX:number,canvasWidth:number,layoutClass:layoutClass){
+function getScale(maxX:number,maxY:number,canvasWidth:number,canvasHeight:number,layoutClass:layoutClass,invert:boolean=false,minRadius:number=0,angleRange:number=2*Math.PI,rootAngle:number=0){
     switch(layoutClass){
         case "Rectangular":
-            return (d:number)=>d/maxX*canvasWidth
+            const xScale = (d:number)=>d/maxX*canvasWidth
+            const yScale = (d:number)=>d/maxY*canvasHeight
+            return function(vertex:{x:number,y:number}){
+                return {x:xScale(vertex.x),y:yScale(vertex.y)}
+            }
+        case "Polar":
+            return polarScaleMaker(maxX,maxY,canvasWidth,canvasHeight,invert,minRadius,angleRange,rootAngle)
+
         default:
             throw new Error("Not implemented in calcX")
     }
 }
 
-function calcY(maxY:number,figureHeight:number,layoutClass:layoutClass){
-    switch(layoutClass){
-        case "Rectangular":
-            return (d:number)=>d/maxY*figureHeight
-            default:
-                throw new Error("Not implemented in calcY")
-    }
-}
