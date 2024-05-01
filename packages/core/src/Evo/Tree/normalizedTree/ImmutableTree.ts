@@ -553,16 +553,8 @@ export class ImmutableTree implements Tree  {
        
     }
     
-    // getAnnotationType(name: string): AnnotationType|undefined {
-    //     if(this._data.annotations.allNodes[name]){
-    //         return this._data.annotations.allNodes[name].type
-    //     }else{
-    //         return undefined
-    //     }
-    // }
 
-
-    // Topology changes 
+    // Topology changes  - updates to root and descendants
 
     root(n:NodeRef):ImmutableTree{
         throw new Error("root not implemented in immutable tree");
@@ -591,7 +583,7 @@ export class ImmutableTree implements Tree  {
                 const factor = down ? 1 : -1;
                  orderNodes(draft._data, node, (nodeA, countA, nodeB, countB) => {
                     return (countA - countB) * factor;
-                }, (n:NodeRef)=>this.fireCallBack(n));
+                }, (n:NodeRef)=>{draft._updateDescendants(n);draft._updateNodesToRoot(n)});
                 
             })
         }else{
@@ -604,19 +596,37 @@ export class ImmutableTree implements Tree  {
             const factor = down ? 1 : -1;
             orderNodes(this._draft._data, node!, (nodeA, countA, nodeB, countB) => {
                 return (countA - countB) * factor;
-            },(n:NodeRef)=>this._draft._changeLog.push(n.number));
+            },(n:NodeRef)=>{this._draft._updateDescendants(n);this._draft._updateNodesToRoot(n)});
 
             return this;
         }
     }
 
-    rotate(node: NodeRef, recursive: boolean=false): ImmutableTree {
+    rotate(nodeRef: NodeRef, recursive: boolean=false): ImmutableTree {
         if(this._draft){
-            this._draft.rotate(node,recursive);
+            this._draft.rotate(nodeRef,recursive);
+
+            const node = this._draft.getNode(nodeRef.number) as Node;
+            node.children = node.children.reverse();
+            this._draft._updateDescendants(node);
+            this._draft._updateNodesToRoot(node);
+            if(recursive){
+                for(const child of node.children.map(n=>this._draft.getNode(n))){
+                    this._draft.rotate(child,recursive)
+                }
+            }
             return this;
         }else{
             return produce(this,draft=>{
-                rotate(draft,node,recursive);
+                const node = draft.getNode(nodeRef.number) as Node;
+                node.children = node.children.reverse();
+                draft._updateDescendants(node);
+                draft._updateNodesToRoot(node);
+                if(recursive){
+                    for(const child of node.children.map(n=>draft.getNode(n))){
+                       draft.rotate(child,recursive)
+                    }
+                }
             })
         }
     }
@@ -746,10 +756,14 @@ export class ImmutableTree implements Tree  {
             return(produce(this,draft=>{
                 draft._data.nodes.allNodes[parent.number].children = draft._data.nodes.allNodes[parent.number].children.filter(n => n !== child.number)
                 draft._data.nodes.allNodes[child.number].parent=-1;
+                draft._updateNodesToRoot(parent);
+                draft._updateDescendants(child);
             }))
         }else{
             this._draft._data.nodes.allNodes[parent.number].children = this._draft._data.nodes.allNodes[parent.number].children.filter((n: number) => n !== child.number)
             this._draft._data.nodes.allNodes[child.number].parent=-1;
+            this._draft._updateNodesToRoot(parent);
+            this._draft._updateDescendants(child);
             return this;
         }
     }
@@ -757,11 +771,14 @@ export class ImmutableTree implements Tree  {
         if(!this._draft){
             return(produce(this,draft=>{
                 draft._data.nodes.allNodes[node.number].children = this._data.nodes.allNodes[node.number].children.map(n=>draft.getNode(n)).sort(compare).map(n=>n.number);
-                draft._data.nodes.allNodes[node.number].children.forEach((n:number)=>{draft.fireCallBack(draft.getNode(n))})
+                draft._updateDescendants(node)
+                draft._updateNodesToRoot(node);
+
             }))
         }else{
             this._draft._data.nodes.allNodes[node.number].children = this._draft._data.nodes.allNodes[node.number].children.map((n:number)=>this._draft.getNode(n)).sort(compare).map((n:NodeRef)=>n.number);
-            this._draft._data.nodes.allNodes[node.number].children.forEach((n:NodeRef)=>{this._draft._changeLog.push(n.number)})
+            this._draft._updateDescendants(node)
+            this._draft._updateNodesToRoot(node);
             return this;
         }
     }
@@ -774,17 +791,20 @@ export class ImmutableTree implements Tree  {
                 const p = draft.getNode(parent.number) as Node;
                 p.children.push(c.number);
                 c.parent=parent.number
-                draft._updateNodesToRoot(child);
+                draft._updateNodesToRoot(parent);
+                draft._updateDescendants(child);
             }))
         }else{
             const c = this._draft.getNode(child.number) as Node;
             const p = this._draft.getNode(parent.number) as Node;
             p.children.push(c.number);
             c.parent=parent.number   
-            this._draft._changeLog.push(c.number);
+            this._draft._updateNodesToRoot(parent);
+            this._draft._updateDescendants(child);
             return this;
         }
     }
+    
     setRoot(node: NodeRef): ImmutableTree {
         if(!this._draft){
         return produce(this,draft=>{
@@ -807,6 +827,15 @@ export class ImmutableTree implements Tree  {
             n=p;
         }
     }
+
+    _updateDescendants(node: NodeRef): void {
+        for(const descendent of preOrderIterator(this,node)){
+            (descendent as Node)._id = Symbol();
+        }
+    }
+
+    
+
     _checkAnnotation(input: { name: string, suggestedType: AnnotationType }): AnnotationType {
         let annotationType = this.getAnnotationType(input.name);
         let suggestedType = input.suggestedType
@@ -964,16 +993,6 @@ export class ImmutableTree implements Tree  {
     
 }
 
-function rotate(draft:ImmutableTree,n:NodeRef,recursive:boolean): void{
-    
-        const node = draft.getNode(n.number) as Node;
-        node.children = node.children.reverse();
-        if(recursive){
-            for(const child of node.children.map(n=>draft.getNode(n))){
-                rotate(draft,child,recursive)
-            }
-        }
-}
 
 /**
  * A private recursive function that rotates nodes to give an ordering provided
@@ -995,7 +1014,7 @@ function orderNodes(treeData: ImmutableTreeData, node: NodeRef, ordering: (a: No
             count += value;
         }
         // sort the children using the provided function        
-        const reorderedChildren = treeData.nodes.allNodes[node.number].children.sort( (a, b) => {
+        const reorderedChildren = treeData.nodes.allNodes[node.number].children.slice().sort( (a, b) => { // sort updates the array in place so changed is always false
             return ordering(treeData.nodes.allNodes[a], counts.get(a), treeData.nodes.allNodes[b], counts.get(b))
         });
 
@@ -1003,12 +1022,13 @@ function orderNodes(treeData: ImmutableTreeData, node: NodeRef, ordering: (a: No
         reorderedChildren.forEach((n:number, i:number) => {
             if (n !== treeData.nodes.allNodes[node.number].children[i]) {
                 changed = true;
+                
             }
         });
+        console.log(changed)
         if (changed){
             treeData.nodes.allNodes[node.number].children = reorderedChildren;
-            console.log('changed')
-            reorderedChildren.forEach((n:number)=>callback( treeData.nodes.allNodes[n]))
+             callback(node);
         }
 
     } else {

@@ -28,8 +28,6 @@ export function rectangularLayout (traversal? :PreOrderTraversalCache){ //this i
         traversal = traversal || new PreOrderTraversalCache();
         if( traversal.cache.has(node))return traversal.cache.get(node)!
         if(tree === undefined) throw new Error("Tree is undefined and I don't remember this node!")
-            console.log(`Layouting node ${node.number}`)
-
             let protoVertex:{x:number,y:number,maxX:number,maxY:number,minY:number};
             const x = tree.getDivergence(node)!;
             const predecessor = traversal.getPrevious(tree,node)
