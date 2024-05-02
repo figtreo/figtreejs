@@ -2,7 +2,7 @@ import { extent, min } from "d3-array";
 import { scaleLinear } from "d3-scale";
 
 
-export function polarScaleMaker(maxX:number,maxY:number,canvasWidth:number,canvasHeight:number,invert:boolean=false,minRadius:number=0,angleRange:number=2*Math.PI,rootAngle:number=0){
+export function polarScaleMaker(maxX:number,maxY:number,canvasWidth:number,canvasHeight:number,invert:boolean=false,minRadius:number=0,angleRange:number=1.7*Math.PI,rootAngle:number=0){
   
     const maxRadius = min([canvasWidth,canvasHeight])!/2;
 
@@ -33,7 +33,7 @@ export function polarScaleMaker(maxX:number,maxY:number,canvasWidth:number,canva
     // Also need every pi/2 point we pass through.
     //assumes range is <=2pi
     const normlizedStart = normalizeAngle(startAngle);
-    const normlizedEnd = normalizeAngle(normlizedStart+angleRange); 
+    const normlizedEnd = normalizeAngle(normlizedStart+safeAngleRange); 
 
     
 
@@ -70,7 +70,7 @@ export function polarScaleMaker(maxX:number,maxY:number,canvasWidth:number,canva
     const y = scaleLinear().domain(yDomain).range(yRange);
 
     return function(vertex:{x:number,y:number}){
-            const [r,theta] =[rScale(vertex.x),thetaScale(vertex.y)];
+            const [r,theta] =[rScale(vertex.x),normalizeAngle(thetaScale(vertex.y))];
             const [xcart,ycart] = polarToCartesian(r,theta);
             return {x:x(xcart),y:y(ycart),r,theta}
         }

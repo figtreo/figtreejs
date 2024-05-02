@@ -10,6 +10,7 @@ import Rectangle from "./Shapes/Rectangle";
 import { NodeProps } from "./Node.types";
 import { useFigtreeStore, useVertex } from "../../../store/store";
 import { preOrderIterator } from "../../../Evo/Tree";
+import { textSafeDegrees } from "../../../store/polarScale";
 
 // todo don't expose in index
 export function NodesHOC(ShapeComponent:React.ComponentType<any>) {
@@ -37,7 +38,7 @@ export function NodesHOC(ShapeComponent:React.ComponentType<any>) {
 }
 
 function NodeLabels(props:any){
-        const {filter=(n:NodeRef)=>true,aligned=false,...rest} = props;
+        const {filter=(n:NodeRef)=>true,aligned=false,gap = 6,...rest} = props;
         const shapeProps = useAttributeMappers(props);
 
         const tree = useFigtreeStore(state=>state.tree);  
@@ -48,11 +49,29 @@ function NodeLabels(props:any){
         <g className={"node-label-layer"}>
             {[...preOrderIterator(tree)].filter(filter).map((node) => { 
                     const v = useVertex(node);
-                    const {alignmentBaseline,textAnchor,rotation} = v.nodeLabel;
-                    const scaledMaxX = scale({x:maxX,y:0}).x
+                     // TODO move to function to calculate on the fly
                     const scaledV = scale(v);
-                    const xpos = aligned? scaledMaxX+6 :scaledV.x+v.nodeLabel.dx;
-                    const ypos = scaledV.y +v.nodeLabel.dy
+                    const layoutClass = v.layoutClass;
+
+                    const dx = layoutClass==="Rectangular"? gap: Math.cos(scaledV.theta!)*gap  ; 
+                    const dy = layoutClass==="Rectangular"? 0: Math.sin(scaledV.theta!)*gap ; 
+
+                    const scaledMax = scale({x:maxX,y:v.y})
+                    const xpos = (aligned? scaledMax.x :scaledV.x) + dx;
+                    const ypos = (aligned &&layoutClass==="Polar"? scaledMax.y :scaledV.y) + dy
+                    const rotation = layoutClass==="Polar"? textSafeDegrees(scaledV.theta!):0 
+
+                    const alignmentBaseline=layoutClass==="Polar"? "middle":
+                    tree.isInternal(node) ? 
+                        ((tree.getChildCount(node) > 0 && (tree.getParent(node) === undefined || tree.getChild(tree.getParent(node)!, 0) !== node)) ? "bottom" :
+                            "hanging") :
+                        "middle";
+                    const textAnchor=layoutClass==="Polar"? 
+                        (scaledV.theta!>Math.PI/2 && scaledV.theta!<3*Math.PI/2?"end":
+                            "start"):
+                        tree.isInternal(node)?"end":
+                            "start"
+
                     const d =        
                     aligned ?`M${scaledV.x} ${scaledV.y}L${xpos} ${ypos}`:`M${scaledV.x} ${scaledV.y}L${scaledV.x} ${scaledV.y}`
 

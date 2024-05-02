@@ -65,7 +65,7 @@ export function baseLayout(lc:layoutClass){
             const vertex = {...protoVertex,
                 layoutClass:lc,
                 nodeLabel:{
-                    alignmentBaseline: leftLabel ? (labelBelow ? "bottom" : "hanging") : "middle",
+                    alignmentBaseline: leftLabel ? (labelBelow ? "bottom" : "hanging") : "middle", // todo calc on the fly
                     textAnchor:leftLabel?"end":"start",
                     dx:leftLabel?-6:12,
                     dy:leftLabel ? (labelBelow ? -8 : 8) : 0,
