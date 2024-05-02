@@ -10,7 +10,7 @@ import { TipLabels } from './Labels/tipLabel';
 import { NodeLabels } from './Labels/nodeLabels';
 import { BranchLabels } from './Labels/branchLabels';
 
-import { FigTree,Tanglegram,  Branches, RectangularLayout, PolarLayout, RadialLayout, NodeRef, Highlight, CartoonData, AnnotationType, postOrderIterator, tipIterator, ImmutableTree } from '@figtreejs/core'
+import { FigTree,  Branches,  NodeRef, Highlight, CartoonData, AnnotationType, postOrderIterator, tipIterator, ImmutableTree, rectangularLayout, polarLayout } from '@figtreejs/core'
 import { useAreaSelection } from '../../app/area-selection';
 import { select } from "d3-selection"
 import { selectSelectionMode, selectSelectionRoot, setSelectionRoot } from '../Header/headerSlice';
@@ -237,7 +237,7 @@ export function Tree({ panelRef }: any) {
 
 
 
-  const treeLayout = layout === "rectangular" ? RectangularLayout : layout === "circular" ? PolarLayout : RadialLayout;
+  const treeLayout = layout === "rectangular" ? rectangularLayout : layout === "circular" ? polarLayout : () => {throw new Error("Not implemented!")};
   //
   const handlePaste = (event: any) => {
     dispatch(setTree(ImmutableTree.fromString(event.clipboardData.getData('text'),{parseAnnotations:true})));
@@ -389,7 +389,7 @@ useEffect(() => {
   }
 
   // if (tree.getCurrentIndex() > -1) {
-  if (tree.getNodeCount() > 0) {
+  if (tree.getNodeCount() > 1) {
 
     for(const node of postOrderIterator(tree)){
       const cartoon = tree.getAnnotation(node,CARTOON_ANNOTATION);

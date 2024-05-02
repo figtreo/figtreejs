@@ -20,8 +20,8 @@ export function TipLabels(props: { attrs?:{[key:string]:any} }) {
     attrs.fill = (n:NodeRef)=>{
         if(settings.colourBy==="User selection"){
         
-            if(taxaColours[n.id]&&taxaColours[n.id].taxaCustomColor){
-                return taxaColours[n.id].taxaCustomColor as string;
+            if(taxaColours[n.number]&&taxaColours[n.number].taxaCustomColor){
+                return taxaColours[n.number].taxaCustomColor as string;
             }
            return settings.colour;
       }else{

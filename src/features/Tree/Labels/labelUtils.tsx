@@ -1,5 +1,5 @@
 import { format } from "d3-format";
-import { NodeRef, decimalToDate, Tree, AnnotationType, TreeInterface } from "@figtreejs/core";
+import { NodeRef, decimalToDate, AnnotationType, ImmutableTree } from "@figtreejs/core";
 import { timeFormat } from "d3-time-format";
 
 // a function that converts a number to roman numerals
@@ -49,15 +49,15 @@ export function getNumericalFormatter(formatString: string, sigDigs: number): (n
     }
 }
 
-export function getTextFunction(tree: TreeInterface, settings: any) {
+export function getTextFunction(tree: ImmutableTree, settings: any) {
     let numericalFormatter = getNumericalFormatter(settings.format, settings.sigDigs);
     let textFunction;
     switch (settings.display) {
         case "Name":
-            textFunction = (node: NodeRef) => tree.getNodeTaxon(node);
+            textFunction = (node: NodeRef) => tree.getTaxon(node);
             break;
         case "Node Heights":
-            textFunction = (node: NodeRef) => tree.getNodeHeight(node)? numericalFormatter(tree.getNodeHeight(node)!):'';
+            textFunction = (node: NodeRef) => tree.getHeight(node)? numericalFormatter(tree.getHeight(node)!):'';
             break;
         case "Branch lengths":
             textFunction = (node: NodeRef) => {

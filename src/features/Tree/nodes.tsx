@@ -39,11 +39,12 @@ export function InternalNodes() {
             return (
                 <Nodes.Rectangle filter={filter} attrs={{ width: settings.maxSize, height: settings.maxSize, fill:filler, stroke, strokeWidth }} />
             )
-        } else if (settings.shape === "Swoosh") {
-            return (
-                <Nodes.Coalescent filter={filter} attrs={{ width: settings.maxSize, height: settings.maxSize, fill:filler, stroke, strokeWidth }} />
-            )
         }
+        // } else if (settings.shape === "Swoosh") {
+        //     return (
+        //         <Nodes.Coalescent filter={filter} attrs={{ width: settings.maxSize, height: settings.maxSize, fill:filler, stroke, strokeWidth }} />
+        //     )
+        // }
         else {
             throw new Error("Invalid node shape")
         }
