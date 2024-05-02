@@ -52,8 +52,8 @@ function NodeLabels(props:any){
                      // TODO move to function to calculate on the fly
                     const scaledV = scale(v);
                     const layoutClass = v.layoutClass;
-
-                    const dx = layoutClass==="Rectangular"? gap: Math.cos(scaledV.theta!)*gap  ; 
+                    const labelScootFactor = tree.isInternal(node) ? -1 : 1;
+                    const dx = layoutClass==="Rectangular"? labelScootFactor*gap: Math.cos(scaledV.theta!)*gap  ; 
                     const dy = layoutClass==="Rectangular"? 0: Math.sin(scaledV.theta!)*gap ; 
 
                     const scaledMax = scale({x:maxX,y:v.y})

@@ -15,7 +15,7 @@ const withBranch = (WrappedComponent: React.ComponentType<any>) => {
         const nodeVertex = useVertex(node);
         const vP = scale(parentVertex);
         const {layoutClass} = nodeVertex;
-        console.log(layoutClass)
+
         const vN =  scale(nodeVertex);
         
         // need to get the step here for polar
@@ -24,8 +24,7 @@ const withBranch = (WrappedComponent: React.ComponentType<any>) => {
         
         const points = [vP,vN,step];
 
-        const d = animated?normalizePath(pathGenerator(points,curvature,layoutClass)):pathGenerator(points,curvature,layoutClass);
-
+        const d = normalizePath(pathGenerator(points,curvature,layoutClass)); //normalized so we can use react spring to animate
         return <WrappedComponent {...rest} {...shapeProps(node)} d={d} id={node.number}/>
     } 
     return BranchedComponent;
