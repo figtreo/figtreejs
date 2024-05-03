@@ -406,14 +406,14 @@ useEffect(() => {
     
     
     const layoutOpts = {
-      rootAngle, rootLength, angleRange, showRoot, spread, curvature, fishEye, pointOfInterest, cartoonedNodes,pollard,padding:50,minRadius:minR,invert
+      rootAngle, rootLength, angleRange, showRoot, spread, fishEye, pointOfInterest, cartoonedNodes,pollard,padding:50,minRadius:minR,invert
     }
 
     const figureElements =[            <AxisElement key={0} />,
     <Highlight key={1} attrs={{fill:(n:NodeRef)=> (tree.getAnnotation(n,HILIGHT_ANNOTATION)! as string), opacity:0.4}} filter={(n:NodeRef)=> tree.getAnnotation(n,HILIGHT_ANNOTATION)!==undefined}/>,            
     <Legends key={2} />,
-    <Branches key={3} attrs={{ fill:'none',strokeWidth: lineWidth + 4, stroke: "#959ABF", strokeLinecap: "round", strokeLinejoin: "round" }} filter={(n: NodeRef) => selectedNodes.has(n.number)} />, 
-    <Branches key={4} attrs={{fill:branchFiller, strokeWidth: lineWidth, stroke: branchColourur }} filter={(n: NodeRef) => true} />,
+    <Branches key={3} attrs={{ fill:'none',strokeWidth: lineWidth + 4, stroke: "#959ABF", strokeLinecap: "round", strokeLinejoin: "round" }} filter={(n: NodeRef) => selectedNodes.has(n.number)} curvature={curvature} />,  // highlight selected branches
+    <Branches key={4} attrs={{fill:branchFiller, strokeWidth: lineWidth, stroke: branchColourur }} filter={(n: NodeRef) => true} curvature={curvature}/>,
     <BranchLabels key={5}/>,
     <TipsBackground key={6}/>,
     <TipLabels key={7} attrs={{ filter: (n: NodeRef) => selectedTaxa.has(n.number) ? 'url(#solid)' : null }} />,

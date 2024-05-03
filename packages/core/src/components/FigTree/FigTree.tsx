@@ -66,7 +66,6 @@ function FigTree(props:FigtreeProps){
    
     const layoutMap = layout(tree);
     const {maxX,maxY,layoutClass} = layoutMap.get(tree.getRoot())!;
-    console.log(layoutMap);
     //TODO hook to get scales
     setScale(maxX,maxY,canvasWidth,canvasHeight,layoutClass);
     setAnimated(animated);

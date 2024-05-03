@@ -9,4 +9,5 @@ export interface BranchProps extends BaubleProps{
         strokeLinecap?:attrType,
         strokeLinejoin?:attrType
     },
+    curvature?:number,
 }
