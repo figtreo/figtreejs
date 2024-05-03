@@ -1,21 +1,15 @@
-import { NodeRef, tipIterator } from "../../../Evo/Tree";
 import React from "react";
-import { NodesHOC } from "../../Baubles/Nodes/Nodes";
 import {arc as arcgen} from "d3-shape"
 import { useFigtreeStore, useVertex } from "../../../store/store";
-import withAnimation from "../../HOC/withAnimation";
-import withNode from "../../HOC/withNode";
+import { useAttributeMappers } from "../../../hooks";
 const arc = arcgen();
 
 function CladeHighlight(props:any ){
 
-    const {shapeProps,node, padding = 10} = props;
+    const {node, padding = 10} = props;
     const scale = useFigtreeStore(state=>state.scale);   
-    const tree = useFigtreeStore(state=>state.tree);   
-    console.log("Highlight",{...shapeProps(node)})
-    console.log("Highlight - node",node);
     const v = useVertex(node);
-
+    const shapeProps = useAttributeMappers(props);
     const {attrs,interactions} = shapeProps(node);
     if(v.layoutClass==="Rectangular"){
         const {x,y} = scale(v);
@@ -69,5 +63,5 @@ function CladeHighlight(props:any ){
     }
 }
 
-const Highlight = NodesHOC(CladeHighlight)
+const Highlight =CladeHighlight // NodesHOC(CladeHighlight)
 export default Highlight;
