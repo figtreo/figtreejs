@@ -55,6 +55,7 @@ function FigTree(props:FigtreeProps){
     const setAnimated = useFigtreeStore((state)=>state.setAnimated);
     const setTree = useFigtreeStore((state)=>state.setTree);
     const setLayout = useFigtreeStore((state)=>state.setLayout);
+    const setDimensions = useFigtreeStore((state)=>state.setDimensions);
     
     const canvasWidth = width - margins.left - margins.right;
     const canvasHeight = height - margins.top - margins.bottom;
@@ -71,6 +72,8 @@ function FigTree(props:FigtreeProps){
     setAnimated(animated);
     setTree(tree);
     setLayout(layoutMap);
+    setDimensions(canvasWidth,canvasHeight,[0,maxX])
+    
 
 
     

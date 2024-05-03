@@ -237,7 +237,7 @@ export function Tree({ panelRef }: any) {
 
 
 
-  const treeLayout = layout === "rectangular" ? rectangularLayout : layout === "circular" ? polarLayout : () => {throw new Error("Not implemented!")};
+  const treeLayout = layout === "Rectangular" ? rectangularLayout : layout === "Polar" ? polarLayout : () => {throw new Error("Not implemented!")};
   //
   const handlePaste = (event: any) => {
     dispatch(setTree(ImmutableTree.fromString(event.clipboardData.getData('text'),{parseAnnotations:true})));
@@ -409,7 +409,8 @@ useEffect(() => {
       rootAngle, rootLength, angleRange, showRoot, spread, fishEye, pointOfInterest, cartoonedNodes,pollard,padding:50,minRadius:minR,invert
     }
 
-    const figureElements =[            <AxisElement key={0} />,
+    const figureElements =[            
+    <AxisElement key={0} />,
     <Highlight key={1} attrs={{fill:(n:NodeRef)=> (tree.getAnnotation(n,HILIGHT_ANNOTATION)! as string), opacity:0.4}} filter={(n:NodeRef)=> tree.getAnnotation(n,HILIGHT_ANNOTATION)!==undefined}/>,            
     <Legends key={2} />,
     <Branches key={3} attrs={{ fill:'none',strokeWidth: lineWidth + 4, stroke: "#959ABF", strokeLinecap: "round", strokeLinejoin: "round" }} filter={(n: NodeRef) => selectedNodes.has(n.number)} curvature={curvature} />,  // highlight selected branches

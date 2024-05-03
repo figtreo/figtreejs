@@ -3,7 +3,7 @@ import { RootState } from '../../../../app/store';
 
 
 export interface LayoutState {
-    layout: "rectangular" | "circular" | "equalangle",
+    layout: "Rectangular" | "Polar" | "Equalangle",
     expansion: number,
     pollard: number,
     rootLength: number,
@@ -23,7 +23,7 @@ export interface LayoutState {
 }
 
 const initialState: LayoutState = {
-    layout: 'rectangular',
+    layout: 'Rectangular',
     expansion: 0,
     rootLength: 0,
     curvature: 0,
@@ -46,7 +46,7 @@ export const layoutSlice = createSlice({
     name: 'layout',
     initialState,
     reducers: {
-        setLayout: (state, action: PayloadAction<"rectangular" | "circular" | "equalangle">) => {
+        setLayout: (state, action: PayloadAction<"Rectangular" | "Polar" | "Equalangle">) => {
             state.layout = action.payload;
         },
         setExpansion: (state, action: PayloadAction<number>) => {

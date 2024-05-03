@@ -6,7 +6,7 @@ import RectangularAxisBars from "./RectangularAxisBars";
 export default function AxisBars(props: AxisBarsProps) {
 
     const {type} =props; 
- 
+ console.log("AxisBars",props)
     if(type === "Polar"){
         return null //<PolarAxisBars {...props}/>
     }else if(type === "Rectangular"){

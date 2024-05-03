@@ -111,6 +111,8 @@ function getTickLine(length: number, direction: AxisOrientation) {
 
 
 function makeAxisScale(props: any, { canvasWidth, canvasHeight, domain }:dimensionState ) {
+   console.log("makeAxisScale",props)
+   console.log({ canvasWidth, canvasHeight, domain })
     const { reverse = defaultAxisProps.reverse,
         offsetBy = defaultAxisProps.offsetBy,
         scaleBy = defaultAxisProps.scaleBy, 

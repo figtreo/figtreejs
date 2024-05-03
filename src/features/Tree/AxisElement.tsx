@@ -12,10 +12,10 @@ export default function AxisElement(props:{}) {
                 style:{fontSize:axisSettings.fontSize},
                 format:getNumericalFormatter(axisSettings.format,axisSettings.sigDigs)
     }
-    if(axisSettings.activated && layout!=="equalangle"){
+    if(axisSettings.activated && layout!=="Equalangle"){
         return(
-        <Axis reverse={axisSettings.reverseAxis} offsetBy={axisSettings.originValue} scaleBy = {axisSettings.scaleBy} strokeWidth={axisSettings.lineWeight} ticks={ticks} title={{text:axisSettings.title,style:{fontSize:axisSettings.fontSize+6},padding:45   }}>
-            {axisSettings.showGrid?<AxisBars />:undefined}
+        <Axis reverse={axisSettings.reverseAxis} offsetBy={axisSettings.originValue} type={layout} scaleBy = {axisSettings.scaleBy} strokeWidth={axisSettings.lineWeight} ticks={ticks} title={{text:axisSettings.title,style:{fontSize:axisSettings.fontSize+6},padding:45   }}>
+            {axisSettings.showGrid?<AxisBars type={layout}/>:undefined}
         </Axis>
             )
     }else{

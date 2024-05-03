@@ -11,7 +11,6 @@ import { AxisProps } from './Axis.types';
 export default function Axis(props: AxisProps) {
 
     const {type} = props; 
- 
     if(type === "Polar"){
         return null; //<PolarAxis {...props}/>
     }else if (type === "Rectangular"){

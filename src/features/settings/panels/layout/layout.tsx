@@ -20,13 +20,13 @@ export function Layout() {
                 <div className="layoutImages">
                     <div className="layoutSpacer" />
                     <div className='imageContainer'>
-                        <div className={`image  ${layout === "rectangular" ? "selected" : ''}`} onClick={() => dispatch(setLayout("rectangular"))} title="rectangle layout">
+                        <div className={`image  ${layout === "Rectangular" ? "selected" : ''}`} onClick={() => dispatch(setLayout("Rectangular"))} title="rectangle layout">
                             <img src={rectTreeImage} alt="" />
                         </div>
-                        <div className={`image  ${layout === "circular" ? "selected" : ''}`} onClick={() => dispatch(setLayout("circular"))} title="polar layout">
+                        <div className={`image  ${layout === "Polar" ? "selected" : ''}`} onClick={() => dispatch(setLayout("Polar"))} title="polar layout">
                             <img src={polarTreeImage} alt="" />
                         </div>
-                        <div className={`image ${layout === "equalangle" ? "selected" : ''}`} onClick={() => dispatch(setLayout("equalangle"))} title="radial layout">
+                        <div className={`image ${layout === "Equalangle" ? "selected" : ''}`} onClick={() => dispatch(setLayout("Equalangle"))} title="radial layout">
                             <img src={radialTreeImage} alt="" />
                         </div>
                     </div>
@@ -62,7 +62,7 @@ export function Layout() {
                     id="expansion"
                     onChange={(e) => { dispatch(setExpansion(parseFloat(e.target.value))) }}
                     value={expansion}
-                    disabled={layout!=="rectangular"}
+                    disabled={layout!=="Rectangular"}
                 />
             </div>
             <div className='option range'>
@@ -76,7 +76,7 @@ export function Layout() {
 
                     onChange={(e) => dispatch(setFisheye(parseFloat(e.target.value)))}
                     value={fishEye}
-                    disabled={layout==="equalangle"}
+                    disabled={layout==="Equalangle"}
 
                 />
             </div>
@@ -93,7 +93,7 @@ export function Layout() {
                 id="pollard"
                 onChange={(e) => { dispatch(setPollard(parseFloat(e.target.value))) }}
                 value={pollard}
-                disabled={layout!=="rectangular"}
+                disabled={layout!=="Rectangular"}
             />
             </div>
             <div>
@@ -106,9 +106,9 @@ export function Layout() {
                 <label htmlFor='animate'>Animate</label>
             </div>
             <div className="layoutOptions">
-            {layout === "rectangular" ? <RectangularOptions /> :
-                layout === "circular" ? <PolarOptions /> :
-                    layout === "equalangle" ? <RadialOptions /> : null}
+            {layout === "Rectangular" ? <RectangularOptions /> :
+                layout === "Polar" ? <PolarOptions /> :
+                    layout === "Equalangle" ? <RadialOptions /> : null}
             </div>
 
         </SettingPanel>

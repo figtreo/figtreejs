@@ -11,6 +11,7 @@ function CladeHighlight(props:any ){
 
     const {shapeProps,node, padding = 10} = props;
     const scale = useFigtreeStore(state=>state.scale);   
+    const tree = useFigtreeStore(state=>state.tree);   
     console.log("Highlight",{...shapeProps(node)})
     console.log("Highlight - node",node);
     const v = useVertex(node);
@@ -28,19 +29,17 @@ function CladeHighlight(props:any ){
 
         return (<rect {...attrs} {...interactions} height={height} width={width} x={minX} y={minY} />)
     }else if(v.layoutClass==="Polar"){
-        return null //throw new Error("Highlight not implemented for polar layout")
-
-    //     const transform =  `translate(${verticies.origin!.x},${verticies.origin!.y})` 
-    //     const scaleContext = useScale();
-    //     const scaleR = scaleLinear().domain([0,scaleContext.maxR!]).range([0,verticies.axisLength!])
-    //     const minR = tree.getParent(node)? (verticies.vertices[node.number].r! +verticies.vertices[tree.getParent(node)!.number].r!)/2:0;
+            return null;
+    //     // const transform =  `translate(${verticies.origin!.x},${verticies.origin!.y})` 
+    //     // const scaleR = scaleLinear().domain([0,scaleContext.maxR!]).range([0,verticies.axisLength!])
+    //     const minR =  scale(useVertex(node)).r!; //padding?
     //     let maxR = -Infinity;
     //     let maxTheta=-Infinity;
     //     let minTheta = Infinity;
     //     let lastTheta;
     //     let padding = 0;
     //     for(const tip of tipIterator(tree,node)){
-    //         const v = verticies.vertices[tip.number];
+    //         const v = scale(useVertex(tip));
     //         if(v.r!>maxR) maxR=v.r!;
     //         if(v.y>maxTheta) maxTheta=v.theta!;
     //         if(v.y<minTheta) minTheta=v.theta!;
@@ -57,14 +56,13 @@ function CladeHighlight(props:any ){
     //     const endAngle = startAngle+angleRange +(padding*2)
 
     //     const shape = arc( {
-    //         innerRadius:scaleR(minR),
+    //         innerRadius:scaleR(minR), //todo fix scale
     //         outerRadius:scaleR(maxR+5),
     //         startAngle: startAngle,
     //         endAngle: endAngle
     //     }
     // )!
-    // // console.log({startAngle,endAngle,angleRange})
-    //     return <path d={shape} {...attrs} transform={transform}/>
+    //     return <path d={shape} {...attrs} /> //transform={transform}
 
     }else{
         return null

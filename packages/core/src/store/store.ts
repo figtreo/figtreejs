@@ -14,8 +14,9 @@ interface FigtreeState {
     dimensions:dimensionState,
     setTree:(tree:Tree)=>void,
     setLayout:(layout:Map<NodeRef,FunctionalVertex>)=>void,
-    setScale: (maxX:number,maxY:number,canvasWidth:number,canvaseHeight:number,layoutClass:layoutClass)=>void,
+    setScale: (maxX:number,maxY:number,canvasWidth:number,canvasHeight:number,layoutClass:layoutClass)=>void,
     setAnimated:(animated:boolean)=>void
+    setDimensions:(canvasWidth:number,canvasHeight:number,domain:[number,number])=>void
 }
 
 export const useVertex = (node:NodeRef):FunctionalVertex=>{
