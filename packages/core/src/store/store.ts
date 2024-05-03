@@ -5,7 +5,7 @@ import { polarScaleMaker } from './polarScale'
 
 //todo remove props that are just the getting passed to children and use render props instead
 
-export type dimensionState = {canvasWidth:number,canvasHeight:number,domain:[number,number]}
+export type dimensionState = {canvasWidth:number,canvasHeight:number,domain:[number,number],layoutClass:layoutClass}
 interface FigtreeState {
     tree:Tree,
     layout:Map<NodeRef,FunctionalVertex>,
@@ -16,7 +16,7 @@ interface FigtreeState {
     setLayout:(layout:Map<NodeRef,FunctionalVertex>)=>void,
     setScale: (maxX:number,maxY:number,canvasWidth:number,canvasHeight:number,layoutClass:layoutClass)=>void,
     setAnimated:(animated:boolean)=>void
-    setDimensions:(canvasWidth:number,canvasHeight:number,domain:[number,number])=>void
+    setDimensions:(canvasWidth:number,canvasHeight:number,domain:[number,number],type:layoutClass)=>void
 }
 
 export const useVertex = (node:NodeRef):FunctionalVertex=>{
@@ -33,13 +33,13 @@ export const useFigtreeStore = create<FigtreeState>()((set) => ({
     animated:false,
     tree:new ImmutableTree(),
     layout: new Map<NodeRef,FunctionalVertex>(),
-    dimensions:{canvasWidth:0,canvasHeight:0,domain:[0,0]},
+    dimensions:{canvasWidth:0,canvasHeight:0,domain:[0,0],layoutClass:layoutClass.Rectangular},
 
     setScale: (maxX,maxY,canvasWidth,canvasHeight,layoutClass)=>set(()=> ({scale:getScale(maxX,maxY,canvasWidth,canvasHeight,layoutClass)})),
     setAnimated:(animated)=>set(()=>({animated})),
     setTree:(tree)=>set(()=>({tree:tree})),
     setLayout:(layout)=>set(()=>({layout})),
-    setDimensions:(canvasWidth:number,canvasHeight:number,domain:[number,number])=>set(()=>({dimensions:{canvasWidth,canvasHeight,domain}})) //TODO cache these
+    setDimensions:(canvasWidth:number,canvasHeight:number,domain:[number,number],layoutClass)=>set(()=>({dimensions:{canvasWidth,canvasHeight,domain,layoutClass}})) //TODO cache these
 }))
 //Todo cache these
 function getScale(maxX:number,maxY:number,canvasWidth:number,canvasHeight:number,layoutClass:layoutClass,invert:boolean=false,minRadius:number=0,angleRange:number=2*Math.PI,rootAngle:number=0){

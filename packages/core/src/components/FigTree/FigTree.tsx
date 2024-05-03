@@ -72,7 +72,7 @@ function FigTree(props:FigtreeProps){
     setAnimated(animated);
     setTree(tree);
     setLayout(layoutMap);
-    setDimensions(canvasWidth,canvasHeight,[0,maxX])
+    setDimensions(canvasWidth,canvasHeight,[0,maxX],layoutClass);
     
 
 
