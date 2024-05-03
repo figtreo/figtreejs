@@ -1009,6 +1009,7 @@ function annotateNodeHelper(tree:ImmutableTree,node:NodeRef,annotation:{name:str
     tree._data.nodes.allNodes[node.number].annotations[annotation.name] = suggestedType.value;
     const domain = tree._getUpdatedDomain( { id:annotation.name, value:annotation.value, type:checkedType })
     tree._data.annotations[annotation.name]={id:annotation.name,domain,type:checkedType}
+    tree._updateNodesToRoot(node); // so we re - layout if needed
 }
 
 export function* preOrderIterator(tree:Tree,node:NodeRef|undefined = undefined):Generator<NodeRef> {

@@ -3,29 +3,32 @@ import React from "react";
 import { NodesHOC } from "../../Baubles/Nodes/Nodes";
 import {arc as arcgen} from "d3-shape"
 import { useFigtreeStore, useVertex } from "../../../store/store";
+import withAnimation from "../../HOC/withAnimation";
+import withNode from "../../HOC/withNode";
 const arc = arcgen();
 
-function CladeHighlight(props:{attrs:{[key:string]:any},node:NodeRef}){
+function CladeHighlight(props:any ){
 
-    const {attrs,node} = props;
+    const {shapeProps,node, padding = 10} = props;
     const scale = useFigtreeStore(state=>state.scale);   
-    
+    console.log("Highlight",{...shapeProps(node)})
+    console.log("Highlight - node",node);
     const v = useVertex(node);
+
+    const {attrs,interactions} = shapeProps(node);
     if(v.layoutClass==="Rectangular"){
         const {x,y} = scale(v);
         const scaledMax = scale({x:v.maxX,y:v.maxY});
         const scaledMin = scale({x:x,y:v.minY});
-        const minX = x - 5; //padding
-        let maxX = scaledMax.x;
-        let maxY=scaledMax.y;
-        let minY = scaledMin.y;
+        const minX = x - padding; //padding
+        let minY = scaledMin.y - padding;
         
-        const width = maxX-minX+5; //padding
-        const height = maxY-minY;
+        const width = scaledMax.x-minX+ padding*2; //padding
+        const height = (scaledMax.y-scaledMin.y)+padding*2 ;
 
-        return (<rect {...attrs} height={height+2*5} width={width} x={minX} y={minY-5} />)
+        return (<rect {...attrs} {...interactions} height={height} width={width} x={minX} y={minY} />)
     }else if(v.layoutClass==="Polar"){
-        throw new Error("Highlight not implemented for polar layout")
+        return null //throw new Error("Highlight not implemented for polar layout")
 
     //     const transform =  `translate(${verticies.origin!.x},${verticies.origin!.y})` 
     //     const scaleContext = useScale();
