@@ -1,6 +1,8 @@
 import { NodeRef, Tree, newickParsingOptions } from "../Tree.types";
 import { ImmutableTree, postOrderIterator,  preOrderIterator } from "../NormalizedTree/ImmutableTree";
 import { parseAnnotation } from "./AnnotationParser";
+import { timeParse } from "d3-time-format";
+import { dateToDecimal } from "../utilities";
 
 export function parseNewick(tree:ImmutableTree,newick: string,options?:newickParsingOptions): ImmutableTree {
     if (options === undefined) {
@@ -142,6 +144,35 @@ export function parseNewick(tree:ImmutableTree,newick: string,options?:newickPar
                     }
                 }
                 tree.setTaxon(externalNode,name)
+
+                let decimalDate = undefined;
+                let date = undefined;
+                if (options.datePrefix && options.dateFormat) {
+                    const parts = name.split(options.datePrefix);
+                    if (parts.length === 0) {
+                    throw new Error(
+                        `the tip, ${name}, doesn't have a date separated by the prefix, '${options.datePrefix}'`
+                    );
+                    }
+                    const dateBit = parts[parts.length - 1];
+                    if (options.dateFormat === "decimal") {
+                    decimalDate = parseFloat(parts[parts.length - 1]);
+                    } else {
+                    date = timeParse(options.dateFormat)(dateBit);
+                    if (!date) {
+                        date = timeParse(options.dateFormat)(`${dateBit}-15`);
+                    }
+                    if (!date) {
+                        date = timeParse(options.dateFormat)(`${dateBit}-06-15`);
+                    }
+                    decimalDate = dateToDecimal(date!);
+                    }
+                }
+                if(decimalDate){
+                    tree.annotateNode(externalNode,{name:"decimalDate",value:decimalDate})
+                }
+
+
                 // externalNode.label = taxon.id;
                 // externalNode.name = taxon.id;
 

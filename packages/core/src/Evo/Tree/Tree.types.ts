@@ -27,6 +27,8 @@ export interface Annotation {
 
 
 export interface newickParsingOptions  {
+    dateFormat?: string,
+    datePrefix?: string,
      labelName?: string,  parseAnnotations?: boolean , tipNameMap?: Map<string, string>
 }
 export interface Tree  {
