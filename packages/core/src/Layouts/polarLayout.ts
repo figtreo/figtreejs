@@ -3,7 +3,6 @@ import { scaleLinear } from "d3-scale";
 import { AbstractLayout, ArbitraryVertices, defaultInternalLayoutOptions, internalLayoutOptions,Vertices} from "./LayoutInterface";
 import { RectangularLayout, fishEyeTransform } from "./rectangularLayout";
 import { Tree } from "..";
-import { ImmutableTree } from "../Evo/Tree/normalizedTree/ImmutableTree";
 
 
 export class PolarLayout extends AbstractLayout {

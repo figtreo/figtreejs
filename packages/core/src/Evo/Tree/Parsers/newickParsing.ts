@@ -1,5 +1,5 @@
 import { NodeRef, Tree, newickParsingOptions } from "../Tree.types";
-import { ImmutableTree, postOrderIterator,  preOrderIterator } from "../normalizedTree/ImmutableTree";
+import { ImmutableTree, postOrderIterator,  preOrderIterator } from "../NormalizedTree/ImmutableTree";
 import { parseAnnotation } from "./AnnotationParser";
 
 export function parseNewick(tree:ImmutableTree,newick: string,options?:newickParsingOptions): ImmutableTree {

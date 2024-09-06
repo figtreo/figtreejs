@@ -1,4 +1,4 @@
-export * from "./normalizedTree"
+export * from "./NormalizedTree"
 export * from "./Tree.types"
 export * from "./Parsers"
 export * from "./Traversals"

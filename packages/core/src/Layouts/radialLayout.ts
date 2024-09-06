@@ -27,7 +27,7 @@ import { scaleLinear } from "d3-scale";
 import { AbstractLayout, ArbitraryVertex, ArbitraryVertices, defaultInternalLayoutOptions, internalLayoutOptions, Vertices } from "./LayoutInterface";
 import { textSafeDegrees } from "./polarLayout";
 import {  Tree } from "../Evo/Tree";
-import {  preOrderIterator, tipIterator } from "../Evo/Tree/normalizedTree/ImmutableTree";
+import {  preOrderIterator, tipIterator } from "../Evo/Tree/NormalizedTree/ImmutableTree";
 
 type data = {
     angleStart: number,

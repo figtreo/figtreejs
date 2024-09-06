@@ -10,7 +10,7 @@ const packageJson = require("./package.json");
 
 export default [
   {
-    input: "src/index.ts",
+    input: "./src/index.ts",
     output: [
       {
         file: packageJson.main,
@@ -30,15 +30,16 @@ export default [
       typescript({ tsconfig: "./tsconfig.json" }),
       terser(),
       replace({
-        'process.env.NODE_ENV': JSON.stringify( 'production' )
+        'process.env.NODE_ENV': JSON.stringify( 'production' ),
+        preventAssignment:true
       })
     ],
-    external: ["react", "react-dom", "styled-components"],
+    external: ["react", "react-dom", "styled-components"], // the hope is this includes react in the bundle
     // external: [ "styled-components"],
   },
   {
-    input: "dist/esm/types/src/index.d.ts",
-    output: [{ file: "dist/index.d.ts", format: "es" }],
+    input: "./dist/esm/types/src/index.d.ts",
+    output: [{ file: "./dist/index.d.ts", format: "es" }],
     plugins: [dts.default()],
   },
 ];

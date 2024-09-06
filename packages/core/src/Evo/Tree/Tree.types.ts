@@ -86,7 +86,7 @@ export interface Tree  {
     orderNodesByDensity(down:boolean):Tree
     sortChildren(node:NodeRef,compare:(a:NodeRef,b:NodeRef)=>number):Tree
     isRoot(node:NodeRef):boolean;
-    getMRCA(nodes:NodeRef[]):NodeRef;
+    getMRCA(node1:NodeRef,node2:NodeRef):NodeRef;
     rotate(node:NodeRef,recursive:boolean):Tree;
     reroot(node:NodeRef,proportion:number):Tree;
     //TODO decide if we want to keep integers different from continuous

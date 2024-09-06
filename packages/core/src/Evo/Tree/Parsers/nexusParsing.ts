@@ -1,5 +1,5 @@
 import { Tree } from "../Tree.types";
-import { ImmutableTree } from "../normalizedTree/ImmutableTree";
+import { ImmutableTree } from "../NormalizedTree/ImmutableTree";
 import { parseNewick } from "./newickParsing";
 
 //ONLY parses the first tree

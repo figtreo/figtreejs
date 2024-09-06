@@ -1,4 +1,4 @@
-import { ImmutableTree } from "../normalizedTree/ImmutableTree";
+import { ImmutableTree } from "../NormalizedTree/ImmutableTree";
 import { processAnnotationValue } from "./AnnotationParser";
 
 describe("Test annotation parsing",()=>{

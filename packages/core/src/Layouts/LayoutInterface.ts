@@ -3,7 +3,7 @@
 // is should only use static methods. and store any state as static constants.
 
 import { NodeRef, Tree } from "../Evo/Tree"
-import { ImmutableTree } from "../Evo/Tree/normalizedTree/ImmutableTree"
+import { ImmutableTree } from "../Evo/Tree/NormalizedTree/ImmutableTree"
 import { layoutOptions } from "../components/FigTree/Figtree.types"
 //TODO make tree
 

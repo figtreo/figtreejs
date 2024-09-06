@@ -225,7 +225,7 @@ export class MutableTree implements Tree {
     sortChildren(node: NodeRef, compare: (a: NodeRef, b: NodeRef) => number): Tree {
             throw new Error("Method not implemented.");
         }
-    getMRCA(nodes: NodeRef[]): NodeRef {
+    getMRCA(node1:NodeRef,node2:NodeRef): NodeRef {
         throw new Error("Method not implemented.");
     }
     getAnnotationDomain(name: string): string[] | number[] | [number, number] | [boolean, boolean] | undefined {
