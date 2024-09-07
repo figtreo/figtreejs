@@ -736,10 +736,23 @@ export class ImmutableTree implements Tree {
             "Root node has more than two children and we are rerooting! There be dragons!",
           )
         }
-        const rootLength = rootNode.children
+        let rootLength = 0;
+        
+        if(rootNode.children.length==2){ // just sum them. 
+          rootLength =rootNode.children
           .map((n) => draft.getNode(n))
           .map((n) => draft.getLength(n))
           .reduce((acc, l) => l! + acc!, 0)!
+        }
+        else{
+          // we need the length of the incoming root branch
+          const pathToRoot =  [...draft.getPathToRoot(node)]
+          const rootChild = pathToRoot[pathToRoot.length-2]; // last one is the root
+          if(!rootNode.children.includes(rootChild.number)){
+            throw new Error("Root child not in path to root - likely an internal error")
+          }
+          rootLength = draft.getLength(rootChild)!;
+        }
 
         const treeNode = draft.getNode(node.number) as Node
         if (draft.getParent(node) !== rootNode) {
@@ -766,6 +779,9 @@ export class ImmutableTree implements Tree {
             parent.children = parent.children.filter((n) => n !== node0.number)
 
             if (draft.getParent(parent)!.number === rootNode.number) {
+
+              // at the root
+              if(rootNode.children.length==2){
               const ls = draft.getLeftSibling(parent)
               const sibling = ls
                 ? (ls as Node)
@@ -783,6 +799,34 @@ export class ImmutableTree implements Tree {
               parent.children.push(sibling.number)
               sibling.parent = parent.number
               sibling.length = rootLength
+            }else{
+              // need to add a new node here.
+              const newNode:Node = {
+                number: draft._data.nodes.allNodes.length,
+                children: [],
+                parent: undefined,
+                label: "",
+                length: undefined,
+                divergence: undefined,
+                height: undefined,
+                name: undefined,
+                level: undefined,
+                annotations: {},
+                _id: Symbol(),
+              }
+              draft._data.nodes.allNodes.push(newNode)
+              newNode.length = rootLength;
+              parent.children.push(newNode.number)
+              newNode.parent = parent.number;
+              for(const childNumber of rootNode.children){
+                const child = draft.getNode(childNumber) as Node;
+                if(child.number!==parent.number){
+                  child.parent = newNode.number;
+                  newNode.children.push(child.number)
+                }
+              }
+            }
+
             } else {
               // swap the parent and parent's parent's length around
               const nan = draft.getParent(parent)! as Node // your mammy's mammy
