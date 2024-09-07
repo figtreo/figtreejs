@@ -145,7 +145,6 @@ export function parseNewick(tree:ImmutableTree,newick: string,options?:newickPar
                 }
                 tree.setTaxon(externalNode,name)
 
-                let decimalDate = undefined;
                 let date = undefined;
                 if (options.datePrefix && options.dateFormat) {
                     const parts = name.split(options.datePrefix);
@@ -156,7 +155,7 @@ export function parseNewick(tree:ImmutableTree,newick: string,options?:newickPar
                     }
                     const dateBit = parts[parts.length - 1];
                     if (options.dateFormat === "decimal") {
-                    decimalDate = parseFloat(parts[parts.length - 1]);
+                    date = parseFloat(parts[parts.length - 1]);
                     } else {
                     date = timeParse(options.dateFormat)(dateBit);
                     if (!date) {
@@ -165,11 +164,10 @@ export function parseNewick(tree:ImmutableTree,newick: string,options?:newickPar
                     if (!date) {
                         date = timeParse(options.dateFormat)(`${dateBit}-06-15`);
                     }
-                    decimalDate = dateToDecimal(date!);
                     }
                 }
-                if(decimalDate){
-                    tree.annotateNode(externalNode,{name:"decimalDate",value:decimalDate})
+                if(date){
+                    tree.annotateNode(externalNode,{name:"date",value:date})
                 }
 
 
