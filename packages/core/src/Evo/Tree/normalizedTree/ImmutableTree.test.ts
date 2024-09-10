@@ -7,10 +7,10 @@ import { ImmutableTree } from "./ImmutableTree";
 describe('ImmutableTree', () =>{
 
         it('simpleTree', function() {
-            const tree = new ImmutableTree().beginBatchedEdits();
-            const [node] = tree.addNodes();
-            const tree1  = tree.endBatchedEdits();
-            
+            const tree = new ImmutableTree();
+            const added  = tree.addNodes();
+            const tree1 = added.tree;
+            const node = added.nodes[0];
             expect(tree.getNodeCount()).toEqual(1);
             expect(tree1.getNodeCount()).toEqual(2);
             expect(tree1).not.toEqual(tree);
@@ -18,9 +18,9 @@ describe('ImmutableTree', () =>{
         });
 //Add child used getNode and updates both node and child.
         it('build tree and check parent', function() {
-            const prototree = new ImmutableTree().beginBatchedEdits()
-            const [child,child2]=prototree.addNodes(2)
-            const tree = prototree.endBatchedEdits();
+            const prototree = new ImmutableTree()
+            const {tree:tree,nodes:[child,child2,...rest]}=prototree.addNodes(2)
+
             const parent = tree.getNode(0);
             const tree1 = tree.addChild(parent,child)
                             .addChild(parent,child2);
@@ -37,14 +37,13 @@ describe('ImmutableTree', () =>{
         });
     //editing length does not access parent. Does the parent still update.
         it('Change branchlength', function() {
-            const tree = new ImmutableTree().beginBatchedEdits();
+            const prototree = new ImmutableTree()
                             
-            const [parent,child,child2] = tree.addNodes(3)
+            const {tree:tree,nodes:[parent,child,child2]} = prototree.addNodes(3)
 
 
             const tree1 = tree.addChild(parent,child)
                             .addChild(parent,child2)
-                            .endBatchedEdits();
             
             const tree2 = tree1.setLength(child,0.5);
             expect(tree2).not.toEqual(tree1)

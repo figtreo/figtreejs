@@ -1,5 +1,5 @@
 import { max, mean,min } from "d3-array";
-import { ImmutableTree, NodeRef, Tree } from "../../Evo/Tree";
+import { ImmutableTree, NodeRef, postOrderIterator, preOrderIterator, Tree } from "../../Evo/Tree";
 import { PreOrderTraversalCache } from "../../Evo/Tree/Traversals/PreOrderTraversal";
 
 export enum layoutClass{
@@ -25,37 +25,29 @@ export type FunctionalVertex = {
 }
 
 
-export function baseLayout(lc:layoutClass){
-    const traversal = new PreOrderTraversalCache();
-    function layout (tree:ImmutableTree,node?:NodeRef):Map<NodeRef,FunctionalVertex>{
 
-        if(node === undefined){
-            node = tree.getRoot();
-        }
-        if( traversal.cache.has(node))return traversal.cache.get(node)!
-            let descendentMap = new Map<NodeRef,FunctionalVertex>();
+export function baseLayout(lc:layoutClass){
+    
+    function layout (tree:ImmutableTree):(node:NodeRef)=>FunctionalVertex { 
+        const map = new Map<NodeRef,FunctionalVertex>();
+        
+            let currentY = 0;
+            for( const node of postOrderIterator(tree)){
     
             let protoVertex:{x:number,y:number,maxX:number,maxY:number,minY:number};
             const x = tree.getDivergence(node)!;
-            const predecessor = traversal.getPrevious(tree,node)
             const leftLabel = tree.getChildCount(node) > 0;
             const labelBelow = (tree.getChildCount(node) > 0 && (tree.getParent(node) === undefined || tree.getChild(tree.getParent(node)!, 0) !== node));
     
     
             if(tree.isExternal(node)){
-                if(predecessor){
-                    const predMap = layout(tree,predecessor!);
-                    const currentY = predMap.get(predecessor!)!.maxY; // here recursion happens 
-                    protoVertex = {x,y:currentY+1,maxY:currentY+1,maxX:x, minY:currentY+1}
-                }else{
-                    //at first node
-                    protoVertex = {x,y:0,maxY:0,maxX:x,minY:0}
-                }
+
+                protoVertex = {x,y:currentY,maxY:currentY,maxX:x, minY:currentY}
+                currentY++;
+                
             }else{
                 
-                const kidMaps = tree.getChildren(node).map(child=>layout(tree,child)) // here recursion happens 
-                descendentMap = kidMaps.reduce((acc,curr)=>{return new Map([...acc,...curr])},descendentMap) //caching the results of the recursion
-                const kidPositions = tree.getChildren(node).map(child=>descendentMap.get(child)!)
+                const kidPositions = tree.getChildren(node).map(child=>map.get(child)!)
                 const y= mean(kidPositions,d=>d.y)!;
                 const maxY = max(kidPositions,d=>d.maxY)!;
                 const maxX = max(kidPositions,d=>d.maxX)!;
@@ -71,9 +63,17 @@ export function baseLayout(lc:layoutClass){
                     dy:leftLabel ? (labelBelow ? -8 : 8) : 0,
                     rotation:0}
                 }
-            descendentMap.set(node,vertex)            
-            traversal.cache.set(node,descendentMap)
-            return traversal.cache.get(node);
+                map.set(node,vertex);
+            }
+
+        return function(node:NodeRef):FunctionalVertex{
+            if(map.has(node))return map.get(node)!;
+            else{
+                throw new Error("Node not found in layout -  has the tree changed")
+            }
+        }
+
+
     }
     return layout
 }

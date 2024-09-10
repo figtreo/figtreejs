@@ -67,7 +67,7 @@ export interface Tree  {
     getAnnotationKeys(): string[]
     getAnnotationType(name: string): string |undefined
 
-    addNodes(n?:number): NodeRef[] 
+    addNodes(n?:number):  {tree:Tree,nodes:NodeRef[]}
     deleteNode(n:NodeRef):Tree
     removeChild(parent:NodeRef,child:NodeRef):Tree
     deleteClade(n:NodeRef):Tree

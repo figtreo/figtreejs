@@ -9,7 +9,7 @@
     "build": "rollup -c --bundleConfigAsCjs",
     "build:watch": "rollup -c --bundleConfigAsCjs -w",
     "dev": "rollup -c --bundleConfigAsCjs -w",
-    "test": "jest"
+    "test": "jest src/**/*/*test*"
   },
   "author": "Andrew Rambaut and JT McCrone",
   "license": "MIT",

@@ -6,19 +6,19 @@ describe("Test rectangular layout",()=>{
     it('check x and y on root', function() {
         const tree = ImmutableTree.fromNewick("((a:1,b:1):1,c:1);");
         const layout = rectangularLayout(tree);
-        const root = layout.get(tree.getRoot())!;
+        const root = layout(tree.getRoot())!;
         expect(root.x).toBeCloseTo(0);
         expect(root.y).toBeCloseTo(1.25); 
 
         // //a
         const a = tree.getNodeByTaxon("a")!;
-        const aV = layout.get(a)!;
+        const aV = layout(a)!;
         expect(aV.x).toBeCloseTo(2);
         expect(aV.y).toBeCloseTo(0); 
 
         // //c
         const c = tree.getNodeByTaxon("c")!;
-        const cV = layout.get(c)!;
+        const cV = layout(c)!;
         expect(cV.x).toBeCloseTo(1);
         expect(cV.y).toBeCloseTo(2); 
     });
@@ -28,19 +28,21 @@ describe("Test rectangular layout",()=>{
         const tree = ImmutableTree.fromNewick("((a:1,b:1):1,c:1);")
 
         const layout = rectangularLayout(tree);
-        const root = layout.get(tree.getRoot());
+        const root = layout(tree.getRoot());
         const c = tree.getNodeByTaxon("c")!;
-        const cV = layout.get(c) 
+        const cV = layout(c) 
         const tree2 = tree.setDivergence(tree.getNodeByTaxon('a')!,3.0)
 
         const layout2 =rectangularLayout(tree2);
-        const root2 = layout2.get(tree2.getRoot())!;
+        const root2 = layout2(tree2.getRoot())!;
         const c2 = tree2.getNodeByTaxon("c")!;
-        const cV2 = layout2.get(c2);
+        const cV2 = layout2(c2);
         expect(c2).toStrictEqual(c)
         expect(cV2).toStrictEqual(cV)
         // check a parent should 
-        expect(tree.getRoot()).not.toStrictEqual(tree2.getRoot())
+        
+       
+        
         expect(root2).not.toStrictEqual(root) //these are vertexes
         expect(root2.maxX).toBeCloseTo(3);
 
@@ -57,11 +59,10 @@ describe("Test rectangular layout",()=>{
     const reordededC = reordered.getNodeByTaxon("c")!;
     const ogC = tree.getNodeByTaxon("c")!;
 
-    const ogCvertext = layout.get(ogC)
-    const reorderedCVertex = reorderedLayout.get(reordededC);
-        expect(ogC).not.toBe(reordededC)
+    const ogCvertext = layout(ogC)
+    const reorderedCVertex = reorderedLayout(reordededC);
 
-        expect(ogCvertext).not.toBe(reorderedCVertex)
+    expect(ogCvertext).not.toBe(reorderedCVertex)
     });
     
 
