@@ -23,7 +23,7 @@ export interface layoutOptions{
     padding?:number
 }
 
-type layoutFunction=(tree:ImmutableTree,node?:NodeRef,)=>Map<NodeRef,FunctionalVertex>;
+type layoutFunction=(tree:ImmutableTree)=>(node:NodeRef)=>FunctionalVertex;
 
 export interface FigtreeProps {
     width:number,

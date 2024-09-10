@@ -8,12 +8,12 @@ import { polarScaleMaker } from './polarScale'
 export type dimensionState = {canvasWidth:number,canvasHeight:number,domain:[number,number],layoutClass:layoutClass}
 interface FigtreeState {
     tree:Tree,
-    layout:Map<NodeRef,FunctionalVertex>,
+    layout:(node:NodeRef)=>FunctionalVertex,
     scale:(v:{x:number,y:number})=>{x:number,y:number,r?:number,theta?:number},    
     animated:boolean,
     dimensions:dimensionState,
     setTree:(tree:Tree)=>void,
-    setLayout:(layout:Map<NodeRef,FunctionalVertex>)=>void,
+    setLayout:(layout:(node:NodeRef)=>FunctionalVertex)=>void,
     setScale: (maxX:number,maxY:number,canvasWidth:number,canvasHeight:number,layoutClass:layoutClass)=>void,
     setAnimated:(animated:boolean)=>void
     setDimensions:(canvasWidth:number,canvasHeight:number,domain:[number,number],type:layoutClass)=>void
@@ -21,7 +21,7 @@ interface FigtreeState {
 
 export const useVertex = (node:NodeRef):FunctionalVertex=>{
     const layout = useFigtreeStore(state=>state.layout);
-    const v = layout.get(node);
+    const v = layout(node);
     if(v === undefined){
         throw new Error(`Node ${node} not found in layout`)
     }
@@ -32,7 +32,7 @@ export const useFigtreeStore = create<FigtreeState>()((set) => ({
     scale:(v:{x:number,y:number})=>v,
     animated:false,
     tree:new ImmutableTree(),
-    layout: new Map<NodeRef,FunctionalVertex>(),
+    layout: (node:NodeRef)=>{throw new Error("Layout not set")},
     dimensions:{canvasWidth:0,canvasHeight:0,domain:[0,0],layoutClass:layoutClass.Rectangular},
 
     setScale: (maxX,maxY,canvasWidth,canvasHeight,layoutClass)=>set(()=> ({scale:getScale(maxX,maxY,canvasWidth,canvasHeight,layoutClass)})),

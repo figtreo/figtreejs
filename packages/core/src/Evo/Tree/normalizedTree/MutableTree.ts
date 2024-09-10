@@ -173,7 +173,7 @@ export class MutableTree implements Tree {
     getAnnotationKeys(): string[] {
             return Object.keys(this.annotations);
     }
-    addNodes(n: number=1): NodeRef[] {
+    addNodes(n: number=1): {tree:Tree,nodes:NodeRef[]} {
         const newNodes = [];
         for(let i=0;i<n;i++){
             const node = new Node({tree:this});
@@ -181,7 +181,7 @@ export class MutableTree implements Tree {
             node.name&& this._tipMap.set(node.name,node);
             this._nodeMap.set(node.number,node);
         }
-        return newNodes
+        return ({tree:this,nodes:newNodes});
     }
     removeChild(parent: NodeRef, child: NodeRef): Tree {
             this.removeChild(parent, child);
