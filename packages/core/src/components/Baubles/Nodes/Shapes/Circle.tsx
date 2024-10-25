@@ -4,19 +4,17 @@ import withAnimation from "../../../HOC/withAnimation";
 import { BaseShapeProps } from "../";
 import { NodeProps } from "../Node.types";
 import { NodeRef } from "../../../../Evo/Tree";
-import { useFigtreeStore } from "../../../../store/store";
 import withNode from "../../../HOC/withNode";
 
 
-const BaseCircle = React.memo<CircleProps>( props=> {
+const BaseCircle = function(props:any){
  
    const {attrs,interactions,id} = props;
-
-
     return (
     	<animated.circle  node-id={id} className={"node-shape"} {...attrs} {...interactions} cx={attrs.x} cy={attrs.y} />
     	);
-});
+};
+
 
 export const Circle = withNode(withAnimation(BaseCircle));
 

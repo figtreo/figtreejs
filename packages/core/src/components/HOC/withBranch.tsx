@@ -1,15 +1,13 @@
 import React from "react";
-import { useFigtreeStore, useVertex } from "../../store/store";
+import {  useVertexFactory } from "../../store/store";
 import { normalizePath } from "../../path.helpers";
 import { layoutClass } from "../../Layouts/functional/rectangularLayout";
 
 const withBranch = (WrappedComponent: React.ComponentType<any>) => {
     function BranchedComponent(props:any){
         
-        const {parent,node,shapeProps,curvature=0,...rest} = props
-        const scale = useFigtreeStore(state=>state.scale);
-  
-        const animated = useFigtreeStore(state=>state.animated);
+        const {parent,node,shapeProps,curvature=0,scale,layout,...rest} = props
+        const useVertex = useVertexFactory(layout);
 
         const parentVertex = useVertex(parent);
         const nodeVertex = useVertex(node);
@@ -76,7 +74,6 @@ function rectangularBranchPath(points: { x: number, y: number,r?:number,theta?:n
 
 function polarBranchPath(points: { x: number, y: number,r?:number,theta?:number }[]):string{
     const positions = points.length;
-    console.log("polar")
     switch (positions) {
         case 3: {
             const [parent,child,step] = points;

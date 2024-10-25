@@ -1,6 +1,5 @@
 import { useSpring } from "@react-spring/web";
 import React from "react";
-import { useFigtreeStore } from "../../store/store";
 
 /**
  * This is a HOC that wraps a bauble and applies a string to it's visible attributes if the animation is true.
@@ -9,7 +8,7 @@ import { useFigtreeStore } from "../../store/store";
  */
 const withAnimation = (WrappedComponent: React.ComponentType<any>) => {
     function AnimatedComponent(props: any) {
-        const animation = useFigtreeStore(state=>state.animated);
+        const animation = props.animated;
         let {attrs,d=null,x=null,y=null,...rest}=props; // d is the data for the path
 
         if(attrs.width && attrs.height){

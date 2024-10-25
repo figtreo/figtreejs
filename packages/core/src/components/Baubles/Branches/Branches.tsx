@@ -1,12 +1,9 @@
-import React, { useMemo, useRef } from "react"
+import React from "react"
 import {  useAttributeMappers,  } from "../../../hooks";
 
-import { Vertex } from "../../../Layouts/LayoutInterface";
 import { NodeRef } from "../../../Evo/Tree/Tree.types";
-import { normalizePath } from "../../../path.helpers";
 import { BranchProps } from "./Branches.types";
 import { Branch } from "./Branch";
-import { useFigtreeStore } from "../../../store/store";
 import { preOrderIterator } from "../../../Evo/Tree";
 //TODO very similar to Nodes
 

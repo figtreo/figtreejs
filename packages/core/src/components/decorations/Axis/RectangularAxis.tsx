@@ -4,14 +4,14 @@ import { mean, quantile, range } from "d3-array"
 import { ScaleContinuousNumeric, scaleLinear } from 'd3-scale';
 import { AxisOrientation, AxisProps, AxisScaleContext, defaultAxisProps } from './Axis.types';
 import { AxisContext } from './Axis.context';
-import { dimensionState, useFigtreeStore } from '../../../store/store';
+import { dimensionState } from '../../../store/store';
 
 //TODO do things to scale and allow date as origin not maxD.
 
 
-export default function Axis(props: AxisProps) {
+export default function Axis(props: any) {
 
-    const dimensions = useFigtreeStore(state=>state.dimensions);
+    const {dimensions} = props
     const { direction = defaultAxisProps.direction!, 
         gap = defaultAxisProps.gap!,
         strokeWidth = defaultAxisProps.strokeWidth!,
@@ -111,8 +111,7 @@ function getTickLine(length: number, direction: AxisOrientation) {
 
 
 function makeAxisScale(props: any, { canvasWidth, canvasHeight, domain }:dimensionState ) {
-   console.log("makeAxisScale",props)
-   console.log({ canvasWidth, canvasHeight, domain })
+
     const { reverse = defaultAxisProps.reverse,
         offsetBy = defaultAxisProps.offsetBy,
         scaleBy = defaultAxisProps.scaleBy, 

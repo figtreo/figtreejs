@@ -1,4 +1,4 @@
-import {create}  from 'zustand'
+import {create, StoreApi, UseBoundStore}  from 'zustand'
 import { ImmutableTree, NodeRef, Tree } from '../Evo/Tree'
 import { FunctionalVertex,layoutClass } from '../Layouts/functional/rectangularLayout'
 import { polarScaleMaker } from './polarScale'
@@ -6,7 +6,7 @@ import { polarScaleMaker } from './polarScale'
 //todo remove props that are just the getting passed to children and use render props instead
 
 export type dimensionState = {canvasWidth:number,canvasHeight:number,domain:[number,number],layoutClass:layoutClass}
-interface FigtreeState {
+export interface FigtreeState {
     layout:(node:NodeRef)=>FunctionalVertex,
     scale:(v:{x:number,y:number})=>{x:number,y:number,r?:number,theta?:number},    
     animated:boolean,
@@ -17,8 +17,7 @@ interface FigtreeState {
     setDimensions:(canvasWidth:number,canvasHeight:number,domain:[number,number],type:layoutClass)=>void
 }
 
-export const useVertex = (node:NodeRef):FunctionalVertex=>{
-    const layout = useFigtreeStore(state=>state.layout);
+export const useVertexFactory =(layout:(n:NodeRef)=>FunctionalVertex)=> (node:NodeRef):FunctionalVertex=>{
     const v = layout(node);
     if(v === undefined){
         throw new Error(`Node ${node} not found in layout`)
@@ -26,7 +25,7 @@ export const useVertex = (node:NodeRef):FunctionalVertex=>{
     return v!;
 }
 
-export const useFigtreeStore = create<FigtreeState>()((set) => ({
+const useFigtreeStore = create<FigtreeState>()((set) => ({
     scale:(v:{x:number,y:number})=>v,
     animated:false,
     layout: (node:NodeRef)=>{throw new Error("Layout not set")},
@@ -50,7 +49,7 @@ export const storeCreator = () =>{
     }))
 }
 //Todo cache these
-function getScale(maxX:number,maxY:number,canvasWidth:number,canvasHeight:number,layoutClass:layoutClass,invert:boolean=false,minRadius:number=0,angleRange:number=2*Math.PI,rootAngle:number=0){
+export function getScale(maxX:number,maxY:number,canvasWidth:number,canvasHeight:number,layoutClass:layoutClass,invert:boolean=false,minRadius:number=0,angleRange:number=2*Math.PI,rootAngle:number=0){
     switch(layoutClass){
         case "Rectangular":
             const xScale = (d:number)=>d/maxX*canvasWidth

@@ -4,7 +4,6 @@ import {extent, max, min} from "d3-array";
 // import { useLayout,useTree} from "../../../../hooks";
 import { Vertex } from "../../../../Layouts/LayoutInterface";
 import withLinearGradient from "../../../HOC/WithLinearGradient";
-import { NodeRef, tipIterator } from "../../../../Evo/Tree";
 import { NodeProps } from "..";
 
 type genericAttr = {[key:string]:any};

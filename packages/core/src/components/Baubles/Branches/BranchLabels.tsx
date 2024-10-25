@@ -3,20 +3,16 @@ import React, { useMemo } from "react"
 import {useAttributeMappers} from "../../../hooks";
 import Label from "../Nodes/Shapes/Label";
 import { NodeRef } from "../../../Evo/Tree/Tree.types";
-import { useFigtreeStore, useVertex } from "../../../store/store";
+import {  useVertexFactory } from "../../../store/store";
 import { preOrderIterator } from "../../../Evo/Tree";
 import { textSafeDegrees } from "../../../store/polarScale";
 
 
 
 export default function BranchLabels(props:any){
-    const {tree,filter=(n:NodeRef)=>true,aligned=false,gap=6,...rest} = props;
+    const {tree,filter=(n:NodeRef)=>true,aligned=false,gap=6,layout,scale,...rest} = props;
     const shapeProps = useAttributeMappers(props);
-
-    const scale = useFigtreeStore(state=>state.scale);
-
-
-
+    const useVertex = useVertexFactory(layout);
 
 return (
     <g className={"node-label-layer"}>

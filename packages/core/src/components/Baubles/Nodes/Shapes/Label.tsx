@@ -2,10 +2,9 @@ import React from "react";
 import { useSpring, to,  animated } from "@react-spring/web";
 import { BaseShapeProps } from "..";
 import { NodeRef } from "../../../../Evo/Tree";
-import { useFigtreeStore } from "../../../../store/store";
 //We don't use the HOC here because of how the rotation transform is applied
 export default function Label(props: any) {
-    const animation = useFigtreeStore(state=>state.animated);
+    const animation = props.animated;
 
     const { attrs, text, node, x, y, d, alignmentBaseline, textAnchor, rotation,id } = props;
     

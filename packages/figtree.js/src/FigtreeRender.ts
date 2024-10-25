@@ -15,13 +15,11 @@ export default function figtreeRender(options:FigTreeOptions){
     if(rootMap.has(svg)){
         const root = rootMap.get(svg);
         root.render(React.createElement(FigTree, options,...options.baubles));
-        console.log(`reredering ${svg}`);
     }
     else{
         const root = createRoot(svg);
         rootMap.set(svg,root);
         root.render(React.createElement(FigTree, options,...options.baubles));
-        console.log('making new root');
 
     }
 }

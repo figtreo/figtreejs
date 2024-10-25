@@ -8,7 +8,7 @@ import {  Circle } from "./Shapes/Circle";
 import Rectangle from "./Shapes/Rectangle";
 // import CoalescentShape from "./Shapes/CoalescentShape";
 import { NodeProps } from "./Node.types";
-import { useFigtreeStore, useVertex } from "../../../store/store";
+import {  useVertexFactory } from "../../../store/store";
 import { preOrderIterator } from "../../../Evo/Tree";
 import { textSafeDegrees } from "../../../store/polarScale";
 
@@ -16,14 +16,13 @@ import { textSafeDegrees } from "../../../store/polarScale";
 export function NodesHOC(ShapeComponent:React.ComponentType<any>) {
     return function Nodes(props:NodeProps) {
         const shapeProps = useAttributeMappers(props);
-        const {tree,filter=(n:NodeRef)=>true} = props;
-
+        const {tree,filter=(n:NodeRef)=>true,...rest} = props;
         // pass x and y position here so can be animated with react-spring in useAnimation hook
         return (
             <g className={"node-layer"}>
-                {[...preOrderIterator(tree)].filter(filter).map((node) => {
+                {[...preOrderIterator(tree)].filter(n=>filter(n)).map((node) => {
                      {
-                        return <ShapeComponent key={node.number} node={node}  shapeProps={shapeProps}/> 
+                        return <ShapeComponent key={node.number} node={node}  shapeProps={shapeProps} {...rest}/> 
                     }
                 })
                 }
@@ -33,10 +32,9 @@ export function NodesHOC(ShapeComponent:React.ComponentType<any>) {
 }
 
 function NodeLabels(props:any){
-        console.log(props)
-        const {tree,filter=(n:NodeRef)=>true,aligned=false,gap = 6,...rest} = props;
+        const {tree,filter=(n:NodeRef)=>true,aligned=false,gap = 6,layout,scale,...rest} = props;
         const shapeProps = useAttributeMappers(props);
-        const scale = useFigtreeStore(state=>state.scale);
+        const useVertex = useVertexFactory(layout);
         const rootV = useVertex(tree.getRoot());
         const {maxX} = rootV
     return (

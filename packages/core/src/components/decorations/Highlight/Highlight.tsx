@@ -1,14 +1,13 @@
 import React from "react";
 import {arc as arcgen} from "d3-shape"
-import { useFigtreeStore, useVertex } from "../../../store/store";
 import { useAttributeMappers } from "../../../hooks";
 const arc = arcgen();
 
 function CladeHighlight(props:any ){
 
-    const {node, padding = 10} = props;
-    const scale = useFigtreeStore(state=>state.scale);   
-    const v = useVertex(node);
+    const {node, padding = 10,scale,layout} = props;
+
+    const v = layout(node);
     const shapeProps = useAttributeMappers(props);
     const {attrs,interactions} = shapeProps(node);
     if(v.layoutClass==="Rectangular"){

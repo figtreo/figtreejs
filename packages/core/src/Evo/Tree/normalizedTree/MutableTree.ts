@@ -1056,7 +1056,6 @@ export class MutableTree implements Tree {
         const tree = new MutableTree();
 
         for (const token of tokens.filter(token => token.length > 0)) {
-            // console.log(`Token ${i}: ${token}, level: ${level}`);
             if(inAnnotation){
                 if(token==="="){
                     annotationKeyNext=false;

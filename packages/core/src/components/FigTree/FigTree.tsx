@@ -2,8 +2,8 @@ import React from 'react';
 import { FigtreeProps } from './Figtree.types';
 import { defaultInternalLayoutOptions, rectangularLayout } from '../../Layouts';
 import { Branches } from '../Baubles';
-import { useFigtreeStore } from '../../store/store';
 import { ImmutableTree } from '../../Evo/Tree';
+import { getScale } from '../../store/store';
 
 
 
@@ -15,6 +15,7 @@ import { ImmutableTree } from '../../Evo/Tree';
 //TODO extract these from state to props?
 //TODO this is different than defualt 
 const defaultTree = ImmutableTree.fromNewick("((A:1,B:1):1,C:2);"); //TODO don't expose the need to pass a tree in here.
+
 export const defaultOpts:FigtreeProps = {
     opts:defaultInternalLayoutOptions,
     width:100,
@@ -24,9 +25,9 @@ export const defaultOpts:FigtreeProps = {
     tree:defaultTree,
     children:[<Branches tree={defaultTree} filter={(n)=>true} attrs={{fill:'none',stroke:"black",strokeWidth:1}} interactions={{}}/>],
     animated:false,
-    store:useFigtreeStore
-   
+
 }
+
 
 function FigTree(props:FigtreeProps){
 
@@ -38,8 +39,6 @@ function FigTree(props:FigtreeProps){
         tree = defaultOpts.tree,
         layout = defaultOpts.layout,
         animated=defaultOpts.animated,
-        store = defaultOpts.store,
-
     } = props;
     
     const {rootAngle = defaultOpts.opts.rootAngle,
@@ -54,27 +53,22 @@ function FigTree(props:FigtreeProps){
         invert = defaultOpts.opts.invert
     } = props.opts; //todo this requires opts to not be undefined even though all the values are optional.
 
-    const setScale = useFigtreeStore((state)=>state.setScale);
-    const setAnimated = useFigtreeStore((state)=>state.setAnimated);
-    const setLayout = useFigtreeStore((state)=>state.setLayout);
-    const setDimensions = useFigtreeStore((state)=>state.setDimensions);
-    
     const canvasWidth = width - margins.left - margins.right;
     const canvasHeight = height - margins.top - margins.bottom;
 
     const point = pointOfInterest?pointOfInterest: {x:(margins.left+canvasWidth)/2,y:(margins.top+height)/2};
-
         
-    const children = ((props.children?props.children:defaultOpts.children) as React.ReactElement[]).map(child=>React.cloneElement(child,{tree:tree}));
-   
     const layoutMap = layout(tree);
     const {maxX,maxY,layoutClass} = layoutMap(tree.getRoot())!;
-    //TODO hook to get scales
-    setScale(maxX,maxY,canvasWidth,canvasHeight,layoutClass);
-    setAnimated(animated);
-    setLayout(layoutMap);
-    setDimensions(canvasWidth,canvasHeight,[0,maxX],layoutClass);
-    
+
+    const scale = getScale(maxX,maxY,canvasWidth,canvasHeight,layoutClass);
+    const dimensions = {canvasWidth,canvasHeight,domain:[0,maxX],layoutClass};
+    let rawChildren = (props.children?props.children:defaultOpts.children) as React.ReactElement|React.ReactElement[];
+
+    if(!Array.isArray(rawChildren)){
+        rawChildren = [rawChildren];
+    }
+    const children = rawChildren.map(child=>React.cloneElement(child,{tree:tree,layout:layoutMap,animated,scale,dimensions}));
 
     return (
                 <g>

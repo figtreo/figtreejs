@@ -188,12 +188,12 @@
             animated:true,
             baubles: [
             // ft.Axis({bars:{}}),
-            ft.Branches({ attrs: { stroke: "black", strokeWidth: 2, cursor:"pointer"}, curvature:curvature,
-             interactions:{onClick:()=>console.log("clicked"), onMouseOver:()=>console.log("enter"), onMouseLeave:()=>console.log("leave")}}),
-            ft.NodeLabels({filter:(n)=>tree2.isExternal(n), attrs: { fill: "black", fontSize: 12, fontWeight: 300 }, text: (n) => tree2.getTaxon(n),aligned:true  }),
-            ft.CircleNodes({ attrs: { r: 7, fill: (n) => tree2.getChildCount(n) > "#005C68" } }),
+            // ft.Branches({ attrs: { stroke: "black", strokeWidth: 2, cursor:"pointer"}, curvature:curvature,
+            //  interactions:{onClick:()=>console.log("clicked"), onMouseOver:()=>console.log("enter"), onMouseLeave:()=>console.log("leave")}}),
+            // ft.NodeLabels({filter:(n)=>tree2.isExternal(n), attrs: { fill: "black", fontSize: 12, fontWeight: 300 }, text: (n) => tree2.getTaxon(n),aligned:true  }),
+            // ft.CircleNodes({ attrs: { r: 7, fill: (n) => tree2.getChildCount(n) > "#005C68" } }),
             ft.CircleNodes({ attrs: { r: 5, fill: (n) => tree2.getChildCount(n) > 0 ? tree2.isRoot(n) ? "#e31e58" : "#29c5ef" : "#22b680" , cursor:"pointer"},interactions:{onClick:(n)=>console.log(n)}}),
-            ft.BranchLabels({ attrs: { fill: "black", fontSize: 8, fontWeight: 300 }, text: (n) => tree2.getLength(n) }),
+            // ft.BranchLabels({ attrs: { fill: "black", fontSize: 8, fontWeight: 300 }, text: (n) => tree2.getLength(n) }),
             ],
             opts: {} // todo remove the need for this empty options
 
@@ -201,7 +201,7 @@
     }
         ft.figtree(figureOptions());
 
-        ft.figtree(figureOptions2());
+        // ft.figtree(figureOptions2());
 
 
         document.getElementById('sort_up_button').onclick = function () {
