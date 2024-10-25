@@ -1,6 +1,5 @@
 import React from 'react'
 import { AxisBarsProps, defaultAxisBarsProps } from './Axis.types';
-import { useAxisContext } from './Axis.context';
 
 /**
  * This component adds vertical bars to the backgound of a figure. It is used a child of an Axis component and gets
@@ -14,14 +13,14 @@ export  default function AxisBars(props:any):JSX.Element {
         attrs,
         evenFill=defaultAxisBarsProps.evenFill,
         oddFill=defaultAxisBarsProps.oddFill,
-        lift=defaultAxisBarsProps.lift} = props;
+        lift=defaultAxisBarsProps.lift,
+        tickValues,scale,gap,direction} = props;
 
-        const {tickValues,scale,gap,direction} = useAxisContext();
         const {canvasHeight} = props.dimension;
 
     return(
         <g className={"axisBars"}>
-                {tickValues.reduce((acc:JSX.Element[],curr,i)=>{
+                {tickValues.reduce((acc:JSX.Element[],curr:any,i:number)=>{
                     const width=i===tickValues.length-1?scale.range()[1]-scale(tickValues[i]):scale(tickValues[i+1]) - scale(tickValues[i]);
                     const fill = i%2===0?evenFill:oddFill;
                     acc.push(<rect key={i} transform={`translate(${scale(tickValues[i])},0)`}

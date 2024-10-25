@@ -1,7 +1,6 @@
 
 import React from 'react'
 import { AxisBarsProps, defaultAxisBarsProps } from './Axis.types';
-import { useAxisContext } from './Axis.context';
 import {arc as arcgen} from "d3-shape"
 import { normalizeAngle } from '../../../Layouts/polarLayout';
 import Axis from './RectangularAxis';

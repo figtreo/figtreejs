@@ -3,7 +3,6 @@ import { line } from "d3-shape"
 import { mean, quantile, range } from "d3-array"
 import { ScaleContinuousNumeric, scaleLinear } from 'd3-scale';
 import { AxisOrientation, AxisProps, AxisScaleContext, defaultAxisProps } from './Axis.types';
-import { AxisContext } from './Axis.context';
 import { dimensionState } from '../../../store/store';
 
 //TODO do things to scale and allow date as origin not maxD.
@@ -40,14 +39,16 @@ export default function Axis(props: any) {
         transform = direction === "horizontal" ? `translate(${0},${dimensions.canvasHeight + gap})` : `translate(${-1 * gap},${0})`;
     }
 
+    const bars = props.children?Array.isArray(props.children)?props.children:[props.children]:null;
 
     //TODO break this into parts HOC with logic horizontal/ vertical axis ect.
     return (
         <g className={"axis"} transform={transform}>
             {/*This is for Bars*/}
-            <AxisContext.Provider value={{ tickValues, gap,scale,direction }}>
-                {props.children}
-            </AxisContext.Provider>
+            
+            {bars?
+            bars.map((b: React.ReactElement)=>React.cloneElement(b,{tickValues, gap,scale,direction })):null
+            }
           
 
             <path d={getPath(scale, direction)} stroke={"black"} strokeWidth={strokeWidth} />
