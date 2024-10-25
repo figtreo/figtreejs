@@ -2,6 +2,7 @@ import { NodeRef, Tree, newickParsingOptions } from "../Tree.types";
 import { ImmutableTree, postOrderIterator,  preOrderIterator } from "../NormalizedTree/ImmutableTree";
 import { parseAnnotation } from "./AnnotationParser";
 import { timeParse } from "d3-time-format";
+import { dateToDecimal } from "../utilities";
 
 export function parseNewick(tree:ImmutableTree,newick: string,options?:newickParsingOptions): ImmutableTree {
     if (options === undefined) {
@@ -149,6 +150,7 @@ export function parseNewick(tree:ImmutableTree,newick: string,options?:newickPar
                 }
                 tree = tree.setTaxon(externalNode,name)
 
+                let decimalDate = undefined;
                 let date = undefined;
                 if (options.datePrefix && options.dateFormat) {
                     const parts = name.split(options.datePrefix);
@@ -159,7 +161,7 @@ export function parseNewick(tree:ImmutableTree,newick: string,options?:newickPar
                     }
                     const dateBit = parts[parts.length - 1];
                     if (options.dateFormat === "decimal") {
-                    date = parseFloat(parts[parts.length - 1]);
+                     decimalDate = parseFloat(parts[parts.length - 1]);
                     } else {
                     date = timeParse(options.dateFormat)(dateBit);
                     if (!date) {
@@ -168,11 +170,19 @@ export function parseNewick(tree:ImmutableTree,newick: string,options?:newickPar
                     if (!date) {
                         date = timeParse(options.dateFormat)(`${dateBit}-06-15`);
                     }
+                    if(!date){
+                        throw new Error(
+                        `the tip, ${name}, doesn't have a date in the format, '${options.dateFormat}' Tried to parse ${dateBit}`
+                        );
+                    }
+                    decimalDate = dateToDecimal(date);
                     }
                 }
+
                 if(date){
-                    tree = tree.annotateNode(externalNode,{name:"date",value:date})
+                    tree = tree.annotateNode(externalNode,{name:"date",value:decimalDate})
                 }
+                
 
 
                 // externalNode.label = taxon.id;

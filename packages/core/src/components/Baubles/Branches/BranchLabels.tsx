@@ -10,10 +10,9 @@ import { textSafeDegrees } from "../../../store/polarScale";
 
 
 export default function BranchLabels(props:any){
-    const {filter=(n:NodeRef)=>true,aligned=false,gap=6,...rest} = props;
+    const {tree,filter=(n:NodeRef)=>true,aligned=false,gap=6,...rest} = props;
     const shapeProps = useAttributeMappers(props);
 
-    const tree = useFigtreeStore(state=>state.tree);  
     const scale = useFigtreeStore(state=>state.scale);
 
 

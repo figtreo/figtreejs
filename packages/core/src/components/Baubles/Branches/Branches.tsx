@@ -13,10 +13,9 @@ import { preOrderIterator } from "../../../Evo/Tree";
 //todo pull out defaults
 export default function Branches(props:BranchProps) {
 
-    const  {filter= (n:NodeRef) => true, 
+    const  {tree,filter= (n:NodeRef) => true, 
     attrs= { stroke: "black", strokeWidth: 2,fill:"none" },interactions,
     ...rest} = props;
-    const tree = useFigtreeStore(state=>state.tree);
     const shapeProps = useAttributeMappers({attrs,interactions}); //TODO not obvious why in an object
     return (
         <g className={"branch-layer"}>

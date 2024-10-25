@@ -1,17 +1,29 @@
 import React from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from 'react-dom/client';
 import { FigTreeOptions } from "./FigtreeOptions";
 import { FigTree } from '@figtreejs/core'
 
-
+const rootMap =new Map();
 
 
 //TODO update children to be called Baubles
 export default function figtreeRender(options:FigTreeOptions){
     
+
     const svg = options.svg;
-    ReactDOM.render(
-        React.createElement(FigTree, options,...options.baubles) ,svg)
+
+    if(rootMap.has(svg)){
+        const root = rootMap.get(svg);
+        root.render(React.createElement(FigTree, options,...options.baubles));
+        console.log(`reredering ${svg}`);
+    }
+    else{
+        const root = createRoot(svg);
+        rootMap.set(svg,root);
+        root.render(React.createElement(FigTree, options,...options.baubles));
+        console.log('making new root');
+
+    }
 }
 
 

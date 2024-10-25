@@ -14,15 +14,17 @@ import { ImmutableTree } from '../../Evo/Tree';
  */
 //TODO extract these from state to props?
 //TODO this is different than defualt 
+const defaultTree = ImmutableTree.fromNewick("((A:1,B:1):1,C:2);"); //TODO don't expose the need to pass a tree in here.
 export const defaultOpts:FigtreeProps = {
     opts:defaultInternalLayoutOptions,
     width:100,
     height:100,
     layout:rectangularLayout,
     margins:{top:10,right:10,bottom:10,left:10},
-    tree:ImmutableTree.fromNewick("((A:1,B:1):1,C:2);"),
-    children:[<Branches filter={(n)=>true} attrs={{fill:'none',stroke:"black",strokeWidth:1}} interactions={{}}/>],
+    tree:defaultTree,
+    children:[<Branches tree={defaultTree} filter={(n)=>true} attrs={{fill:'none',stroke:"black",strokeWidth:1}} interactions={{}}/>],
     animated:false,
+    store:useFigtreeStore
    
 }
 
@@ -36,6 +38,7 @@ function FigTree(props:FigtreeProps){
         tree = defaultOpts.tree,
         layout = defaultOpts.layout,
         animated=defaultOpts.animated,
+        store = defaultOpts.store,
 
     } = props;
     
@@ -53,7 +56,6 @@ function FigTree(props:FigtreeProps){
 
     const setScale = useFigtreeStore((state)=>state.setScale);
     const setAnimated = useFigtreeStore((state)=>state.setAnimated);
-    const setTree = useFigtreeStore((state)=>state.setTree);
     const setLayout = useFigtreeStore((state)=>state.setLayout);
     const setDimensions = useFigtreeStore((state)=>state.setDimensions);
     
@@ -63,35 +65,28 @@ function FigTree(props:FigtreeProps){
     const point = pointOfInterest?pointOfInterest: {x:(margins.left+canvasWidth)/2,y:(margins.top+height)/2};
 
         
-    const children = props.children?props.children:defaultOpts.children;
+    const children = ((props.children?props.children:defaultOpts.children) as React.ReactElement[]).map(child=>React.cloneElement(child,{tree:tree}));
    
     const layoutMap = layout(tree);
     const {maxX,maxY,layoutClass} = layoutMap(tree.getRoot())!;
     //TODO hook to get scales
     setScale(maxX,maxY,canvasWidth,canvasHeight,layoutClass);
     setAnimated(animated);
-    setTree(tree);
     setLayout(layoutMap);
     setDimensions(canvasWidth,canvasHeight,[0,maxX],layoutClass);
     
 
-
-    
-    //state gives us a nicer api where the data don't need to be passed to the subcomponents of the figure and the subcomponents can be added by user with JSX
-    //todo check clip path is working where expected.
     return (
                 <g>
-                                <defs>
-                                <clipPath id="clip">
-                                    <rect x={-margins.left} y={-margins.top} width={width} height={height} /> 
-                                </clipPath>
-                                </defs>
-
-                       
-                        {/*<rect x="0" y="0" width="100%" height="100%" fill="none" pointerEvents={"visible"} onClick={()=>nodeDispatch({type:"clearSelection"})}/>*/}
-                        <g transform={`translate(${margins.left},${margins.top})`} clipPath={'url(#clip)'} >
-                            {children}
-                        </g>
+                    <defs>
+                        <clipPath id="clip">
+                            <rect x={-margins.left} y={-margins.top} width={width} height={height} /> 
+                        </clipPath>
+                    </defs>                     
+                    {/*<rect x="0" y="0" width="100%" height="100%" fill="none" pointerEvents={"visible"} onClick={()=>nodeDispatch({type:"clearSelection"})}/>*/}
+                    <g transform={`translate(${margins.left},${margins.top})`} clipPath={'url(#clip)'} >
+                        {children}
+                    </g>
                 </g>
 
             )

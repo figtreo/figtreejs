@@ -9,7 +9,7 @@ import undoable from 'redux-undo';
 
 export const store = configureStore({
   reducer: {
-    tree: undoable(treeReducer,{limit:10}),
+    tree: undoable(treeReducer,{limit:10}), // Don't think I need tree in the state here.
     settings: settingReducer,
     header:headerReducer,
     colorScales:colorScaleReducer

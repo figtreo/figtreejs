@@ -15,13 +15,8 @@ import { textSafeDegrees } from "../../../store/polarScale";
 // todo don't expose in index
 export function NodesHOC(ShapeComponent:React.ComponentType<any>) {
     return function Nodes(props:NodeProps) {
-
-        const {filter=(n:NodeRef)=>true} = props;
-
         const shapeProps = useAttributeMappers(props);
-
-        const tree = useFigtreeStore(state=>state.tree);  
-
+        const {tree,filter=(n:NodeRef)=>true} = props;
 
         // pass x and y position here so can be animated with react-spring in useAnimation hook
         return (
@@ -38,10 +33,9 @@ export function NodesHOC(ShapeComponent:React.ComponentType<any>) {
 }
 
 function NodeLabels(props:any){
-        const {filter=(n:NodeRef)=>true,aligned=false,gap = 6,...rest} = props;
+        console.log(props)
+        const {tree,filter=(n:NodeRef)=>true,aligned=false,gap = 6,...rest} = props;
         const shapeProps = useAttributeMappers(props);
-
-        const tree = useFigtreeStore(state=>state.tree);  
         const scale = useFigtreeStore(state=>state.scale);
         const rootV = useVertex(tree.getRoot());
         const {maxX} = rootV

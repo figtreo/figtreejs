@@ -34,4 +34,5 @@ export interface FigtreeProps {
     children:React.ReactNode,
     opts:layoutOptions
     animated:boolean,
+    store:any,
 }
