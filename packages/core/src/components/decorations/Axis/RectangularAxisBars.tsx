@@ -16,8 +16,8 @@ export  default function AxisBars(props:any):JSX.Element {
         lift=defaultAxisBarsProps.lift,
         tickValues,scale,gap,direction} = props;
 
-        const {canvasHeight} = props.dimension;
-
+        const {canvasHeight} = props.dimensions;
+        console.log(props)
     return(
         <g className={"axisBars"}>
                 {tickValues.reduce((acc:JSX.Element[],curr:any,i:number)=>{

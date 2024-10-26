@@ -10,7 +10,7 @@ import { dimensionState } from '../../../store/store';
 
 export default function Axis(props: any) {
 
-    const {dimensions} = props
+    const {dimensions,layoutClass} = props
     const { direction = defaultAxisProps.direction!, 
         gap = defaultAxisProps.gap!,
         strokeWidth = defaultAxisProps.strokeWidth!,
@@ -18,16 +18,23 @@ export default function Axis(props: any) {
     
     const ticks = props.ticks?{...defaultAxisProps.ticks!,...props.ticks}:defaultAxisProps.ticks!;
     const title = props.title?{...defaultAxisProps.title!, ...props.title}:defaultAxisProps.title!;
-
+        
+    // todo options to provide tick values so can specify breaks
+    
     const scale = makeAxisScale(props, dimensions);
 
     // scaleSequentialQuantile doesn’t implement tickValues or tickFormat.
     let tickValues: number[];
-    if (!scale.ticks) {
-        tickValues = range(ticks.number!).map(i => quantile(scale.domain(), i / (ticks.number! - 1))) as number[];
-    } else {
-        tickValues = scale.ticks(ticks.number);
-    }
+    // if(ticks.breaks){
+    //     tickValues = ticks.breaks;
+    // }else{
+        if (!scale.ticks) {
+            tickValues = range(ticks.number!).map(i => quantile(scale.domain(), i / (ticks.number! - 1))) as number[];
+        } else {
+            tickValues = scale.ticks(ticks.number);
+        }
+    // }
+
 
     //TODO this needs to be lifted so transmform can be applied to other axis
 
@@ -39,16 +46,15 @@ export default function Axis(props: any) {
         transform = direction === "horizontal" ? `translate(${0},${dimensions.canvasHeight + gap})` : `translate(${-1 * gap},${0})`;
     }
 
-    const bars = props.children?Array.isArray(props.children)?props.children:[props.children]:null;
-
+    const rawBars = props.children?Array.isArray(props.children)?props.children:[props.children]:null;
+    const bars = rawBars?rawBars.map((b:React.ReactElement)=>React.cloneElement(b,{scale,direction,layoutClass,dimensions,tickValues,gap})):null;
+    console.log(bars)
     //TODO break this into parts HOC with logic horizontal/ vertical axis ect.
     return (
         <g className={"axis"} transform={transform}>
             {/*This is for Bars*/}
             
-            {bars?
-            bars.map((b: React.ReactElement)=>React.cloneElement(b,{tickValues, gap,scale,direction })):null
-            }
+            {bars}
           
 
             <path d={getPath(scale, direction)} stroke={"black"} strokeWidth={strokeWidth} />
@@ -116,13 +122,14 @@ function makeAxisScale(props: any, { canvasWidth, canvasHeight, domain }:dimensi
     const { reverse = defaultAxisProps.reverse,
         offsetBy = defaultAxisProps.offsetBy,
         scaleBy = defaultAxisProps.scaleBy, 
-        scale= defaultAxisProps.scale,
+        _scale= defaultAxisProps.scale, // TODO can't be scale since that gets passed in by figure
         direction = defaultAxisProps.direction 
        } = props;
         
 //todo unify this code with the scale making code in layout
-    const axisScale = (scale === undefined ? (direction === "horizontal" ? scaleLinear().domain([0,domain[1]]).range([0, canvasWidth]) : scaleLinear().domain([0,domain[1]]).range([0, canvasHeight])) : scale).copy();
-    if (scale === undefined) {
+    const axisScale = (_scale === undefined ? (direction === "horizontal" ? scaleLinear().domain([0,domain[1]]).range([0, canvasWidth]) : scaleLinear().domain([0,domain[1]]).range([0, canvasHeight])) : _scale).copy();
+    
+    if (_scale === undefined) {
         // assume domain goes 0 to max divergence make adjustments on this scale and then update min if it is not 0
         const offset = domain.map(d=>d+offsetBy)
         const newDomain = offset.map((d,i)=>(d-offsetBy)*scaleBy + offsetBy)

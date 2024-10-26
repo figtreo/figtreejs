@@ -60,7 +60,7 @@ function FigTree(props:FigtreeProps){
         
     const layoutMap = layout(tree);
     const {maxX,maxY,layoutClass} = layoutMap(tree.getRoot())!;
-
+    console.log('layoutMap',{maxX,maxY,layoutClass});
     const scale = getScale(maxX,maxY,canvasWidth,canvasHeight,layoutClass);
     const dimensions = {canvasWidth,canvasHeight,domain:[0,maxX],layoutClass};
     let rawChildren = (props.children?props.children:defaultOpts.children) as React.ReactElement|React.ReactElement[];
@@ -68,7 +68,7 @@ function FigTree(props:FigtreeProps){
     if(!Array.isArray(rawChildren)){
         rawChildren = [rawChildren];
     }
-    const children = rawChildren.map(child=>React.cloneElement(child,{tree:tree,layout:layoutMap,animated,scale,dimensions}));
+    const children = rawChildren.map(child=>React.cloneElement(child,{tree:tree,layout:layoutMap,animated,scale,dimensions,layoutClass}));
 
     return (
                 <g>

@@ -2,6 +2,7 @@ import {create, StoreApi, UseBoundStore}  from 'zustand'
 import { ImmutableTree, NodeRef, Tree } from '../Evo/Tree'
 import { FunctionalVertex,layoutClass } from '../Layouts/functional/rectangularLayout'
 import { polarScaleMaker } from './polarScale'
+import { scaleLinear } from 'd3-scale'
 
 //todo remove props that are just the getting passed to children and use render props instead
 
@@ -52,8 +53,8 @@ export const storeCreator = () =>{
 export function getScale(maxX:number,maxY:number,canvasWidth:number,canvasHeight:number,layoutClass:layoutClass,invert:boolean=false,minRadius:number=0,angleRange:number=2*Math.PI,rootAngle:number=0){
     switch(layoutClass){
         case "Rectangular":
-            const xScale = (d:number)=>d/maxX*canvasWidth
-            const yScale = (d:number)=>d/maxY*canvasHeight
+            const xScale = scaleLinear().domain([0,maxX]).range([0,canvasWidth]);
+            const yScale = scaleLinear().domain([0,maxY]).range([0,canvasHeight]);
             return function(vertex:{x:number,y:number}){
                 return {x:xScale(vertex.x),y:yScale(vertex.y)}
             }

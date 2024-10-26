@@ -28,9 +28,9 @@ export default [
       resolve(),
       commonjs(),
       typescript({ tsconfig: "./tsconfig.json" }),
-      terser(),
+      // terser(),
       replace({
-        'process.env.NODE_ENV': JSON.stringify( 'production' ),
+        'process.env.NODE_ENV': JSON.stringify( 'dev' ),
         preventAssignment:true
       })
     ],

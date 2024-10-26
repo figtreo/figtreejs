@@ -11,6 +11,7 @@ import { AxisProps } from './Axis.types';
 export default function Axis(props: any) {
 
     const {layoutClass} = props; 
+    console.log('axis', props)
     if(layoutClass === "Polar"){
         return null; //<PolarAxis {...props}/>
     }else if (layoutClass === "Rectangular"){

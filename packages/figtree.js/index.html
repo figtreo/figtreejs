@@ -165,7 +165,7 @@
             margins,
             animated:true,
             baubles: [
-            // ft.Axis({bars:{}}),
+            ft.Axis({bars:{}}),
             ft.Branches({ attrs: { stroke: "black", strokeWidth: 2, cursor:"pointer"}, curvature:curvature,
              interactions:{onClick:()=>console.log("clicked"), onMouseOver:()=>console.log("enter"), onMouseLeave:()=>console.log("leave")}}),
             ft.NodeLabels({filter:(n)=>tree.isExternal(n), attrs: { fill: "black", fontSize: 12, fontWeight: 300 }, text: (n) => tree.getTaxon(n),aligned:true  }),

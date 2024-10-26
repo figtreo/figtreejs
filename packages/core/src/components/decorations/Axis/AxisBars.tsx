@@ -5,7 +5,7 @@ import RectangularAxisBars from "./RectangularAxisBars";
 export default function AxisBars(props: any) {
 
     const {layoutClass} = props; 
-
+    console.log('axisbars', props)
     if(layoutClass === "Polar"){
         return null //<PolarAxisBars {...props}/>
     }else if(layoutClass === "Rectangular"){
