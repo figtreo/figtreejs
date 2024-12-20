@@ -1,3 +1,4 @@
+import { Taxon } from "./Taxa/Taxon";
 
 
 export interface NodeRef{
@@ -42,7 +43,7 @@ export interface Tree  {
     getInternalNodes():NodeRef[]
     getExternalNodes():NodeRef[]
 
-    getTaxon(node:NodeRef):string
+    getTaxon(id:number):Taxon|undefined
 
     isExternal(node:NodeRef):boolean
     isInternal(node:NodeRef):boolean
@@ -51,7 +52,7 @@ export interface Tree  {
     getChildCount(node:NodeRef):number
     getChild(node:NodeRef,i:number):NodeRef
 
-    getNodeByTaxon(name: string): NodeRef|undefined
+    getNodeByTaxon(taxon: Taxon): NodeRef|undefined
     getNodeByLabel(label: string): NodeRef|undefined
     getLevel(node:NodeRef):number;
    
@@ -77,7 +78,7 @@ export interface Tree  {
     setHeight(node:NodeRef,height:number):Tree
     setDivergence(node:NodeRef,divergence:number):Tree
     setLength(node:NodeRef,length:number):Tree
-    setTaxon(node:NodeRef,name:string):Tree
+    setTaxon(node:NodeRef,taxon:Taxon):Tree
     setLabel(node:NodeRef,label:string):Tree
     annotateNode(node:NodeRef,annotation:{name:string,value:any,type:AnnotationType}):Tree
 

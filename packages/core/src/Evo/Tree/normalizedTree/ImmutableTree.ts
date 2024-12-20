@@ -8,10 +8,11 @@ import {
 } from "../Tree.types"
 import { parseNewick, parseNexus, processAnnotationValue } from "../Parsers"
 import { createDraft, finishDraft, immerable, produce } from "immer"
+import { Taxon, TaxonSet } from "../Taxa/Taxon"
 
 interface Node extends NodeRef {
   number: number
-  name: string | undefined
+  taxon: number | undefined
   label: string | undefined
   children: number[]
   parent: number | undefined
@@ -23,27 +24,28 @@ interface Node extends NodeRef {
   _id: symbol // an id so we can mark updates to root when toplogy changes
 }
 
-interface ImmutableTreeData {
+interface ImmutableTreeData  {
   nodes: {
     allNodes: Node[]
-    byName: {
-      [name: string]: number
-    }
+    byTaxon: number[],
     byLabel: {
       [label: string]: number
     }
-  }
+  },
+  nodeToTaxon:number[],
   rootNode: number
   is_rooted: boolean
 
   annotations: { [annotation: string]: Annotation }
 }
 
-export class ImmutableTree implements Tree {
+export class ImmutableTree extends TaxonSet implements Tree {
   [immerable] = true
 
   _data: ImmutableTreeData
-  constructor(data?: ImmutableTreeData) {
+  constructor(input?:{data?:ImmutableTreeData,taxonSet?:TaxonSet} ) {
+    let {data,taxonSet} = input || {};
+    super(taxonSet);
     if (data === undefined) {
       data = {
         nodes: {
@@ -56,15 +58,16 @@ export class ImmutableTree implements Tree {
               length: undefined,
               divergence: undefined,
               height: undefined,
-              name: undefined,
               level: undefined,
+              taxon:undefined,
               annotations: {},
               _id: Symbol(),
             },
           ],
-          byName: {},
+          byTaxon: [],
           byLabel: {},
         },
+        nodeToTaxon:[],
         rootNode: 0,
         is_rooted: true,
         annotations: {},
@@ -146,14 +149,16 @@ export class ImmutableTree implements Tree {
 
     return this._data.nodes.allNodes.filter((n) => n.children.length == 0)
   }
-  getTaxon(node: NodeRef): string {
-
-    const n = this._data.nodes.allNodes[node.number] as Node
-    const name = n.name
-    if (name === undefined) {
-      throw new Error(`Node ${node} does not have a taxon`)
+  getTaxonFromNode(node: NodeRef): Taxon|undefined {
+    const taxaIndex = this._data.nodeToTaxon[node.number];
+    if(taxaIndex===undefined){
+      return undefined
     }
-    return name
+    return super.getTaxon(taxaIndex)
+
+  }
+  getTaxon(id:number):Taxon|undefined{
+    return super.getTaxon(id)
   }
 
   hasNodeHeights(): boolean {
@@ -183,7 +188,7 @@ export class ImmutableTree implements Tree {
         ? `(${this.getChildren(node)
             .map((child) => this._toString(child))
             .join(",")})${this.getLabel(node) ? "#" + this.getLabel(node) : ""}`
-        : `${this.getTaxon(node) ? this.getTaxon(node) : ""}`) +
+        : `${this.getTaxonFromNode(node) ? this.getTaxonFromNode(node)!.name : ""}`) +
       (this.getLength(node) ? `:${this.getLength(node)}` : "")
     )
   }
@@ -370,9 +375,9 @@ export class ImmutableTree implements Tree {
 
     return this._data.rootNode === node.number
   }
-  getNodeByTaxon(name: string): NodeRef | undefined {
+  getNodeByTaxon(taxon: Taxon): NodeRef | undefined {
 
-    return this.getNode(this._data.nodes.byName[name])
+    return this.getNode(this._data.nodes.byTaxon[taxon.number])
   }
 
   getNodeByLabel(label: string): NodeRef | undefined {
@@ -396,6 +401,7 @@ export class ImmutableTree implements Tree {
           height: undefined,
           name: undefined,
           level: undefined,
+          taxon : undefined,
           annotations: {},
           _id: Symbol(),
         }
@@ -405,14 +411,16 @@ export class ImmutableTree implements Tree {
     }), nodes: newNodes})
   }
 
-  setTaxon(node: NodeRef, name: string): ImmutableTree {
-    if (this._data.nodes.byName[name] !== undefined) {
-      throw new Error(`Duplicate node name ${name}`)
+  setTaxon(node: NodeRef, taxon: Taxon): ImmutableTree {
+    // check we know about this taxon;
+    if(taxon!==super.getTaxonByName(taxon.name)){
+      throw new Error(`Taxon ${taxon.name} not in the taxon set`)
     }
       return produce(this, (draft) => {
         const n = draft.getNode(node.number) as Node
-        n.name = name
-        draft._data.nodes.byName[name] = node.number
+        n.taxon = taxon.number;
+        draft._data.nodes.byTaxon[taxon.number] = node.number
+        draft._data.nodeToTaxon[node.number] = taxon.number
       })
    
   }
@@ -469,8 +477,16 @@ export class ImmutableTree implements Tree {
       return produce(this, (draft) => {
         const n = draft.getNode(node.number) as Node
         n.height = height
-        //update divergence and branchlengths
-        //update all nodes to root
+        //change length of this and children
+        if(draft.getParent(n)){
+          n.length = draft.getHeight(draft.getParent(n)!)! - height;
+        } 
+        for(const child of draft.getChildren(n)){
+            (child as Node).length =  height - (child as Node).height!;
+        }
+//   for now just update all divergences (could be much smarter - just update this or if root. update all. )
+      setDivergence(draft);
+
       })
   }
 
@@ -499,6 +515,11 @@ export class ImmutableTree implements Tree {
       return produce(this, (draft) => {
         const n = draft.getNode(node.number) as Node
         n.length = length
+        //update height and divergence;
+        const maxDivergence = setDivergence(draft)
+        for (const node of postOrderIterator(draft)) {
+          ;(node as Node).height = maxDivergence - (node as Node).divergence!
+        }
         //update all nodes to root
       })
    
@@ -641,7 +662,7 @@ export class ImmutableTree implements Tree {
                 length: undefined,
                 divergence: undefined,
                 height: undefined,
-                name: undefined,
+                taxon: undefined,
                 level: undefined,
                 annotations: {},
                 _id: Symbol(),
@@ -1093,3 +1114,4 @@ function setDivergence(tree: ImmutableTree): number {
   }
   return maxDivergence
 }
+
