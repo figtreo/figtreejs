@@ -5,13 +5,11 @@ import { parseAnnotation } from "../AnnotationParser"
 
 export class NexusImporter {
   reader: ReadableStreamDefaultReader<string>
-  taxonSet: TaxonSet | undefined
+  taxonSet: TaxonSet
   currentBlock: string | undefined
   hasTree: boolean | undefined
   options: { labelName?: string }
-
   translateTaxonMap: Map<string, Taxon> | undefined
-
   constructor(
     stream: ReadableStream<any>,
     options: { labelName?: string } = {},
@@ -24,7 +22,7 @@ export class NexusImporter {
       .pipeThrough(nexusTransformer)
       .getReader();
 
-    this.taxonSet = undefined
+    this.taxonSet = new TaxonSet()
     this.currentBlock = undefined
     this.options = options
   }
@@ -142,7 +140,6 @@ export class NexusImporter {
           break
         case /taxlabels/i.test(command):
           let token = await this.nextToken()
-          this.taxonSet = new TaxonSet()
           while (token !== ";") {
             this.taxonSet.addTaxon(token)
             token = await this.nextToken()
@@ -157,6 +154,7 @@ export class NexusImporter {
           if (this.taxonSet!.getTaxonCount() === 0) {
             throw "hit end of taxa section but didn't find any taxa"
           }
+          this.taxonSet.lockTaxa(); // no more taxa can be added since we parsed a block;
           this.skipSemiColon()
         default:
           throw `Reached impossible code looking for dimensions or taxlabels in taxa block "${command}"`
@@ -175,11 +173,6 @@ export class NexusImporter {
           // all white space removed by tranformStream so will be
           // ['key','taxon,'] but may be ['key','taxon',','] if space tween taxa and ,
           this.translateTaxonMap = new Map()
-          let newTaxonSet = false
-          if (!this.taxonSet) {
-            this.taxonSet = new TaxonSet()
-            newTaxonSet = true
-          }
           let i = 0
           let key
           token = await this.nextToken()
@@ -191,7 +184,7 @@ export class NexusImporter {
                 token = token.slice(0, -1)
               }
               // todo get taxa to add here.
-              if (!newTaxonSet) {
+              if (this.taxonSet.finalized) {
                 if (this.taxonSet.getTaxonByName(token) === undefined) {
                   throw `Taxon ${token} not found in taxa block - but found in translate block`
                 }
@@ -208,6 +201,7 @@ export class NexusImporter {
             } //incase some white space in there
             i++
           }
+          this.taxonSet.lockTaxa();
           break
         case /tree/i.test(command):
           //parse tree
@@ -231,9 +225,10 @@ export class NexusImporter {
           let nodeStack: NodeRef[] = []
           let labelNext = false
           let lengthNext = false
-
+          if(this.taxonSet === undefined){
+            this.taxonSet = new TaxonSet(); // could make this at top and just finalize above
+          };
           let tree = new ImmutableTree({ taxonSet: this.taxonSet })
-
           while (token !== ";") {
             while (buffer.length > 0) {
               const t = buffer.pop()!
@@ -347,9 +342,9 @@ export class NexusImporter {
                     } else {
                       throw `No mapping found for ${name} in tipNameMap. It's name will not be updated`
                     }
-                  } else if (this.taxonSet) {
+                  } else if (this.taxonSet&& this.taxonSet.finalized) {// if set then it will be finalised by now.
                     taxon = this.taxonSet.getTaxonByName(name)
-                    if (taxon === undefined) {
+                    if (taxon === undefined ) { // hmm trees won't have
                       throw `Taxon ${name} not found in taxa - but found in tree`
                     }
                   } else {

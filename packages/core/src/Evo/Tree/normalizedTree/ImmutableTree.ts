@@ -81,6 +81,10 @@ export class ImmutableTree  implements Tree,TaxonSetInterface {
     }
     this._data = data
   }
+  lockTaxa(): TaxonSetInterface {
+      this.taxonSet.lockTaxa();
+      return this;
+  }
   addTaxon(name: string): ImmutableTree {
     this.taxonSet.addTaxon(name);
     return this;
@@ -92,6 +96,9 @@ export class ImmutableTree  implements Tree,TaxonSetInterface {
     return this.taxonSet.getTaxonCount();
   }
 
+  getTaxonSet(): TaxonSet {
+    return this.taxonSet;
+  }
   // Parsers and constructors
 
   static fromNewick(

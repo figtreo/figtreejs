@@ -24,12 +24,13 @@ export interface TaxonSetInterface{
     getTaxon(id:number):Taxon|undefined;
     getTaxonByName(name:string):Taxon;
     getTaxonCount():number;
+    lockTaxa():TaxonSetInterface;
 }
 
 export class TaxonSet implements TaxonSetInterface{
     allNames:string[]; 
     byName:{[taxon:string]:Taxon};
-    
+    finalized:boolean = false;
     constructor(taxonSet?:TaxonSet){
       if(taxonSet===undefined){
         this.allNames=[];
@@ -40,7 +41,16 @@ export class TaxonSet implements TaxonSetInterface{
         this.byName = taxonSet.byName;
       }
     }
+    lockTaxa(): TaxonSetInterface {
+        if(!this.finalized){
+            this.finalized = true;
+        }
+        return this;
+    }
     addTaxon(name:string):TaxonSet{
+        if(this.finalized){
+            throw new Error('Cannot add taxon to finalized set')
+        }
         if(this.byName[name]){
             throw new Error(`taxon ${name} already exists in the set. Names must be unique`)
         }
