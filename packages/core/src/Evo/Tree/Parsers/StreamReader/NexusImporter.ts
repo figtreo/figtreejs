@@ -126,8 +126,9 @@ export class NexusImporter {
   }
   private async parseTaxaBlock() {
     let ntax
-    let command = await this.skipUntil(/dimensions|taxlabels|end/i)
-    while (true) {
+    let keepGoing = true
+    while (keepGoing) {
+      let command = await this.skipUntil(/dimensions|taxlabels|end/i)
       switch (true) {
         case /dimensions/i.test(command):
           const taxaLine = await this.readUntil(/;/)
@@ -155,11 +156,12 @@ export class NexusImporter {
             throw "hit end of taxa section but didn't find any taxa"
           }
           this.taxonSet.lockTaxa(); // no more taxa can be added since we parsed a block;
-          this.skipSemiColon()
+          this.skipSemiColon();
+          keepGoing = false;
+          break;
         default:
-          throw `Reached impossible code looking for dimensions or taxlabels in taxa block "${command}"`
+          throw `Reached impossible code looking for dimensions or taxlabels or end in taxa block "${command}"`
       }
-      command = await this.skipUntil(/dimensions|taxlabels|end/i)
     }
   }
 

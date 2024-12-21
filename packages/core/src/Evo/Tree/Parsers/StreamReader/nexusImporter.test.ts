@@ -52,4 +52,31 @@ describe("Testing nexus importer", () => {
       expect(i).toBe(2);
       expect(lastTree?.getTaxonCount()).toBe(15); //has taxa available from all trees
   })
+
+  it('parse  Nexus multiple trees, taxa',async function(){
+    const nexusString = `#NEXUS
+    Begin taxa;
+      Dimensions ntax=5;
+      TaxLabels Tip0 Tip1 Tip2 Tip3 Tip4;
+    End;
+    Begin trees;
+      tree 1 = ((Tip3:0.005683055909367637,(Tip4:0.028897909268250865,Tip2:0.17725578701486128):0.15953222892967397):0.0015945469810341964,Tip0:0.16482157194489672,Tip1:0.06558413486573018);
+      tree 2 = (Tip3:0.07895643336574805,Tip0:0.09039621608818542,(Tip2:0.12447554684923097,(Tip4:0.016569217859539333,Tip1:0.04529906914098861):0.4270260158852053):0.5512862407921115);
+      tree 3 = ((Tip4:0.15573112107230094,Tip2:0.10434839467828654):0.10910110483363722,Tip0:0.009239519001625887,(Tip3:0.4614463596422172,Tip1:0.087294319045952):0.22603324870135144);
+    End;`
+
+    const nexusStream = stringToReadableStream(nexusString);
+
+    const trees = new NexusImporter(nexusStream).getTrees();
+    let i = 0;
+    let lastTree;
+     for  await (const tree of trees){
+        expect(tree).toBeInstanceOf(ImmutableTree);
+        lastTree = tree;
+        i++;
+    }
+    expect(i).toBe(3);
+    expect(lastTree?.getTaxonCount()).toBe(5); //has taxa available from all trees
+})
+
 });
