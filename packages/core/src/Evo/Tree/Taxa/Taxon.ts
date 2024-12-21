@@ -19,7 +19,14 @@ export class Taxon implements TaxonInterface{
     }
 }
 
-export class TaxonSet{
+export interface TaxonSetInterface{
+    addTaxon(name:string):TaxonSetInterface;
+    getTaxon(id:number):Taxon|undefined;
+    getTaxonByName(name:string):Taxon;
+    getTaxonCount():number;
+}
+
+export class TaxonSet implements TaxonSetInterface{
     allNames:string[]; 
     byName:{[taxon:string]:Taxon};
     
@@ -37,11 +44,10 @@ export class TaxonSet{
         if(this.byName[name]){
             throw new Error(`taxon ${name} already exists in the set. Names must be unique`)
         }
-        return produce(this, (draft) => {
-            const taxon = new Taxon(name,draft.allNames.length)
-            draft.allNames.push(name);
-            draft.byName[name] = taxon;
-          })
+        const taxon = new Taxon(name,this.allNames.length)
+        this.allNames.push(name);
+        this.byName[name] = taxon;
+        return this;
     }
 
     getTaxon(id:number):Taxon|undefined{

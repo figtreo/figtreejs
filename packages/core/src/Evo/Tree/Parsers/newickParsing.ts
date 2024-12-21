@@ -141,53 +141,10 @@ export function parseNewick(tree:ImmutableTree,newick: string,options?:newickPar
                 tree = added.tree;
                 const externalNode = added.nodes[0];
 
-                if(options.tipNameMap && options.tipNameMap.keys().next().value !== undefined ){
-                    if(options.tipNameMap.has(name)){
-                        name=options.tipNameMap.get(name)!
-                    }else{
-                        console.warn(`No mapping found for ${name} in tipNameMap. It's name will not be updated`)
-                    }
-                }
-                tree = tree.setTaxon(externalNode,name)
-
-                let decimalDate = undefined;
-                let date = undefined;
-                if (options.datePrefix && options.dateFormat) {
-                    const parts = name.split(options.datePrefix);
-                    if (parts.length === 0) {
-                    throw new Error(
-                        `the tip, ${name}, doesn't have a date separated by the prefix, '${options.datePrefix}'`
-                    );
-                    }
-                    const dateBit = parts[parts.length - 1];
-                    if (options.dateFormat === "decimal") {
-                     decimalDate = parseFloat(parts[parts.length - 1]);
-                    } else {
-                    date = timeParse(options.dateFormat)(dateBit);
-                    if (!date) {
-                        date = timeParse(options.dateFormat)(`${dateBit}-15`);
-                    }
-                    if (!date) {
-                        date = timeParse(options.dateFormat)(`${dateBit}-06-15`);
-                    }
-                    if(!date){
-                        throw new Error(
-                        `the tip, ${name}, doesn't have a date in the format, '${options.dateFormat}' Tried to parse ${dateBit}`
-                        );
-                    }
-                    decimalDate = dateToDecimal(date);
-                    }
-                }
-
-                if(date){
-                    tree = tree.annotateNode(externalNode,{name:"date",value:decimalDate})
-                }
-                
-
-
-                // externalNode.label = taxon.id;
-                // externalNode.name = taxon.id;
-
+                // todo accept a taxon set like the nexus file. 
+                tree.addTaxon(name) //does this affect immutability - using the first tree as a taxon set.
+                const taxon = tree.getTaxonByName(name)!
+                tree = tree.setTaxon(externalNode,taxon)
 
                 if (currentNode) {
                     nodeStack.push(currentNode);

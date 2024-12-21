@@ -8,8 +8,9 @@ import {
 } from "../Tree.types"
 import { parseNewick, parseNexus, processAnnotationValue } from "../Parsers"
 import { createDraft, finishDraft, immerable, produce } from "immer"
-import { Taxon, TaxonSet } from "../Taxa/Taxon"
+import { Taxon, TaxonSet, TaxonSetInterface } from "../Taxa/Taxon"
 
+//TODO will need to think about taxonsets and immutability.
 interface Node extends NodeRef {
   number: number
   taxon: number | undefined
@@ -39,13 +40,18 @@ interface ImmutableTreeData  {
   annotations: { [annotation: string]: Annotation }
 }
 
-export class ImmutableTree extends TaxonSet implements Tree {
+export class ImmutableTree  implements Tree,TaxonSetInterface {
   [immerable] = true
 
   _data: ImmutableTreeData
+  taxonSet: TaxonSet; // can we do this?
   constructor(input?:{data?:ImmutableTreeData,taxonSet?:TaxonSet} ) {
     let {data,taxonSet} = input || {};
-    super(taxonSet);
+    if(taxonSet){
+      this.taxonSet = taxonSet;
+    }else{
+      this.taxonSet= new TaxonSet();
+    }
     if (data === undefined) {
       data = {
         nodes: {
@@ -74,6 +80,16 @@ export class ImmutableTree extends TaxonSet implements Tree {
       }
     }
     this._data = data
+  }
+  addTaxon(name: string): ImmutableTree {
+    this.taxonSet.addTaxon(name);
+    return this;
+  }
+  getTaxonByName(name: string): Taxon {
+    return this.taxonSet.getTaxonByName(name);
+  }
+  getTaxonCount(): number {
+    return this.taxonSet.getTaxonCount();
   }
 
   // Parsers and constructors
@@ -154,11 +170,11 @@ export class ImmutableTree extends TaxonSet implements Tree {
     if(taxaIndex===undefined){
       return undefined
     }
-    return super.getTaxon(taxaIndex)
+    return this.taxonSet.getTaxon(taxaIndex)
 
   }
   getTaxon(id:number):Taxon|undefined{
-    return super.getTaxon(id)
+    return this.taxonSet.getTaxon(id)
   }
 
   hasNodeHeights(): boolean {
@@ -413,7 +429,7 @@ export class ImmutableTree extends TaxonSet implements Tree {
 
   setTaxon(node: NodeRef, taxon: Taxon): ImmutableTree {
     // check we know about this taxon;
-    if(taxon!==super.getTaxonByName(taxon.name)){
+    if(taxon!==this.taxonSet.getTaxonByName(taxon.name)){
       throw new Error(`Taxon ${taxon.name} not in the taxon set`)
     }
       return produce(this, (draft) => {

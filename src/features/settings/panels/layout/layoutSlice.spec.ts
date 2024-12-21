@@ -2,7 +2,7 @@ import layoutReducer, { LayoutState} from "./layoutSlice"
 
 describe('layoutSlice',()=>{
     const initialState: LayoutState = {
-        layout: 'rectangular',
+        layout: 'Rectangular',
         expansion: 0,
         fishEye: 0,
         rootLength: 0,
