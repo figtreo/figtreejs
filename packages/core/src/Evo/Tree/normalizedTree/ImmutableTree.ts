@@ -40,12 +40,12 @@ interface ImmutableTreeData  {
   annotations: { [annotation: string]: Annotation }
 }
 
-export class ImmutableTree  implements Tree,TaxonSetInterface {
+export class ImmutableTree  implements Tree,TaxonSetInterface { //TODO remove the TaxonSetInterface implementation.
   [immerable] = true
 
   _data: ImmutableTreeData
-  taxonSet: TaxonSet; // can we do this?
-  constructor(input?:{data?:ImmutableTreeData,taxonSet?:TaxonSet} ) {
+  taxonSet: TaxonSetInterface; // can we do this?
+  constructor(input?:{data?:ImmutableTreeData,taxonSet?:TaxonSetInterface} ) {
     let {data,taxonSet} = input || {};
     if(taxonSet){
       this.taxonSet = taxonSet;
@@ -96,7 +96,7 @@ export class ImmutableTree  implements Tree,TaxonSetInterface {
     return this.taxonSet.getTaxonCount();
   }
 
-  getTaxonSet(): TaxonSet {
+  getTaxonSet(): TaxonSetInterface {
     return this.taxonSet;
   }
   // Parsers and constructors

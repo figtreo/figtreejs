@@ -1,7 +1,9 @@
+import parse from "parse-svg-path"
 import { ImmutableTree } from "../../NormalizedTree"
 import { Taxon, TaxonSet } from "../../Taxa/Taxon"
 import { NodeRef } from "../../Tree.types"
 import { parseAnnotation } from "../AnnotationParser"
+import { NewickCharacterParser } from "../newickCharacterParser"
 
 export class NexusImporter {
   reader: ReadableStreamDefaultReader<string>
@@ -14,13 +16,12 @@ export class NexusImporter {
     stream: ReadableStream<any>,
     options: { labelName?: string } = {},
   ) {
-
     const nexusTransformer = new TransformStream(transformerOptions())
 
     this.reader = stream
       .pipeThrough(new TextDecoderStream())
       .pipeThrough(nexusTransformer)
-      .getReader();
+      .getReader()
 
     this.taxonSet = new TaxonSet()
     this.currentBlock = undefined
@@ -155,10 +156,10 @@ export class NexusImporter {
           if (this.taxonSet!.getTaxonCount() === 0) {
             throw "hit end of taxa section but didn't find any taxa"
           }
-          this.taxonSet.lockTaxa(); // no more taxa can be added since we parsed a block;
-          this.skipSemiColon();
-          keepGoing = false;
-          break;
+          this.taxonSet.lockTaxa() // no more taxa can be added since we parsed a block;
+          this.skipSemiColon()
+          keepGoing = false
+          break
         default:
           throw `Reached impossible code looking for dimensions or taxlabels or end in taxa block "${command}"`
       }
@@ -167,9 +168,9 @@ export class NexusImporter {
 
   private async *parseTreesBlock() {
     let token
-    let keepGoing = true;
+    let keepGoing = true
     while (keepGoing) {
-      let command = await this.skipUntil(/translate|tree|end/i);
+      let command = await this.skipUntil(/translate|tree|end/i)
       switch (true) {
         case /translate/i.test(command):
           // all white space removed by tranformStream so will be
@@ -203,7 +204,7 @@ export class NexusImporter {
             } //incase some white space in there
             i++
           }
-          this.taxonSet.lockTaxa();
+          this.taxonSet.lockTaxa()
           break
         case /tree/i.test(command):
           //parse tree
@@ -214,168 +215,29 @@ export class NexusImporter {
           // Then =
           // then possible annotations
           // then tree
-          const treeId = await this.nextToken()//todo - read to'=' not just next token
+          const treeId = await this.nextToken() //todo - read to'=' not just next token
+          const parser = new NewickCharacterParser(this.taxonSet)
           // read to first '(';
           token = await this.skipUntil(/\(/)
           let buffer = token
             .split(newickDeliminators)
             .filter((n) => n.length > 0)
             .reverse()
-
-          let level = 0
-          let currentNode: NodeRef | undefined = undefined
-          let nodeStack: NodeRef[] = []
-          let labelNext = false
-          let lengthNext = false
-          if(this.taxonSet === undefined){
-            this.taxonSet = new TaxonSet(); // could make this at top and just finalize above
-          };
-          let tree = new ImmutableTree({ taxonSet: this.taxonSet })
-          while (token !== ";") {
+          while (!parser.isDone()) {
             while (buffer.length > 0) {
-              const t = buffer.pop()!
-              if (t.length > 2 && t.substring(0, 2) === "[&") {
-                const annotations = parseAnnotation(t)
-
-                tree = tree.annotateNode(currentNode!, annotations)
-              } else if (t === "(") {
-                // an internal node
-
-                if (labelNext) {
-                  // if labelNext is set then the last bracket has just closed
-                  // so there shouldn't be an open bracket.
-                  throw new Error("expecting a comma")
-                }
-                let node
-                level += 1
-                if (currentNode !== undefined) {
-                  const added = tree.addNodes(1)
-                  tree = added.tree
-                  node = added.nodes[0]
-                  nodeStack.push(currentNode)
-                } else {
-                  node = tree.getRoot()
-                }
-                currentNode = node
-              } else if (t === ",") {
-                // another branch in an internal node
-
-                labelNext = false // labels are optional
-                if (lengthNext) {
-                  throw new Error("branch length missing")
-                }
-
-                let parent = nodeStack.pop()! as NodeRef
-                tree = tree.addChild(parent, currentNode!)
-                // tree.setParent(currentNode!,parent)
-
-                currentNode = parent
-              } else if (t === ")") {
-                if (level === 0) {
-                  throw new Error(
-                    "the brackets in the newick file are not balanced: too many closed",
-                  )
-                }
-                // finished an internal node
-
-                labelNext = false // labels are optional
-                if (lengthNext) {
-                  throw new Error("branch length missing")
-                }
-
-                // the end of an internal node
-                let parent = nodeStack.pop()! as NodeRef
-                tree = tree.addChild(parent, currentNode!)
-                // tree.setParent(currentNode!,parent)
-
-                level -= 1
-                currentNode = parent
-
-                labelNext = true
-              } else if (t === ":") {
-                labelNext = false // labels are optional
-                lengthNext = true
-              } else {
-                // not any specific token so may be a label, a length, or an external node name
-                if (lengthNext) {
-                  tree = tree.setLength(currentNode!, parseFloat(t))
-                  lengthNext = false
-                } else if (labelNext) {
-                  if (!t.startsWith("#")) {
-                    let value: number | any = parseFloat(t)
-                    if (isNaN(value)) {
-                      value = t
-                    }
-                    if (this.options.labelName) {
-                      let label_annotation = {
-                        name: this.options.labelName,
-                        value: value,
-                      }
-                      tree = tree.annotateNode(currentNode!, label_annotation)
-                    } else {
-                      console.warn(
-                        `No label name provided to newick parser but found label ${t}. It will be ignored`,
-                      )
-                    }
-                  } else {
-                    tree = tree.setLabel(currentNode!, t.slice(1)) //remove the # todo put it back when writing to newick
-                  }
-                  labelNext = false
-                } else {
-                  let name = t // TODO tree needs be a map that's not the ID
-
-                  // remove any quoting and then trim whitespace
-                  // TODO add to bit that parses taxa block
-                  if (name.startsWith('"') || name.startsWith("'")) {
-                    name = name.substr(1)
-                  }
-                  if (name.endsWith('"') || name.endsWith("'")) {
-                    name = name.substr(0, name.length - 1)
-                  }
-                  name = name.trim()
-
-                  const added = tree.addNodes(1)
-                  tree = added.tree
-                  const externalNode = added.nodes[0]
-                  let taxon: Taxon
-                  if (this.translateTaxonMap) {
-                    if (this.translateTaxonMap.has(name)) {
-                      taxon = this.translateTaxonMap.get(name)!
-                    } else {
-                      throw `No mapping found for ${name} in tipNameMap. It's name will not be updated`
-                    }
-                  } else if (this.taxonSet&& this.taxonSet.finalized) {// if set then it will be finalised by now.
-                    taxon = this.taxonSet.getTaxonByName(name)
-                    if (taxon === undefined ) { // hmm trees won't have
-                      throw `Taxon ${name} not found in taxa - but found in tree`
-                    }
-                  } else {
-                    tree.addTaxon(name) //does this affect immutability - using the first tree as a taxon set.
-                    taxon = tree.getTaxonByName(name)!
-                  }
-
-                  tree = tree.setTaxon(externalNode, taxon)
-
-                  if (currentNode) {
-                    nodeStack.push(currentNode)
-                  }
-                  currentNode = externalNode
-                }
-              }
+              const c = buffer.pop()
+              parser.parseCharacter(c!)
             }
-            // get next token from reader
-            token = await this.nextToken()
-            buffer = token
-              .split(newickDeliminators)
-              .filter((n) => n.length > 0)
-              .reverse()
+            if (!parser.isDone()) {
+              // get next token
+              token = await this.nextToken()
+              buffer = token
+                .split(newickDeliminators)
+                .filter((n) => n.length > 0)
+                .reverse()
+            }
           }
-          if (level > 0) {
-            throw new Error(`unexpected semi-colon in tree: ${treeId}`)
-          }
-          if (this.taxonSet === undefined) {
-            this.taxonSet === tree
-          }
+          const tree = parser.getTree()
           yield tree
           break
         case /end/i.test(command):
@@ -383,8 +245,8 @@ export class NexusImporter {
           this.hasTree = false
           // Give up the ghost.
           //TODO read to the end of the file.
-          this.reader.releaseLock();
-          keepGoing=false;
+          this.reader.releaseLock()
+          keepGoing = false
           break
         default:
           throw `Reached impossible code in treeblock block "${command}"`
