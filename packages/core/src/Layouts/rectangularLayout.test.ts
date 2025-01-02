@@ -9,12 +9,12 @@ describe("Test rectangular layout",()=>{
         expect(vertices.vertices[0].y).toBeCloseTo(125); 
 
         //a
-        const a = tree.getNodeByTaxon("a")!;
+        const a = tree.getNodeByTaxon(tree.getTaxonByName("a")!)!;
         expect(vertices.vertices[a.number].x).toBeCloseTo(100);
         expect(vertices.vertices[a.number].y).toBeCloseTo(0); 
 
         //c
-        const c = tree.getNodeByTaxon("c")!;
+        const c = tree.getNodeByTaxon(tree.getTaxonByName("c")!)!;
         expect(vertices.vertices[c.number].x).toBeCloseTo(50);
         expect(vertices.vertices[c.number].y).toBeCloseTo(200); 
     });
@@ -25,12 +25,12 @@ describe("Test rectangular layout",()=>{
         expect(vertices.vertices[0].y).toBeCloseTo(125); 
 
         //a
-        const a = tree.getNodeByTaxon("a")!;
+        const a = tree.getNodeByTaxon(tree.getTaxonByName("a")!)!;
         expect(vertices.vertices[a.number].x).toBeCloseTo(100);
         expect(vertices.vertices[a.number].y).toBeCloseTo(0); 
 
         //c
-        const c = tree.getNodeByTaxon("c")!;
+        const c = tree.getNodeByTaxon(tree.getTaxonByName("c")!)!;
         expect(vertices.vertices[c.number].x).toBeCloseTo(50);
         expect(vertices.vertices[c.number].y).toBeCloseTo(200); 
     });
