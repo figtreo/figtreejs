@@ -1,9 +1,7 @@
-import { NodeRef, Tree, newickParsingOptions } from "../Tree.types";
+import {newickParsingOptions } from "../Tree.types";
 import { ImmutableTree, postOrderIterator,  preOrderIterator } from "../NormalizedTree/ImmutableTree";
-import { parseAnnotation } from "./AnnotationParser";
-import { timeParse } from "d3-time-format";
-import { dateToDecimal } from "../utilities";
-import { NewickCharacterParser } from "./newickCharacterParser";
+
+import { NewickCharacterParser } from "./NewickCharacterParser";
 import { TaxonSet } from "../Taxa/Taxon";
 
 export function parseNewick(newick: string,options:newickParsingOptions={}): ImmutableTree {
@@ -11,13 +9,12 @@ export function parseNewick(newick: string,options:newickParsingOptions={}): Imm
     const taxonSet = options.taxonSet ? options.taxonSet : new TaxonSet();
     const tokens = newick.split(/\s*('[^']+'|"[^"]+"|\[&[^[]+]|,|:|\)|\(|;)\s*/).filter(token => token.length > 0);
 
-    const parser = new NewickCharacterParser(taxonSet);
+    const parser = new NewickCharacterParser(taxonSet,options); 
 
     for (const token of tokens) {
         parser.parseCharacter(token);
     }
     let tree = parser.getTree();
-
      const output = setDivergence(tree);
      tree = output.tree;
      const maxDivergence = output.maxDivergence;
@@ -33,8 +30,9 @@ export function parseNewick(newick: string,options:newickParsingOptions={}): Imm
 export function setDivergence(tree: ImmutableTree): {tree:ImmutableTree,maxDivergence:number} {
 let maxDivergence = 0;
 for (const node of preOrderIterator(tree)) {
-    if (tree.getParent(node)) {
-        tree = tree.setDivergence(node,tree.getLength( node)! + tree.getDivergence(tree.getParent(node)!)!);
+    if (tree.getParent(node)!==undefined ){
+        const nodeLength = tree.getLength(node)==undefined? 1:tree.getLength(node)!;
+        tree = tree.setDivergence(node,nodeLength + tree.getDivergence(tree.getParent(node)!)!);
     } else {
         tree = tree.setDivergence(node,0);
     }

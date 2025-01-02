@@ -35,7 +35,6 @@ describe('ImmutableTree', () =>{
             expect(tree1.getChild(parent,0)).not.toEqual(child); // this child has no parent!
 
         });
-    //editing length does not access parent. Does the parent still update.
         it('Change branchlength', function() {
             const prototree = new ImmutableTree()
                             
@@ -50,6 +49,18 @@ describe('ImmutableTree', () =>{
             // expect(tree1.getNode(0)).not.toBe(tree2.getNode(0));
             // expect(tree1.getParent(child)).not.toBe(tree2.getParent(child));
 
+        });
+        it('change height', function() {
+            const tree=  ImmutableTree.fromNewick("((A:1,B:1):1,C:2);");
+            const A = tree.getTaxonByName("A")!;
+            const B = tree.getTaxonByName("B")!;
+            expect(tree.getHeight(tree.getNodeByTaxon(A)!)).toBe(0);
+            const tree1 = tree.setHeight(tree.getNodeByTaxon(A)!,0.5);
+            expect(tree1.getHeight(tree.getNodeByTaxon(A)!)).toBe(0.5);
+            expect(tree1.getHeight(tree.getNodeByTaxon(tree.getTaxonByName("B")!)!)).toBe(0);
+            expect(tree1.getLength(tree.getNodeByTaxon(A)!)).toBe(0.5);
+            expect(tree1.getDivergence(tree.getNodeByTaxon(A)!)).toBe(1.5);
+            expect(tree1.getDivergence(tree.getNodeByTaxon(B)!)).toBe(2);
         });
         it('order', function() {
 

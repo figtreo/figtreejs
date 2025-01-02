@@ -201,7 +201,6 @@ export class ImmutableTree  implements Tree,TaxonSetInterface { //TODO remove th
   }
   getLength(node: NodeRef): number | undefined {
 
-    const n = this.getNode(node.number) as Node
     const length = (node as Node).length
 
     return length
@@ -503,14 +502,17 @@ export class ImmutableTree  implements Tree,TaxonSetInterface { //TODO remove th
         const n = draft.getNode(node.number) as Node
         n.height = height
         //change length of this and children
-        if(draft.getParent(n)){
+        // Don't change the lengths of nodes that don't have lengths.
+        if(draft.getParent(n)&&n.length!==undefined){
           n.length = draft.getHeight(draft.getParent(n)!)! - height;
         } 
         for(const child of draft.getChildren(n)){
-            (child as Node).length =  height - (child as Node).height!;
+            if((child as Node).length!==undefined){
+              (child as Node).length =  height - (child as Node).height!;
+            }
         }
-//   for now just update all divergences (could be much smarter - just update this or if root. update all. )
-      setDivergence(draft);
+        //TODO handel this!
+      // setDivergence(draft);
 
       })
   }

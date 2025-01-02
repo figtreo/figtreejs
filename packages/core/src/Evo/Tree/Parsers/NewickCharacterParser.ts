@@ -40,7 +40,7 @@ export class NewickCharacterParser {
   }
   getTree(): ImmutableTree {
     if(!this.done){
-        throw ("No tree to give - still parsing the tree.")
+        throw ("expecting a semi-colon at the end of the newick string")
     }
     if(!this.started){
         throw ("No tree to give - parsing has not started.");
