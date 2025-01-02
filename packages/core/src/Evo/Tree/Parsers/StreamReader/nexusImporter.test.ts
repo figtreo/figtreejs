@@ -68,6 +68,7 @@ describe("Testing nexus importer", () => {
       i++
     }
     expect(i).toBe(1)
+    
   }),
     it("parse  Nexus multiple trees, taxa", async function () {
       const nexusString = `#NEXUS

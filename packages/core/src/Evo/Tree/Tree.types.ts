@@ -1,4 +1,4 @@
-import { Taxon } from "./Taxa/Taxon";
+import { Taxon, TaxonSet } from "./Taxa/Taxon";
 
 
 export interface NodeRef{
@@ -30,7 +30,8 @@ export interface Annotation {
 export interface newickParsingOptions  {
     dateFormat?: string,
     datePrefix?: string,
-     labelName?: string,  parseAnnotations?: boolean , tipNameMap?: Map<string, string>
+     labelName?: string,  parseAnnotations?: boolean , tipNameMap?: Map<string, string>,
+     taxonSet?: TaxonSet
 }
 export interface Tree  {
     

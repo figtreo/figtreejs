@@ -9,6 +9,7 @@ import {
 import { parseNewick, parseNexus, processAnnotationValue } from "../Parsers"
 import { createDraft, finishDraft, immerable, produce } from "immer"
 import { Taxon, TaxonSet, TaxonSetInterface } from "../Taxa/Taxon"
+import { format } from "d3-format"
 
 //TODO will need to think about taxonsets and immutability.
 interface Node extends NodeRef {
@@ -45,7 +46,7 @@ export class ImmutableTree  implements Tree,TaxonSetInterface { //TODO remove th
 
   _data: ImmutableTreeData
   taxonSet: TaxonSetInterface; // can we do this?
-  constructor(input?:{data?:ImmutableTreeData,taxonSet?:TaxonSetInterface} ) {
+  constructor(input:{data?:ImmutableTreeData,taxonSet?:TaxonSetInterface}={} ) {
     let {data,taxonSet} = input || {};
     if(taxonSet){
       this.taxonSet = taxonSet;
@@ -103,17 +104,18 @@ export class ImmutableTree  implements Tree,TaxonSetInterface { //TODO remove th
 
   static fromNewick(
     newick: string,
-    options?: newickParsingOptions | undefined,
+    options: newickParsingOptions ={},
   ): ImmutableTree {
-    const tree = new this()
-    return parseNewick(tree, newick, options)
+    // const tree = new this()
+    return parseNewick(newick, options)
   }
   static fromNexus(
     nexus: string,
     options?: newickParsingOptions | undefined,
   ): ImmutableTree {
     const tree = new this()
-    return parseNexus(tree, nexus, options)
+    // return parseNexus(tree, nexus, options)
+    throw new Error("Nexus parsing not implemented");
   }
   static fromString(
     string: string,
@@ -205,14 +207,14 @@ export class ImmutableTree  implements Tree,TaxonSetInterface { //TODO remove th
     return length
   }
 
-  _toString(node: NodeRef): string {
+  _toString(node: NodeRef,blFormat=format("0.2")): string { // pass formating on
     return (
       (this.getChildCount(node) > 0
         ? `(${this.getChildren(node)
             .map((child) => this._toString(child))
             .join(",")})${this.getLabel(node) ? "#" + this.getLabel(node) : ""}`
         : `${this.getTaxonFromNode(node) ? this.getTaxonFromNode(node)!.name : ""}`) +
-      (this.getLength(node) ? `:${this.getLength(node)}` : "")
+      (this.getLength(node) ? `:${blFormat(this.getLength(node)!)}` : "")
     )
   }
 

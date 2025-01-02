@@ -70,16 +70,19 @@ describe('ImmutableTree', () =>{
             const newickString = `((((((virus1:0.1,virus2:0.12):0.08,(virus3:0.011,virus4:0.0087):0.15):0.03,virus5:0.21):0.2,(virus6:0.45,virus7:0.4):0.02):0.1,virus8:0.4):0.1,(virus9:0.04,virus10:0.03):0.6);`;
 
             const tree = ImmutableTree.fromNewick(newickString)
-            const tree1 = tree.reroot(tree.getParent(tree.getNodeByTaxon("virus3")!)!,0.5);
+            const virus3 = tree.getTaxonByName("virus3")!;
+            const tree1 = tree.reroot(tree.getParent(tree.getNodeByTaxon(virus3)!)!,0.5);
             expect(tree1.toNewick()).toBe("(((virus1:0.1,virus2:0.12):0.08,(virus5:0.21,((virus6:0.45,virus7:0.4):0.02,(virus8:0.4,(virus9:0.04,virus10:0.03):0.7):0.1):0.2):0.03):0.075,(virus3:0.011,virus4:0.0087):0.075);")
         })
         it('rotate',function(){
             const tree = ImmutableTree.fromNewick("((A:1,B:1):1,C:2);");
-            const node = tree.getParent(tree.getNodeByTaxon("A")!)!;
+            const A = tree.getTaxonByName("A")!;
+            const B = tree.getTaxonByName("B")!;
+            const node = tree.getParent(tree.getNodeByTaxon(A)!)!;
             const child1 = tree.getChild(node,0)!;
             const rotatedTree = tree.rotate(node);
             const child2 = rotatedTree.getChild(node,0)!;
-            expect(rotatedTree.getTaxon(child2)).toBe("B");
-            expect(tree.getTaxon(child1)).toBe("A");
+            expect(rotatedTree.getTaxonFromNode(child2)).toBe(B);
+            expect(tree.getTaxonFromNode(child1)).toBe(A);
         })
 })

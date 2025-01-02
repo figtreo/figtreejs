@@ -3,163 +3,25 @@ import { ImmutableTree, postOrderIterator,  preOrderIterator } from "../Normaliz
 import { parseAnnotation } from "./AnnotationParser";
 import { timeParse } from "d3-time-format";
 import { dateToDecimal } from "../utilities";
+import { NewickCharacterParser } from "./newickCharacterParser";
+import { TaxonSet } from "../Taxa/Taxon";
 
-export function parseNewick(tree:ImmutableTree,newick: string,options?:newickParsingOptions): ImmutableTree {
-    if (options === undefined) {
-     
-        options = { parseAnnotations: false }
-    }
+export function parseNewick(newick: string,options:newickParsingOptions={}): ImmutableTree {
 
+    const taxonSet = options.taxonSet ? options.taxonSet : new TaxonSet();
     const tokens = newick.split(/\s*('[^']+'|"[^"]+"|\[&[^[]+]|,|:|\)|\(|;)\s*/).filter(token => token.length > 0);
 
-
-    let level = 0;
-    let currentNode: NodeRef|undefined = undefined;
-    let nodeStack: NodeRef[] = [];
-    let labelNext = false;
-    let lengthNext = false;
-
-    const end = tokens.pop();
-    if (end !== ";") {
-        throw new Error("expecting a semi-colon at the end of the newick string")
-    }
+    const parser = new NewickCharacterParser(taxonSet);
 
     for (const token of tokens) {
-
-        if (options.parseAnnotations && token.length > 2 && token.substring(0, 2) === '[&') {
-            const annotations = parseAnnotation(token);
-            
-            tree = tree.annotateNode(currentNode!, annotations);
-
-        } else if (token === "(") {
-            // an internal node
-
-            if (labelNext) {
-                // if labelNext is set then the last bracket has just closed
-                // so there shouldn't be an open bracket.
-                throw new Error("expecting a comma");
-            }
-
-           
-            let node
-            level += 1;
-            if (currentNode!==undefined) {
-                 const added =  tree.addNodes(1);
-                tree = added.tree;
-                node = added.nodes[0];
-                 nodeStack.push(currentNode);
-            } else {
-                // tree.setRoot(node);
-                node = tree.getRoot();
-            }
-            currentNode = node;
-
-        } else if (token === ",") {
-            // another branch in an internal node
-
-            labelNext = false; // labels are optional
-            if (lengthNext) {
-                throw new Error("branch length missing");
-            }
-
-            let parent = nodeStack.pop()! as NodeRef;
-            tree = tree.addChild(parent,currentNode!)
-            // tree.setParent(currentNode!,parent)
-
-            currentNode = parent;
-        } else if (token === ")") {
-            if (level === 0) {
-                throw new Error("the brackets in the newick file are not balanced: too many closed")
-            }
-            // finished an internal node
-
-            labelNext = false; // labels are optional
-            if (lengthNext) {
-                throw new Error("branch length missing");
-            }
-
-            // the end of an internal node
-            let parent = nodeStack.pop()! as NodeRef;
-            tree = tree.addChild(parent,currentNode!)
-            // tree.setParent(currentNode!,parent)
-
-            level -= 1;
-            currentNode = parent ;
-
-            labelNext = true;
-        } else if (token === ":") {
-            labelNext = false; // labels are optional
-            lengthNext = true;
-        } else if (token === ";") {
-            // end of the tree, check that we are back at level 0
-            if (level > 0) {
-                throw new Error("unexpected semi-colon in tree")
-            }
-            break;
-        }
-        else {
-            // not any specific token so may be a label, a length, or an external node name
-            if (lengthNext) {
-                tree = tree.setLength(currentNode!,parseFloat(token));
-                lengthNext = false;
-            } else if (labelNext) {
-                
-                if (!token.startsWith("#")) {
-                    let value: number | any = parseFloat(token);
-                    if (isNaN(value)) {
-                        value = token;
-                    }
-                    if(options.labelName){
-                        let label_annotation = { name: options.labelName, value: value }
-                        tree = tree.annotateNode(currentNode!, label_annotation)
-
-                    }else{
-                        console.warn(`No label name provided to newick parser but found label ${token}. It will be ignored`)
-                    }
-                }else{
-                    tree = tree.setLabel(currentNode!,token.slice(1)) //remove the # todo put it back when writing to newick
-                }
-                labelNext = false;
-            } else {
-
-
-                let name = token; // TODO tree needs be a map that's not the ID
-
-
-                // remove any quoting and then trim whitespace 
-                // TODO add to bit that parses taxa block 
-                if (name.startsWith("\"") || name.startsWith("'")) {
-                    name = name.substr(1);
-                }
-                if (name.endsWith("\"") || name.endsWith("'")) {
-                    name = name.substr(0, name.length - 1);
-                }
-                name = name.trim();
-
-
-                const added = tree.addNodes(1);
-                tree = added.tree;
-                const externalNode = added.nodes[0];
-
-                // todo accept a taxon set like the nexus file. 
-                tree.addTaxon(name) //does this affect immutability - using the first tree as a taxon set.
-                const taxon = tree.getTaxonByName(name)!
-                tree = tree.setTaxon(externalNode,taxon)
-
-                if (currentNode) {
-                    nodeStack.push(currentNode);
-                }
-                currentNode = externalNode;
-            }
-        }
+        parser.parseCharacter(token);
     }
-    if (level > 0) {
-        throw new Error("the brackets in the newick file are not balanced: too many opened")
-    }
+    let tree = parser.getTree();
 
      const output = setDivergence(tree);
      tree = output.tree;
      const maxDivergence = output.maxDivergence;
+     // TODO yuck find a more robust way to handel heights and lengths;
     for (const node of postOrderIterator(tree) ) {
         tree = tree.setHeight(node,maxDivergence - tree.getDivergence(node));
     }

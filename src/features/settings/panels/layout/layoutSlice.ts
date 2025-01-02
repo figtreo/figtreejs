@@ -22,7 +22,7 @@ export interface LayoutState {
     minR:number
 }
 
-const initialState: LayoutState = {
+export const initialState: LayoutState = {
     layout: 'Rectangular',
     expansion: 0,
     rootLength: 0,

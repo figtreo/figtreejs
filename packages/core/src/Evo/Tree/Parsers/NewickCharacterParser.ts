@@ -1,7 +1,6 @@
-import { Immutable } from "immer"
 import { Taxon, TaxonSet, TaxonSetInterface } from "../Taxa/Taxon"
 import { NodeRef } from "../Tree.types"
-import { ImmutableTree } from "../NormalizedTree"
+import { ImmutableTree } from "../NormalizedTree/ImmutableTree"
 import { parseAnnotation } from "./AnnotationParser"
 
 export class NewickCharacterParser {
@@ -16,7 +15,7 @@ export class NewickCharacterParser {
   tree: ImmutableTree
   options: { labelName?: string; translateTaxonNames?: Map<string, string> }
   constructor(
-    taxonSet?: TaxonSet,
+    taxonSet: TaxonSet=new TaxonSet(),
     options: {
       labelName?: string
       translateTaxonNames?: Map<string, string>
@@ -29,9 +28,9 @@ export class NewickCharacterParser {
     this.nodeStack = []
     this.labelNext = false
     this.lengthNext = false
-    this.taxonSet = taxonSet ? taxonSet : new TaxonSet()
-    this.options = options
-    this.tree = new ImmutableTree({ taxonSet: this.taxonSet })
+    this.taxonSet = taxonSet;
+    this.options = options;
+    this.tree = new ImmutableTree({ taxonSet: this.taxonSet });
   }
   isDone() {
     return this.done
