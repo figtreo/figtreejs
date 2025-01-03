@@ -45,6 +45,8 @@ export class NewickCharacterParser {
     if(!this.started){
         throw ("No tree to give - parsing has not started.");
     }
+    //set hights
+
     return this.tree;
   }
 
@@ -126,7 +128,7 @@ export class NewickCharacterParser {
     } else {
       // not any specific token so may be a label, a length, or an external node name
       if (this.lengthNext) {
-        this.tree = this.tree.setLength(this.currentNode!, parseFloat(t))
+        this.tree = this.tree._setLength(this.currentNode!, parseFloat(t))
         this.lengthNext = false
       } else if (this.labelNext) {
         if (!t.startsWith("#")) {

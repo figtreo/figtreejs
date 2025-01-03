@@ -56,11 +56,14 @@ describe('ImmutableTree', () =>{
             const B = tree.getTaxonByName("B")!;
             expect(tree.getHeight(tree.getNodeByTaxon(A)!)).toBe(0);
             const tree1 = tree.setHeight(tree.getNodeByTaxon(A)!,0.5);
-            expect(tree1.getHeight(tree.getNodeByTaxon(A)!)).toBe(0.5);
-            expect(tree1.getHeight(tree.getNodeByTaxon(tree.getTaxonByName("B")!)!)).toBe(0);
-            expect(tree1.getLength(tree.getNodeByTaxon(A)!)).toBe(0.5);
-            expect(tree1.getDivergence(tree.getNodeByTaxon(A)!)).toBe(1.5);
-            expect(tree1.getDivergence(tree.getNodeByTaxon(B)!)).toBe(2);
+
+            expect(tree1.getHeight(tree1.getNodeByTaxon(A)!)).toBe(0.5);
+
+            expect(tree1.getHeight(tree1.getNodeByTaxon(tree.getTaxonByName("B")!)!)).toBe(0);
+            expect(tree1.getLength(tree1.getNodeByTaxon(A)!)).toBe(0.5);
+
+            expect(tree1.getDivergence(tree1.getNodeByTaxon(A)!)).toBe(1.5);
+            expect(tree1.getDivergence(tree1.getNodeByTaxon(B)!)).toBe(2);
         });
         it('order', function() {
 
