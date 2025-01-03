@@ -1,9 +1,7 @@
-import parse from "parse-svg-path"
 import { ImmutableTree } from "../../NormalizedTree"
 import { Taxon, TaxonSet } from "../../Taxa/Taxon"
-import { NodeRef } from "../../Tree.types"
-import { parseAnnotation } from "../AnnotationParser"
-import { NewickCharacterParser } from "../newickCharacterParser"
+
+import { NewickCharacterParser } from "../NewickCharacterParser"
 
 export class NexusImporter {
   reader: ReadableStreamDefaultReader<string>
@@ -11,7 +9,7 @@ export class NexusImporter {
   currentBlock: string | undefined
   hasTree: boolean | undefined
   options: { labelName?: string }
-  translateTaxonMap: Map<string, Taxon> | undefined
+  translateTaxonMap: Map<string, string> | undefined
   constructor(
     stream: ReadableStream<any>,
     options: { labelName?: string } = {},
@@ -195,8 +193,8 @@ export class NexusImporter {
                 //new taxon set so add it;
                 this.taxonSet.addTaxon(token)
               }
-              const taxon = this.taxonSet.getTaxonByName(token)
-              this.translateTaxonMap.set(key!, taxon)
+              // const taxon = this.taxonSet.getTaxonByName(token)
+              this.translateTaxonMap.set(key!, token)
             }
             token = await this.nextToken()
             while (token === ",") {
@@ -216,7 +214,7 @@ export class NexusImporter {
           // then possible annotations
           // then tree
           const treeId = await this.nextToken() //todo - read to'=' not just next token
-          const parser = new NewickCharacterParser(this.taxonSet)
+          const parser = new NewickCharacterParser(this.taxonSet,{translateTaxonNames:this.translateTaxonMap})
           // read to first '(';
           token = await this.skipUntil(/\(/)
           let buffer = token

@@ -46,7 +46,7 @@ export interface Tree  {
     getInternalNodes():NodeRef[]
     getExternalNodes():NodeRef[]
 
-    getTaxon(id:number):Taxon|undefined
+    getTaxon(id:number|NodeRef):Taxon|undefined
 
     isExternal(node:NodeRef):boolean
     isInternal(node:NodeRef):boolean

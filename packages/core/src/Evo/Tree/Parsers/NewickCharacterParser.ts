@@ -178,6 +178,7 @@ export class NewickCharacterParser {
             throw `No mapping found for ${name} in tipNameMap. It's name will not be updated`
           }
         }
+        
         if (this.taxonSet.finalized) {
           // if set then it will be finalised by now.
           taxon = this.taxonSet.getTaxonByName(name)

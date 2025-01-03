@@ -60,7 +60,7 @@ function FigTree(props:FigtreeProps){
         
     const layoutMap = layout(tree);
     const {maxX,maxY,layoutClass} = layoutMap(tree.getRoot())!;
-    console.log('layoutMap',{maxX,maxY,layoutClass});
+    // console.log('layoutMap',{maxX,maxY,layoutClass});
     const scale = getScale(maxX,maxY,canvasWidth,canvasHeight,layoutClass);
     const dimensions = {canvasWidth,canvasHeight,domain:[0,maxX],layoutClass};
     let rawChildren = (props.children?props.children:defaultOpts.children) as React.ReactElement|React.ReactElement[];
@@ -72,13 +72,14 @@ function FigTree(props:FigtreeProps){
 
     return (
                 <g>
-                    <defs>
+                    {/* <defs>
                         <clipPath id="clip">
                             <rect x={-margins.left} y={-margins.top} width={width} height={height} /> 
                         </clipPath>
-                    </defs>                     
+                    </defs>                      */}
                     {/*<rect x="0" y="0" width="100%" height="100%" fill="none" pointerEvents={"visible"} onClick={()=>nodeDispatch({type:"clearSelection"})}/>*/}
-                    <g transform={`translate(${margins.left},${margins.top})`} clipPath={'url(#clip)'} >
+                    {/* <g transform={`translate(${margins.left},${margins.top})`} clipPath={'url(#clip)'} > */}
+                    <g transform={`translate(${margins.left},${margins.top})`} >
                         {children}
                     </g>
                 </g>

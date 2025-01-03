@@ -23,3 +23,6 @@ export const ft ={
 
 //TODO mimic plot api have d3 return svg //how to handle animations?
 export {ImmutableTree} from "@figtreejs/core";
+
+export {NexusImporter} from "@figtreejs/core";
+export {postOrderIterator,tipIterator,preOrderIterator} from "@figtreejs/core";

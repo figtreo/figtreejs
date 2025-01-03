@@ -1,5 +1,4 @@
-export * from "./NormalizedTree"
+export * from "./NormalizedTree";
 export * from "./Tree.types"
-// export * from "./Parsers"
+export * from "./Parsers/StreamReader"
 export * from "./Traversals"
-// export * from "./Treedux"
