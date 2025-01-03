@@ -286,11 +286,13 @@ export function Tree({ panelRef }: any) {
         }
   //
   const handlePaste = (event: any) => {
+    const tree = ImmutableTree.fromString(event.clipboardData.getData("text"), {
+      parseAnnotations: true,
+    })
+    console.log(tree)
     dispatch(
       setTree(
-        ImmutableTree.fromString(event.clipboardData.getData("text"), {
-          parseAnnotations: true,
-        }),
+        tree
       ),
     )
     for (const annotation of tree.getAnnotationKeys()) {
@@ -489,6 +491,7 @@ export function Tree({ panelRef }: any) {
           node={n}
         />
       ))
+      // TODO update these so they respect the props added by figtree.
     const figureElements = [
       <AxisElement key={0} />,
       ,

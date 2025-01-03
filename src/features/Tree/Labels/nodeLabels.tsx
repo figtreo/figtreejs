@@ -1,15 +1,15 @@
 import { format } from "d3-format";
 import { getColorScale, useAppSelector } from "../../../app/hooks";
 import { selectLabelState } from "../../Settings/panels/label/labelSlice";
-import { Nodes,NodeRef} from "@figtreejs/core";
+import { Nodes,NodeRef, ImmutableTree} from "@figtreejs/core";
 import { selectTree } from '../../../app/hooks';
 import { getTextFunction } from "./labelUtils";
 import { COLOUR_ANNOTATION } from "../../../app/constants";
 
-export function NodeLabels(props:{ attrs?:{[key:string]:any} }) {
-    const { attrs={} } = props;
+export function NodeLabels(props:{ attrs?:{[key:string]:any},tree:ImmutableTree }) {
+    const { attrs={},tree } = props;
     const settings = useAppSelector(selectLabelState("node"));
-    const tree = useAppSelector(selectTree);
+    // const tree = useAppSelector(selectTree);
 
 
     const fillColorScale = useAppSelector( (state)=>getColorScale(state,settings.colourBy));
@@ -34,7 +34,7 @@ export function NodeLabels(props:{ attrs?:{[key:string]:any} }) {
         let textFunction = getTextFunction(tree,settings);
 
         return (
-            <Nodes.Label filter={filter} attrs={{ fontSize: settings.fontSize,...attrs }}  text={textFunction} />
+            <Nodes.Label {...props} filter={filter} attrs={{ fontSize: settings.fontSize,...attrs }}  text={textFunction} />
         )
 
     } else {

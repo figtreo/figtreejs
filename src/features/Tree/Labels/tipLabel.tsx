@@ -7,10 +7,10 @@ import {  selectNodeDecorations } from "../../Header/headerSlice";
 import { selectTree } from '../../../app/hooks';
 import { getTextFunction } from "./labelUtils";
 
-export function TipLabels(props: { attrs?:{[key:string]:any} }) {
-    const { attrs={} } = props;
+export function TipLabels(props: any ) {
+    const { attrs={},tree } = props;
     const settings = useAppSelector(selectLabelState("tip"));
-    const tree = useAppSelector(selectTree);
+    // const tree = useAppSelector(selectTree);
     const { alignTipLabels } = useAppSelector(selectLayout)
 
     const filter = (n: NodeRef) => tree.getChildCount(n) === 0;
@@ -38,7 +38,7 @@ export function TipLabels(props: { attrs?:{[key:string]:any} }) {
         let textFunction = getTextFunction(tree,settings);
 
         return (
-            <Nodes.Label filter={filter} attrs={{ fontSize: settings.fontSize,...attrs }} aligned={alignTipLabels} text={textFunction} />
+            <Nodes.Label {...props} filter={filter} attrs={{ fontSize: settings.fontSize,...attrs }} aligned={alignTipLabels} text={textFunction} />
         )
 
     } else {

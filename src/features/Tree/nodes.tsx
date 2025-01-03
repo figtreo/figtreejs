@@ -4,10 +4,9 @@ import {  Nodes, NodeRef } from "@figtreejs/core";
 import { COLOUR_ANNOTATION } from "../../app/constants";
 import { selectTree } from '../../app/hooks';
 
-export function InternalNodes() {
+export function InternalNodes(props:any) {
     const settings = useAppSelector(selectShapeState("node"));
-    const tree = useAppSelector(selectTree);
-
+    const {tree} = props;
     const filter = (n: NodeRef) => tree.getChildCount(n) > 0;
 
     // check if sizing by an attribute or by a constant
@@ -33,11 +32,11 @@ export function InternalNodes() {
     if (settings.activated) {
         if (settings.shape === "Circle") {
             return (
-                <Nodes.Circle filter={filter} attrs={{ r: radius, fill:filler, stroke, strokeWidth }} />
+                <Nodes.Circle {...props} filter={filter} attrs={{ r: radius, fill:filler, stroke, strokeWidth }} />
             )
         } else if (settings.shape === "Rectangle") {
             return (
-                <Nodes.Rectangle filter={filter} attrs={{ width: settings.maxSize, height: settings.maxSize, fill:filler, stroke, strokeWidth }} />
+                <Nodes.Rectangle {...props} filter={filter} attrs={{ width: settings.maxSize, height: settings.maxSize, fill:filler, stroke, strokeWidth }} />
             )
         }
         // } else if (settings.shape === "Swoosh") {

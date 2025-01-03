@@ -32,11 +32,14 @@ export function NodesHOC(ShapeComponent:React.ComponentType<any>) {
 }
 
 function NodeLabels(props:any){
+
         const {tree,filter=(n:NodeRef)=>true,aligned=false,gap = 6,layout,scale,...rest} = props;
+        console.log("NodeLabels",props)
         const shapeProps = useAttributeMappers(props);
         const useVertex = useVertexFactory(layout);
         const rootV = useVertex(tree.getRoot());
         const {maxX} = rootV
+
     return (
         <g className={"node-label-layer"}>
             {[...preOrderIterator(tree)].filter(filter).map((node) => { 

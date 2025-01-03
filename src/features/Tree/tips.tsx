@@ -9,7 +9,7 @@ function tipShapeGenerator(target: "tip" | "tipBackground" ) {
     const settings = useAppSelector(selectShapeState(target));
     const tipColourBy = useAppSelector(selectShapeState("tip")).colourBy;
     const activated = useAppSelector(selectShapeState("tip")).activated && settings.activated;
-    const tree = useAppSelector(selectTree);
+    const {tree} = props;
 
     //if we color by an attribute and the tip doesn't have that attribute, don't show it
 
@@ -49,12 +49,12 @@ function tipShapeGenerator(target: "tip" | "tipBackground" ) {
     if (activated) {
         if (settings.shape === "Circle") {
             return (
-                <Nodes.Circle filter={filter} attrs={{ r: radius, fill:filler, stroke, strokeWidth }} />
+                <Nodes.Circle {...props} filter={filter} attrs={{ r: radius, fill:filler, stroke, strokeWidth }} />
 
             )
         } else if (settings.shape === "Rectangle") {
             return (
-                <Nodes.Rectangle filter={filter} attrs={{ width: settings.maxSize, height: settings.maxSize, fill:filler, stroke, strokeWidth }} />
+                <Nodes.Rectangle {...props} filter={filter} attrs={{ width: settings.maxSize, height: settings.maxSize, fill:filler, stroke, strokeWidth }} />
             )
         }
         else {

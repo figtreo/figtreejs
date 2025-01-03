@@ -6,11 +6,10 @@ import { selectTree } from '../../../app/hooks';
 import { getTextFunction } from "./labelUtils";
 import { COLOUR_ANNOTATION } from "../../../app/constants";
 
-export function BranchLabels(props:{ attrs?:{[key:string]:any} }) {
+export function BranchLabels(props:any) {
     const { attrs={} } = props;
     const settings = useAppSelector(selectLabelState("branch"));
-    const tree = useAppSelector(selectTree);
-
+    const {tree} = props;
     const taxaColours = useAppSelector(selectNodeDecorations)
     const filter = (n: NodeRef) => true;
 
@@ -34,7 +33,7 @@ export function BranchLabels(props:{ attrs?:{[key:string]:any} }) {
         let textFunction = getTextFunction(tree,settings);
        
         return (
-            <BL filter={filter} attrs={{ fontSize: settings.fontSize,...attrs }}  text={textFunction} /> 
+            <BL {...props} filter={filter} attrs={{ fontSize: settings.fontSize,...attrs }}  text={textFunction} /> 
         )
 
     } else {
