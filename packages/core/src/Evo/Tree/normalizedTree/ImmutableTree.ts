@@ -87,6 +87,7 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
     this.taxonSet.lockTaxa()
     return this
   }
+
   addTaxon(name: string): ImmutableTree {
     this.taxonSet.addTaxon(name)
     return this

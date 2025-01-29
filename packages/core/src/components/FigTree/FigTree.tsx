@@ -68,7 +68,7 @@ function FigTree(props:FigtreeProps){
     if(!Array.isArray(rawChildren)){
         rawChildren = [rawChildren];
     }
-    const children = rawChildren.map(child=>React.cloneElement(child,{tree:tree,layout:layoutMap,animated,scale,dimensions,layoutClass}));
+    const children = rawChildren.map((child,i)=>React.cloneElement(child,{key:i,tree:tree,layout:layoutMap,animated,scale,dimensions,layoutClass}));
 
     return (
                 <g>

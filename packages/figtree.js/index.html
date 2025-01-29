@@ -147,7 +147,7 @@
         let tree = ImmutableTree.fromNewick(newickString, { labelName: 'probability' })
         let tree2 = ImmutableTree.fromNewick(newickString2, { labelName: 'probability' })
 
-        const virus1Node = tree.getNodeByTaxon("virus1");
+        const virus1Node = tree.getNode("virus1");
         const probability = tree.getAnnotation(tree.getParent(virus1Node), "probability");    // tree.annotateNode(tree.root,{root:true})
         const treeSVG = document.getElementById('phylogram_1a');
         const treeSVG2 = document.getElementById('phylogram_1b');
@@ -165,11 +165,11 @@
             margins,
             animated:true,
             baubles: [
-            ft.Axis({bars:{}}),
+            // ft.Axis({bars:{}}),
             ft.Branches({ attrs: { stroke: "black", strokeWidth: 2, cursor:"pointer"}, curvature:curvature,
              interactions:{onClick:()=>console.log("clicked"), onMouseOver:()=>console.log("enter"), onMouseLeave:()=>console.log("leave")}}),
-            ft.NodeLabels({filter:(n)=>tree.isExternal(n), attrs: { fill: "black", fontSize: 12, fontWeight: 300 }, text: (n) => tree.getTaxon(n),aligned:true  }),
-            ft.CircleNodes({ attrs: { r: 7, fill: (n) => tree.getChildCount(n) > "#005C68" } }),
+            ft.NodeLabels({filter:(n)=>tree.isExternal(n), attrs: { fill: "black", fontSize: 12, fontWeight: 300 }, text: (n) => tree.getTaxon(n).name,aligned:true  }),
+            ft.CircleNodes({ attrs: { r: 7, fill: "#005C68" } }),
             ft.CircleNodes({ attrs: { r: 5, fill: (n) => tree.getChildCount(n) > 0 ? tree.isRoot(n) ? "#e31e58" : "#29c5ef" : "#22b680" , cursor:"pointer"},interactions:{onClick:(n)=>console.log(n)}}),
             ft.BranchLabels({ attrs: { fill: "black", fontSize: 8, fontWeight: 300 }, text: (n) => tree.getLength(n) }),
             ],

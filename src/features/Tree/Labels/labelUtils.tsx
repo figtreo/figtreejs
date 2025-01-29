@@ -54,7 +54,7 @@ export function getTextFunction(tree: ImmutableTree, settings: any) {
     let textFunction;
     switch (settings.display) {
         case "Name":
-            textFunction = (node: NodeRef) => tree.getTaxon(node);
+            textFunction = (node: NodeRef) => tree.getTaxon(node)===undefined?'':tree.getTaxon(node)!.name;
             break;
         case "Node Heights":
             textFunction = (node: NodeRef) => tree.getHeight(node)? numericalFormatter(tree.getHeight(node)!):'';

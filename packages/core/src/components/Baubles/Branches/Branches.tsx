@@ -19,9 +19,9 @@ export default function Branches(props:BranchProps) {
     return (
         <g className={"branch-layer"}>
              {[...preOrderIterator(tree)].filter(node=>filter(node) && !tree.isRoot(node)).map((node) => {
-                     {
+                        console.log("node",keyBy(node))
                         return <Branch key={keyBy(node)} node={node}  parent={tree.getParent(node)} shapeProps={shapeProps} {...rest}/> 
-                    }
+                    
                 })
                 }
         </g>
