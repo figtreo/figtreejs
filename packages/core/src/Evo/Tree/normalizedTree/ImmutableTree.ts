@@ -32,7 +32,7 @@ interface ImmutableTreeData {
       [label: string]: number
     }
   }
-  heights:[];
+  heights: []
   nodeToTaxon: number[]
   rootNode: number
   is_rooted: boolean
@@ -78,7 +78,7 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
         rootNode: 0,
         is_rooted: true,
         annotations: {},
-        heights:[]
+        heights: [],
       }
     }
     this._data = data
@@ -197,10 +197,10 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
     return this.taxonSet.getTaxon(taxaIndex)
   }
   //TODO overload as above.
-  getTaxon(id: number|NodeRef): Taxon | undefined {
-    if(typeof id === "number"){
-    return this.taxonSet.getTaxon(id)
-    }else{
+  getTaxon(id: number | NodeRef): Taxon | undefined {
+    if (typeof id === "number") {
+      return this.taxonSet.getTaxon(id)
+    } else {
       return this.getTaxonFromNode(id)
     }
   }
@@ -213,17 +213,18 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
     const divMap: number[] = []
     let maxDiv = 0
     for (const node of preOrderIterator(this)) {
-      if(this.isRoot(node)){
-        divMap[node.number] = 0;
-        continue;
+      if (this.isRoot(node)) {
+        divMap[node.number] = 0
+        continue
       }
-      const nodeDiv = this.getLength(node)! + divMap[this.getParent(node)!.number]
+      const nodeDiv =
+        this.getLength(node)! + divMap[this.getParent(node)!.number]
       divMap[node.number] = nodeDiv
       if (nodeDiv > maxDiv) {
         maxDiv = nodeDiv
       }
     }
-  return maxDiv-divMap[node.number];
+    return maxDiv - divMap[node.number]
   }
   hasBranchLength(node: NodeRef): number {
     throw new Error("hasBranchLength not implemented.")
@@ -261,20 +262,34 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
     return this._toString(node!) + ";"
   }
 
-  getMRCA(node1: NodeRef, node2: NodeRef): NodeRef {
-    const path1 = [...this.getPathToRoot(node1)]
-
-    let mrca = null
-    for (const ancestor of this.getPathToRoot(node2)) {
-      if (path1.includes(ancestor)) {
-        mrca = ancestor
-        break
+  getMRCA(node1: NodeRef | NodeRef[], node2?: NodeRef): NodeRef {
+    if (Array.isArray(node1)) {
+      const nodes = node1 as NodeRef[]
+      if (nodes.length === 0) {
+        throw new Error("No nodes provided to get MRCA")
       }
+      let mrca = nodes[0]
+      for (let i = 1; i < nodes.length; i++) {
+        mrca = this.getMRCA(mrca, nodes[i])
+        if (this.isRoot(mrca)) {
+          return mrca
+        }
+      }
+      return mrca
+    } else {
+      const path1 = [...this.getPathToRoot(node1)]
+      let mrca = null
+      for (const ancestor of this.getPathToRoot(node2!)) {
+        if (path1.includes(ancestor)) {
+          mrca = ancestor
+          break
+        }
+      }
+      if (mrca === null) {
+        throw new Error("No MRCA found")
+      }
+      return mrca
     }
-    if (mrca === null) {
-      throw new Error("No MRCA found")
-    }
-    return mrca
   }
 
   getPath(node1: NodeRef, node2: NodeRef): NodeRef[] {
@@ -504,35 +519,36 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
 
   //TODO handle height and divergence changes still not very happy with how these are handled.
 
-
   setHeight(node: NodeRef, height: number): ImmutableTree {
     return produce(this, (draft) => {
       const n = draft.getNode(node.number) as Node
-      if(height < 0){
+      if (height < 0) {
         throw new Error("Height must be non-negative")
       }
 
-      const currentHeight = draft.getHeight(node);
-      const change = currentHeight-height; // positive change increases length
-      n.length=n.length!+change;
-  })}
+      const currentHeight = draft.getHeight(node)
+      const change = currentHeight - height // positive change increases length
+      n.length = n.length! + change
+    })
+  }
 
   setLength(node: NodeRef, length: number): ImmutableTree {
     return produce(this, (draft) => {
       const n = draft.getNode(node.number) as Node
-      n.length = length;
+      n.length = length
     })
   }
   // can only be called once heights are known.
   setDivergence(node: NodeRef, divergence: number): ImmutableTree {
     return produce(this, (draft) => {
       const n = draft.getNode(node.number) as Node
-      const height = draft.getHeight(node);
-      const rootHeight = draft.getHeight(draft.getRoot());
-      const currentDivergence = rootHeight-height;
-      const change = currentDivergence-divergence;// a negative change increases the length
-      n.length=n.length!-change;
-  })}
+      const height = draft.getHeight(node)
+      const rootHeight = draft.getHeight(draft.getRoot())
+      const currentDivergence = rootHeight - height
+      const change = currentDivergence - divergence // a negative change increases the length
+      n.length = n.length! - change
+    })
+  }
 
   setLabel(node: NodeRef, label: string): ImmutableTree {
     if (this._data.nodes.byLabel[label] !== undefined) {
@@ -552,8 +568,6 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
       n.length = length
     })
   }
-
-
 
   // Topology changes  - updates to root and descendants
 
@@ -757,7 +771,6 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
       // todo reset heights.
       // traverse and get max height;
       // set all heights to max height - divergence
-
     })
   }
   removeChild(parent: NodeRef, child: NodeRef): ImmutableTree {
