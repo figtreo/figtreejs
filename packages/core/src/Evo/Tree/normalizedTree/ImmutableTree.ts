@@ -198,10 +198,12 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
     return this.taxonSet.getTaxon(taxaIndex)
   }
   //TODO overload as above.
-  getTaxon(id: number | NodeRef): Taxon | undefined {
+  getTaxon(id: number | NodeRef|string): Taxon | undefined {
     if (typeof id === "number") {
       return this.taxonSet.getTaxon(id)
-    } else {
+    } else if(typeof id === "string") {
+      return this.getTaxonByName(id)
+    }else {
       return this.getTaxonFromNode(id)
     }
   }

@@ -1,5 +1,5 @@
 {
-  "name": "figtreejs",
+  "name": "@figtreejs/web",
   "version": "0.0.1",
   "description": "A standalone library for phylogenetic visualization",
   "main": "dist/cjs/index.js",

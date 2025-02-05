@@ -36,10 +36,10 @@ export function  parseNexus(tree:ImmutableTree,nexus:string,options={}):Immutabl
                     }else{
                         const treeString = token.substring(token.indexOf("("));
                         if(tipNameMap.size>0) {
-                            return parseNewick(tree,treeString, { parseAnnotations: true,...options, tipNameMap: tipNameMap});
+                            return parseNewick(treeString, { parseAnnotations: true,...options, tipNameMap: tipNameMap});
 
                         }else{
-                            return parseNewick(tree,treeString, {parseAnnotations: true,...options, tipNameMap: tipNameMap});
+                            return parseNewick(treeString, {parseAnnotations: true,...options, tipNameMap: tipNameMap});
                             ;
                         }
                     }
