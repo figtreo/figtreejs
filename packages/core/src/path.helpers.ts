@@ -10,8 +10,8 @@ import abs from 'abs-svg-path'
 import normalize from 'normalize-svg-path'
 import parse from 'parse-svg-path'
 class point{
-    x:number
-    y:number
+    x:number;
+    y:number;
     constructor(x:number,y:number){
         this.x=x
         this.y=y
