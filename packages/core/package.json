@@ -7,8 +7,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "rollup -c ",
-    "build:watch": "rollup -c --bundleConfigAsCjs -w",
-    "dev": "rollup -c --bundleConfigAsCjs -w",
+    "dev": "rollup -c -w",
     "test": "vitest"
   },
   "author": "Andrew Rambaut and JT McCrone",
