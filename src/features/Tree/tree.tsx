@@ -28,6 +28,8 @@ import {
   ImmutableTree,
   rectangularLayout,
   polarLayout,
+  layoutClass,
+  radialLayout,
 } from "@figtreejs/core"
 import { useAreaSelection } from "../../app/area-selection"
 import { select } from "d3-selection"
@@ -276,14 +278,23 @@ export function Tree({ panelRef }: any) {
     }
   }
 
-  const treeLayout =
-    layout === "Rectangular"
-      ? rectangularLayout
-      : layout === "Polar"
-      ? polarLayout
-      : () => {
-          throw new Error("Not implemented!")
-        }
+  let treeLayout;
+  
+    switch (layout) {
+      case layoutClass.Rectangular:
+        treeLayout =  rectangularLayout;
+        break;
+      case layoutClass.Polar:
+        treeLayout =  polarLayout;
+        break;
+      case layoutClass.Radial:
+        treeLayout = radialLayout;
+        break;
+      default:
+        throw new Error(`layout Option ${layout} Not implemented!`)
+    }
+  
+   
   //
   const handlePaste = (event: any) => {
     const tree = ImmutableTree.fromString(event.clipboardData.getData("text"), {

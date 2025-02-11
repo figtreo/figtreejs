@@ -1,21 +1,17 @@
 import { immerable, produce } from "immer"
 import { AnnotationType } from "../Tree.types"
 
-interface TaxonInterface {
+export interface Taxon {
     name:string,
     number:number,
     annotations: { [annotation: string]: string | string[] | number | number[] }
 }
 
-export class Taxon implements TaxonInterface{
-    name: string
-    number: number
-    annotations: { [annotation: string]: string | number | string[] | number[] }
-
-    constructor(name:string,number:number){
-        this.name=name;
-        this.number = number;
-        this.annotations = {}
+function newTaxon(name:string,number:number):Taxon{
+    return {
+        name,
+        number,
+        annotations:{}
     }
 }
 
@@ -27,46 +23,49 @@ export interface TaxonSetInterface{
     lockTaxa():TaxonSetInterface;
 }
 
+export interface TaxonSetData{
+    allNames:string[],
+    byName:{[taxon:string]:Taxon},
+    finalized:boolean
+}
 export class TaxonSet implements TaxonSetInterface{
-    allNames:string[]; 
-    byName:{[taxon:string]:Taxon};
-    finalized:boolean = false;
-    constructor(taxonSet?:TaxonSet){
-      if(taxonSet===undefined){
-        this.allNames=[];
-        this.byName={};
-      }
-      else{
-        this.allNames = taxonSet.allNames;
-        this.byName = taxonSet.byName;
-      }
+    _data:TaxonSetData;
+    constructor(taxonSetData?:TaxonSetData){
+        this._data = taxonSetData?taxonSetData:{
+            allNames:[],
+            byName:{},
+            finalized:false
+        }
     }
     lockTaxa(): TaxonSetInterface {
-        if(!this.finalized){
-            this.finalized = true;
+        if(!this._data.finalized){
+            this._data.finalized = true;
         }
         return this;
     }
     addTaxon(name:string):TaxonSet{
-        if(this.finalized){
+        if(this._data.finalized){
             throw new Error('Cannot add taxon to finalized set')
         }
-        if(this.byName[name]){
+        if(this._data.byName[name]){
             throw new Error(`taxon ${name} already exists in the set. Names must be unique`)
         }
-        const taxon = new Taxon(name,this.allNames.length)
-        this.allNames.push(name);
-        this.byName[name] = taxon;
+        const taxon = newTaxon(name,this._data.allNames.length)
+        this._data.allNames.push(name);
+        this._data.byName[name] = taxon;
         return this;
     }
 
     getTaxon(id:number):Taxon|undefined{
-        return this.byName[this.allNames[id]]
+        return this._data.byName[this._data.allNames[id]]
     }
     getTaxonByName(name:string):Taxon{
-        return this.byName[name]
+        return this._data.byName[name]
     }
     getTaxonCount():number{
-        return this.allNames.length
+        return this._data.allNames.length
+    }
+    get isFinalized(){
+        return this._data.finalized
     }
   }

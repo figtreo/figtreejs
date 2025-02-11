@@ -15,11 +15,9 @@ export default function Branches(props:BranchProps) {
     keyBy=n=>n.number,
     ...rest} = props;
     const shapeProps = useAttributeMappers({attrs,interactions}); //TODO not obvious why in an object
-    // todo make Key below based on downstream clade
     return (
         <g className={"branch-layer"}>
              {[...preOrderIterator(tree)].filter(node=>filter(node) && !tree.isRoot(node)).map((node) => {
-                        console.log("node",keyBy(node))
                         return <Branch key={keyBy(node)} node={node}  parent={tree.getParent(node)} shapeProps={shapeProps} {...rest}/> 
                     
                 })

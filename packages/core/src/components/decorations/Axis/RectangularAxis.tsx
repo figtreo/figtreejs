@@ -8,7 +8,6 @@ import {
   AxisScaleContext,
   defaultAxisProps,
 } from "./Axis.types"
-import { dimensionState } from "../../../store/store"
 
 export default function Axis(props: any) {
   const { dimensions, layoutClass } = props
@@ -171,7 +170,7 @@ function getTickLine(length: number, direction: AxisOrientation) {
 
 function makeAxisScale(
   props: any,
-  { canvasWidth, canvasHeight, domain }: dimensionState,
+  { canvasWidth, canvasHeight, domain }: {canvasWidth: number, canvasHeight: number, domain: number[]},
 ) {
   const {
     reverse = defaultAxisProps.reverse,

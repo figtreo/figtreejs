@@ -4,7 +4,7 @@ import { defaultInternalLayoutOptions, rectangularLayout } from '../../Layouts';
 import { Branches } from '../Baubles';
 import { ImmutableTree } from '../../Evo/Tree';
 import { getScale } from '../../store/store';
-
+import { extent } from 'd3-array';
 
 
 /**
@@ -59,10 +59,12 @@ function FigTree(props:FigtreeProps){
     const point = pointOfInterest?pointOfInterest: {x:(margins.left+canvasWidth)/2,y:(margins.top+height)/2};
         
     const layoutMap = layout(tree);
-    const {maxX,maxY,layoutClass} = layoutMap(tree.getRoot())!;
+    const {layoutClass} = layoutMap(tree.getRoot())!;
+    const [minX,maxX] = extent(tree.getNodes().map(n=>layoutMap(n)!.x));
+    const [minY,maxY] = extent(tree.getNodes().map(n=>layoutMap(n)!.y));
     // console.log('layoutMap',{maxX,maxY,layoutClass});
-    const scale = getScale(maxX,maxY,canvasWidth,canvasHeight,layoutClass);
-    const dimensions = {canvasWidth,canvasHeight,domain:[0,maxX],layoutClass};
+    const dimensions = {canvasWidth,canvasHeight,domainX:[minX!,maxX!],domainY:[minY!,maxY!],layoutClass};
+    const scale = getScale(dimensions);
     let rawChildren = (props.children?props.children:defaultOpts.children) as React.ReactElement|React.ReactElement[];
 
     if(!Array.isArray(rawChildren)){

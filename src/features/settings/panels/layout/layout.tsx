@@ -8,6 +8,7 @@ import { RadialOptions } from './radialOptions';
 import rectTreeImage from '../../../../figtreeGraphics/rectangularTree.png'
 import polarTreeImage from '../../../../figtreeGraphics/polarTree.png'
 import radialTreeImage from '../../../../figtreeGraphics/radialTree.png'
+import { layoutClass } from '@figtreejs/core';
 export function Layout() {
     const { layout,zoom,expansion,fishEye,animate,pollard} = useAppSelector(selectLayout);
     const dispatch = useAppDispatch();
@@ -20,13 +21,13 @@ export function Layout() {
                 <div className="layoutImages">
                     <div className="layoutSpacer" />
                     <div className='imageContainer'>
-                        <div className={`image  ${layout === "Rectangular" ? "selected" : ''}`} onClick={() => dispatch(setLayout("Rectangular"))} title="rectangle layout">
+                        <div className={`image  ${layout === layoutClass.Rectangular ? "selected" : ''}`} onClick={() => dispatch(setLayout(layoutClass.Rectangular))} title="rectangle layout">
                             <img src={rectTreeImage} alt="" />
                         </div>
-                        <div className={`image  ${layout === "Polar" ? "selected" : ''}`} onClick={() => dispatch(setLayout("Polar"))} title="polar layout">
+                        <div className={`image  ${layout === layoutClass.Polar ? "selected" : ''}`} onClick={() => dispatch(setLayout(layoutClass.Polar))} title="polar layout">
                             <img src={polarTreeImage} alt="" />
                         </div>
-                        <div className={`image ${layout === "Equalangle" ? "selected" : ''}`} onClick={() => dispatch(setLayout("Equalangle"))} title="radial layout">
+                        <div className={`image ${layout === layoutClass.Radial ? "selected" : ''}`} onClick={() => dispatch(setLayout(layoutClass.Radial))} title="radial layout">
                             <img src={radialTreeImage} alt="" />
                         </div>
                     </div>

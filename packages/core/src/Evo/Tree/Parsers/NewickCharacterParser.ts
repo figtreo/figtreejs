@@ -179,7 +179,7 @@ export class NewickCharacterParser {
           }
         }
         
-        if (this.taxonSet.finalized) {
+        if (this.taxonSet.isFinalized) {
           // if set then it will be finalised by now.
           taxon = this.taxonSet.getTaxonByName(name)
           if (taxon === undefined) {

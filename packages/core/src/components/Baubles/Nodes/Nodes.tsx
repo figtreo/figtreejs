@@ -37,11 +37,10 @@ function NodeLabels(props:any){
         const {tree,
             filter=(n:NodeRef)=>true,
             keyBy=(n:NodeRef)=>n.number,
-            aligned=false,gap = 6,layout,scale,...rest} = props;
+            aligned=false,gap = 6,layout,scale,dimensions,...rest} = props;
         const shapeProps = useAttributeMappers(props);
         const useVertex = useVertexFactory(layout);
-        const rootV = useVertex(tree.getRoot());
-        const {maxX} = rootV
+        const {maxX} = dimensions
 
     return (
         <g className={"node-label-layer"}>
@@ -51,6 +50,7 @@ function NodeLabels(props:any){
                     const scaledV = scale(v);
                     const layoutClass = v.layoutClass;
                     const labelxScootFactor = tree.isInternal(node) ? -1 : 1;
+                    
                     const dx = layoutClass==="Rectangular"? labelxScootFactor*gap: Math.cos(scaledV.theta!)*gap  ; 
                     const dy = layoutClass==="Rectangular"?  (tree.getChildCount(node) > 0 ? 
                                                                     (tree.getParent(node) === undefined || tree.getChild(tree.getParent(node)!, 0) !== node) ?

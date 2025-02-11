@@ -16,23 +16,42 @@ export const useVertexFactory =(layout:(n:NodeRef)=>FunctionalVertex)=> (node:No
 }
 
 //Todo cache these
-export function getScale(maxX:number,maxY:number,canvasWidth:number,canvasHeight:number,layoutClass:layoutClass,invert:boolean=false,minRadius:number=0,angleRange:number=2*Math.PI,rootAngle:number=0){
-    
-    const xScale = scaleLinear().domain([0,maxX]).range([0,canvasWidth]);
-    const yScale = scaleLinear().domain([0,maxY]).range([0,canvasHeight]);
-    
-    switch(layoutClass){
+export function getScale({
+    domainX,
+    domainY,
+    canvasWidth,
+    canvasHeight,
+    layoutClass,
+    invert = false,
+    minRadius = 0,
+    angleRange = 2 * Math.PI,
+    rootAngle = 0
+}: {
+    domainX: number[],
+    domainY: number[],
+    canvasWidth: number,
+    canvasHeight: number,
+    layoutClass: layoutClass,
+    invert?: boolean,
+    minRadius?: number,
+    angleRange?: number,
+    rootAngle?: number
+}) {
+    let xScale = scaleLinear().domain(domainX).range([0, canvasWidth]);
+    let yScale = scaleLinear().domain(domainY).range([0, canvasHeight]);
+
+    switch (layoutClass) {
         case "Rectangular":
-            return function(vertex:{x:number,y:number}){
-                return {x:xScale(vertex.x),y:yScale(vertex.y)}
-            } 
+            return function (vertex: { x: number, y: number }) {
+                return { x: xScale(vertex.x), y: yScale(vertex.y) }
+            }
         case "Polar":
-            return polarScaleMaker(maxX,maxY,canvasWidth,canvasHeight,invert,minRadius,angleRange,rootAngle)
+            return polarScaleMaker(domainX[1], domainY[1], canvasWidth, canvasHeight, invert, minRadius, angleRange, rootAngle)
         case "Radial":
-            return function(vertex:{x:number,y:number}){
-                return {x:xScale(vertex.x),y:yScale(vertex.y)}
-            }         
-            default:
+            return function (vertex: { x: number, y: number }) {
+                return { x: xScale(vertex.x), y: yScale(vertex.y) }
+            }
+        default:
             throw new Error("Not implemented in calcX")
     }
 }

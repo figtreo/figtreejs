@@ -40,7 +40,7 @@ describe("Test rectangular layout",()=>{
         // expect(cV2).toStrictEqual(cV)
 
         expect(root2).not.toBe(root) //these are vertexes
-        expect(root2.maxX).toBeCloseTo(3);
+        expect(root2.x).toBeCloseTo(0);
 
     });
 

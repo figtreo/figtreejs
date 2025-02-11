@@ -23,6 +23,7 @@ const withBranch = (WrappedComponent: React.ComponentType<any>) => {
         const points = [vP,vN,step];
 
         const d = normalizePath(pathGenerator(points,curvature,layoutClass)); //normalized so we can use react spring to animate
+        console.log(pathGenerator(points,curvature,layoutClass))
         return <WrappedComponent {...rest} {...shapeProps(node)} d={d} id={node.number}/>
     } 
     return BranchedComponent;
@@ -30,15 +31,17 @@ const withBranch = (WrappedComponent: React.ComponentType<any>) => {
 export default withBranch;
 
 
-function pathGenerator(points: { x: number, y: number,r?:number,theta?:number }[], curvature:number,layoutClass:layoutClass): string {
+function pathGenerator(points: { x: number, y: number,r?:number,theta?:number }[], curvature:number,layout:layoutClass): string {
 
-    switch (layoutClass) {
-        case "Rectangular": {
+    switch (layout) {
+        case layoutClass.Rectangular: {
             return rectangularBranchPath(points,curvature);
         }
-        case "Polar": {
+        case layoutClass.Polar: {
             return polarBranchPath(points);
-        } default: {
+        } case layoutClass.Radial:{
+            return radialBranchPath(points);
+        }default: {
             throw new Error(`path generator not implemented for this ${layoutClass} of points`)
         }
     }
@@ -87,4 +90,22 @@ function polarBranchPath(points: { x: number, y: number,r?:number,theta?:number 
     }
 
     }
+}
+
+function radialBranchPath(points: { x: number, y: number,r?:number,theta?:number }[]):string{
+    const positions = points.length;
+
+    switch (positions) {
+        case 0: {
+            return '';
+        }
+        case 3: {
+            const [parent,child,step] = points; //parent is parent and gets pushed to end of array
+                return `M${parent.x},${parent.y}L${(parent.x + child.x) / 2},${(parent.y + child.y) / 2}L${child.x},${child.y}`;
+            
+        } default: {
+            throw new Error(`path rectangular generator not implemented for this ${positions} of points`)
+        }
+    }
+    
 }

@@ -1,19 +1,16 @@
 import { max, mean,min } from "d3-array";
-import { ImmutableTree, NodeRef, postOrderIterator, preOrderIterator, Tree } from "../../Evo/Tree";
+import { ImmutableTree, NodeRef, postOrderIterator} from "../../";
 import { PreOrderTraversalCache } from "../../Evo/Tree/Traversals/PreOrderTraversal";
 
 export enum layoutClass{
     Rectangular = "Rectangular",
-    Polar = "Polar"
-
+    Polar = "Polar",
+    Radial = "Radial"
 }
 
 export type FunctionalVertex = {
     x:number,
     y:number,
-    maxY:number,
-    maxX:number,
-    minY:number,
     layoutClass:layoutClass
     nodeLabel:{
         alignmentBaseline:string,
@@ -34,7 +31,7 @@ export function baseLayout(lc:layoutClass){
             let currentY = 0;
             for( const node of postOrderIterator(tree)){
     
-            let protoVertex:{x:number,y:number,maxX:number,maxY:number,minY:number};
+            let protoVertex:{x:number,y:number};
             const x = tree.getDivergence(node)!;
             const leftLabel = tree.getChildCount(node) > 0;
             const labelBelow = (tree.getChildCount(node) > 0 && (tree.getParent(node) === undefined || tree.getChild(tree.getParent(node)!, 0) !== node));
@@ -42,17 +39,14 @@ export function baseLayout(lc:layoutClass){
     
             if(tree.isExternal(node)){
 
-                protoVertex = {x,y:currentY,maxY:currentY,maxX:x, minY:currentY}
+                protoVertex = {x,y:currentY}
                 currentY++;
                 
             }else{
                 
                 const kidPositions = tree.getChildren(node).map(child=>map.get(child)!)
                 const y= mean(kidPositions,d=>d.y)!;
-                const maxY = max(kidPositions,d=>d.maxY)!;
-                const maxX = max(kidPositions,d=>d.maxX)!;
-                const minY = min(kidPositions,d=>d.minY)!;
-                protoVertex = {x,y,maxY,maxX,minY}
+                protoVertex = {x,y};
             }
             const vertex = {...protoVertex,
                 layoutClass:lc,
@@ -81,3 +75,4 @@ export function baseLayout(lc:layoutClass){
 
 
 export const rectangularLayout =baseLayout(layoutClass.Rectangular);
+export const polarLayout = baseLayout(layoutClass.Polar);

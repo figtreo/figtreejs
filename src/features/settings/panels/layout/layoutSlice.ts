@@ -1,9 +1,10 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../../../app/store';
+import { layoutClass } from '@figtreejs/core';
 
 
 export interface LayoutState {
-    layout: "Rectangular" | "Polar" | "Equalangle",
+    layout: layoutClass,
     expansion: number,
     pollard: number,
     rootLength: number,
@@ -23,7 +24,7 @@ export interface LayoutState {
 }
 
 export const initialState: LayoutState = {
-    layout: 'Rectangular',
+    layout: layoutClass.Rectangular,
     expansion: 0,
     rootLength: 0,
     curvature: 0,
@@ -46,7 +47,7 @@ export const layoutSlice = createSlice({
     name: 'layout',
     initialState,
     reducers: {
-        setLayout: (state, action: PayloadAction<"Rectangular" | "Polar" | "Equalangle">) => {
+        setLayout: (state, action: PayloadAction<layoutClass>) => {
             state.layout = action.payload;
         },
         setExpansion: (state, action: PayloadAction<number>) => {

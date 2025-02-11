@@ -21,10 +21,10 @@ interface Node extends NodeRef {
   length: number | undefined
   level: number | undefined
   annotations: { [annotation: string]: string | string[] | number | number[] }
-  _id: symbol // an id so we can mark updates to root when topology changes
+  // _id: symbol // an id so we can mark updates to root when topology changes
 }
 
-interface ImmutableTreeData {
+export interface ImmutableTreeData {
   nodes: {
     allNodes: Node[]
     byTaxon: number[]
@@ -45,9 +45,9 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
   [immerable] = true
 
   _data: ImmutableTreeData
-  taxonSet: TaxonSetInterface
+  taxonSet: TaxonSet
   constructor(
-    input: { data?: ImmutableTreeData; taxonSet?: TaxonSetInterface } = {},
+    input: { data?: ImmutableTreeData; taxonSet?: TaxonSet } = {},
   ) {
     let { data, taxonSet } = input || {}
     if (taxonSet) {
@@ -68,7 +68,7 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
               level: undefined,
               taxon: undefined,
               annotations: {},
-              _id: Symbol(),
+              // _id: Symbol(),
             },
           ],
           byTaxon: [],
@@ -174,7 +174,7 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
   getNode(i: string | number | Taxon): NodeRef {
     if (typeof i === "number") {
       return this._data.nodes.allNodes[i]
-    } else if (i instanceof Taxon) {
+    } else if (i instanceof Object) {
       return this.getNodeByTaxon(i)!
     } else if (typeof i === "string") {
       const taxon = this.getTaxonByName(i)
@@ -452,7 +452,7 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
             level: undefined,
             taxon: undefined,
             annotations: {},
-            _id: Symbol(),
+            // _id: Symbol(),
           }
           newNodes.push(newNode)
           draft._data.nodes.allNodes.push(newNode)
@@ -707,7 +707,7 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
                 taxon: undefined,
                 level: undefined,
                 annotations: {},
-                _id: Symbol(),
+                // _id: Symbol(),
               }
               draft._data.nodes.allNodes.push(newNode)
               newNode.length = rootLength
@@ -1130,3 +1130,4 @@ export function* pathToRootIterator(
     n = tree.getParent(n)
   }
 }
+
