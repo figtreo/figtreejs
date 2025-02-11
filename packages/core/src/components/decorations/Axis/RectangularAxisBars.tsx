@@ -26,7 +26,7 @@ export default function AxisBars(props: any): JSX.Element {
 
 
   return (
-    <g className={"axisBars"}>
+    <g className={"axisBars"} key="axisBars">
       {tickValues.reduce((acc: JSX.Element[], curr: any, i: number) => {
         let width;
         let x;
@@ -49,7 +49,7 @@ export default function AxisBars(props: any): JSX.Element {
         const fill = i % 2 === 0 ? evenFill : oddFill
         acc.push(
           <rect
-            key={i}
+            key={`recBar-${i}`}
             transform={`translate(${x},0)`} // to deal with reverse scales
             width={width} // to deal with negative scales
             y={-1 * (canvasHeight + gap + lift)}

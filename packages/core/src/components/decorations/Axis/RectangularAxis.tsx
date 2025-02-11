@@ -91,7 +91,7 @@ export default function Axis(props: any) {
         {tickValues.map((t, i) => {
           return (
             <g
-              key={i}
+              key={`tick-${i}`}
               transform={`translate(${
                 direction === "horizontal" ? scale(t) : 0
               },${direction === "horizontal" ? 0 : scale(t)})`}
@@ -102,6 +102,7 @@ export default function Axis(props: any) {
                 strokeWidth={strokeWidth}
               />
               <text
+                key={`tickText-${i}`}
                 transform={`translate(${
                   direction === "horizontal" ? 0 : ticks.padding
                 },${direction === "horizontal" ? ticks.padding : 0})`}
@@ -170,7 +171,7 @@ function getTickLine(length: number, direction: AxisOrientation) {
 
 function makeAxisScale(
   props: any,
-  { canvasWidth, canvasHeight, domain }: {canvasWidth: number, canvasHeight: number, domain: number[]},
+  { canvasWidth, canvasHeight, domainX }: {canvasWidth: number, canvasHeight: number, domainX: number[]},
 ) {
   const {
     reverse = defaultAxisProps.reverse,
@@ -184,14 +185,14 @@ function makeAxisScale(
   const axisScale = (
     _scale === undefined
       ? direction === "horizontal"
-        ? scaleLinear().domain([0, domain[1]]).range([0, canvasWidth])
-        : scaleLinear().domain([0, domain[1]]).range([0, canvasHeight])
+        ? scaleLinear().domain([0, domainX[1]]).range([0, canvasWidth])
+        : scaleLinear().domain([0, domainX[1]]).range([0, canvasHeight])
       : _scale
   ).copy()
 
   if (_scale === undefined) {
     // assume domain goes 0 to max divergence make adjustments on this scale and then update min if it is not 0
-    const offset = domain.map((d) => d + offsetBy)
+    const offset = domainX.map((d) => d + offsetBy)
     const newDomain = offset.map((d, i) => (d - offsetBy) * scaleBy + offsetBy)
 
     axisScale.domain(newDomain)

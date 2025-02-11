@@ -1,10 +1,10 @@
-import { Axis, AxisBars } from "@figtreejs/core"
+import { Axis, AxisBars, layoutClass } from "@figtreejs/core"
 import { useAppSelector } from "../../app/hooks"
 import { selectAxis } from "../Settings/panels/axis/axisSlice"
 import { getNumericalFormatter } from "./Labels/labelUtils"
 import { selectLayout } from "../Settings/panels/layout/layoutSlice"
 
-export default function AxisElement(props:{}) {
+export default function AxisElement(props:any) {
 
     const axisSettings = useAppSelector(selectAxis)
     const {layout} = useAppSelector(selectLayout)
@@ -12,10 +12,11 @@ export default function AxisElement(props:{}) {
                 style:{fontSize:axisSettings.fontSize},
                 format:getNumericalFormatter(axisSettings.format,axisSettings.sigDigs)
     }
-    if(axisSettings.activated && layout!=="Equalangle"){
+    
+    if(axisSettings.activated && layout!==layoutClass.Radial){
         return(
-        <Axis reverse={axisSettings.reverseAxis} offsetBy={axisSettings.originValue}  scaleBy = {axisSettings.scaleBy} strokeWidth={axisSettings.lineWeight} ticks={ticks} title={{text:axisSettings.title,style:{fontSize:axisSettings.fontSize+6},padding:45   }}>
-            {axisSettings.showGrid?<AxisBars />:undefined}
+        <Axis reverse={axisSettings.reverseAxis} offsetBy={axisSettings.originValue}  scaleBy = {axisSettings.scaleBy} strokeWidth={axisSettings.lineWeight} ticks={ticks} title={{text:axisSettings.title,style:{fontSize:axisSettings.fontSize+6},padding:45   }} {...props}>
+            {axisSettings.showGrid?<AxisBars key="bars"/>:undefined}
         </Axis>
             )
     }else{
