@@ -1,21 +1,7 @@
-import layoutReducer, { LayoutState} from "./layoutSlice"
+import layoutReducer, { initialState} from "./layoutSlice"
 
 describe('layoutSlice',()=>{
-    const initialState: LayoutState = {
-        layout: 'rectangular',
-        expansion: 0,
-        fishEye: 0,
-        rootLength: 0,
-        curvature: 0,
-        alignTipLabels: false,
-        zoom: 0,
-        rootAngle: 0,
-        angleRange: 0,
-        showRoot: false,
-        spread: 0,
-        pointOfInterest: undefined,
-        animate: false,
-    };
+    
     it('should handle initial state', () => {
         expect(layoutReducer(undefined, { type: 'unknown' })).toEqual(initialState)
     })

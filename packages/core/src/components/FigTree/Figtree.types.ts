@@ -1,7 +1,7 @@
-import { AbstractLayout, NodeDecoration } from "../../Layouts/LayoutInterface";
-import { Tree,NodeRef } from "../../Tree/Tree.types";
+import { ImmutableTree,NodeRef } from "../../Evo/Tree";
+import { FunctionalVertex } from "../../Layouts/functional/rectangularLayout";
 
-interface Margins{
+export interface Margins{
     top:number,
     bottom:number,
     left:number,
@@ -13,21 +13,23 @@ export interface layoutOptions{
     rootLength?: number,
     rootAngle?: number,
     angleRange?: number,
-    tipSpace?: (tip1: NodeRef, tip2: NodeRef) => number, //Todo make arguements nodeRefs
-    curvature?: number,
     showRoot?: boolean,
     spread?: number
     pointOfInterest?: { x: number; y: number; },
     fishEye?: number;
-    nodeDecorations:{[key:string]:NodeDecoration}
-
+    pollard?:number,
+    invert?:boolean,
+    minRadius?:number,
+    padding?:number
 }
+
+type layoutFunction=(tree:ImmutableTree)=>(node:NodeRef)=>FunctionalVertex;
 
 export interface FigtreeProps {
     width:number,
     height:number,
-    layout:typeof AbstractLayout,
-    tree:Tree,
+    layout:layoutFunction,
+    tree:ImmutableTree,
     margins:Margins,
     children:React.ReactNode,
     opts:layoutOptions

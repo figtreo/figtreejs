@@ -1,6 +1,5 @@
 import React from 'react'
 
-import { useLayout, useScale } from "../../../hooks";
 
 import PolarAxis from './PolarAxis';
 import RectangularAxis from './RectangularAxis';
@@ -9,16 +8,16 @@ import { AxisProps } from './Axis.types';
 //TODO do things to scale and allow date as origin not maxD.
 
 
-export default function Axis(props: AxisProps) {
+export default function Axis(props: any) {
+    console.log('axis', props)
 
-    const {type} = useLayout(); 
- 
-    if(type === "Polar"){
-        return <PolarAxis {...props}/>
-    }else if (type === "Rectangular"){
+    const {layoutClass} = props.dimensions;
+    if(layoutClass === "Polar"){
+        return null; //<PolarAxis {...props}/>
+    }else if (layoutClass === "Rectangular"){
         return <RectangularAxis {...props}/>
     }else{
-        console.warn(`Axis not supported for ${type}`);
+        console.warn(`Axis not supported for ${layoutClass}`);
         return null;
     }
     

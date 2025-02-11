@@ -1,50 +1,49 @@
-import { extent, max, mean } from "d3-array";
+import {  max, mean } from "d3-array";
 import { scaleLinear } from "d3-scale";
 import { AbstractLayout, ArbitraryVertex, ArbitraryVertices, defaultInternalLayoutOptions, internalLayoutOptions, Vertices } from "./LayoutInterface";
-import { NodeRef, Tree } from "../Tree";
+import { NodeRef, Tree } from "../Evo/Tree";
+import { ImmutableTree, postOrderIterator } from "../Evo/Tree/NormalizedTree/ImmutableTree";
 
 
 export class RectangularLayout extends AbstractLayout {
 
-    static getArbitraryLayout(tree: Tree, opts: internalLayoutOptions): ArbitraryVertices {
+    static getArbitraryLayout(tree: Tree, opts?: internalLayoutOptions): ArbitraryVertices {
         const safeOpts = { ...defaultInternalLayoutOptions, ...opts };
         const { rootLength, tipSpace } = safeOpts;
-        const nodeDecorations = safeOpts.nodeDecorations;
+        if(safeOpts.pollard>1 || safeOpts.pollard<0) throw new Error("Pollard must be between 0 and 1");
+        const cartoonedNodes     = safeOpts.cartoonedNodes;
         let currentY = 0;
-        const vertices: ArbitraryVertices = { byId: {}, allIds: [], extent: { x: [0, 0], y: [0, 0] } };
+        const vertices: ArbitraryVertices = { vertices:[], extent: { x: [0, 0], y: [0, 0] } };
         let maxY = 0;
         let maxX = 0;
-        const adjustedRootLength = rootLength * max([...tree.getTips()].map((tip: NodeRef) => tree.getDivergence(tip)!))!
+        const adjustedRootLength = rootLength * max(tree.getExternalNodes().map((tip: NodeRef) => tree.getDivergence(tip)!))!
 
         let lastTip: null | NodeRef = null;
         //visits children first so we can get the y position of the parents. 
         // when visiting the parent we also update the path of the children. 
         // paths are stored on the parent
-        // todo neet to think about cartoons in this context
 
 
-        for (const node of tree.getPostorderNodes()) {
+        for (const node of postOrderIterator(tree)) {
 
             maxY = currentY;
 
             const leftLabel = tree.getChildCount(node) > 0;
-            const labelBelow = (tree.getChildCount(node) > 0 && (tree.getParent(node) === null || tree.getChild(tree.getParent(node)!, 0) !== node));
+            const labelBelow = (tree.getChildCount(node) > 0 && (tree.getParent(node) === undefined || tree.getChild(tree.getParent(node)!, 0) !== node));
 
             //internal node
             if (tree.getChildCount(node) > 0) {
-                const children: ArbitraryVertex[] = tree.getChildren(node).map((child: NodeRef) => vertices.byId[child.id]);
+                const children: ArbitraryVertex[] = tree.getChildren(node).map((child: NodeRef) => vertices.vertices[child.number]);
                 const x = tree.getDivergence(node)! + adjustedRootLength;
                 const y = children.reduce((acc, child) => acc + child.y, 0) / children.length;
 
-
-
-                vertices.byId[node.id] = {
+                vertices.vertices[node.number] = {
                     hidden:false,
                     labelHidden:false,
                     x,
                     y,
                     level: tree.getLevel(node), //max(children, (child: ArbitraryVertex) => child.level)! + 1,
-                    id: node.id,
+                    number: node.number,
                     pathPoints: [{ x, y }],
                     nodeLabel:
                     {
@@ -55,39 +54,39 @@ export class RectangularLayout extends AbstractLayout {
                     }
                 }
 
-                if (nodeDecorations[node.id] && nodeDecorations[node.id].cartooned) {
+                if (cartoonedNodes.has(node) && cartoonedNodes.get(node).cartooned) {
                     let i = 0;
                     // need max x for labels
                     let maxX = x;
                     let maxY = -Infinity;
                     let minY = Infinity;
-                    for (const descendent of tree.getPostorderNodes(node)) {
+                    for (const descendent of postOrderIterator(tree,node)) {
                         if (node === descendent) continue;
 
-                        if (tree.isExternal(tree.getNode(descendent.id))) {
-                            const descendentVertex = vertices.byId[descendent.id];
+                        if (tree.isExternal(descendent)) {
+                            const descendentVertex = vertices.vertices[descendent.number];
                             if (descendentVertex.x > maxX) maxX = descendentVertex.x;
-                            const y = descendentVertex.y - i * nodeDecorations[node.id].collapseFactor;
+                            const y = descendentVertex.y - i * cartoonedNodes.get(node).collapseFactor;
                             descendentVertex.y = y; // update for labeling etc
                             if (y > maxY) maxY = y;
                             if (y < minY) minY = y;
                             i++;
                         }
-                        vertices.byId[descendent.id].hidden=true;
-                        vertices.byId[descendent.id].labelHidden= nodeDecorations[node.id].collapseFactor===0;
+                        vertices.vertices[descendent.number].hidden=true;
+                        vertices.vertices[descendent.number].labelHidden= cartoonedNodes.get(node).collapseFactor===0;
                     }
 
                     const newy = (maxY + minY) / 2;
-                    vertices.byId[node.id].y = newy;;
+                    vertices.vertices[node.number].y = newy;;
 
-                    vertices.byId[node.id].pathPoints = [{ x: maxX, y: minY }, { x: maxX, y: maxY }, { x, y: newy }]
+                    vertices.vertices[node.number].pathPoints = [{ x: maxX, y: minY }, { x: maxX, y: maxY }, { x, y: newy }]
 
                     currentY = maxY + 1
 
                 }
                 else {
                     for (const child of children) {
-                        vertices.byId[child.id].pathPoints.push({ x, y })
+                        vertices.vertices[child.number].pathPoints.push({ x, y })
                     }
                 }
                 //update children paths
@@ -96,12 +95,12 @@ export class RectangularLayout extends AbstractLayout {
                 //tip
                 const x = tree.getDivergence(node)! + adjustedRootLength
                 const y = currentY;
-                vertices.byId[node.id] = {
+                vertices.vertices[node.number] = {
                     hidden:false,
                     labelHidden:false,
                     x,
                     y,
-                    id: node.id,
+                    number: node.number,
                     level: 0,
                     pathPoints: [{ x, y }],
                     nodeLabel: {
@@ -123,29 +122,27 @@ export class RectangularLayout extends AbstractLayout {
             }
         }
 
-        vertices.extent = { x: [0, maxX], y: [0, currentY-1] }
+        vertices.extent = { x: [maxX*safeOpts.pollard, maxX], y: [0, currentY-1] }
 
-        if (tree.root) {
-            const rootVertex = vertices.byId[tree.root.id];
-            vertices.byId[tree.root.id].pathPoints.push({ x: 0, y: rootVertex.y })
+        if (tree.getRoot() !== undefined) {
+            const rootVertex = vertices.vertices[tree.getRoot()!.number];
+            vertices.vertices[tree.getRoot()!.number].pathPoints.push({ x: 0, y: rootVertex.y })
         }
-
-        vertices.allIds = Object.keys(vertices.byId);
-
         return vertices;
     }
 
 
     static finalizeArbitraryLayout(arbitraryLayout: ArbitraryVertices, treeStats: { tipCount: number }, opts: internalLayoutOptions): Vertices {
-
         const safeOpts = { ...defaultInternalLayoutOptions, ...opts };
+        const padding = safeOpts.padding;
+        const xRange = safeOpts.invert ? [padding, safeOpts.width - padding].reverse() : [padding, safeOpts.width - padding];
         const x = scaleLinear()
             .domain(arbitraryLayout.extent.x)
-            .range([this.padding, opts.width - this.padding]);
+            .range(xRange);
 
         const y_og = scaleLinear()
             .domain(arbitraryLayout.extent.y)
-            .range([this.padding, opts.height - this.padding]);
+            .range([padding, safeOpts.height - padding]);
 
         const pointOfInterestY = y_og.invert(safeOpts.pointOfInterest.y)
 
@@ -153,15 +150,13 @@ export class RectangularLayout extends AbstractLayout {
 
         const y = scaleLinear()
             .domain(arbitraryLayout.extent.y.map(transform))
-            .range([this.padding, opts.height - this.padding]);
+            .range([padding, safeOpts.height - padding]);
 
         const scaledVertices: Vertices = {
-            byId: {},
-            allIds: [],
+            vertices:[],
             type:"Rectangular"
         };
-        for (const id of arbitraryLayout.allIds) {
-            const vertex = arbitraryLayout.byId[id];
+        for (const vertex of arbitraryLayout.vertices) {
 
             const xpos = x(vertex.x);
             const ypos = y(transform(vertex.y));
@@ -171,8 +166,8 @@ export class RectangularLayout extends AbstractLayout {
             }
 
 
-            scaledVertices.byId[vertex.id] = {
-                id: vertex.id,
+            scaledVertices.vertices[vertex.number] = {
+                number: vertex.number,
                 x: xpos,
                 y: ypos,
                 level: vertex.level,
@@ -189,7 +184,7 @@ export class RectangularLayout extends AbstractLayout {
                 branch: vertex.pathPoints.length > 1 ? {
                     d: this.pathGenerator(vertex.pathPoints.map(d => ({ x: x(d.x), y: y(transform(d.y)) })), safeOpts),
                     label: {
-                        x: mean([xpos, x(vertex.pathPoints[1].x)])!, //parent is at the end of the array
+                        x: mean([xpos, x(vertex.pathPoints[vertex.pathPoints.length-1].x)])!, //parent is at the end of the array
                         y: ypos - 6,
                         alignmentBaseline: "bottom",
                         textAnchor: "middle",
@@ -197,7 +192,6 @@ export class RectangularLayout extends AbstractLayout {
                     }
                 } : undefined
             };
-            scaledVertices.allIds.push(vertex.id);
         }
         scaledVertices.axisLength = x.range()[1] - x.range()[0];
         return scaledVertices;

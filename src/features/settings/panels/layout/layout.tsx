@@ -1,5 +1,5 @@
 import { useAppSelector, useAppDispatch } from '../../../../app/hooks';
-import { flipAnimate, selectLayout, setExpansion, setFisheye, setLayout, setZoom } from './layoutSlice';
+import { flipTangle, flipAnimate, selectLayout, setExpansion, setFisheye, setLayout, setPollard, setZoom } from './layoutSlice';
 import { SettingPanel } from '../PanelHeader';
 import './layout.css'
 import { RectangularOptions } from './rectangularOptions';
@@ -8,9 +8,12 @@ import { RadialOptions } from './radialOptions';
 import rectTreeImage from '../../../../figtreeGraphics/rectangularTree.png'
 import polarTreeImage from '../../../../figtreeGraphics/polarTree.png'
 import radialTreeImage from '../../../../figtreeGraphics/radialTree.png'
+import { layoutClass } from '@figtreejs/core';
 export function Layout() {
-    const { layout,zoom,expansion,fishEye,animate } = useAppSelector(selectLayout);
+    const { layout,zoom,expansion,fishEye,animate,pollard} = useAppSelector(selectLayout);
     const dispatch = useAppDispatch();
+
+
     return (
         <SettingPanel title="Layout" intialOpen={true} >
 
@@ -18,13 +21,13 @@ export function Layout() {
                 <div className="layoutImages">
                     <div className="layoutSpacer" />
                     <div className='imageContainer'>
-                        <div className={`image  ${layout === "rectangular" ? "selected" : ''}`} onClick={() => dispatch(setLayout("rectangular"))} title="rectangle layout">
+                        <div className={`image  ${layout === layoutClass.Rectangular ? "selected" : ''}`} onClick={() => dispatch(setLayout(layoutClass.Rectangular))} title="rectangle layout">
                             <img src={rectTreeImage} alt="" />
                         </div>
-                        <div className={`image  ${layout === "circular" ? "selected" : ''}`} onClick={() => dispatch(setLayout("circular"))} title="polar layout">
+                        <div className={`image  ${layout === layoutClass.Polar ? "selected" : ''}`} onClick={() => dispatch(setLayout(layoutClass.Polar))} title="polar layout">
                             <img src={polarTreeImage} alt="" />
                         </div>
-                        <div className={`image ${layout === "equalangle" ? "selected" : ''}`} onClick={() => dispatch(setLayout("equalangle"))} title="radial layout">
+                        <div className={`image ${layout === layoutClass.Radial ? "selected" : ''}`} onClick={() => dispatch(setLayout(layoutClass.Radial))} title="radial layout">
                             <img src={radialTreeImage} alt="" />
                         </div>
                     </div>
@@ -60,7 +63,7 @@ export function Layout() {
                     id="expansion"
                     onChange={(e) => { dispatch(setExpansion(parseFloat(e.target.value))) }}
                     value={expansion}
-                    disabled={layout!=="rectangular"}
+                    disabled={layout!=="Rectangular"}
                 />
             </div>
             <div className='option range'>
@@ -74,23 +77,39 @@ export function Layout() {
 
                     onChange={(e) => dispatch(setFisheye(parseFloat(e.target.value)))}
                     value={fishEye}
-                    disabled={layout==="equalangle"}
+                    disabled={layout==="Equalangle"}
 
                 />
+            </div>
+            <div  className='option range'>
+
+
+            <label htmlFor="pollard">Pollard: </label>
+
+            <input
+                type="range"
+                min="0"
+                max="0.99"
+                step={0.01}
+                id="pollard"
+                onChange={(e) => { dispatch(setPollard(parseFloat(e.target.value))) }}
+                value={pollard}
+                disabled={layout!=="Rectangular"}
+            />
             </div>
             <div>
             <input
                     type="checkbox"
                     checked={animate}
                     onChange={() => dispatch(flipAnimate())}
-                    id="alignLabels"
+                    id="animate"
                 />
-                <label htmlFor='alignlabels'>Animate</label>
+                <label htmlFor='animate'>Animate</label>
             </div>
             <div className="layoutOptions">
-            {layout === "rectangular" ? <RectangularOptions /> :
-                layout === "circular" ? <PolarOptions /> :
-                    layout === "equalangle" ? <RadialOptions /> : null}
+            {layout === "Rectangular" ? <RectangularOptions /> :
+                layout === "Polar" ? <PolarOptions /> :
+                    layout === "Equalangle" ? <RadialOptions /> : null}
             </div>
 
         </SettingPanel>

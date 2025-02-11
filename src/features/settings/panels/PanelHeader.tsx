@@ -10,10 +10,23 @@ Clicking on a title of a panel that is not checkable will open the panel.
 On a panel that is checkable, clicking to the left of the title will open the panel
 to the right of the title will toggle the box. 
 */
+// onClick:null,
+// checkable: false,
+// checked: false,
+// intialOpen:false
+
+
+const defaultProps = {
+    onClick:null,
+    intialOpen:false
+}
+
 export function SettingPanel(props: {
-    children: ReactNode; title: string, checkable: boolean, onClick?: () => void, checked: boolean,intialOpen?:boolean
+    children: ReactNode, title: string, checkable: boolean, onClick?: () => void, checked: boolean,intialOpen?:boolean
 }) {
-    const [isOpen, setOpen] = useState(props.intialOpen);
+    const {intialOpen,checked,onClick,checkable,title} = {...defaultProps,...props}
+
+    const [isOpen, setOpen] = useState(intialOpen);
 
     return (
         <div >
@@ -24,14 +37,14 @@ export function SettingPanel(props: {
 
             </div>
 
-            <div className="PanelTitle" onClick={props.onClick?props.onClick:()=>setOpen(!isOpen)}>
-                {props.checkable ?
+            <div className="PanelTitle" onClick={onClick?onClick:()=>setOpen(!isOpen)}>
+                {checkable ?
                     <div className="PanelTitle__checkbox" >
-                        <input type="checkbox" checked={props.checked} onChange={()=>null} />
+                        <input type="checkbox" checked={checked} onChange={()=>null} />
                     </div>
                     : ""}
                 <div className="PanelTitle__title"  >
-                   {props.title}
+                   {title}
                 </div>
             </div>
             </div>
@@ -43,9 +56,4 @@ export function SettingPanel(props: {
             )
 }
 
-            SettingPanel.defaultProps = {
-                onClick:null,
-                checkable: false,
-                checked: false,
-                intialOpen:false
-}
+            

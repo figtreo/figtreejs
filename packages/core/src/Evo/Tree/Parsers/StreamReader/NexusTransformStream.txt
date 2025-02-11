@@ -1,0 +1,109 @@
+import { TaxonSet, Tree } from "../..";
+
+enum NexusBlock {
+    Taxa = "taxa",
+    Trees = "trees",
+    Other = "other"
+}
+
+enum STATUS {
+    BLOCK_NAME_NEXT,
+    SKIP_SEMICOLON,
+    PARSING,
+    SKIPPING,
+    IN_BLOCK,
+    SKIP_UNTIL,
+}
+
+export function NexusTransformStream(){
+    // local parameters
+    const taxonSet = new TaxonSet();
+    let currentBlock :NexusBlock | undefined= undefined;
+    let status = STATUS.PARSING;
+    let command = undefined;
+
+    function processChunk(chunk:string):Tree|undefined{
+        if(status === STATUS.SKIP_SEMICOLON){
+            if(!chunk.match(/;$/)) {
+                throw `expected ";" got ${chunk}`;
+            }
+            status = STATUS.PARSING;
+            return;
+        }else if(status === STATUS.SKIPPING){
+            if(chunk.match(/\bend;/i)){
+                status = STATUS.PARSING;
+                currentBlock = undefined;
+                return;
+            }else{
+                return;
+            }
+        } else if(status === STATUS.BLOCK_NAME_NEXT){
+            if(chunk.match(/taxa/i)){
+                currentBlock = NexusBlock.Taxa;
+                status = STATUS.SKIP_SEMICOLON;
+            }else if(chunk.match(/trees/i)){
+                currentBlock = NexusBlock.Trees;
+                status = STATUS.SKIP_SEMICOLON;
+            }else{
+            console.log(
+                    `skipping block ${chunk}. Only parsing blocks are taxa and trees for now.`,
+                  )
+            }
+            status = STATUS.SKIPPING;
+        }else if(chunk.match(/\bbegin/i)){
+            status = STATUS.BLOCK_NAME_NEXT;
+            return;
+        }else if(status === STATUS.PARSING && currentBlock === NexusBlock.Taxa){
+            if(command)
+        }
+       
+
+        return parseTree(chunk);
+        
+    }
+    
+    function parseNextBlock(chunk:string){
+        const blockName = getNextBlockName(chunk);
+        switch (blockName) {
+          case "taxa":
+            this.currentBlock = "taxa"
+            await this.parseTaxaBlock()
+            break
+          case "trees":
+            this.currentBlock = "trees"
+            break
+          default:
+            console.log(
+              `skipping block ${blockName}. Only parsing blocks are taxa and trees for now.`,
+            )
+            await this.readToEndOfBlock()
+        }
+      }
+
+      function getNextBlockName(chunck ) {
+        while (true) {
+          const value = await this.nextToken()
+    
+          if (value.match(/\bbegin/i)) {
+            const token = await this.nextToken()
+            this.skipSemiColon()
+            return token
+          }
+        }
+      }
+
+    return {
+        start(){},
+        transform(chunk: string, controller: { enqueue: (arg0: Tree) => void }) {
+            
+            const tree = processChunk(chunk);
+            
+            if(tree){
+                controller.enqueue(tree);
+            }
+
+        },
+        flush(controller: any) { }
+    }
+
+}

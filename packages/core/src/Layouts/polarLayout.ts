@@ -8,38 +8,37 @@ import { Tree } from "..";
 export class PolarLayout extends AbstractLayout {
 
     static getArbitraryLayout(tree: Tree, opts:internalLayoutOptions): ArbitraryVertices {
-        const safeOpts = { ...defaultInternalLayoutOptions, ...opts };
-        const rectangularVerticies = RectangularLayout.getArbitraryLayout(tree,opts);
+        const safeOpts = { ...defaultInternalLayoutOptions, ...opts,pollard:0 };
+        const rectangularVerticies = RectangularLayout.getArbitraryLayout(tree,safeOpts);
         //remove root path if needed
         if(!safeOpts.showRoot){
-            rectangularVerticies.byId[tree.root!.id].pathPoints = [];
+            rectangularVerticies.vertices[tree.getRoot()!.number].pathPoints = [];
         }
         return rectangularVerticies;
     }
 
-    static finalizeArbitraryLayout(arbitraryLayout: ArbitraryVertices, treeStats:{tipCount:number,rootId:string}, opts: internalLayoutOptions):Vertices {
+    static finalizeArbitraryLayout(arbitraryLayout: ArbitraryVertices, treeStats:{tipCount:number,rootId:number}, opts: internalLayoutOptions):Vertices {
         const safeOpts = { ...defaultInternalLayoutOptions, ...opts };
-        console.log(defaultInternalLayoutOptions)
-        console.log(opts)
-        console.log(safeOpts)
+        const {minRadius,padding,invert} = safeOpts;
         // Do fisheye thing assuming we are using the rectangular layout
 
         const y_og = scaleLinear()
             .domain(arbitraryLayout.extent.y)
-            .range([this.padding, opts.height - this.padding]);
+            .range([padding, safeOpts.height - padding]);
         const pointOfInterestY = y_og.invert(safeOpts.pointOfInterest.y)
 
         const transform = fishEyeTransform(safeOpts.fishEye,pointOfInterestY); //fish eye does  wierd things here when too big 10 m
             
 
-        const maxRadius = min([opts.width,opts.height])!/2;
+        const maxRadius = min([safeOpts.width,safeOpts.height])!/2;
 
         const angleRange = normalizeAngle(safeOpts.angleRange);
         // These scales adjust the x and y values from arbitrary layout to polar coordinates with r within the svg and theta between 0 and 2pi
 
+        const rRange = invert? [minRadius*maxRadius,maxRadius].reverse():[minRadius*maxRadius,maxRadius];
         const rScale = scaleLinear()
             .domain(arbitraryLayout.extent.x)
-            .range([0, maxRadius ]);
+            .range(rRange);
 
     
             const startAngle = safeOpts.rootAngle+(2*3.14 - angleRange)/2; //2pi - angle range  is what we ignore and we want to center this on the root angle
@@ -48,17 +47,14 @@ export class PolarLayout extends AbstractLayout {
             .domain(arbitraryLayout.extent.y.map(transform))
             .range([startAngle,endAngle]); // rotated to match figtree orientation
        
-        console.log(angleRange)
         const polarVertices = [];
         
-        for(const id of arbitraryLayout.allIds){
-            const vertex = arbitraryLayout.byId[id];
+        for(const vertex of arbitraryLayout.vertices){
             const r = rScale(vertex.x);
             const theta =  thetaScale(transform(vertex.y));
             const [x,y] = polarToCartesian(r,theta);// convert back to cartesian for x and y (will need to be scaled for svg coordinates)
             const level = vertex.level;
 
-            console.log(vertex)
             //this ends up converting points that have been converted previously. maybe just pass 
             // parent id as source and fetch when needed?
             let pathPoints:{x:number,y:number,r:number,theta:number}[] = [];
@@ -80,7 +76,7 @@ export class PolarLayout extends AbstractLayout {
             //add step point so we can scale it later 
             pathPoints.push({x:stepPointX,y:stepPointY,r:stepPointR,theta:stepPointTheta});
         }
-            polarVertices.push({id:vertex.id,r,theta,x,y,pathPoints,level,nodeLabel:vertex.nodeLabel})
+            polarVertices.push({number:vertex.number,r,theta,x,y,pathPoints,level,nodeLabel:vertex.nodeLabel})
         };
         
 
@@ -121,17 +117,17 @@ export class PolarLayout extends AbstractLayout {
 
         const ratio = (xDomain[1]-xDomain[0])/(yDomain[1]-yDomain[0]);
 
-        const scaler = Math.min(opts.width,opts.height*ratio)
+        const scaler = Math.min(safeOpts.width,safeOpts.height*ratio)
         const width = scaler;
         const height = scaler/ratio;
 
-        const xShift = (opts.width-width)/2;
-        const yShift = (opts.height-height)/2;
+        const xShift = (safeOpts.width-width)/2;
+        const yShift = (safeOpts.height-height)/2;
 
 
 
-        const yRange = [yShift,opts.height-yShift];
-        const xRange = [xShift,opts.width-xShift];
+        const yRange = [yShift,safeOpts.height-yShift];
+        const xRange = [xShift,safeOpts.width-xShift];
         
 
 
@@ -141,15 +137,14 @@ export class PolarLayout extends AbstractLayout {
     
         
         const scaledVertices: Vertices = {
-            byId: {},
-            allIds: [],
+            vertices:[],
             type: "Polar",
         };
         for (const vertex of polarVertices) {
             const xpos = x(vertex.x);
             const ypos = y(vertex.y);
 
-            //hypothenuse is 12 (tip label gap) or -6 node label gap
+            //hypothenuse is 12 (tip label gap) or 6 node label gap
             let dx,dy;
            if(vertex.nodeLabel.dx===12){
                 dx = Math.cos(vertex.theta)*12;
@@ -158,7 +153,7 @@ export class PolarLayout extends AbstractLayout {
                 dx = Math.cos(vertex.theta)*6;
                 dy = Math.sin(vertex.theta)*6;
             }
-
+            
             //branch lable dx dy;
             let branchDx,branchDy;
             const normalizedTheta = normalizeAngle(vertex.theta);
@@ -180,12 +175,11 @@ export class PolarLayout extends AbstractLayout {
             const [alignedX,alignedY] = polarToCartesian(maxRadius,vertex.theta);
 
             const scalePathPoints = vertex.pathPoints.map(d=>({...d,x:x(d.x),y:y(d.y)}));
-            console.log(vertex,scalePathPoints)
 
-            scaledVertices.byId[vertex.id] = {
-                hidden:arbitraryLayout.byId[vertex.id].hidden,
-                labelHidden:arbitraryLayout.byId[vertex.id].labelHidden,
-                id: vertex.id,
+            scaledVertices.vertices[vertex.number] = {
+                hidden:arbitraryLayout.vertices[vertex.number].hidden,
+                labelHidden:arbitraryLayout.vertices[vertex.number].labelHidden,
+                number: vertex.number,
                 x: xpos,
                 y: ypos,
                 level: vertex.level,
@@ -199,7 +193,7 @@ export class PolarLayout extends AbstractLayout {
                     rotation:textSafeDegrees(vertex.theta),
                     alignedPos:{x:x(alignedX)+dx,y:y(alignedY)+dy}
                 },
-                branch:scalePathPoints.length>0 && ! arbitraryLayout.byId[vertex.id].hidden?{
+                branch:scalePathPoints.length>0 && ! arbitraryLayout.vertices[vertex.number].hidden?{
                     d: this.pathGenerator(scalePathPoints, opts), //transformes x and y
                     label:{
                         x: vertex.pathPoints.length>0? mean([xpos,x(vertex.pathPoints[2].x)])!+branchDx:xpos, // no path on root sometimes put this at the position  // want mean of step and final point
@@ -210,17 +204,16 @@ export class PolarLayout extends AbstractLayout {
                     }}:undefined,
                 
             };
-            if(vertex.id===treeStats.rootId){
+            if(vertex.number===treeStats.rootId){
                 if(scalePathPoints.length>0){
                     scaledVertices.origin = {x:scalePathPoints[1].x,y:scalePathPoints[1].y}
             }else{
                 scaledVertices.origin = {x:xpos,y:ypos}
             }
         }
-            scaledVertices.allIds.push(vertex.id);
 
         }      
-        const furthestNode = scaledVertices.byId[scaledVertices.allIds[maxIndex(scaledVertices.allIds.map(id=>scaledVertices.byId[id].r))]];
+        const furthestNode = scaledVertices.vertices[maxIndex(scaledVertices.vertices.map(sv=>sv.r))];
         scaledVertices.axisLength= distance (scaledVertices.origin!, furthestNode)
 
         scaledVertices.theta = [normlizedStart,normlizedEnd];

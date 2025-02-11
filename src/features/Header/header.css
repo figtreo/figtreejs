@@ -23,6 +23,7 @@
   pointer-events: none;
 }
 
+
 .deactivated p {
   color: gray
 }
@@ -100,6 +101,7 @@
   transform: rotate(225deg);
 }
 
+
 .arrow:before {
   content: '';
   position: absolute;
@@ -111,6 +113,23 @@
   background-color: #878787;
   transform: rotate(-45deg) translate(2px,1px);
 } 
+
+.deactivated .arrow {
+  border-color: #E2E2E2 #E2E2E2 transparent transparent;
+}
+
+.deactivated .arrow:before {
+  content: '';
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  display: block;
+  height: 6px;
+  width: 8px;
+  background-color: #E2E2E2;
+  transform: rotate(-45deg) translate(2px,1px);
+} 
+
 
 .header .pushInput{
   flex:3

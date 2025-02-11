@@ -22,11 +22,12 @@
 //TODO clean up angle work here. Only needs to be done in initial or final layout. 
 // it is split between both right now. Branch angle is angle above  horizontal  to convert to usual need to subtract from 2pi.
 
-import { max, mean } from "d3-array";
+import {  mean } from "d3-array";
 import { scaleLinear } from "d3-scale";
 import { AbstractLayout, ArbitraryVertex, ArbitraryVertices, defaultInternalLayoutOptions, internalLayoutOptions, Vertices } from "./LayoutInterface";
 import { textSafeDegrees } from "./polarLayout";
-import { NodeRef, Tree } from "../Tree";
+import {  Tree } from "../Evo/Tree";
+import {  preOrderIterator, tipIterator } from "../Evo/Tree/NormalizedTree/ImmutableTree";
 
 type data = {
     angleStart: number,
@@ -34,15 +35,15 @@ type data = {
     xpos: number,
     ypos: number,
     level: number,
-    id: string
+    number: number
 }
 
 export class RadialLayout extends AbstractLayout {
 
 
-    static getArbitraryLayout(tree: Tree, option:internalLayoutOptions): ArbitraryVertices {
+    static getArbitraryLayout(tree: Tree, option?:internalLayoutOptions): ArbitraryVertices {
         const safeOpts = { ...defaultInternalLayoutOptions, ...option };
-        const vertices: ArbitraryVertices = { byId: {}, allIds: [], extent: { x: [0, 0], y: [0, 0] } };
+        const vertices: ArbitraryVertices = { vertices:[], extent: { x: [0, 0], y: [0, 0] } };
         let maxY = Number.NEGATIVE_INFINITY
         let maxX = Number.NEGATIVE_INFINITY;
 
@@ -51,27 +52,27 @@ export class RadialLayout extends AbstractLayout {
 
 
         //visits parents first and passes data to children through a stack to avoid recursion (but mostly for fun)
-        const dataStack: data[] = [{ angleStart: 0, angleEnd: 2 * Math.PI, xpos: 0, ypos: 0, level: 0, id: tree.root!.id }]
-        for (const node of tree.getPreorderNodes()) {
+        const dataStack: data[] = [{ angleStart: 0, angleEnd: 2 * Math.PI, xpos: 0, ypos: 0, level: 0, number: tree.getRoot()!.number }] // TODO start tree.
+        for (const node of preOrderIterator(tree)) { // TODO traverse from tip so layout doesn't change with root
 
-            const { angleStart, angleEnd, xpos, ypos, level, id } = dataStack.pop()!
+            const { angleStart, angleEnd, xpos, ypos, level, number } = dataStack.pop()!
 
-            if (id !== node.id) {
+            if (number !== node.number) {
                 throw new Error("something went wrong with the stack") //todo remove this and the id in the stack. 
             }
             const branchAngle = (angleStart + angleEnd) / 2.0;
 
-            const length = tree.getLength(node) ? tree.getLength(node) : 0;
+            const length = tree.getLength(node)!==undefined ? tree.getLength(node) : 0;
 
             const directionX = Math.cos(branchAngle);
             const directionY = Math.sin(branchAngle);
-            const x = xpos + (length * directionX);
-            const y = ypos + (length * directionY);
+            const x = xpos + (length! * directionX);
+            const y = ypos + (length! * directionY);
 
 
 
             const leftLabel = tree.getChildCount(node) > 0;
-            const labelBelow = (tree.getChildCount(node) > 0 && (tree.getParent(node) === null || tree.getChild(tree.getParent(node)!, 0) !== node));
+            const labelBelow = (tree.getChildCount(node) > 0 && (tree.getParent(node) === undefined || tree.getChild(tree.getParent(node)!, 0) !== node));
             
             let dx,dy;
            if(!leftLabel){
@@ -82,12 +83,12 @@ export class RadialLayout extends AbstractLayout {
                 dy = -Math.sin(branchAngle)*6;
             }
 
-            vertices.byId[node.id] = {
+            vertices.vertices[node.number] = {
                 x,
                 y,
                 labelHidden:false, // TODO make radial decorations
                 hidden:false,
-                id: node.id, level,
+                number: node.number, level,
                 theta: branchAngle,
                 pathPoints: [{ x: xpos, y: ypos },{ x, y }],
                 nodeLabel:{
@@ -98,7 +99,6 @@ export class RadialLayout extends AbstractLayout {
                     rotation:branchAngle
                 }
             }; // i think xpos and ypos come from parent.
-            vertices.allIds.push(node.id);
 
             // The rest of the work is to set the data that is passed to the children
 
@@ -108,7 +108,7 @@ export class RadialLayout extends AbstractLayout {
                 const childLeafs: number[] = [];
                 let totalLeafs = 0;
                 for (let i = 0; i < tree.getChildCount(node); i++) {
-                    const leafCount = [...tree.getTips(tree.getChild(node, i))].length;
+                    const leafCount = [...tipIterator(tree,tree.getChild(node, i))].length;
                     childLeafs[i] = leafCount;
                     totalLeafs += leafCount;
                 }
@@ -116,7 +116,7 @@ export class RadialLayout extends AbstractLayout {
                 let span = angleEnd - angleStart;
                 let updatedAngleStart = angleStart;
                 let updatedAngleEnd = angleEnd;
-                if (tree.root !== node) {
+                if (tree.getRoot() !== node) {
                     span *= 1.0 + ((safeOpts.spread * Math.PI / 180) / 10.0);
                     updatedAngleStart = branchAngle - (span / 2.0);
                     updatedAngleEnd = branchAngle + (span / 2.0);
@@ -127,7 +127,7 @@ export class RadialLayout extends AbstractLayout {
                 for (let i = tree.getChildCount(node) - 1; i > -1; i--) { // i think we need to go in reverse order here 
                     let a1 = a2;
                     a2 = a1 + (span * childLeafs[i] / totalLeafs);
-                    dataStack.push({ angleStart: a1, angleEnd: a2, xpos: x, ypos: y, level: level + 1, id: tree.getChild(node, i).id })
+                    dataStack.push({ angleStart: a1, angleEnd: a2, xpos: x, ypos: y, level: level + 1, number: tree.getChild(node, i).number })
                 }
             } else {
                 //tip
@@ -144,22 +144,25 @@ export class RadialLayout extends AbstractLayout {
         return vertices;
     }
 
-    static finalizeArbitraryLayout(arbitraryLayout: ArbitraryVertices, treeStats: { tipCount: number }, opts: internalLayoutOptions): Vertices {
+    static finalizeArbitraryLayout(arbitraryLayout: ArbitraryVertices, treeStats: { tipCount: number }, opts?: internalLayoutOptions): Vertices {
+        
+        const safeOpts = { ...defaultInternalLayoutOptions, ...opts };
+
+        const padding = safeOpts.padding;
+
         const x = scaleLinear()
             .domain(arbitraryLayout.extent.x)
-            .range([this.padding, opts.width - this.padding]);
+            .range([padding, safeOpts.width - padding]);
 
         const y = scaleLinear()
             .domain(arbitraryLayout.extent.y)
-            .range([opts.height - this.padding, this.padding]); //flipped to match figtree
+            .range([safeOpts.height - padding, padding]); //flipped to match figtree
 
         const scaledVertices: Vertices = {
-            byId: {},
-            allIds: [],
+            vertices:[],
             type: "Radial"
         };
-        for (const id of arbitraryLayout.allIds) {
-            const vertex = arbitraryLayout.byId[id];
+        for (const vertex of arbitraryLayout.vertices) {
             const xpos = x(vertex.x);
             const ypos = y(vertex.y);
 
@@ -182,8 +185,8 @@ export class RadialLayout extends AbstractLayout {
 
 
 
-            scaledVertices.byId[vertex.id] = {
-                id: vertex.id,
+            scaledVertices.vertices[vertex.number] = {
+                number: vertex.number,
                 x: x(vertex.x),
                 y: y(vertex.y),
                 labelHidden:vertex.labelHidden,
@@ -198,7 +201,7 @@ export class RadialLayout extends AbstractLayout {
                     rotation:-textSafeDegrees(vertex.nodeLabel.rotation!),
                 },
                 branch:{
-                d: this.pathGenerator(vertex.pathPoints.map(d => ({ x: x(d.x), y: y(d.y) })), opts), // scale the points
+                d: this.pathGenerator(vertex.pathPoints.map(d => ({ x: x(d.x), y: y(d.y) })), safeOpts), // scale the points
                     label:{
                         x:mean([xpos,x(vertex.pathPoints[0].x)])!+branchDx, //parent is at the end of the array
                         y:mean([ypos,y(vertex.pathPoints[0].y)])!+branchDy,
@@ -208,7 +211,6 @@ export class RadialLayout extends AbstractLayout {
                     }
             }
             };
-            scaledVertices.allIds.push(vertex.id);
         }
         return scaledVertices;
     }

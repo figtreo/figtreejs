@@ -1,12 +1,10 @@
 import React from 'react';
-import { LayoutContext, TreeContext,AnimationContext,ScaleContext, scaleContextType } from '../../Context/context';
-import { NodeRef } from '../../Tree/Tree.types';
-import { RectangularLayout } from '../../Layouts/rectangularLayout';
 import { FigtreeProps } from './Figtree.types';
-import { NormalizedTree } from '../../Tree/normalizedTree';
-import {Branches, PolarLayout, defaultInternalLayoutOptions} from '../../index';
-import { extent, max } from 'd3-array';
-
+import { defaultInternalLayoutOptions, rectangularLayout } from '../../Layouts';
+import { Branches } from '../Baubles';
+import { ImmutableTree } from '../../Evo/Tree';
+import { getScale } from '../../store/store';
+import { extent } from 'd3-array';
 
 
 /**
@@ -16,19 +14,23 @@ import { extent, max } from 'd3-array';
  */
 //TODO extract these from state to props?
 //TODO this is different than defualt 
+const defaultTree = ImmutableTree.fromNewick("((A:1,B:1):1,C:2);"); //TODO don't expose the need to pass a tree in here.
+
 export const defaultOpts:FigtreeProps = {
     opts:defaultInternalLayoutOptions,
     width:100,
     height:100,
-    layout:RectangularLayout,
+    layout:rectangularLayout,
     margins:{top:10,right:10,bottom:10,left:10},
-    tree:NormalizedTree.fromNewick("((A:1,B:1):1,C:2);"),
-    children:[<Branches filter={(n)=>true} attrs={{stroke:"black",strokeWidth:1}} interactions={{}}/>],
-    animated:false
-   
+    tree:defaultTree,
+    children:[<Branches tree={defaultTree} filter={(n)=>true} attrs={{fill:'none',stroke:"black",strokeWidth:1}} interactions={{}}/>],
+    animated:false,
+
 }
 
+
 function FigTree(props:FigtreeProps){
+
 
 
     const {width =defaultOpts.width,
@@ -36,54 +38,60 @@ function FigTree(props:FigtreeProps){
         margins = defaultOpts.margins,
         tree = defaultOpts.tree,
         layout = defaultOpts.layout,
-        animated=defaultOpts.animated} = props;
+        animated=defaultOpts.animated,
+    } = props;
     
     const {rootAngle = defaultOpts.opts.rootAngle,
         rootLength = defaultOpts.opts.rootLength,
         angleRange = defaultOpts.opts.angleRange,
-        curvature = defaultOpts.opts.curvature,
         showRoot = defaultOpts.opts.showRoot,
         spread = defaultOpts.opts.spread,
         pointOfInterest = defaultOpts.opts.pointOfInterest,
         fishEye = defaultOpts.opts.fishEye,
-        nodeDecorations = defaultOpts.opts.nodeDecorations,
+        pollard = defaultOpts.opts.pollard,
+        minRadius = defaultOpts.opts.minRadius,
+        invert = defaultOpts.opts.invert
     } = props.opts; //todo this requires opts to not be undefined even though all the values are optional.
 
-    const w = width - margins.left - margins.right;
-    const h = height - margins.top - margins.bottom;
-    const point = pointOfInterest?pointOfInterest: {x:(margins.left+w)/2,y:(margins.top+height)/2};
+    const canvasWidth = width - margins.left - margins.right;
+    const canvasHeight = height - margins.top - margins.bottom;
 
-    const vertices = layout.layout(tree,{showRoot,width:w,height:h,rootLength,rootAngle,angleRange,curvature,spread,tipSpace:(tip1:NodeRef,tip2:NodeRef)=>1,fishEye,pointOfInterest:point,nodeDecorations});
+    const point = pointOfInterest?pointOfInterest: {x:(margins.left+canvasWidth)/2,y:(margins.top+height)/2};
         
+    const layoutMap = layout(tree);
+    const {layoutClass} = layoutMap(tree.getRoot())!;
+    const [minX,maxX] = extent(tree.getNodes().map(n=>layoutMap(n)!.x));
+    const [minY,maxY] = extent(tree.getNodes().map(n=>layoutMap(n)!.y));
+    // console.log('layoutMap',{maxX,maxY,layoutClass});
+    const dimensions = {canvasWidth,canvasHeight,domainX:[minX!,maxX!],domainY:[minY!,maxY!],layoutClass};
+    const scale = getScale(dimensions);
+    let rawChildren = (props.children?props.children:defaultOpts.children) as React.ReactElement|React.ReactElement[];
 
-
-    const children = props.children?props.children:defaultOpts.children;
-
-    const scaleContext:scaleContextType = {width:w,height:h,maxDivergence:tree.getHeight(tree.root!)+rootLength!};
-    if(layout === PolarLayout){
-        scaleContext.maxR = max(vertices.allIds,d=>vertices.byId[d].r);
-        scaleContext.theta = extent(vertices.allIds,d=>vertices.byId[d].theta!) as [number,number];
+    if(!Array.isArray(rawChildren)){
+        rawChildren = [rawChildren];
     }
+    const children = rawChildren.map((child,i)=>React.cloneElement(child,{key:i,tree:tree,layout:layoutMap,animated,scale,dimensions,layoutClass}));
 
-    //context gives us a nicer api where the data don't need to be passed to the subcomponents of the figure and the subcomponents can be added by user with JSX
     return (
-                <TreeContext.Provider value={tree}>
-                    <LayoutContext.Provider value={vertices}>
-                    <AnimationContext.Provider value={animated}>
-                        <ScaleContext.Provider value={scaleContext}>
-                       
-                        {/*<rect x="0" y="0" width="100%" height="100%" fill="none" pointerEvents={"visible"} onClick={()=>nodeDispatch({type:"clearSelection"})}/>*/}
-                        <g transform={`translate(${margins.left},${margins.top})`}>
-                            {children}
-                        </g>
-                        </ScaleContext.Provider>
-                        </AnimationContext.Provider>
-                    </LayoutContext.Provider>
-                </TreeContext.Provider>
+                <g>
+                    {/* <defs>
+                        <clipPath id="clip">
+                            <rect x={-margins.left} y={-margins.top} width={width} height={height} /> 
+                        </clipPath>
+                    </defs>                      */}
+                    {/*<rect x="0" y="0" width="100%" height="100%" fill="none" pointerEvents={"visible"} onClick={()=>nodeDispatch({type:"clearSelection"})}/>*/}
+                    {/* <g transform={`translate(${margins.left},${margins.top})`} clipPath={'url(#clip)'} > */}
+                    <g transform={`translate(${margins.left},${margins.top})`} >
+                        {children}
+                    </g>
+                </g>
+
             )
 }
 
 export default FigTree; // ; withConditionalInteractionProvider(FigTree);
+
+
 // export default FigTree;
 
 

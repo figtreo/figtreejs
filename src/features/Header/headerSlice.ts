@@ -1,6 +1,6 @@
 import { RootState } from '../../app/store';
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
-import { NodeDecoration } from '@figtreejs/core';
+import { NodeDecoration } from '@figtreejs/core'; //TODO taxa list 
 //TODO tree list or count to include multiple trees
 
 
@@ -9,9 +9,9 @@ type SelectionMode = "Node"|"Clade"|"Taxa"
 
 interface HeaderData{
     selectionMode:SelectionMode,
-    selectionRoot:string|undefined,
+    selectionRoot:number|undefined,
     nodeDecorations:{
-        [key:string]:NodeDecoration
+        [key:number]:NodeDecoration
     }
 }
 
@@ -27,7 +27,7 @@ export const HeaderSlice = createSlice({
     name:"header",
     initialState,
     reducers:{
-        setSelectionRoot:(state, action: PayloadAction<string|undefined>) => {
+        setSelectionRoot:(state, action: PayloadAction<number|undefined>) => {
                 state.selectionRoot = action.payload;
         },
         clearSelection:(state,action)=>{
@@ -36,65 +36,21 @@ export const HeaderSlice = createSlice({
         setSelectionMode:(state,action:PayloadAction<SelectionMode>)=>{
             state.selectionMode = action.payload;
         },
-        cartoonNode:(state,action:PayloadAction<string>)=>{
-            if(!state.nodeDecorations[action.payload]){ //TODO unify this and the below line that casts the empty object
-                state.nodeDecorations[action.payload] = {cartooned:true,collapseFactor:0,hilighted:undefined,customColor:undefined,taxaCustomColor:undefined};
-            }else{
-                state.nodeDecorations[action.payload].cartooned =  !state.nodeDecorations[action.payload].cartooned;
-            }
-        },      
-        collapseNode:(state,action:PayloadAction<string>)=>{
-            if(!state.nodeDecorations[action.payload]){
-                state.nodeDecorations[action.payload] = {cartooned:true,collapseFactor:0.25,hilighted:undefined,customColor:undefined,taxaCustomColor:undefined};
-            }else if(!state.nodeDecorations[action.payload].cartooned){
-                state.nodeDecorations[action.payload].cartooned = true;
-                state.nodeDecorations[action.payload].collapseFactor = 0.25;
-            }
-            else{
-                const currentCollapseFactor = state.nodeDecorations[action.payload].collapseFactor;
-                state.nodeDecorations[action.payload].collapseFactor = currentCollapseFactor!>0.9?0:currentCollapseFactor!+0.25;
-            }
-        },
-        // uncollapseNode:(state,action:PayloadAction<string>)=>{
-        //     state.nodeDecorations[action.payload].collapsed = false;
-        // },        
-        hiLightNode:(state,action:PayloadAction<{id:string,colour:string}>)=>{
-            if(!state.nodeDecorations[action.payload.id]){
-                state.nodeDecorations[action.payload.id]={} as NodeDecoration;
-            }
-            state.nodeDecorations[action.payload.id].hilighted = action.payload.colour;
-        },
-        colorNode:(state,action:PayloadAction<{id:string,colour:string}>)=>{
-            if(!state.nodeDecorations[action.payload.id]){
-                state.nodeDecorations[action.payload.id]={} as NodeDecoration;
-            }
-            state.nodeDecorations[action.payload.id].customColor = action.payload.colour;
-
-        },
-        colorClade:(state,action:PayloadAction<{id:string,colour:string}[]>)=>{
+        colourTaxa:(state,action:PayloadAction<{number:number,colour:string}[]>)=>{
             for(const node of action.payload){
-                if(!state.nodeDecorations[node.id]){
-                    state.nodeDecorations[node.id]={} as NodeDecoration;
+                if(!state.nodeDecorations[node.number]){
+                    state.nodeDecorations[node.number]={} as NodeDecoration;
                 }
-                state.nodeDecorations[node.id].customColor = node.colour
-            }
-        },
-        colourTaxa:(state,action:PayloadAction<{id:string,colour:string}[]>)=>{
-            for(const node of action.payload){
-                if(!state.nodeDecorations[node.id]){
-                    state.nodeDecorations[node.id]={} as NodeDecoration;
-                }
-                state.nodeDecorations[node.id].taxaCustomColor = node.colour
+                state.nodeDecorations[node.number].taxaCustomColor = node.colour
             }        }
     }
 
 })
 export default HeaderSlice.reducer;
-export const {setSelectionMode,setSelectionRoot,cartoonNode,collapseNode,colorNode,colorClade,colourTaxa,hiLightNode} = HeaderSlice.actions;
+export const {setSelectionMode,setSelectionRoot,colourTaxa} = HeaderSlice.actions;
 //Lets 
-export const selectHeader = (state:RootState) => ({
-    SelectionMode:state.header.selectionMode,
-    SelectionRoot:state.header.selectionRoot,
-    SelectNodeDecorations:state.header.nodeDecorations,
 
-})
+
+export const selectSelectionRoot = (state:RootState) => state.header.selectionRoot;
+export const selectSelectionMode = (state:RootState) => state.header.selectionMode;
+export const selectNodeDecorations = (state:RootState) => state.header.nodeDecorations;
