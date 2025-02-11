@@ -14,7 +14,8 @@ interface axisState {
     format: numericalFormat | "Date",
     sigDigs: 2,
     scaleBy:number,
-    activated: boolean
+    activated: boolean,
+    title: string
 }
 //TODO handel dates
 const initialState: axisState = {
@@ -28,7 +29,8 @@ const initialState: axisState = {
     format: "Decimal",
     sigDigs: 2,
     activated: false,
-    scaleBy:1
+    scaleBy:1,
+    title: ""
 }
 
 const AxisSlice = createSlice({
@@ -51,12 +53,15 @@ const AxisSlice = createSlice({
         },
         setScale: (state, action) => {
             state.scaleBy = action.payload
+        },
+        setTitle: (state, action) => {
+            state.title = action.payload
         }
     }
 })
 
 export default AxisSlice.reducer
 
-export const { flipActivated, flipShowGrid, flipShowBoxes, setLineWeight, flipReverseAxis, setTicks, setOriginValue, setFontSize,setFormat,setSigDigs,setScale } = AxisSlice.actions
+export const { flipActivated, flipShowGrid, flipShowBoxes, setLineWeight, flipReverseAxis, setTicks, setOriginValue, setFontSize,setFormat,setSigDigs,setScale,setTitle } = AxisSlice.actions
 
 export const selectAxis = (state: RootState) => state.settings.axis

@@ -14,17 +14,21 @@ export interface AxisProps {
     ticks?: { number?: number, format?: (value: number) => string, padding?: number, style?: {}, length?: number },
     direction?: AxisOrientation,
     scale?: ScaleContinuousNumeric<number, number> ,
-    strokeWidth?: number
-    children?: React.ReactNode
+    strokeWidth?: number,
+    x?: number,
+    y?: number,
+    children?: React.ReactNode,
+    type?: "Polar" | "Rectangular" //yuck
 }
 
 
 export interface AxisScaleContext {
     width: number;
     height: number;
-    maxDivergence: number;
+    domain: [number,number];
     maxR?: number;
     theta?: [number, number];
+    padding:number
 }
 
 export const defaultAxisProps: AxisProps = {
@@ -36,7 +40,8 @@ export const defaultAxisProps: AxisProps = {
     ticks: { number: 5, format: format(".1f"), padding: 20, style: {}, length: 6 },
     direction: "horizontal",
     scale: undefined,
-    strokeWidth:1
+    strokeWidth:1,
+    type: "Rectangular"
 }
 
 export const defaultAxisBarsProps={
@@ -54,6 +59,7 @@ export interface AxisBarsProps{
     oddFill?:string,
     attrs?:{[key:string]:any},
     lift?:number,
+    type?:"Rectangular"|"Polar"
 
 
 

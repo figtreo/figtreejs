@@ -1,16 +1,24 @@
 import { BaubleProps, attrType } from "..";
+import { ImmutableTree, NodeRef } from "../../../Evo";
 
 
 export interface NodeProps extends BaubleProps{
+    tree:ImmutableTree,
     attrs:{
         stroke?:attrType,
         strokeWidth?:attrType,
         fill:attrType,
         width?:attrType,
         height?:attrType,
-        r:attrType
+        r?:attrType,
+        opacity?:attrType
     }
 }
+
+
+
+
+//TODO make a CIRCLENODEPROPS ... 
 export interface NodeLabelProps extends BaubleProps{
     attrs:{
         fontFamily?:attrType,

@@ -1,0 +1,31 @@
+{
+  "name": "@figtreejs/browser",
+  "version": "0.0.1",
+  "description": "A standalone library for phylogenetic visualization",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "rollup -c ",
+    "build:watch": "rollup -c  -w",
+    "dev": "rollup -c  -w",
+    "test": "jest"
+  },
+  "author": "Andrew Rambaut and JT McCrone",
+  "license": "MIT",
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^25.0.8",
+    "@rollup/plugin-node-resolve": "^15.3.1",
+    "@rollup/plugin-replace": "^5.0.7",
+    "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^11.1.6",
+    "@types/jest": "^29.5.14",
+    "@types/react": "^18.3.18",
+    "typescript": "^5.7.3"
+  },
+  "dependencies": {
+    "@figtreejs/core": "^0.0.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  }
+}

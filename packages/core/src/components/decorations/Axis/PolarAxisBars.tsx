@@ -1,10 +1,9 @@
 
 import React from 'react'
 import { AxisBarsProps, defaultAxisBarsProps } from './Axis.types';
-import { useAxisContext } from './Axis.context';
-import { useLayout, useScale } from '../../../hooks';
 import {arc as arcgen} from "d3-shape"
 import { normalizeAngle } from '../../../Layouts/polarLayout';
+import Axis from './RectangularAxis';
 
 const arc = arcgen();
 /**
@@ -15,43 +14,44 @@ const arc = arcgen();
  * @constructor
  */
 // we are already rotaed by the axis parent
-export  default function PolarAxisBars(props:AxisBarsProps):JSX.Element {
-    const {
-        attrs,
-        evenFill=defaultAxisBarsProps.evenFill,
-        oddFill=defaultAxisBarsProps.oddFill,
-        lift=defaultAxisBarsProps.lift} = props;
+export  default function PolarAxisBars(props:AxisBarsProps) {
+    throw new Error("Polar Axis Bars not implemented yet)")
+    // const {
+    //     attrs,
+    //     evenFill=defaultAxisBarsProps.evenFill,
+    //     oddFill=defaultAxisBarsProps.oddFill,
+    //     lift=defaultAxisBarsProps.lift} = props;
 
-        const {tickValues,scale,gap,direction} = useAxisContext();
-        const {theta} = useLayout();
-        //d3 starts with 0 at 12 o'clock and svg starts with 0 at 3 o'clock
+    //     const {tickValues,scale,gap,direction} = useAxisContext();
+    //     const {theta} = useLayout();
+    //     //d3 starts with 0 at 12 o'clock and svg starts with 0 at 3 o'clock
 
-        const angleRange = theta![0]>theta![1]+0.1?2*Math.PI-(theta![0]-(theta![1]+0.1)):(theta![1]+0.1)-theta![0];
+    //     const angleRange = theta![0]>theta![1]+0.1?2*Math.PI-(theta![0]-(theta![1]+0.1)):(theta![1]+0.1)-theta![0];
 
 
-        const startAngle = theta![0]+Math.PI/2 ;
-        const endAngle = angleRange+startAngle;
+    //     const startAngle = theta![0]+Math.PI/2 ;
+    //     const endAngle = angleRange+startAngle;
 
         
-    return(
-        <g className={"axisBars"}>
-                {tickValues.reduce((acc:JSX.Element[],curr,i)=>{
+    // return(
+    //     <g className={"axisBars"}>
+    //             {tickValues.reduce((acc:JSX.Element[],curr,i)=>{
 
-                    const shape = arc(
-                        {
-                            innerRadius:scale(tickValues[i]),
-                            outerRadius:scale(tickValues[i+1]),
-                            startAngle: startAngle,
-                            endAngle:endAngle 
-                        }
-                    )!
+    //                 const shape = arc(
+    //                     {
+    //                         innerRadius:scale(tickValues[i]),
+    //                         outerRadius:scale(tickValues[i+1]),
+    //                         startAngle: startAngle,
+    //                         endAngle:endAngle 
+    //                     }
+    //                 )!
                     
-                    const fill = i%2===0?evenFill:oddFill;
-                    acc.push(<path key={i} d={shape} fill={fill} {...attrs} />);
+    //                 const fill = i%2===0?evenFill:oddFill;
+    //                 acc.push(<path key={i} d={shape} fill={fill} {...attrs} />);
                                  
-                    return acc;
-                },[])}
-        </g>
-    )
+    //                 return acc;
+    //             },[])}
+    //     </g>
+    // )
 }
 

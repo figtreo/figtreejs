@@ -6,7 +6,7 @@ import {timeParse, timeFormat} from "d3-time-format";
  * @param year
  * @return {boolean}
  */
-export function leapYear(year:number) {
+export function leapYear(year:number):boolean {
     return ((year % 4 === 0) && (year % 100 !== 0)) || (year % 400 === 0);
 }
 

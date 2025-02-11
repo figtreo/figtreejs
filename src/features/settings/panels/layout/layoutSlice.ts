@@ -1,10 +1,12 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../../../app/store';
+import { layoutClass } from '@figtreejs/core';
 
 
 export interface LayoutState {
-    layout: "rectangular" | "circular" | "equalangle",
+    layout: layoutClass,
     expansion: number,
+    pollard: number,
     rootLength: number,
     curvature: number,
     alignTipLabels: boolean
@@ -15,11 +17,14 @@ export interface LayoutState {
     spread:number
     pointOfInterest: { x: number; y: number; } | undefined;
     fishEye: number,
-    animate:boolean
+    animate:boolean,
+    tangle:boolean,
+    invert:boolean,
+    minR:number
 }
 
-const initialState: LayoutState = {
-    layout: 'rectangular',
+export const initialState: LayoutState = {
+    layout: layoutClass.Rectangular,
     expansion: 0,
     rootLength: 0,
     curvature: 0,
@@ -31,14 +36,18 @@ const initialState: LayoutState = {
     spread:0,
     pointOfInterest:undefined,
     fishEye:0,
-    animate:false
+    animate:false,
+    pollard:0,
+    tangle:false,
+    invert:false,
+    minR:0
 }
 
 export const layoutSlice = createSlice({
     name: 'layout',
     initialState,
     reducers: {
-        setLayout: (state, action: PayloadAction<"rectangular" | "circular" | "equalangle">) => {
+        setLayout: (state, action: PayloadAction<layoutClass>) => {
             state.layout = action.payload;
         },
         setExpansion: (state, action: PayloadAction<number>) => {
@@ -49,6 +58,9 @@ export const layoutSlice = createSlice({
         },
         setCurvature: (state, action: PayloadAction<number>) => {
             state.curvature = action.payload;
+        },        
+        setMinR: (state, action: PayloadAction<number>) => {
+            state.minR = action.payload;
         },
         flipAlignTipLabels: (state) => {
             state.alignTipLabels = !state.alignTipLabels;
@@ -70,18 +82,27 @@ export const layoutSlice = createSlice({
         },
         setFisheye: (state, action: PayloadAction<number>) => {
             state.fishEye = action.payload;
+        },        
+        setPollard: (state, action: PayloadAction<number>) => {
+            state.pollard = action.payload;
         },
         setPointOfInterest(state, action: PayloadAction<{ x: number; y: number; }>) {
             state.pointOfInterest = action.payload;
         },
         flipAnimate(state) {
             state.animate = !state.animate;
+        },
+        flipTangle(state) {
+            state.tangle = !state.tangle;
+        },
+        flipInvert(state){
+            state.invert = !state.invert;
         }
     }
 }
 )
 
-export const { setSpread, setZoom, setLayout, setExpansion, setFisheye, setRootLength, setCurvature, flipAlignTipLabels,setRootAngle,flipShowRoot,setAngleRange,setPointOfInterest,flipAnimate} = layoutSlice.actions;
+export const { flipInvert,setMinR,flipTangle,setSpread, setZoom, setLayout, setExpansion, setFisheye, setRootLength, setCurvature, flipAlignTipLabels,setRootAngle,flipShowRoot,setAngleRange,setPointOfInterest,flipAnimate,setPollard} = layoutSlice.actions;
 
 export const selectLayout = (state: RootState) => state.settings.layout
 

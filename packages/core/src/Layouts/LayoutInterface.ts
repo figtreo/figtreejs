@@ -2,7 +2,8 @@
 // calculating those layouts, but they should not create side effects. So each class here 
 // is should only use static methods. and store any state as static constants.
 
-import { NodeRef, Tree } from "../Tree"
+import { NodeRef, Tree } from "../Evo/Tree"
+import { ImmutableTree } from "../Evo/Tree/NormalizedTree/ImmutableTree"
 import { layoutOptions } from "../components/FigTree/Figtree.types"
 //TODO make tree
 
@@ -18,7 +19,7 @@ export interface Label {
     alignedPos?: { x: number, y: number }
 }
 export interface Vertex {
-    id: string,
+    number: number,
     x: number,
     y: number,
     hidden:boolean|undefined,
@@ -37,7 +38,7 @@ export interface Vertex {
 export interface ArbitraryVertex {
     hidden: boolean
     labelHidden: boolean
-    id: string,
+    number: number,
     x: number,
     y: number,
     level: number,
@@ -49,30 +50,25 @@ export interface ArbitraryVertex {
 //ids match node ids
 export interface Vertices {
     type: "Rectangular" | "Polar" |"Radial"
-    byId: { [id: string]: Vertex },
-    allIds: string[]
+   vertices: Vertex[] ,
     origin?: { x: number, y: number } // used by polar layout to denote the position of the root (or stem) which can change
     theta?: [number, number] // used by polar layout to denote the range of angles
     axisLength?:number // provided by layouts that support axis
 }   
 
 export interface ArbitraryVertices {
-    byId: { [id: string]: ArbitraryVertex },
-    allIds: string[]
+    vertices: ArbitraryVertex[] ,
     extent: { x: [number, number], y: [number, number] }
 }
 
 export interface internalLayoutOptions extends layoutOptions { // all layout options plus width and height of drawable area
-    width: number,
-    height: number,
+    width?: number,
+    height?: number,
 }
 
-export interface NodeDecoration{
+export interface CartoonData{
     cartooned:boolean,
     collapseFactor:number,
-    hilighted:string|undefined,
-    customColor:string|undefined
-    taxaCustomColor:string|undefined
 }
 
 export const defaultInternalLayoutOptions = {
@@ -87,7 +83,11 @@ export const defaultInternalLayoutOptions = {
     spread: 1,
     pointOfInterest: { x: 0, y: 0 },
     fishEye: 0,
-    nodeDecorations:{}
+    cartoonedNodes:new Map(),
+    pollard:0,
+    padding:20,
+    invert:false,
+    minRadius:0,
 }
 
 
@@ -95,17 +95,16 @@ export const defaultInternalLayoutOptions = {
 
 
 export abstract class AbstractLayout {
-    static readonly padding = 20;
-    static layout(tree: Tree, layoutOptions: internalLayoutOptions): Vertices {
+    static layout(tree: Tree, layoutOptions?: internalLayoutOptions): Vertices {
         const arbitraryLayout = this.getArbitraryLayout(tree, layoutOptions);
-        const treeStats = { tipCount: [...tree.getTips()].length,rootId:tree.root!.id } //todo cache this count
+        const treeStats = { tipCount: tree.getExternalNodes().length,rootId:tree.getRoot()!.number } //todo cache this count
         return this.finalizeArbitraryLayout(arbitraryLayout, treeStats, layoutOptions);
     }
 
-    static getArbitraryLayout(tree: Tree, opts: internalLayoutOptions): ArbitraryVertices {
+    static getArbitraryLayout(tree: Tree, opts?: internalLayoutOptions): ArbitraryVertices {
         throw new Error("Method not implemented.")
     }
-    static finalizeArbitraryLayout(arbitraryVertices: ArbitraryVertices, treeStats: { tipCount: number }, opts: internalLayoutOptions): Vertices {
+    static finalizeArbitraryLayout(arbitraryVertices: ArbitraryVertices, treeStats: { tipCount: number }, opts?: internalLayoutOptions): Vertices {
         throw new Error("Method not implemented.")
     }
     //  cartoonGenerator(tree:NormalizedTree,vertices:Vertices,):string

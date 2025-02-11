@@ -124,7 +124,6 @@ export function useSelected(
     if (!elementRef.current || !selection) {
       setIsSelected(false);
     } else {
-      console.log(".");
       const a = elementRef.current.getBoundingClientRect();
       const b = selection;
       setIsSelected(

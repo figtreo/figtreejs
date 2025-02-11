@@ -1,0 +1,124 @@
+import { extent, min } from "d3-array";
+import { scaleLinear } from "d3-scale";
+
+
+export function polarScaleMaker(maxX:number,maxY:number,canvasWidth:number,canvasHeight:number,invert:boolean=false,minRadius:number=0,angleRange:number=1.7*Math.PI,rootAngle:number=0){
+  
+    const maxRadius = min([canvasWidth,canvasHeight])!/2;
+
+    // These scales adjust the x and y values from arbitrary layout to polar coordinates with r within the svg and theta between 0 and 2pi
+
+    const safeAngleRange = normalizeAngle(angleRange);
+    const rRange = invert? [minRadius*maxRadius,maxRadius].reverse():[minRadius*maxRadius,maxRadius];
+    const rScale = scaleLinear()
+        .domain([0,maxX])
+        .range(rRange);
+
+
+    const startAngle =rootAngle+(2*3.14 - safeAngleRange)/2; //2pi - angle range  is what we ignore and we want to center this on the root angle
+    const endAngle = startAngle+safeAngleRange;
+    
+    const thetaScale = scaleLinear()
+        .domain([0,maxY])
+        .range([startAngle,endAngle]); // rotated to match figtree orientation
+
+    // (x,y) =>polarToCartesian(rScale(x),thetaScale(y))=>(x,y)
+    
+    // Once we have the polar coordinates we will convert back to cartesian coordinates
+    // But we need to adjust the aspect ratio to fit the circle
+
+    // center (0,0) polartoCartesian(maxRadius,startAngle) is top left of svg
+    const extremes = [[0,0],polarToCartesian(maxRadius,startAngle),polarToCartesian(maxRadius,endAngle)]; 
+
+    // Also need every pi/2 point we pass through.
+    //assumes range is <=2pi
+    const normlizedStart = normalizeAngle(startAngle);
+    const normlizedEnd = normalizeAngle(normlizedStart+safeAngleRange); 
+
+    
+
+    if(normlizedEnd>normlizedStart){
+        for (const theta of [Math.PI/2,Math.PI,3*Math.PI/2].filter(d=>d>normlizedStart && d<normlizedEnd)){
+            const [x,y] = polarToCartesian(maxRadius,theta);
+            extremes.push([x,y]);
+        }
+    }else{//we've crossed 0
+
+        for (const theta of [0,Math.PI/2,Math.PI,3*Math.PI/2].filter(d=>d>normlizedStart || d<normlizedEnd)){
+            const [x,y] = polarToCartesian(maxRadius,theta);
+            extremes.push([x,y]);
+        }
+
+    }
+
+    const xDomain = extent(extremes,(d)=>d[0]) as [number, number];
+    const yDomain = extent(extremes,(d)=>d[1]) as [number, number];
+
+    const ratio = (xDomain[1]-xDomain[0])/(yDomain[1]-yDomain[0]);
+
+    const scaler = Math.min(canvasWidth,canvasHeight*ratio)
+    const width = scaler;
+    const height = scaler/ratio;
+
+    const xShift = (canvasWidth-width)/2;
+    const yShift = (canvasHeight-height)/2;
+
+    const yRange = [yShift,canvasHeight-yShift];
+    const xRange = [xShift,canvasWidth-xShift];
+    
+    const x = scaleLinear().domain(xDomain).range(xRange);
+    const y = scaleLinear().domain(yDomain).range(yRange);
+
+    const nodeLabel= {
+        alignmentBaseline:"middle",
+        textAnchor:"middle",
+        dx:0,
+        dy:0,
+        rotation:0}
+
+    return function(vertex:{x:number,y:number}){
+            const [r,theta] =[rScale(vertex.x),normalizeAngle(thetaScale(vertex.y))];
+            const [xcart,ycart] = polarToCartesian(r,theta);
+
+            const nodeLabel= {
+                alignmentBaseline:"middle",
+                textAnchor: (theta!>Math.PI/2 && theta!<3*Math.PI/2?"end":" start"),
+                dxFactor:Math.cos(theta),
+                dyFactor:Math.sin(theta),
+                rotation:textSafeDegrees(theta)}
+
+            return {x:x(xcart),y:y(ycart),r,theta, nodeLabel:nodeLabel}
+        }
+}
+
+
+export function polarToCartesian(r:number,theta:number){
+    return [r*Math.cos(theta),r*Math.sin(theta)];
+}
+
+export function normalizeAngle(theta:number){
+    while(theta>2*Math.PI ){
+    theta-=2*Math.PI
+    }
+    return theta;
+}
+
+export function degrees(theta:number){
+    return normalizeAngle(theta)*180/Math.PI;
+}
+
+//this function converts radians to degrees and adjusts degrees 
+// so the text is not fliped
+export function textSafeDegrees(radians:number){
+    const d =  degrees(normalizeAngle(radians));
+
+    if(d>90 && d<270){
+        return d-180;
+    }else{
+        return d
+    }
+}
+
+function distance(point1:{x:number,y:number}, point2:{x:number,y:number}):number{
+    return Math.sqrt((point1.x-point2.x)**2+(point1.y-point2.y)**2)
+}

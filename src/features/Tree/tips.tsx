@@ -1,38 +1,60 @@
-import { useAppSelector } from "../../app/hooks";
+import { getColorScale, useAppSelector } from "../../app/hooks";
 import { selectShapeState } from "../Settings/panels/shapes/shapeSlice";
-import { NormalizedTree, Nodes, NodeRef } from "@figtreejs/core";
-import { Node } from "./treeSlice";
-import { selectHeader } from "../Header/headerSlice";
+import {  Nodes, NodeRef, Tree } from "@figtreejs/core";
+import { COLOUR_ANNOTATION } from "../../app/constants";
+import { selectTree } from '../../app/hooks';
 
-export function Tips(props: { tree: NormalizedTree }) {
-    const tree = props.tree;
-    const settings = useAppSelector(selectShapeState("tip"));
-    const header = useAppSelector(selectHeader)
+function tipShapeGenerator(target: "tip" | "tipBackground" ) {
+    return function(props:any){
+    const settings = useAppSelector(selectShapeState(target));
+    const tipColourBy = useAppSelector(selectShapeState("tip")).colourBy;
+    const activated = useAppSelector(selectShapeState("tip")).activated && settings.activated;
+    const {tree} = props;
 
-    const filter = (n: Node) => tree.getChildCount(n) === 0;
+    //if we color by an attribute and the tip doesn't have that attribute, don't show it
 
+    function filter(n:NodeRef):boolean{
+        if(tipColourBy==="User selection"){
+           return  tree.getChildCount(n) === 0;
+        }else{
+            const annotation = tree.getAnnotation(n,tipColourBy);
+           return annotation!==undefined && tree.getChildCount(n) === 0;
+        }
+    }
+
+    // const filter = (n: NodeRef) => tree.getChildCount(n) === 0;
+
+    const fillColorScale = useAppSelector( (state)=>getColorScale(state,settings.colourBy));
+  
+    function filler(n:NodeRef):string{
+      if(settings.colourBy==="User selection"){
+        const custom = tree.getAnnotation(n,COLOUR_ANNOTATION);
+        return custom===undefined?settings.colour:(custom as string);
+    }else{
+      const annotation = tree.getAnnotation(n,settings.colourBy);
+      if(annotation===undefined){
+        return settings.colour;
+      }
+      return fillColorScale(tree.getAnnotation(n,settings.colourBy)) as string;
+    }
+  }
 
     // check if sizing by an attribute or by a constant
     const radius = settings.maxSize / 2;
-    const fill = settings.colourBy === "User selection" ?
-        (n: NodeRef) => {
-            const custom = header.SelectNodeDecorations[n.id] ? header.SelectNodeDecorations[n.id].customColor : settings.colour
-            return custom!
-        } : settings.colour;
 
     const stroke = settings.outlineColour;;
     const strokeWidth = settings.outlineWidth;
 
 
-    if (settings.activated) {
+    if (activated) {
         if (settings.shape === "Circle") {
             return (
-                <Nodes.Circle filter={filter} attrs={{ r: radius, fill, stroke, strokeWidth }} />
+                <Nodes.Circle {...props} filter={filter} attrs={{ r: radius, fill:filler, stroke, strokeWidth }} />
 
             )
         } else if (settings.shape === "Rectangle") {
             return (
-                <Nodes.Rectangle filter={filter} attrs={{ width: settings.maxSize, height: settings.maxSize, fill, stroke, strokeWidth }} />
+                <Nodes.Rectangle {...props} filter={filter} attrs={{ width: settings.maxSize, height: settings.maxSize, fill:filler, stroke, strokeWidth }} />
             )
         }
         else {
@@ -42,6 +64,8 @@ export function Tips(props: { tree: NormalizedTree }) {
         return <g></g>;
     }
 
-
-
+    }
 }
+
+export const Tips = tipShapeGenerator("tip")
+export const TipsBackground = tipShapeGenerator("tipBackground")

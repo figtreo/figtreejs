@@ -1,16 +1,14 @@
 import React from "react";
-import { useLayout } from "../../../hooks";
-import { AxisBarsProps } from "./Axis.types";
-import PolarAxisBars from "./PolarAxisBars";
+
 import RectangularAxisBars from "./RectangularAxisBars";
 
-export default function AxisBars(props: AxisBarsProps) {
+export default function AxisBars(props: any) {
 
-    const {type} = useLayout(); 
- 
-    if(type === "Polar"){
-        return <PolarAxisBars {...props}/>
-    }else if(type === "Rectangular"){
+    const {layoutClass} = props; 
+    console.log('axisbars', props)
+    if(layoutClass === "Polar"){
+        return null //<PolarAxisBars {...props}/>
+    }else if(layoutClass === "Rectangular"){
         return <RectangularAxisBars {...props}/>
     }else{
         return null;

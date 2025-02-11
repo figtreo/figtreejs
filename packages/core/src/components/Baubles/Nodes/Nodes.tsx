@@ -1,34 +1,31 @@
 
-import { NodeRef } from "../../../Tree/Tree.types";
-import {useAttributeMappers, useLayout, useTree} from "../../../hooks";
+import { NodeRef } from "../../../Evo/Tree/Tree.types";
+import {useAttributeMappers} from "../../../hooks";
 
 import React from "react";
 import Label from "./Shapes/Label";
 import {  Circle } from "./Shapes/Circle";
 import Rectangle from "./Shapes/Rectangle";
-import CoalescentShape from "./Shapes/CoalescentShape";
-import { NodeProps, NodeShape } from "./Node.types";
+// import CoalescentShape from "./Shapes/CoalescentShape";
+import { NodeProps } from "./Node.types";
+import {  useVertexFactory } from "../../../store/store";
+import { preOrderIterator } from "../../../Evo/Tree";
+import { textSafeDegrees } from "../../../store/polarScale";
 
 // todo don't expose in index
 export function NodesHOC(ShapeComponent:React.ComponentType<any>) {
     return function Nodes(props:NodeProps) {
-        const vertices =useLayout();
-        const tree = useTree();
-        const {filter=(n:NodeRef)=>true,
-            ...rest} = props;
         const shapeProps = useAttributeMappers(props);
-        
+        const {tree,filter=(n:NodeRef)=>true,
+            keyBy=n=>n.number,...rest} = props;
+        // pass x and y position here so can be animated with react-spring in useAnimation hook
         return (
             <g className={"node-layer"}>
-                {vertices.allIds.filter(a=>!vertices.byId[a].hidden).sort((a,b)=>(vertices.byId[a].x-vertices.byId[b].x)).reduce<React.ReactNode[]>( (all, id) => {
-                    if (filter(tree.getNode(id))) {//filter needs to us tree api
-                        const v = vertices.byId[id];
-                        const element = <ShapeComponent key={id} {...rest}  node={tree.getNode(v.id)}  theta={v.theta} x={v.x} y={v.y} {...shapeProps(v)}/> 
-                        // const element = <ShapeComponent key={v.id} {...rest}  {...shapeProps(v)}   vertex={v}  x={scales.x(v.x)} y={scales.y(v.y)}/> 
-                            all.push(element)
+                {[...preOrderIterator(tree)].filter(n=>filter(n)).map((node) => {
+                     {
+                        return <ShapeComponent key={keyBy(node)} node={node}  shapeProps={shapeProps} {...rest}/> 
                     }
-                    return all
-                }, [])
+                })
                 }
             </g>
         )
@@ -36,27 +33,45 @@ export function NodesHOC(ShapeComponent:React.ComponentType<any>) {
 }
 
 function NodeLabels(props:any){
-    const vertices =useLayout();
-    const tree = useTree();
-    const {filter=(n:NodeRef)=>true,
-        aligned=false,
-        ...rest} = props;
-    const shapeProps = useAttributeMappers(props);
+
+        const {tree,
+            filter=(n:NodeRef)=>true,
+            keyBy=(n:NodeRef)=>n.number,
+            aligned=false,
+            gap = 6,
+            layout,
+            scale,
+            dimensions,
+            ...rest} = props;
+
+        const shapeProps = useAttributeMappers(props);
+        const useVertex = useVertexFactory(layout);
+        const {domainX,layoutClass} = dimensions
+        
     return (
         <g className={"node-label-layer"}>
-            {vertices.allIds.filter(a=>!vertices.byId[a].hidden).sort((a,b)=>(vertices.byId[a].x-vertices.byId[b].x)).reduce<React.ReactNode[]>( (all, id) => {
-                if (filter(tree.getNode(id))) {//filter needs to us tree api
-                    const v = vertices.byId[id];
-                    const {alignmentBaseline,textAnchor,rotation} = v.nodeLabel;
-                    const {x,y} = aligned &&  v.nodeLabel.alignedPos ? v.nodeLabel.alignedPos:v.nodeLabel;
+            {[...preOrderIterator(tree)].filter(filter).map((node) => { 
+                    const v = useVertex(node);
+                     // TODO move to function to calculate on the fly
+                    const scaledV = scale(v);
+                    const nodeLabel = scaledV.nodeLabel;
+                    const dx = nodeLabel.dxFactor*gap; 
+                    const dy = nodeLabel.dyFactor*gap;
+                                             
+                    const scaledMax = scale({x:domainX[1],y:v.y})
+                    
+                    const xpos = (aligned? scaledMax.x :scaledV.x) + dx;
+                    const ypos = (aligned && layoutClass==="Polar"? scaledMax.y :scaledV.y) + dy;
+
+                    const {alignmentBaseline,rotation,textAnchor}=nodeLabel;
+
                     const d =        
-                    aligned &&  v.nodeLabel.alignedPos ?`M${v.x} ${v.y}L${x} ${y}`:`M${v.x} ${v.y}L${v.x} ${v.y}`
-                    const element = <Label key={id} {...rest}  node={tree.getNode(v.id)}  d={d} alignmentBaseline={alignmentBaseline} textAnchor={textAnchor} rotation={rotation}   x={x} y={y} {...shapeProps(v)}/> 
+                    aligned ?`M${scaledV.x} ${scaledV.y}L${xpos} ${ypos}`:`M${scaledV.x} ${scaledV.y}L${scaledV.x} ${scaledV.y}`
+
+                    return <Label key={keyBy(node)} {...rest} node={node}  d={d} alignmentBaseline={alignmentBaseline} textAnchor={textAnchor} rotation={rotation}   x={xpos} y={ypos} {...shapeProps(node)}/> 
                     // const element = <ShapeComponent key={v.id} {...rest}  {...shapeProps(v)}   vertex={v}  x={scales.x(v.x)} y={scales.y(v.y)}/> 
-                        all.push(element)
-                }
-                return all
-            }, [])
+                })
+            
             }
         </g>
     )
@@ -73,12 +88,12 @@ const RectangularNodes = NodesHOC(Rectangle);
 
 
 
-const CoalescentNodes=NodesHOC(CoalescentShape);
+// const CoalescentNodes=NodesHOC(CoalescentShape);
 
 
 
 
-const Nodes={Circle:CircleNodes,Coalescent:CoalescentNodes,Rectangle:RectangularNodes,Label:NodeLabels};
+const Nodes={Circle:CircleNodes,Rectangle:RectangularNodes,Label:NodeLabels};
 export default Nodes;
 
 

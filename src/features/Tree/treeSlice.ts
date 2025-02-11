@@ -1,108 +1,21 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { RootState } from '../../app/store';
-import { NormalizedTree, NormalizedTreeData } from '@figtreejs/core';
-
-export interface Node {
-    id: string,
-    name: string | null,
-    label: string | null,
-    children: string[],
-    parent: string | null,
-    length: number | null,
-    height: number | null,
-    divergence: number | null,//derive height and divergence from this for now
-}
-
-export interface TreeState {
-    tree: NormalizedTreeData,
-    status: 'idle' | 'loading' | 'failed';
-}
-//fill initial state of tree with a single node and empty annotations
-const initialState: TreeState = {
-    tree: {
-        nodes: {
-            byId: {},
-            allIds: [],
-            byName: {},
-            byLabel: {},
-            annotations: {}
-        },
-        rootNode: null,
-        annotations: {
-            byId: {},
-            allIds: []
-        },
-    },
-    status: 'idle',
-}
-export const parseNewick = createAsyncThunk(
-    'tree/parseNewick',
-    async (newickString: string) => {
-        const response = await getTreeFromNewick(newickString);
-        return response.data;
-    }
-);
-
-
-export const treeSlice = createSlice({
+import {   createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { ImmutableTree,ImmutableTreeData, TaxonSetData, TaxonSet } from '@figtreejs/core';
+const tree = createSlice({
     name: 'tree',
-    initialState,
-    reducers: {
-
-        rotate: (state, action: PayloadAction<{node:string,recursive:boolean}>) => {
-            const tree = new NormalizedTree(state.tree);
-            const node = tree.getNode(action.payload.node);
-            tree.rotate(node,action.payload.recursive);
-            state.tree = tree.data;
-            // state.tree.nodes.byId[action.payload].children = state.tree.nodes.byId[action.payload].children.reverse();
-        },
-        reroot: (state, action: PayloadAction<string>) => {
-            const tree = new NormalizedTree(state.tree);
-            const node = tree.getNode(action.payload);
-            tree.reroot(node,0.5);
-            state.tree = tree.data;
-            //TODO update all nodes
+    initialState: {tree:new ImmutableTree()._data,taxa:new TaxonSet()._data},
+    reducers:{
+        setTree:{
+            reducer (state, action: PayloadAction<{tree:ImmutableTreeData,taxa:TaxonSetData}>){
+                state.tree = action.payload.tree;
+                state.taxa = action.payload.taxa;
+            },
+            prepare(tree:ImmutableTree){
+                console.log(tree.taxonSet._data)
+                return {payload:{tree:tree._data,taxa:tree.taxonSet._data}}
+            }
         }
-        //orderDecreasing
-        //orderIncreasing
-        //annotateNode
-
-    },
-    extraReducers: (builder) => {
-        builder
-            .addCase(parseNewick.pending, (state) => {
-                state.status = 'loading';
-            })
-            .addCase(parseNewick.fulfilled, (state, action) => {
-                return action.payload;
-            })
-            .addCase(parseNewick.rejected, (state) => {
-                state.status = 'failed';
-            });
-    }
+    }   
 })
-//This requires knowing about the root state. Can we refactor so that information can be provided?
+export default tree.reducer;
 
-export const selectNodeCount = (state: RootState) => state.tree.tree.nodes.allIds.length;
-export const selectAnnotationTypes = (state: RootState) => state.tree.tree.annotations.allIds.map(id => state.tree.tree.annotations.byId[id].type);
-export const selectTree = (state: RootState) => state.tree;
-//TODO can we fake a tree class like this that use redux store underneath?
-
-// export const tree = {
-//     rotate:treeSlice.actions.rotate,
-//     reroot:treeSlice.actions.reroot
-// }
-
-
-export const { rotate, reroot } = treeSlice.actions;
-export default treeSlice.reducer;
-
-
-function getTreeFromNewick(newick: string, options?: { label: string, datePrefix: string | null, parseAnnotations: boolean }): Promise<{ data: TreeState }> {
-
-    return new Promise<{ data: TreeState }>((resolve) =>
-        resolve({ data: {tree:(NormalizedTree.fromNewick(newick, options) as NormalizedTree).data,status:'idle'} })
-    );
-
-}
-
+export const {setTree} = tree.actions;
