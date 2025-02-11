@@ -69,13 +69,6 @@ export function polarScaleMaker(maxX:number,maxY:number,canvasWidth:number,canva
     const x = scaleLinear().domain(xDomain).range(xRange);
     const y = scaleLinear().domain(yDomain).range(yRange);
 
-    const nodeLabel= {
-        alignmentBaseline:"middle",
-        textAnchor:"middle",
-        dx:0,
-        dy:0,
-        rotation:0}
-
     return function(vertex:{x:number,y:number}){
             const [r,theta] =[rScale(vertex.x),normalizeAngle(thetaScale(vertex.y))];
             const [xcart,ycart] = polarToCartesian(r,theta);

@@ -26,8 +26,8 @@ import {  mean } from "d3-array";
 import { scaleLinear } from "d3-scale";
 import { AbstractLayout, ArbitraryVertex, ArbitraryVertices, defaultInternalLayoutOptions, internalLayoutOptions, Vertices } from "./LayoutInterface";
 import { textSafeDegrees } from "./polarLayout";
-import {  Tree } from "../Evo/Tree";
-import {  preOrderIterator, tipIterator } from "../Evo/Tree/NormalizedTree/ImmutableTree";
+import {  Tree } from "..";
+import {  preOrderIterator, tipIterator } from "../";
 
 type data = {
     angleStart: number,
