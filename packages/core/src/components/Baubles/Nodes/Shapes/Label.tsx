@@ -27,7 +27,7 @@ export default function Label(props: any) {
     return (
 
         <g  className={"node-label"} node-id={id} >
-            <text  alignmentBaseline={alignmentBaseline} textAnchor={textAnchor} transform={`translate(${nonAnimated.x},${nonAnimated.y}) rotate(${nonAnimated.rotation})`} {...attrs}>{text(node)}</text>
+            <text  alignmentBaseline={alignmentBaseline} textAnchor={textAnchor} x={nonAnimated.x} y={nonAnimated.y} transform={`rotate(${nonAnimated.rotation},${nonAnimated.x},${nonAnimated.y})`} {...attrs}>{text(node)}</text>
             {d?<path strokeWidth={1} stroke='grey' strokeDasharray="2" d={nonAnimated.d} />:null}
         </g>
     )

@@ -35,31 +35,24 @@ export function radialLayout (tree:ImmutableTree):(node:NodeRef)=>FunctionalVert
             const leftLabel = tree.getChildCount(node) > 0;
             let dx,dy;
            if(!leftLabel){
-                dx = Math.cos(branchAngle)*12;
-                dy = -Math.sin(branchAngle)*12;
+                dx = Math.cos(branchAngle); // twice the gap as left label
+                dy = Math.sin(branchAngle);
             }else{
-                dx = Math.cos(branchAngle)*6;
-                dy = -Math.sin(branchAngle)*6;
+                dx = Math.cos(branchAngle);
+                dy = Math.sin(branchAngle);
             }           
             const vertex = {x,
                 y,
                 layoutClass:layoutClass.Radial,
                 theta: branchAngle,
                 nodeLabel:{
-                    dx: dx,
-                    dy: dy,
+                    dxFactor: dx,
+                    dyFactor: dy,
                     alignmentBaseline: "middle",
-                    textAnchor: branchAngle>Math.PI/2 && branchAngle<3*Math.PI/2?"end":"start",
-                    rotation: - textSafeDegrees(branchAngle)
+                    textAnchor: normalizeAngle(branchAngle)>Math.PI/2 && normalizeAngle(branchAngle)<3*Math.PI/2?"end":"start",
+                    rotation:  textSafeDegrees(normalizeAngle(branchAngle))
                 }
             }
-            /* nodeLabel: {
-                                x: xpos+vertex.nodeLabel.dx,
-                                y: ypos+vertex.nodeLabel.dy,
-                                alignmentBaseline: vertex.nodeLabel.alignmentBaseline,
-                                textAnchor: vertex.nodeLabel.rotation!>Math.PI/2 && vertex.nodeLabel.rotation!<3*Math.PI/2?"end":"start",
-                                rotation:-textSafeDegrees(vertex.nodeLabel.rotation!),
-                                */
             
             if (tree.getChildCount(node) > 0) {
                 const childLeafs: number[] = [];
@@ -104,9 +97,13 @@ export function radialLayout (tree:ImmutableTree):(node:NodeRef)=>FunctionalVert
 // so the text is not fliped
 export function textSafeDegrees(radians:number){
     const d =  degrees(radians)
-
+//trial and error  - must be a better way
     if(d>90 && d<270){
-        return d-180;
+        return (d-180)/2;
+    }else if(d>0 && d<88){
+        return d/2;
+    }else if(d<360 && d>272){
+        return (360+d)/2
     }else{
         return d
     }

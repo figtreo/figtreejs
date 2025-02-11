@@ -27,7 +27,7 @@ return (
                 const step = scale({x:parentVertex.x,y:v.y})
                 const {dx,dy} = layoutClass==="Polar"? getPolarBranchDs(scaledV.theta!,gap):{dx:0,dy:-1*gap};
                 const x = (layoutClass==="Polar"? (scaledV.x+step.x)/2 : (scaledV.x+scaledpV.x)/2 )+dx;
-                const y = (layoutClass==="Polar"? (scaledV.y+step.y)/2  : scaledV.y )+dy;
+                const y = (layoutClass==="Polar"? (scaledV.y+step.y)/2  : layoutClass==="Radial"? (scaledV.y+scaledpV.y)/2 : scaledV.y )+dy;
 
                 return <Label key={node.number} {...rest}  node={node}  alignmentBaseline={"bottom"} textAnchor={"middle"} rotation={rotation} x = {x}  y={y} {...shapeProps(node)}/> 
                 // const element = <ShapeComponent key={v.id} {...rest}  {...shapeProps(v)}   vertex={v}  x={scales.x(v.x)} y={scales.y(v.y)}/> 

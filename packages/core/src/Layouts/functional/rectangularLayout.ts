@@ -15,8 +15,8 @@ export type FunctionalVertex = {
     nodeLabel:{
         alignmentBaseline:string,
         textAnchor:string,
-        dx:number,
-        dy:number,
+        dxFactor:number,
+        dyFactor:number,
         rotation:number
     }
 }
@@ -53,8 +53,8 @@ export function baseLayout(lc:layoutClass){
                 nodeLabel:{
                     alignmentBaseline: leftLabel ? (labelBelow ? "bottom" : "hanging") : "middle", // todo calc on the fly
                     textAnchor:leftLabel?"end":"start",
-                    dx:leftLabel?-6:12,
-                    dy:leftLabel ? (labelBelow ? -8 : 8) : 0,
+                    dxFactor: leftLabel?-1:1,
+                    dyFactor:leftLabel ? (labelBelow ? -1 : 1) : 0,
                     rotation:0}
                 }
                 map.set(node,vertex);

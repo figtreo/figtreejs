@@ -37,42 +37,33 @@ function NodeLabels(props:any){
         const {tree,
             filter=(n:NodeRef)=>true,
             keyBy=(n:NodeRef)=>n.number,
-            aligned=false,gap = 6,layout,scale,dimensions,...rest} = props;
+            aligned=false,
+            gap = 6,
+            layout,
+            scale,
+            dimensions,
+            ...rest} = props;
+
         const shapeProps = useAttributeMappers(props);
         const useVertex = useVertexFactory(layout);
-        const {maxX} = dimensions
-
+        const {domainX,layoutClass} = dimensions
+        
     return (
         <g className={"node-label-layer"}>
             {[...preOrderIterator(tree)].filter(filter).map((node) => { 
                     const v = useVertex(node);
                      // TODO move to function to calculate on the fly
                     const scaledV = scale(v);
-                    const layoutClass = v.layoutClass;
-                    const labelxScootFactor = tree.isInternal(node) ? -1 : 1;
+                    const nodeLabel = scaledV.nodeLabel;
+                    const dx = nodeLabel.dxFactor*gap; 
+                    const dy = nodeLabel.dyFactor*gap;
+                                             
+                    const scaledMax = scale({x:domainX[1],y:v.y})
                     
-                    const dx = layoutClass==="Rectangular"? labelxScootFactor*gap: Math.cos(scaledV.theta!)*gap  ; 
-                    const dy = layoutClass==="Rectangular"?  (tree.getChildCount(node) > 0 ? 
-                                                                    (tree.getParent(node) === undefined || tree.getChild(tree.getParent(node)!, 0) !== node) ?
-                                                                -1*gap : gap :
-                                                                         0 ) :
-                                             Math.sin(scaledV.theta!)*gap ; 
-
-                    const scaledMax = scale({x:maxX,y:v.y})
                     const xpos = (aligned? scaledMax.x :scaledV.x) + dx;
-                    const ypos = (aligned &&layoutClass==="Polar"? scaledMax.y :scaledV.y) + dy
-                    const rotation = layoutClass==="Polar"? textSafeDegrees(scaledV.theta!):0 
+                    const ypos = (aligned && layoutClass==="Polar"? scaledMax.y :scaledV.y) + dy;
 
-                    const alignmentBaseline=layoutClass==="Polar"? "middle":
-                    tree.isInternal(node) ? 
-                        ((tree.getChildCount(node) > 0 && (tree.getParent(node) === undefined || tree.getChild(tree.getParent(node)!, 0) !== node)) ? "bottom" :
-                            "hanging") :
-                        "middle";
-                    const textAnchor=layoutClass==="Polar"? 
-                        (scaledV.theta!>Math.PI/2 && scaledV.theta!<3*Math.PI/2?"end":
-                            "start"):
-                        tree.isInternal(node)?"end":
-                            "start"
+                    const {alignmentBaseline,rotation,textAnchor}=nodeLabel;
 
                     const d =        
                     aligned ?`M${scaledV.x} ${scaledV.y}L${xpos} ${ypos}`:`M${scaledV.x} ${scaledV.y}L${scaledV.x} ${scaledV.y}`

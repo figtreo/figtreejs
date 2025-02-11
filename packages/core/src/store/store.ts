@@ -43,13 +43,13 @@ export function getScale({
     switch (layoutClass) {
         case "Rectangular":
             return function (vertex: { x: number, y: number }) {
-                return { x: xScale(vertex.x), y: yScale(vertex.y) }
+                return { ...vertex, x: xScale(vertex.x), y: yScale(vertex.y) }
             }
         case "Polar":
             return polarScaleMaker(domainX[1], domainY[1], canvasWidth, canvasHeight, invert, minRadius, angleRange, rootAngle)
         case "Radial":
             return function (vertex: { x: number, y: number }) {
-                return { x: xScale(vertex.x), y: yScale(vertex.y) }
+                return { ...vertex,x: xScale(vertex.x), y: yScale(vertex.y) }
             }
         default:
             throw new Error("Not implemented in calcX")

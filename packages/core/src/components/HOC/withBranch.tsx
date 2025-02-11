@@ -23,7 +23,6 @@ const withBranch = (WrappedComponent: React.ComponentType<any>) => {
         const points = [vP,vN,step];
 
         const d = normalizePath(pathGenerator(points,curvature,layoutClass)); //normalized so we can use react spring to animate
-        console.log(pathGenerator(points,curvature,layoutClass))
         return <WrappedComponent {...rest} {...shapeProps(node)} d={d} id={node.number}/>
     } 
     return BranchedComponent;

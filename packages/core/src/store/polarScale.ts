@@ -69,10 +69,25 @@ export function polarScaleMaker(maxX:number,maxY:number,canvasWidth:number,canva
     const x = scaleLinear().domain(xDomain).range(xRange);
     const y = scaleLinear().domain(yDomain).range(yRange);
 
+    const nodeLabel= {
+        alignmentBaseline:"middle",
+        textAnchor:"middle",
+        dx:0,
+        dy:0,
+        rotation:0}
+
     return function(vertex:{x:number,y:number}){
             const [r,theta] =[rScale(vertex.x),normalizeAngle(thetaScale(vertex.y))];
             const [xcart,ycart] = polarToCartesian(r,theta);
-            return {x:x(xcart),y:y(ycart),r,theta}
+
+            const nodeLabel= {
+                alignmentBaseline:"middle",
+                textAnchor: (theta!>Math.PI/2 && theta!<3*Math.PI/2?"end":" start"),
+                dxFactor:Math.cos(theta),
+                dyFactor:Math.sin(theta),
+                rotation:textSafeDegrees(theta)}
+
+            return {x:x(xcart),y:y(ycart),r,theta, nodeLabel:nodeLabel}
         }
 }
 
@@ -95,7 +110,7 @@ export function degrees(theta:number){
 //this function converts radians to degrees and adjusts degrees 
 // so the text is not fliped
 export function textSafeDegrees(radians:number){
-    const d =  degrees(radians)
+    const d =  degrees(normalizeAngle(radians));
 
     if(d>90 && d<270){
         return d-180;
