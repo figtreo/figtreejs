@@ -1,22 +1,11 @@
-import {create, StoreApi, UseBoundStore}  from 'zustand'
-import { ImmutableTree, NodeRef, Tree } from '../Evo/Tree'
+import {create, }  from 'zustand'
+import {  NodeRef } from '../Evo/Tree'
 import { FunctionalVertex,layoutClass } from '../Layouts/functional/rectangularLayout'
 import { polarScaleMaker } from './polarScale'
 import { scaleLinear } from 'd3-scale'
 
 //todo remove props that are just the getting passed to children and use render props instead
 
-export type dimensionState = {canvasWidth:number,canvasHeight:number,domain:[number,number],layoutClass:layoutClass}
-export interface FigtreeState {
-    layout:(node:NodeRef)=>FunctionalVertex,
-    scale:(v:{x:number,y:number})=>{x:number,y:number,r?:number,theta?:number},    
-    animated:boolean,
-    dimensions:dimensionState,
-    setLayout:(layout:(node:NodeRef)=>FunctionalVertex)=>void,
-    setScale: (maxX:number,maxY:number,canvasWidth:number,canvasHeight:number,layoutClass:layoutClass)=>void,
-    setAnimated:(animated:boolean)=>void
-    setDimensions:(canvasWidth:number,canvasHeight:number,domain:[number,number],type:layoutClass)=>void
-}
 
 export const useVertexFactory =(layout:(n:NodeRef)=>FunctionalVertex)=> (node:NodeRef):FunctionalVertex=>{
     const v = layout(node);
@@ -26,42 +15,24 @@ export const useVertexFactory =(layout:(n:NodeRef)=>FunctionalVertex)=> (node:No
     return v!;
 }
 
-const useFigtreeStore = create<FigtreeState>()((set) => ({
-    scale:(v:{x:number,y:number})=>v,
-    animated:false,
-    layout: (node:NodeRef)=>{throw new Error("Layout not set")},
-    dimensions:{canvasWidth:0,canvasHeight:0,domain:[0,0],layoutClass:layoutClass.Rectangular},
-    setScale: (maxX,maxY,canvasWidth,canvasHeight,layoutClass)=>set(()=> ({scale:getScale(maxX,maxY,canvasWidth,canvasHeight,layoutClass)})),
-    setAnimated:(animated)=>set(()=>({animated})),
-    setLayout:(layout)=>set(()=>({layout})),
-    setDimensions:(canvasWidth:number,canvasHeight:number,domain:[number,number],layoutClass)=>set(()=>({dimensions:{canvasWidth,canvasHeight,domain,layoutClass}})) //TODO cache these
-}))
-
-export const storeCreator = () =>{
-    return create<FigtreeState>()((set) => ({
-        scale:(v:{x:number,y:number})=>v,
-        animated:false,
-        layout: (node:NodeRef)=>{throw new Error("Layout not set")},
-        dimensions:{canvasWidth:0,canvasHeight:0,domain:[0,0],layoutClass:layoutClass.Rectangular},
-        setScale: (maxX,maxY,canvasWidth,canvasHeight,layoutClass)=>set(()=> ({scale:getScale(maxX,maxY,canvasWidth,canvasHeight,layoutClass)})),
-        setAnimated:(animated)=>set(()=>({animated})),
-        setLayout:(layout)=>set(()=>({layout})),
-        setDimensions:(canvasWidth:number,canvasHeight:number,domain:[number,number],layoutClass)=>set(()=>({dimensions:{canvasWidth,canvasHeight,domain,layoutClass}})) //TODO cache these
-    }))
-}
 //Todo cache these
 export function getScale(maxX:number,maxY:number,canvasWidth:number,canvasHeight:number,layoutClass:layoutClass,invert:boolean=false,minRadius:number=0,angleRange:number=2*Math.PI,rootAngle:number=0){
+    
+    const xScale = scaleLinear().domain([0,maxX]).range([0,canvasWidth]);
+    const yScale = scaleLinear().domain([0,maxY]).range([0,canvasHeight]);
+    
     switch(layoutClass){
         case "Rectangular":
-            const xScale = scaleLinear().domain([0,maxX]).range([0,canvasWidth]);
-            const yScale = scaleLinear().domain([0,maxY]).range([0,canvasHeight]);
             return function(vertex:{x:number,y:number}){
                 return {x:xScale(vertex.x),y:yScale(vertex.y)}
-            }
+            } 
         case "Polar":
             return polarScaleMaker(maxX,maxY,canvasWidth,canvasHeight,invert,minRadius,angleRange,rootAngle)
-
-        default:
+        case "Radial":
+            return function(vertex:{x:number,y:number}){
+                return {x:xScale(vertex.x),y:yScale(vertex.y)}
+            }         
+            default:
             throw new Error("Not implemented in calcX")
     }
 }
