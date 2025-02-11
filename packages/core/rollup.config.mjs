@@ -3,10 +3,12 @@ import commonjs from "@rollup/plugin-commonjs";
 import typescript from "@rollup/plugin-typescript";
 import dts from "rollup-plugin-dts";
 import terser from '@rollup/plugin-terser';
-import peerDepsExternal from "rollup-plugin-peer-deps-external";
+import external from "rollup-plugin-peer-deps-external";
 import replace from '@rollup/plugin-replace';
 
-const packageJson = require("./package.json");
+// const packageJson = require("./package.json");
+import packageJson from './package.json' with { type: 'json' };
+
 
 export default [
   {
@@ -24,23 +26,22 @@ export default [
       },
     ],
     plugins: [
-      peerDepsExternal(),
+      external(),
       resolve(),
       commonjs(),
       typescript({ tsconfig: "./tsconfig.json" }),
-      // terser(),
+      terser(),
       replace({
-        // 'process.env.NODE_ENV': JSON.stringify( 'dev' ),
         'process.env.NODE_ENV': JSON.stringify( 'dev' ),
         preventAssignment:true
       })
     ],
-    // external: ["react", "react-dom", "styled-components"], // the hope is this includes react in the bundle
-    external: [ "styled-components"],
+    external: ["react", "react-dom"], // the hope is this includes react in the bundle
+    // external: [ "styled-components"],
   },
   {
-    input: "./src/index.ts",
+    input: "./dist/esm/types/src/index.d.ts",
     output: [{ file: "./dist/index.d.ts", format: "es" }],
-    plugins: [dts.default()],
+    plugins: [dts()],
   },
 ];

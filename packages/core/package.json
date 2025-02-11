@@ -6,7 +6,7 @@
   "module": "dist/esm/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "rollup -c --bundleConfigAsCjs",
+    "build": "rollup -c ",
     "build:watch": "rollup -c --bundleConfigAsCjs -w",
     "dev": "rollup -c --bundleConfigAsCjs -w",
     "test": "vitest"

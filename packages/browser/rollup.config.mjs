@@ -6,7 +6,9 @@ import terser from '@rollup/plugin-terser';
 import peerDepsExternal from "rollup-plugin-peer-deps-external";
 import replace from '@rollup/plugin-replace';
 
-const packageJson = require("./package.json");
+// const packageJson = require("./package.json");
+import packageJson from './package.json' with { type: 'json' };
+
 
 export default [
   {
@@ -28,18 +30,18 @@ export default [
       resolve(),
       commonjs(),
       typescript({ tsconfig: "./tsconfig.json" }),
-      // terser(),
+      terser(),
       replace({
+        // 'process.env.NODE_ENV': JSON.stringify( 'dev' ),
         'process.env.NODE_ENV': JSON.stringify( 'dev' ),
         preventAssignment:true
       })
     ],
-    external: ["react", "react-dom", "styled-components"], // the hope is this includes react in the bundle
-    // external: [ "styled-components"],
+    // external: ["react", "react-dom", "styled-components"], // the hope is this includes react in the bundle
   },
   {
-    input: "./dist/esm/types/src/index.d.ts",
+    input: "./src/index.ts",
     output: [{ file: "./dist/index.d.ts", format: "es" }],
-    plugins: [dts.default()],
+    plugins: [dts()],
   },
 ];

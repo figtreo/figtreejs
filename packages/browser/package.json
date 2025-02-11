@@ -1,14 +1,14 @@
 {
-  "name": "@figtreejs/web",
+  "name": "@figtreejs/browser",
   "version": "0.0.1",
   "description": "A standalone library for phylogenetic visualization",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "rollup -c --bundleConfigAsCjs ",
-    "build:watch": "rollup -c --bundleConfigAsCjs -w",
-    "dev": "rollup -c --bundleConfigAsCjs -w",
+    "build": "rollup -c ",
+    "build:watch": "rollup -c  -w",
+    "dev": "rollup -c  -w",
     "test": "jest"
   },
   "author": "Andrew Rambaut and JT McCrone",
@@ -24,7 +24,7 @@
     "typescript": "^5.7.3"
   },
   "dependencies": {
-    "@figtreejs/core": "file:../core",
+    "@figtreejs/core": "^0.0.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   }
