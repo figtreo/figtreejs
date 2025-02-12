@@ -10,7 +10,6 @@ const tree = createSlice({
                 state.taxa = action.payload.taxa;
             },
             prepare(tree:ImmutableTree){
-                console.log(tree.taxonSet._data)
                 return {payload:{tree:tree._data,taxa:tree.taxonSet._data}}
             }
         }

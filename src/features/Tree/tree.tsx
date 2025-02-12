@@ -488,7 +488,7 @@ export function Tree({ panelRef }: any) {
       minRadius: minR,
       invert,
     }
-    const hilights = tree
+    const highlights = tree
       .getInternalNodes()
       .filter((n) => tree.getAnnotation(n, HILIGHT_ANNOTATION) !== undefined)
       .map((n, i) => (
@@ -502,14 +502,14 @@ export function Tree({ panelRef }: any) {
           node={n}
         />
       ))
-      // TODO update these so they respect the props added by figtree.
-    const figureElements = [
+
+      const figureElements = [
       <AxisElement key={0} />,
       ,
-      ...hilights,
-      <Legends key={hilights.length + 1} />,
+      ...highlights,
+      <Legends key={highlights.length + 1} />,
       <Branches
-        key={hilights.length + 2}
+        key={highlights.length + 2}
         attrs={{
           fill: "none",
           strokeWidth: lineWidth + 4,
@@ -521,7 +521,7 @@ export function Tree({ panelRef }: any) {
         curvature={curvature}
       />, // highlight selected branches
       <Branches
-        key={hilights.length + 3}
+        key={highlights.length + 3}
         attrs={{
           fill: branchFiller,
           strokeWidth: lineWidth,
@@ -530,18 +530,18 @@ export function Tree({ panelRef }: any) {
         filter={(n: NodeRef) => true}
         curvature={curvature}
       />,
-      <BranchLabels key={hilights.length + 4} />,
-      <TipsBackground key={hilights.length + 5} />,
+      <BranchLabels key={highlights.length + 4} />,
+      <TipsBackground key={highlights.length + 5} />,
       <TipLabels
-        key={hilights.length + 6}
+        key={highlights.length + 6}
         attrs={{
           filter: (n: NodeRef) =>
             selectedTaxa.has(n.number) ? "url(#solid)" : null,
         }}
       />,
-      <Tips key={hilights.length + 7} />,
-      <InternalNodes key={hilights.length + 8} />,
-      <NodeLabels key={hilights.length + 9} />,
+      <Tips key={highlights.length + 7} />,
+      <InternalNodes key={highlights.length + 8} />,
+      <NodeLabels key={highlights.length + 9} />,
     ]
 
     return (

@@ -15,7 +15,9 @@ type data = {
     number: number
 }
 
-export function radialLayout (tree:ImmutableTree):(node:NodeRef)=>FunctionalVertex { 
+export function radialLayout (tree:ImmutableTree,options:{}={}):(node:NodeRef)=>FunctionalVertex { 
+
+    
     const map = new Map<NodeRef,FunctionalVertex>();
     
         const dataStack: data[] = [{ angleStart: 0, angleEnd: 2 * Math.PI, xpos: 0, ypos: 0, level: 0, number: tree.getRoot()!.number }] // TODO start tree.
