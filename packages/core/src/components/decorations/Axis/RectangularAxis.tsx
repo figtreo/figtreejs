@@ -62,8 +62,9 @@ export default function Axis(props: any) {
       : [props.children]
     : null
   const bars = rawBars
-    ? rawBars.map((b: React.ReactElement) =>
+    ? rawBars.map((b: React.ReactElement,i:number) =>
         React.cloneElement(b, {
+          key:i,
           scale,
           direction,
           layoutClass,
@@ -97,6 +98,7 @@ export default function Axis(props: any) {
               },${direction === "horizontal" ? 0 : scale(t)})`}
             >
               <line
+                key={`tickLine-${i}`}
                 {...getTickLine(ticks.length!, direction)}
                 stroke={"black"}
                 strokeWidth={strokeWidth}

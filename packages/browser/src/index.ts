@@ -1,4 +1,4 @@
-import {rectangularLayout, polarLayout } from "@figtreejs/core";
+import {rectangularLayout, polarLayout,radialLayout } from "@figtreejs/core";
 import BranchLabels from "./BranchLabelRender";
 import Branches from "./BranchesRender";
 import figtree from "./FigtreeRender";
@@ -21,9 +21,9 @@ export const ft ={
     // tanglegram:tanglegramRender,
     rectangularLayout,
     polarLayout,
-    // radialLayout:RadialLayout
+    radialLayout:radialLayout
 }
-export {figtree,Branches,BranchLabels,CircleNodes,RectNodes,NodeLabels,Axis,rectangularLayout,polarLayout} ;
+export {figtree,Branches,BranchLabels,CircleNodes,RectNodes,NodeLabels,Axis,rectangularLayout,polarLayout,radialLayout} ;
 //TODO mimic plot api have d3 return svg //how to handle animations?
 export {ImmutableTree} from "@figtreejs/core";
 

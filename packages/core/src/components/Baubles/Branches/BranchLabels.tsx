@@ -10,7 +10,14 @@ import { textSafeDegrees } from "../../../store/polarScale";
 
 
 export default function BranchLabels(props:any){
-    const {tree,filter=(n:NodeRef)=>true,aligned=false,gap=6,layout,scale,...rest} = props;
+    const {tree,
+        filter=(n:NodeRef)=>true,
+        aligned=false,
+        gap=6,
+        layout,
+        scale,
+        keyBy=(n:NodeRef)=>n.number,
+        ...rest} = props;
     const shapeProps = useAttributeMappers(props);
     const useVertex = useVertexFactory(layout);
 
@@ -29,7 +36,7 @@ return (
                 const x = (layoutClass==="Polar"? (scaledV.x+step.x)/2 : (scaledV.x+scaledpV.x)/2 )+dx;
                 const y = (layoutClass==="Polar"? (scaledV.y+step.y)/2  : layoutClass==="Radial"? (scaledV.y+scaledpV.y)/2 : scaledV.y )+dy;
 
-                return <Label key={node.number} {...rest}  node={node}  alignmentBaseline={"bottom"} textAnchor={"middle"} rotation={rotation} x = {x}  y={y} {...shapeProps(node)}/> 
+                return <Label key={keyBy(node)} {...rest}  node={node}  alignmentBaseline={"bottom"} textAnchor={"middle"} rotation={rotation} x = {x}  y={y} {...shapeProps(node)}/> 
                 // const element = <ShapeComponent key={v.id} {...rest}  {...shapeProps(v)}   vertex={v}  x={scales.x(v.x)} y={scales.y(v.y)}/> 
             })
         
