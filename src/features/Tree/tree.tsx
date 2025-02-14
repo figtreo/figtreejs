@@ -327,18 +327,18 @@ export function Tree({ panelRef }: any) {
   //Keyboard shortcuts here
   const handleKeyDown = (event: KeyboardEvent) => {
     if (event.key === "d" && event.metaKey) {
-      tree.orderNodesByDensity(true)
       event.preventDefault()
+      dispatch(setTree(tree.orderNodesByDensity(true)));
     }
     if (event.key === "u" && event.metaKey) {
-      tree.orderNodesByDensity(false)
+      dispatch(setTree(tree.orderNodesByDensity(false)));
     }
     if (event.key === "z" && event.metaKey) {
       dispatch(ActionCreators.undo())
     }
     if (event.key === "y" && event.metaKey) {
-      dispatch(ActionCreators.redo())
       event.preventDefault()
+      dispatch(ActionCreators.redo())
     }
     if (event.key === "s" && event.metaKey) {
       if (svgRef.current && title) {
