@@ -31,7 +31,7 @@ export const Circle = withNode(withAnimation(BaseCircle));
 // 	return true;
 // }
 //TODO specify tooltip and interactions
-export interface CircleProps extends BaseShapeProps{
+export type CircleProps = BaseShapeProps & {
 	attrs:{
 		r:number,
 		fill:string,

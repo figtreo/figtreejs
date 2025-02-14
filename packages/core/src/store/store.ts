@@ -48,6 +48,26 @@ export function getScale({
             return polarScaleMaker(domainX[1], domainY[1], canvasWidth, canvasHeight, invert, minRadius, angleRange, rootAngle)
         case "Radial":
             return function (vertex: { x: number, y: number }) {
+                //TODO need to update so x and y scales are equal otherwise horizontal branches will have a different scale than vertical branches
+
+                    // const ratio = (domainX[1]-domainX[0])/(domainY[1]-domainY[0]);
+
+                    // const scaler = Math.min(canvasWidth,canvasHeight*ratio)
+                    // const width = scaler;
+                    // const height = scaler/ratio;
+
+                    // const xShift = (canvasWidth-width)/2;
+                    // const yShift = (canvasHeight-height)/2;
+
+                    // const yRange = [yShift,canvasHeight-yShift];
+                    // const xRange = [xShift,canvasWidth-xShift];
+                    // console.log(yRange);
+                    // console.log(xRange);
+
+                    
+                    //  yScale = scaleLinear().domain(domainX).range(xRange);
+                    //  xScale = scaleLinear().domain(domainY).range(yRange);
+                
                 return { ...vertex,x: xScale(vertex.x), y: yScale(vertex.y) }
             }
         default:

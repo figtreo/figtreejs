@@ -1,8 +1,8 @@
 import { BaubleProps, attrType } from "..";
-import { ImmutableTree, NodeRef } from "../../../Evo";
+import { ImmutableTree} from "../../../Evo";
 
 
-export interface NodeProps extends BaubleProps{
+export  type NodeProps = BaubleProps & {
     tree:ImmutableTree,
     attrs:{
         stroke?:attrType,
@@ -14,7 +14,6 @@ export interface NodeProps extends BaubleProps{
         opacity?:attrType
     }
 }
-
 
 
 

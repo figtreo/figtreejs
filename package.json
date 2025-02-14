@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite --port 8080",
     "start": "vite",
-    "build": "tsc && vite build",
+    "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
     "test": "vitest",
     "format": "prettier --write .",
@@ -54,8 +54,8 @@
     "prettier-config-nick": "^1.0.8",
     "tslib": "^2.8.1",
     "typescript": "^5.7.3",
-    "vite": "^4.5.9",
-    "vitest": "^2.1.8"
+    "vite": "^6.1.0",
+    "vitest": "^3.0.5"
   },
   "eslintConfig": {
     "extends": [
