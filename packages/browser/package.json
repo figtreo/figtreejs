@@ -9,7 +9,7 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "build": "tsc --noEmit && vite build",
-    "dev": "vite",
+    "dev": "vite build --watch",
     "test": "vitest"
   },
   "exports": {
