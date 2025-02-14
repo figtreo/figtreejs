@@ -1,3 +1,4 @@
+import { extent, min } from 'd3-array'
 import {  NodeRef } from '../Evo/Tree'
 import { FunctionalVertex,layoutClass } from '../Layouts/functional/rectangularLayout'
 import { polarScaleMaker } from './polarScale'
@@ -41,32 +42,37 @@ export function getScale({
 
     switch (layoutClass) {
         case "Rectangular":
+
             return function (vertex: { x: number, y: number }) {
                 return { ...vertex, x: xScale(vertex.x), y: yScale(vertex.y) }
             }
         case "Polar":
             return polarScaleMaker(domainX[1], domainY[1], canvasWidth, canvasHeight, invert, minRadius, angleRange, rootAngle)
         case "Radial":
-            return function (vertex: { x: number, y: number }) {
+
                 //TODO need to update so x and y scales are equal otherwise horizontal branches will have a different scale than vertical branches
 
                     // const ratio = (domainX[1]-domainX[0])/(domainY[1]-domainY[0]);
+                    const domain = extent(domainX.concat(domainY)) as [number,number];
 
+                    const maxRange = min([canvasWidth,canvasHeight])!;
                     // const scaler = Math.min(canvasWidth,canvasHeight*ratio)
                     // const width = scaler;
                     // const height = scaler/ratio;
+                    // center in window
+                    const xShift = (canvasWidth-maxRange)/2;
+                    const yShift = (canvasHeight-maxRange)/2;
 
-                    // const xShift = (canvasWidth-width)/2;
-                    // const yShift = (canvasHeight-height)/2;
-
-                    // const yRange = [yShift,canvasHeight-yShift];
-                    // const xRange = [xShift,canvasWidth-xShift];
-                    // console.log(yRange);
-                    // console.log(xRange);
-
+                    const xRange = [xShift,maxRange+xShift];
+                    const yRange = [yShift,maxRange+yShift];
                     
-                    //  yScale = scaleLinear().domain(domainX).range(xRange);
-                    //  xScale = scaleLinear().domain(domainY).range(yRange);
+                    // console.log(xRange,yRange)
+                    
+                    // console.log(maxRange)
+                    yScale = scaleLinear().domain(domain).range(yRange);
+                    xScale = scaleLinear().domain(domain).range(xRange);
+            return function (vertex: { x: number, y: number }) {
+
                 
                 return { ...vertex,x: xScale(vertex.x), y: yScale(vertex.y) }
             }
