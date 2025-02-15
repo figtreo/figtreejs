@@ -57,8 +57,7 @@ export function Header() {
               dispatch(
                 setTree(
                   tree.annotateNode(tree.getNode(selectionRoot), {
-                    name: CARTOON_ANNOTATION,
-                    value: cartoon}),
+                    [ CARTOON_ANNOTATION] : cartoon}),
                 ),
               )
             }
@@ -80,9 +79,7 @@ export function Header() {
                 dispatch(
                   setTree(
                     tree.annotateNode(tree.getNode(selectionRoot), {
-                      name: COLLAPSE_ANNOTATION,
-                      value: 0.25,
-                      type: AnnotationType.CONTINUOUS,
+                      [COLLAPSE_ANNOTATION]: 0.25,
                     }),
                   ),
                 )
@@ -91,9 +88,7 @@ export function Header() {
                 dispatch(
                   setTree(
                     tree.annotateNode(tree.getNode(selectionRoot), {
-                      name: COLLAPSE_ANNOTATION,
-                      value: collapse,
-                      type: AnnotationType.CONTINUOUS,
+                      [COLLAPSE_ANNOTATION]: collapse
                     }),
                   ),
                 )
