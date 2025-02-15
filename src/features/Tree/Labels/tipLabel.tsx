@@ -8,12 +8,12 @@ import { selectTree } from '../../../app/hooks';
 import { getTextFunction } from "./labelUtils";
 
 export function TipLabels(props: any ) {
-    const { attrs={},tree } = props;
+    const { attrs={},tree,filter:baseFilter } = props;
     const settings = useAppSelector(selectLabelState("tip"));
     // const tree = useAppSelector(selectTree);
     const { alignTipLabels } = useAppSelector(selectLayout)
 
-    const filter = (n: NodeRef) => tree.getChildCount(n) === 0;
+    const filter = (n: NodeRef) =>baseFilter(n) && tree.getChildCount(n) === 0;
 
     const taxaColours = useAppSelector(selectNodeDecorations)
     const fillColorScale = useAppSelector( (state)=>getColorScale(state,settings.colourBy));

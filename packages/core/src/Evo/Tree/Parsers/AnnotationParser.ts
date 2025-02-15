@@ -150,7 +150,7 @@ export function processAnnotationValue(values: any):{type:AnnotationType, value:
     } else {
         if (typeof values === typeof true) {
             type = AnnotationType.BOOLEAN;
-            processedValue = values.map((v: string)=>v as unknown as boolean);
+            processedValue = values //.map((v: string)=>v as unknown as boolean);
         } else if (!isNaN(values)) {
             type = (values % 1 === 0 ? AnnotationType.INTEGER : AnnotationType.CONTINUOUS);
             processedValue = parseFloat(values);

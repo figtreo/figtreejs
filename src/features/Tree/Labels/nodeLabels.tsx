@@ -6,8 +6,8 @@ import { selectTree } from '../../../app/hooks';
 import { getTextFunction } from "./labelUtils";
 import { COLOUR_ANNOTATION } from "../../../app/constants";
 
-export function NodeLabels(props:{ attrs?:{[key:string]:any},tree:ImmutableTree }) {
-    const { attrs={},tree } = props;
+export function NodeLabels(props:{ attrs?:{[key:string]:any},tree:ImmutableTree,filter:(n:NodeRef)=>boolean }) {
+    const { attrs={},tree,filter:baseFilter } = props;
     const settings = useAppSelector(selectLabelState("node"));
     // const tree = useAppSelector(selectTree);
 
@@ -26,7 +26,7 @@ export function NodeLabels(props:{ attrs?:{[key:string]:any},tree:ImmutableTree 
       }
     }
 
-    const filter = (n: NodeRef) => tree.getChildCount(n) > 0;
+    const filter = (n: NodeRef) => baseFilter(n) && tree.getChildCount(n) > 0;
 
 
     if (settings.activated) {

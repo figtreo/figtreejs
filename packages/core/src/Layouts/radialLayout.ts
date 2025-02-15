@@ -225,7 +225,6 @@ export class RadialLayout extends AbstractLayout {
                 return `M${source.x},${source.y}L${target.x},${target.y}`;
             }
             case 3: {
-                console.log("cartoon implemented")
                 throw new Error("path generator not implemented for this number of points")
             } default: {
                 throw new Error("path generator not implemented for this number of points")

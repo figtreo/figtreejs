@@ -66,9 +66,6 @@ export function getScale({
                     const xRange = [xShift,maxRange+xShift];
                     const yRange = [yShift,maxRange+yShift];
                     
-                    // console.log(xRange,yRange)
-                    
-                    // console.log(maxRange)
                     yScale = scaleLinear().domain(domain).range(yRange);
                     xScale = scaleLinear().domain(domain).range(xRange);
             return function (vertex: { x: number, y: number }) {

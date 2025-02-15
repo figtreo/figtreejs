@@ -9,16 +9,16 @@ function tipShapeGenerator(target: "tip" | "tipBackground" ) {
     const settings = useAppSelector(selectShapeState(target));
     const tipColourBy = useAppSelector(selectShapeState("tip")).colourBy;
     const activated = useAppSelector(selectShapeState("tip")).activated && settings.activated;
-    const {tree} = props;
+    const {tree, filter:baseFilter} = props;
 
     //if we color by an attribute and the tip doesn't have that attribute, don't show it
 
     function filter(n:NodeRef):boolean{
         if(tipColourBy==="User selection"){
-           return  tree.getChildCount(n) === 0;
+           return  baseFilter(n) && tree.getChildCount(n) === 0;
         }else{
             const annotation = tree.getAnnotation(n,tipColourBy);
-           return annotation!==undefined && tree.getChildCount(n) === 0;
+           return baseFilter(n) && annotation!==undefined && tree.getChildCount(n) === 0;
         }
     }
 

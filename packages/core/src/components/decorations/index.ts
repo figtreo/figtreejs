@@ -1,3 +1,3 @@
 export * from "./Axis";
-export * from "./Highlight";
+export * from "./Ornaments";
 export * from "./Legend";

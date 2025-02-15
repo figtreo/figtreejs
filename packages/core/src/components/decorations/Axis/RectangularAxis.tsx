@@ -75,7 +75,6 @@ export default function Axis(props: any) {
         }),
       )
     : null
-  console.log(bars)
   //TODO break this into parts HOC with logic horizontal/ vertical axis ect.
   return (
     <g className={"axis"} transform={transform}>

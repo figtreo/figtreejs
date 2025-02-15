@@ -685,12 +685,6 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
                 : (draft.getRightSibling(parent) as Node)
 
               if (!sibling) {
-                console.log(parent.number)
-                console.log(
-                  draft
-                    .getChildren(draft.getParent(parent)!)
-                    .map((d) => d.number),
-                )
                 throw new Error("no sibling in rerooting")
               }
               parent.children.push(sibling.number)

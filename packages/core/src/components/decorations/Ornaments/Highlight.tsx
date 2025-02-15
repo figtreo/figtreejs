@@ -3,6 +3,7 @@ import {arc as arcgen} from "d3-shape"
 import { useAttributeMappers } from "../../../hooks";
 import { tipIterator } from "../../../Evo";
 import { layoutClass } from "../../../Layouts";
+
 const arc = arcgen();
 
 function CladeHighlight(props:any ){
@@ -10,7 +11,6 @@ function CladeHighlight(props:any ){
     const {node, padding = 10,scale,layout,tree,dimensions,layoutClass:layoutType} = props;
 
     const v = layout(node);
-
     const shapeProps = useAttributeMappers(props);
     const {attrs,interactions} = shapeProps(node);
     if(layoutType===layoutClass.Rectangular){
@@ -31,7 +31,6 @@ function CladeHighlight(props:any ){
         
         const width = maxX-minX+ padding*2; //padding
         const height = (maxY-minY)+padding*2 ;
-        
         return (<rect {...attrs} {...interactions} height={height} width={width} x={minX} y={minY} />)
     }else if(layoutType===layoutClass.Polar){
         const origin = scale({x:0,y:0});
@@ -66,6 +65,7 @@ function CladeHighlight(props:any ){
             endAngle: endAngle
         }
     )!
+
         return <path d={shape} {...attrs} transform={transform} /> //transform={transform}
 
     }else{

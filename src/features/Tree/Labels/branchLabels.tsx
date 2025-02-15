@@ -6,11 +6,10 @@ import { getTextFunction } from "./labelUtils";
 import { COLOUR_ANNOTATION } from "../../../app/constants";
 
 export function BranchLabels(props:any) {
-    const { attrs={} } = props;
+    const { attrs={},filter=(n: NodeRef) => true } = props;
     const settings = useAppSelector(selectLabelState("branch"));
     const {tree} = props;
     const taxaColours = useAppSelector(selectNodeDecorations)
-    const filter = (n: NodeRef) => true;
 
     const fillColorScale = useAppSelector( (state)=>getColorScale(state,settings.colourBy));
     attrs.fill = (n:NodeRef)=>{

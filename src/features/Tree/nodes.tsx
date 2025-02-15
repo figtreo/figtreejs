@@ -6,8 +6,8 @@ import { selectTree } from '../../app/hooks';
 
 export function InternalNodes(props:any) {
     const settings = useAppSelector(selectShapeState("node"));
-    const {tree} = props;
-    const filter = (n: NodeRef) => tree.getChildCount(n) > 0;
+    const {tree, filter:baseFilter} = props;
+    const filter = (n: NodeRef) => baseFilter(n) && tree.getChildCount(n) > 0;
 
     // check if sizing by an attribute or by a constant
     const radius = settings.maxSize / 2;

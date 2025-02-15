@@ -30,6 +30,7 @@ import {
   polarLayout,
   layoutClass,
   radialLayout,
+  Cartoon,
 } from "@figtreejs/core"
 import { useAreaSelection } from "../../app/area-selection"
 import { select } from "d3-selection"
@@ -300,7 +301,6 @@ export function Tree({ panelRef }: any) {
     const tree = ImmutableTree.fromString(event.clipboardData.getData("text"), {
       parseAnnotations: true,
     })
-    console.log(tree)
     dispatch(
       setTree(
         tree
@@ -488,28 +488,44 @@ export function Tree({ panelRef }: any) {
       minRadius: minR,
       invert,
     }
-    const highlights = tree
+
+    const dontShow = new Set();
+    const ornaments = tree
       .getInternalNodes()
-      .filter((n) => tree.getAnnotation(n, HILIGHT_ANNOTATION) !== undefined)
-      .map((n, i) => (
-        <Highlight
-          key={i + 1}
-          attrs={{
-            fill: (n: NodeRef) =>
-              tree.getAnnotation(n, HILIGHT_ANNOTATION)! as string,
-            opacity: 0.4,
-          }}
-          node={n}
-        />
-      ))
+      .filter((n) => tree.getAnnotation(n, HILIGHT_ANNOTATION) !== undefined || tree.getAnnotation(n, CARTOON_ANNOTATION))
+      .map((n, i) => {
+        if(tree.getAnnotation(n, HILIGHT_ANNOTATION) !== undefined ){
+          return ( <Highlight
+            key={i + 1}
+            attrs={{
+              fill: (n: NodeRef) =>
+                tree.getAnnotation(n, HILIGHT_ANNOTATION)! as string,
+              opacity: 0.4,
+            }}
+            node={n}
+          />)
+        }else{
+          for(const node of postOrderIterator(tree,n)){
+              if(node!==n){
+                dontShow.add(node)
+              }
+          }
+          return (
+            <Cartoon key={i+1} node={n}  attrs={{
+              fill: branchFiller,
+              strokeWidth: lineWidth,
+              stroke: branchColourur,
+            }}/>
+          );
+        }
+      })
 
       const figureElements = [
       <AxisElement key={0} />,
-      ,
-      ...highlights,
-      <Legends key={highlights.length + 1} />,
+      ...ornaments,
+      <Legends key={ornaments.length + 1} />,
       <Branches
-        key={highlights.length + 2}
+        key={ornaments.length + 2}
         attrs={{
           fill: "none",
           strokeWidth: lineWidth + 4,
@@ -521,27 +537,29 @@ export function Tree({ panelRef }: any) {
         curvature={curvature}
       />, // highlight selected branches
       <Branches
-        key={highlights.length + 3}
+        key={ornaments.length + 3}
         attrs={{
           fill: branchFiller,
           strokeWidth: lineWidth,
           stroke: branchColourur,
         }}
-        filter={(n: NodeRef) => true}
+        filter={(n:NodeRef)=>!dontShow.has(n)}
         curvature={curvature}
       />,
-      <BranchLabels key={highlights.length + 4} />,
-      <TipsBackground key={highlights.length + 5} />,
+      <BranchLabels key={ornaments.length + 4} filter={(n:NodeRef)=>!dontShow.has(n)}/>,
+      <TipsBackground key={ornaments.length + 5} filter={(n:NodeRef)=>!dontShow.has(n)} />,
       <TipLabels
-        key={highlights.length + 6}
+        key={ornaments.length + 6}
+        filter={(n:NodeRef)=>!dontShow.has(n)}
         attrs={{
           filter: (n: NodeRef) =>
-            selectedTaxa.has(n.number) ? "url(#solid)" : null,
+            selectedTaxa.has(n.number)  ? "url(#solid)" : null,
+        
         }}
       />,
-      <Tips key={highlights.length + 7} />,
-      <InternalNodes key={highlights.length + 8} />,
-      <NodeLabels key={highlights.length + 9} />,
+      <Tips key={ornaments.length + 7} filter={(n:NodeRef)=>!dontShow.has(n)}/>,
+      <InternalNodes key={ornaments.length + 8} filter={(n:NodeRef)=>!dontShow.has(n)}/>,
+      <NodeLabels key={ornaments.length + 9} filter={(n:NodeRef)=>!dontShow.has(n)}/>,
     ]
 
     return (

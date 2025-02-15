@@ -9,7 +9,6 @@ import { AxisProps } from './Axis.types';
 
 
 export default function Axis(props: any) {
-    console.log('axis', props)
 
     const {layoutClass} = props.dimensions;
     if(layoutClass === "Polar"){

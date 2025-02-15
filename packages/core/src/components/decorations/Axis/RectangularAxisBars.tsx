@@ -22,7 +22,6 @@ export default function AxisBars(props: any): JSX.Element {
   } = props
 
   const { canvasHeight } = props.dimensions
-  console.log(props)
 
 
   return (
