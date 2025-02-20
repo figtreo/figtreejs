@@ -574,9 +574,41 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
 
   // Topology changes  - updates to root and descendants
 
-  root(n: NodeRef): ImmutableTree {
-    throw new Error("root not implemented in immutable tree")
+  root(n: NodeRef, proportion:number =0.5): ImmutableTree {
+    throw new Error("unroot not implemented in immutable tree")
   }
+  
+  insertNode(n: NodeRef, proportion:number =0.5): ImmutableTree {
+   return  produce(this, (draft) => {
+      const newNode: Node = {
+        number: draft._data.nodes.allNodes.length,
+        children : [],
+        parent: undefined,
+        label: "",
+        length: undefined,
+        level: undefined,
+        taxon: undefined,
+        annotations: {}, // todo copy annotations from root
+      }
+      draft._data.nodes.allNodes.push(newNode)
+      draft._data.nodes.byTaxon.length+=1;
+      // insert halfway on first child's branch.
+
+      const node = draft.getNode(n.number) as Node;
+      const parentNode = draft.getNode(node.parent!) as Node;
+
+      const index = parentNode.children.indexOf(node.number);
+      
+      parentNode.children.splice(index,1,newNode.number);
+      newNode.parent = parentNode.number;
+
+      node.length = node.length! * proportion;
+      newNode.length = node.length! * (1-proportion);
+      newNode.children = [node.number];
+
+      node.parent = newNode.number;
+  })
+}
   unroot(n: NodeRef): ImmutableTree {
     throw new Error("unroot not implemented in immutable tree")
   }
@@ -631,7 +663,7 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
         console.warn(
           "Root node has more than two children and we are rerooting! There be dragons!",
         )
-      }
+    }
       let rootLength = 0
 
       if (rootNode.children.length == 2) {
