@@ -213,21 +213,14 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
   }
   //todo cache
   getHeight(node: NodeRef): number {
-    const divMap: number[] = []
-    let maxDiv = 0
-    for (const node of preOrderIterator(this)) {
-      if (this.isRoot(node)) {
-        divMap[node.number] = 0
-        continue
-      }
-      const nodeDiv =
-        this.getLength(node)! + divMap[this.getParent(node)!.number]
-      divMap[node.number] = nodeDiv
-      if (nodeDiv > maxDiv) {
-        maxDiv = nodeDiv
+    let maxDiv = -1;
+    for(const t of tipIterator(this)){
+      const d = this.getDivergence(t);
+      if(d>maxDiv){
+        maxDiv = d;
       }
     }
-    return maxDiv - divMap[node.number]
+    return maxDiv - this.getDivergence(node);    
   }
   hasBranchLength(node: NodeRef): number {
     throw new Error("hasBranchLength not implemented.")
@@ -381,7 +374,22 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
   }
 
   getDivergence(node: NodeRef): number {
-    return this.getHeight(this.getRoot()) - this.getHeight(node)
+
+    let divergence = 0;
+    for(const n of this.getPathToRoot(node)){
+      let l = this.getLength(n);
+      if(l===undefined){
+        //The root can have a length but doesn't need one.
+        if(this.isRoot(n)){
+          l = 0;
+        }else{
+          console.warn(`Node ${n.number} has no length. Assuming a length of 1.`)
+        l =1;
+        }
+      }
+      divergence += l;
+    }
+    return divergence;
   }
 
   getChildCount(node: NodeRef): number {
@@ -440,15 +448,12 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
       tree: produce(this, (draft) => {
         const number = draft._data.nodes.allNodes.length
         for (let i = 0; i < n!; i++) {
-          const newNode = {
+          const newNode :Node = {
             number: number + i,
             children: [],
             parent: undefined,
             label: "",
             length: undefined,
-            divergence: undefined,
-            height: undefined,
-            name: undefined,
             level: undefined,
             taxon: undefined,
             annotations: {},
@@ -577,7 +582,7 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
   root(n: NodeRef, proportion:number =0.5): ImmutableTree {
     throw new Error("unroot not implemented in immutable tree")
   }
-  
+
   insertNode(n: NodeRef, proportion:number =0.5): ImmutableTree {
    return  produce(this, (draft) => {
       const newNode: Node = {
@@ -601,9 +606,9 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
       
       parentNode.children.splice(index,1,newNode.number);
       newNode.parent = parentNode.number;
-
-      node.length = node.length! * proportion;
-      newNode.length = node.length! * (1-proportion);
+      const oldLength = node.length!;
+      node.length = oldLength * (1-proportion);
+      newNode.length = oldLength * (proportion);
       newNode.children = [node.number];
 
       node.parent = newNode.number;
@@ -648,8 +653,7 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
       }
     })
   }
-  //TODO infinte loop
-  reroot(node: NodeRef, proportion: number): ImmutableTree {
+  reroot(node: NodeRef, proportion: number = 0.5): ImmutableTree {
     return produce(this, (draft) => {
       if (node.number === draft._data.rootNode) {
         // the node is the root - nothing to do
@@ -1107,6 +1111,54 @@ export function* preOrderIterator(
   yield* traverse(node!)
 }
 
+//TODO return the node and edge length of direction
+export function* psuedoRootPreOrderIterator(
+  tree:Tree,
+  node: NodeRef | undefined = undefined,
+  sort: (a: NodeRef|undefined, b: NodeRef|undefined) => number = (a, b) => a!.number - b!.number,
+):Generator<NodeRef> {
+  const traverse = function* (node: NodeRef,visited:number|undefined = undefined): Generator<NodeRef> {
+    yield tree.getNode(node.number) // get from tree so we keep proxy when used in draft
+    const branches = [...tree.getChildren(node),tree.getParent(node)].filter(n=>n!==undefined && n.number!==visited)
+    branches.sort(sort);
+    for(const branch of branches){
+        yield* traverse(branch!,node.number)
+    }
+  }
+
+  if (node === undefined) {
+    node = tree.getRoot()
+    if (node === undefined) {
+      throw new Error("Tree has no root node. Cannot traverse tree")
+    }
+  }
+  yield* traverse(node!)
+}
+
+
+export function* psuedoRootPostOrderIterator(
+  tree:Tree,
+  node: NodeRef | undefined = undefined,
+  sort: (a: NodeRef|undefined, b: NodeRef|undefined) => number = (a, b) => a!.number - b!.number,
+):Generator<NodeRef> {
+  const traverse = function* (node: NodeRef,visited:number|undefined = undefined): Generator<NodeRef> {
+    // get from tree so we keep proxy when used in draft
+    const branches = [...tree.getChildren(node),tree.getParent(node)].filter(n=>n!==undefined && n.number!==visited)
+    branches.sort(sort);
+    for(const branch of branches){
+        yield* traverse(branch!,node.number)
+    }
+    yield tree.getNode(node.number)
+  }
+
+  if (node === undefined) {
+    node = tree.getRoot()
+    if (node === undefined) {
+      throw new Error("Tree has no root node. Cannot traverse tree")
+    }
+  }
+  yield* traverse(node!)
+}
 export function* postOrderIterator(
   tree: Tree,
   node: NodeRef | undefined = undefined,
@@ -1131,7 +1183,10 @@ export function* postOrderIterator(
   yield* traverse(node!)
 }
 
-export function* tipIterator(tree: Tree, node: NodeRef): Generator<NodeRef> {
+export function* tipIterator(tree: Tree, node?: NodeRef): Generator<NodeRef> {
+  if (node === undefined) {
+    node = tree.getRoot()
+  }
   const traverse = function* (node: NodeRef): Generator<NodeRef> {
     const childCount = tree.getChildCount(node)
     if (childCount > 0) {
