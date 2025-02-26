@@ -41,6 +41,7 @@ function FigTree(props:FigtreeProps){
         animated=defaultOpts.animated,
     } = props;
     
+    const opts = props.opts?props.opts:defaultOpts.opts;
     const {rootAngle = defaultOpts.opts.rootAngle,
         rootLength = defaultOpts.opts.rootLength,
         angleRange = defaultOpts.opts.angleRange,
@@ -51,7 +52,8 @@ function FigTree(props:FigtreeProps){
         pollard = defaultOpts.opts.pollard,
         minRadius = defaultOpts.opts.minRadius,
         invert = defaultOpts.opts.invert
-    } = props.opts; //todo this requires opts to not be undefined even though all the values are optional.
+    } = opts; 
+ //todo this requires opts to not be undefined even though all the values are optional.
 
     const canvasWidth = width - margins.left - margins.right;
     const canvasHeight = height - margins.top - margins.bottom;
