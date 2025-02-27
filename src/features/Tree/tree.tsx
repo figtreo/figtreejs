@@ -234,7 +234,6 @@ export function Tree({ panelRef }: any) {
     }
   }, [brushedNodeIds])
 
-  useEffect(() => {})
 
   useEffect(() => {
     window.addEventListener("resize", resize)
@@ -267,8 +266,6 @@ export function Tree({ panelRef }: any) {
   }
 
 
-
-  const cartoonedNodes: Map<NodeRef, CartoonData> = new Map()
 
   //TODO mover to branch componet like tips
   const branchColorScale = useAppSelector((state) =>
@@ -472,18 +469,7 @@ export function Tree({ panelRef }: any) {
 
   // if (tree.getCurrentIndex() > -1) {
   if (tree.getNodeCount() > 1) {
-    for (const node of postOrderIterator(tree)) {
-      const cartoon = tree.getAnnotation(node, CARTOON_ANNOTATION)
-      if (cartoon) {
-        cartoonedNodes.set(node, {
-          cartooned: cartoon as boolean,
-          collapseFactor: tree.getAnnotation(
-            node,
-            COLLAPSE_ANNOTATION,
-          ) as number,
-        })
-      }
-    }
+
 
     const layoutOpts = {
       rootAngle,
@@ -492,7 +478,7 @@ export function Tree({ panelRef }: any) {
       showRoot,
       spread,
       fishEye :{...pointOfInterest,scale:fishEye},
-      cartoonedNodes,
+      
       pollard,
       padding: 50,
       minRadius: minR,
