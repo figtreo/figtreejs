@@ -134,7 +134,7 @@ export default function Axis(props: any) {
 }
 //TODO merge these in instead of overwriting;
 
-function getPath(
+export function getPath(
   scale: ScaleContinuousNumeric<number, number, never>,
   direction: AxisOrientation,
 ): string {
@@ -143,19 +143,20 @@ function getPath(
     .y((d) => d[1])
 
   switch (direction) {
-    case "horizontal":
+    case 'horizontal' :
       return f(scale.range().map<[number, number]>((d) => [d, 0]))!
+    case 'polar' :
+        return f(scale.range().map<[number, number]>((d) => [d, 0]))!
     case "vertical":
       return f(scale.range().map<[number, number]>((d) => [0, d]))!
-    case "polar":
-      throw new Error("Polar not implemented")
+    
     default:
       throw new Error(`Direction ${direction} not implemented`)
   }
 }
 
-function getTickLine(length: number, direction: AxisOrientation) {
-  if (direction === "horizontal") {
+export function getTickLine(length: number, direction: AxisOrientation) {
+  if (direction === "horizontal" || direction === "polar") {
     return { x1: 0, y1: 0, y2: length, x2: 0 }
   } else if (direction === "vertical") {
     return { x1: 0, y1: 0, y2: 0, x2: -1 * length }

@@ -4,12 +4,136 @@ import { mean, quantile, range } from "d3-array"
 import { ScaleContinuousNumeric, scaleLinear } from 'd3-scale';
 import { AxisOrientation, AxisProps, AxisScaleContext, defaultAxisProps } from './Axis.types';
 import { degrees, textSafeDegrees } from '../../../Layouts/polarLayout';
+import { getPath, getTickLine } from './RectangularAxis';
 
 //TODO do things to scale and allow date as origin not maxD.
 
 
-export default function PolarAxis(props: AxisProps) {
-    throw new Error("PolarAxis is not implemented");
+export default function PolarAxis(props: any) {
+
+  const { dimensions, layoutClass } = props
+  const {
+    direction = defaultAxisProps.direction!,
+    gap = defaultAxisProps.gap!,
+    strokeWidth = defaultAxisProps.strokeWidth!,
+    x,
+    y,
+    scale:figureScale
+  } = props
+  
+  const ticks = props.ticks
+    ? { ...defaultAxisProps.ticks!, ...props.ticks }
+    : defaultAxisProps.ticks!
+  const title = props.title
+    ? { ...defaultAxisProps.title!, ...props.title }
+    : defaultAxisProps.title!
+
+   
+  // todo options to provide tick values so can specify breaks
+// we make the scale and then move it to the origin.
+  const scale = makeAxisScale(props, dimensions)
+
+    let tickValues: number[]
+    if (ticks.values) {
+    tickValues = ticks.values
+    } else {
+    if (!scale.ticks) {
+        tickValues = range(ticks.number!).map((i) =>
+        quantile(scale.domain(), i / (ticks.number! - 1)),
+        ) as number[]
+    } else {
+        tickValues = scale.ticks(ticks.number)
+    }
+    }
+
+     // start at the root and go outwards
+     const origin = figureScale({x:0,y:0});
+    
+
+    let transform;
+    if(x!==undefined && y!==undefined){
+        transform = `translate(${x},${y})`;
+    }else{
+        transform =  `translate(${origin.x},${origin.y})` 
+    }
+const rawBars = props.children
+    ? Array.isArray(props.children)
+      ? props.children
+      : [props.children]
+    : null
+  const bars = rawBars
+    ? rawBars.map((b: React.ReactElement,i:number) =>
+        React.cloneElement(b, {
+          key:i,
+          scale,
+          direction,
+          layoutClass,
+          dimensions,
+          tickValues,
+          gap,
+          reverse:props.reverse
+        }),
+      )
+    : null
+// update scale to account for changing range 
+//move rotation off bars so we can calculate the angles better
+//TODO fix magic number 0.1 here and in bars
+    return (
+        <g className={"axis"} transform={transform}>
+          {/*This is for Bars*/}
+    
+          {bars}
+    
+          <path
+            d={getPath(scale, direction)}
+            stroke={"black"}
+            strokeWidth={strokeWidth}
+          />
+          <g>
+            {tickValues.map((t, i) => {
+              return (
+                <g
+                  key={`tick-${i}`}
+                  transform={`translate(${
+                    direction === "horizontal" ? scale(t) : 0
+                  },${direction === "horizontal" ? 0 : scale(t)})`}
+                >
+                  <line
+                    key={`tickLine-${i}`}
+                    {...getTickLine(ticks.length!, direction)}
+                    stroke={"black"}
+                    strokeWidth={strokeWidth}
+                  />
+                  <text
+                    key={`tickText-${i}`}
+                    transform={`translate(${
+                      direction === "horizontal" ? 0 : ticks.padding
+                    },${direction === "horizontal" ? ticks.padding : 0})`}
+                    textAnchor={"middle"}
+                    alignmentBaseline={"middle"}
+                    {...ticks.style}
+                  >
+                    {ticks.format!(t)}
+                  </text>
+                </g>
+              )
+            })}
+            {/*TODO sometimes scale doesn't have a range*/}
+            <g
+              transform={`translate(${
+                direction === "horizontal" ? mean(scale.range()) : title.padding
+              },${
+                direction === "horizontal" ? title.padding : mean(scale.range())
+              })`}
+            >
+              <text textAnchor={"middle"} {...title.style}>
+                {title.text}
+              </text>
+            </g>
+          </g>
+        </g>
+      )
+}
 //     const scaleContext = useScale();
 //     const verticies = useLayout();
 
@@ -104,35 +228,34 @@ export default function PolarAxis(props: AxisProps) {
 //     }
 // }
 
-// /**
-//  * A helper function to make the scale used in the axis. if supplied by props then no modifications are
-//  * applied.
-//  * @param props
-//  * @param contextScales
-//  * @returns {*}
-//  */
-// //TODO can make maxR and height the same parameter and use this  all axes
 
-// function makeAxisScale(props: any, { domain ,range }: {domain:[number,number],range:number}) {
-//     const { reverse = defaultAxisProps.reverse,
-//         offsetBy = defaultAxisProps.offsetBy,
-//         scaleBy = defaultAxisProps.scaleBy, 
-//         scale= defaultAxisProps.scale} = props;
+//TODO can make maxR and height the same parameter and use this  all axes
+
+function makeAxisScale(props: any, { domainX ,domainY }: {domainX:[number,number],domainY:[number,number]}) {
+    const { reverse = defaultAxisProps.reverse,
+        offsetBy = defaultAxisProps.offsetBy,
+        scaleBy = defaultAxisProps.scaleBy, 
+        _scale= defaultAxisProps.scale,
+    scale} = props;
         
 
-//     const axisScale = scale === undefined ?  scaleLinear().domain(domain).range([0, range]) : scale.copy();
-//     if (scale === undefined) {
-//         if (reverse) {
-//             const newMax = axisScale.domain()[0];
-//             const newMin = axisScale.domain()[0]-axisScale.domain()[1];
-//             axisScale.domain([newMin,newMax]);
-//         }
-//         if (offsetBy !== 0 || scaleBy !== 1) {
-//             const domain = axisScale.domain().map((d: number) => (d + offsetBy) * scaleBy)
-//             axisScale.domain(domain);
-//         }
-//     }
-//     return axisScale.nice();
+    const origin = scale({x:domainX[0],y:domainY[0]});
+    const maxPoint = scale({x:domainX[1],y:domainY[1]}); // doesn't matter. 
+    const maxRange = Math.sqrt((maxPoint.x-origin.x)**2+(maxPoint.y-origin.y)**2);
+
+    const axisScale = _scale === undefined ?  scaleLinear().domain(domainX).range([0, maxRange]) : _scale.copy();
+    if (_scale === undefined) {
+        if (reverse) {
+            const newMax = axisScale.domain()[0];
+            const newMin = axisScale.domain()[0]-axisScale.domain()[1];
+            axisScale.domain([newMin,newMax]);
+        }
+        if (offsetBy !== 0 || scaleBy !== 1) {
+            const domain = axisScale.domain().map((d: number) => (d + offsetBy) * scaleBy)
+            axisScale.domain(domain);
+        }
+    }
+    return axisScale.nice();
 
 }
 

@@ -12,7 +12,7 @@ export default function Axis(props: any) {
 
     const {layoutClass} = props.dimensions;
     if(layoutClass === "Polar"){
-        return null; //<PolarAxis {...props}/>
+      return <PolarAxis {...props}/>
     }else if (layoutClass === "Rectangular"){
         return <RectangularAxis {...props}/>
     }else{
