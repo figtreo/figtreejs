@@ -48,6 +48,9 @@ export function getScale({
                 let xScale = scaleLinear().domain([0,domainX[1]]).range([0, canvasWidth]); // 0 to account for any root length
                 let yScale = scaleLinear().domain(domainY).range([0, canvasHeight]);
 
+                if(invert){
+                    xScale.range([canvasWidth,0]);
+                }
                 return { ...vertex, x: xScale(vertex.x), y: yScale(vertex.y) }
             }
         case "Polar":

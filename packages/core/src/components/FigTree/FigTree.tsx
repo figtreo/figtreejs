@@ -66,7 +66,7 @@ function FigTree(props:FigtreeProps){
     const [minY,maxY] = extent(tree.getNodes().map(n=>layoutMap(n)!.y));
 
 
-    const dimensions = {canvasWidth,canvasHeight,domainX:[minX!,maxX!],domainY:[minY!,maxY!],layoutClass};
+    const dimensions = {canvasWidth,canvasHeight,domainX:[minX!,maxX!],domainY:[minY!,maxY!],layoutClass,invert};
     const scale = getScale(dimensions);
     let rawChildren = (props.children?props.children:defaultOpts.children) as React.ReactElement|React.ReactElement[];
 
