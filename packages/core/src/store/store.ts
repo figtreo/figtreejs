@@ -44,12 +44,14 @@ export function getScale({
     fishEye?: { x: number, y: number,scale:number },
 }) {
 
+    let xScale:ScaleLinear<number,number>;
+    let yScale:ScaleLinear<number,number>; 
 
     switch (layoutClass) {
         case "Rectangular":
             const minX = domainX[1] *pollard;
-            let xScale = scaleLinear().domain([minX,domainX[1]]).range([0, canvasWidth]); // 0 to account for any root length
-            let yScale = scaleLinear().domain(domainY).range([0, canvasHeight]);
+             xScale = scaleLinear().domain([minX,domainX[1]]).range([0, canvasWidth]); // 0 to account for any root length
+             yScale = scaleLinear().domain(domainY).range([0, canvasHeight]);
 
             let calcY = (n:number) => yScale(n);
            if(fishEye.scale>0){
