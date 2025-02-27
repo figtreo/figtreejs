@@ -5,6 +5,7 @@ import { ScaleContinuousNumeric, scaleLinear } from 'd3-scale';
 import { AxisOrientation, AxisProps, AxisScaleContext, defaultAxisProps } from './Axis.types';
 import { degrees, textSafeDegrees } from '../../../Layouts/polarLayout';
 import { getPath, getTickLine } from './RectangularAxis';
+import { normalizeAngle } from '../../../store/polarScale';
 
 //TODO do things to scale and allow date as origin not maxD.
 
@@ -48,7 +49,7 @@ export default function PolarAxis(props: any) {
 
      // start at the root and go outwards
      const origin = figureScale({x:0,y:0});
-    
+    const theta = normalizeAngle(figureScale({x:dimensions.domainX[1],y:dimensions.domainY[1]}).theta);
 
     let transform;
     if(x!==undefined && y!==undefined){
@@ -79,58 +80,30 @@ const rawBars = props.children
 //move rotation off bars so we can calculate the angles better
 //TODO fix magic number 0.1 here and in bars
     return (
-        <g className={"axis"} transform={transform}>
+        <g className={"axis"} transform={transform} >
           {/*This is for Bars*/}
     
           {bars}
     
-          <path
-            d={getPath(scale, direction)}
-            stroke={"black"}
-            strokeWidth={strokeWidth}
-          />
-          <g>
-            {tickValues.map((t, i) => {
-              return (
-                <g
-                  key={`tick-${i}`}
-                  transform={`translate(${
-                    direction === "horizontal" ? scale(t) : 0
-                  },${direction === "horizontal" ? 0 : scale(t)})`}
-                >
-                  <line
-                    key={`tickLine-${i}`}
-                    {...getTickLine(ticks.length!, direction)}
-                    stroke={"black"}
-                    strokeWidth={strokeWidth}
-                  />
-                  <text
-                    key={`tickText-${i}`}
-                    transform={`translate(${
-                      direction === "horizontal" ? 0 : ticks.padding
-                    },${direction === "horizontal" ? ticks.padding : 0})`}
-                    textAnchor={"middle"}
-                    alignmentBaseline={"middle"}
-                    {...ticks.style}
-                  >
-                    {ticks.format!(t)}
-                  </text>
+          <g transform={`rotate(${degrees(theta+0.1)})`}> 
+             <path d={getPath(scale, direction)} stroke={"black"} strokeWidth={strokeWidth} />
+             <g>
+                 {tickValues.map((t, i) => {
+                    return (
+                        <g key={i} transform={`translate(${scale(t)},${0})`}>
+                            <line {...getTickLine(ticks.length!, direction)} stroke={"black"} strokeWidth={strokeWidth}/>
+                            <text transform={`translate(${ 0 },${ ticks.padding}) rotate(${-degrees(theta+0.1)})`}
+                                textAnchor={"middle"} dominantBaseline={"center"}  {...ticks.style} >{ticks.format!(t)}</text>
+                        </g>
+                    )
+                })}
+                {/*TODO sometimes scale doesn't have a range*/}
+                <g transform={`translate(${ mean(scale.range()) },${ title.padding}) rotate(${-degrees(theta+0.1)})`}>
+                    <text textAnchor={"middle"}>{title.text}</text>
                 </g>
-              )
-            })}
-            {/*TODO sometimes scale doesn't have a range*/}
-            <g
-              transform={`translate(${
-                direction === "horizontal" ? mean(scale.range()) : title.padding
-              },${
-                direction === "horizontal" ? title.padding : mean(scale.range())
-              })`}
-            >
-              <text textAnchor={"middle"} {...title.style}>
-                {title.text}
-              </text>
             </g>
-          </g>
+            </g>
+
         </g>
       )
 }
@@ -240,7 +213,7 @@ function makeAxisScale(props: any, { domainX ,domainY }: {domainX:[number,number
         
 
     const origin = scale({x:domainX[0],y:domainY[0]});
-    const maxPoint = scale({x:domainX[1],y:domainY[1]}); // doesn't matter. 
+    const maxPoint = scale({x:domainX[1],y:domainY[1]}); //y doesn't matter. 
     const maxRange = Math.sqrt((maxPoint.x-origin.x)**2+(maxPoint.y-origin.y)**2);
 
     const axisScale = _scale === undefined ?  scaleLinear().domain(domainX).range([0, maxRange]) : _scale.copy();
