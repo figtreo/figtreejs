@@ -71,15 +71,18 @@ export function polarScaleMaker(maxX:number,maxY:number,canvasWidth:number,canva
     const y = scaleLinear().domain(yDomain).range(yRange);
 
     return function(vertex:{x:number,y:number}){
-            const [r,theta] =[rScale(vertex.x),normalizeAngle(thetaScale(vertex.y))];
+            // const [r,theta] =[rScale(vertex.x),normalizeAngle(thetaScale(vertex.y))];
+            const [r,theta] =[rScale(vertex.x),thetaScale(vertex.y)]; // not normalized so we get branch length arc directions correct.
             const [xcart,ycart] = polarToCartesian(r,theta);
+
+            const nTheta = normalizeAngle(theta); // normalized so we can think straight when doing things with text.
 
             const nodeLabel= {
                 alignmentBaseline:"middle",
-                textAnchor: (theta!>Math.PI/2 && theta!<3*Math.PI/2?"end":" start"),
-                dxFactor:Math.cos(theta),
-                dyFactor:Math.sin(theta),
-                rotation:textSafeDegrees(theta)}
+                textAnchor: (nTheta!>Math.PI/2 && nTheta!<3*Math.PI/2?"end":" start"),
+                dxFactor:Math.cos(nTheta),
+                dyFactor:Math.sin(nTheta),
+                rotation:textSafeDegrees(nTheta)}
 
             return {x:x(xcart),y:y(ycart),r,theta, nodeLabel:nodeLabel}
         }
