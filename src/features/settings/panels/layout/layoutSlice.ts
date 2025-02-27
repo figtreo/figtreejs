@@ -34,7 +34,7 @@ export const initialState: LayoutState = {
     angleRange: 2*3.14-0.5,
     showRoot: true,
     spread:0,
-    pointOfInterest:undefined,
+    pointOfInterest:{x:0,y:0},
     fishEye:0,
     animate:false,
     pollard:0,

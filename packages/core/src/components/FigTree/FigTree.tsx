@@ -47,7 +47,6 @@ function FigTree(props:FigtreeProps){
         angleRange = defaultOpts.opts.angleRange,
         showRoot = defaultOpts.opts.showRoot,
         spread = defaultOpts.opts.spread,
-        pointOfInterest = defaultOpts.opts.pointOfInterest,
         fishEye = defaultOpts.opts.fishEye,
         pollard = defaultOpts.opts.pollard,
         minRadius = defaultOpts.opts.minRadius,
@@ -57,8 +56,6 @@ function FigTree(props:FigtreeProps){
 
     const canvasWidth = width - margins.left - margins.right;
     const canvasHeight = height - margins.top - margins.bottom;
-
-    const point = pointOfInterest?pointOfInterest: {x:(margins.left+canvasWidth)/2,y:(margins.top+height)/2};
         
     const layoutMap = layout(tree,opts);
     const {layoutClass} = layoutMap(tree.getRoot())!;
@@ -66,7 +63,7 @@ function FigTree(props:FigtreeProps){
     const [minY,maxY] = extent(tree.getNodes().map(n=>layoutMap(n)!.y));
 
 
-    const dimensions = {canvasWidth,canvasHeight,domainX:[minX!,maxX!],domainY:[minY!,maxY!],layoutClass,invert};
+    const dimensions = {canvasWidth,canvasHeight,domainX:[minX!,maxX!],domainY:[minY!,maxY!],layoutClass,invert,pollard,minRadius,fishEye};
     const scale = getScale(dimensions);
     let rawChildren = (props.children?props.children:defaultOpts.children) as React.ReactElement|React.ReactElement[];
 

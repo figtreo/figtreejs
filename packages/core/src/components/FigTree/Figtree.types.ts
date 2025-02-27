@@ -15,9 +15,8 @@ export interface layoutOptions{
     angleRange?: number,
     showRoot?: boolean,
     spread?: number
-    pointOfInterest?: { x: number; y: number; },
-    fishEye?: number;
-    pollard?:number,
+    fishEye?: { x: number; y: number; scale:number; };
+    pollard:number,
     invert?:boolean,
     minRadius?:number,
     padding?:number

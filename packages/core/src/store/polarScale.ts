@@ -2,16 +2,17 @@ import { extent, min } from "d3-array";
 import { scaleLinear } from "d3-scale";
 
 
-export function polarScaleMaker(maxX:number,maxY:number,canvasWidth:number,canvasHeight:number,invert:boolean=false,minRadius:number=0,angleRange:number=1.7*Math.PI,rootAngle:number=0){
+export function polarScaleMaker(maxX:number,maxY:number,canvasWidth:number,canvasHeight:number,invert:boolean=false,minRadius:number=0,angleRange:number=1.7*Math.PI,rootAngle:number=0,pollard=0){
 
     const maxRadius = min([canvasWidth,canvasHeight])!/2;
 
     // These scales adjust the x and y values from arbitrary layout to polar coordinates with r within the svg and theta between 0 and 2pi
 
     const safeAngleRange = normalizeAngle(angleRange);
+    const minX = maxX*pollard;
     const rRange = invert? [minRadius*maxRadius,maxRadius].reverse():[minRadius*maxRadius,maxRadius];
     const rScale = scaleLinear()
-        .domain([0,maxX])
+        .domain([minX,maxX])
         .range(rRange);
 
 
