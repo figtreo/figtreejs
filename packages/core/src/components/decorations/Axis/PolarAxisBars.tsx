@@ -13,9 +13,43 @@ const arc = arcgen();
  * @return {*}
  * @constructor
  */
-// we are already rotaed by the axis parent
-export  default function PolarAxisBars(props:AxisBarsProps) {
-    throw new Error("Polar Axis Bars not implemented yet)")
+// we are already rotated by the axis parent
+export  default function PolarAxisBars(props:any) {
+      const {
+        attrs,
+        evenFill = defaultAxisBarsProps.evenFill,
+        oddFill = defaultAxisBarsProps.oddFill,
+        lift = defaultAxisBarsProps.lift,
+        tickValues,
+        scale,
+        gap,
+        direction,
+        reverse,
+      } = props
+
+      // TODO update angles.
+        const startAngle = 0;
+        const endAngle = 2*Math.PI;
+          return(
+        <g className={"axisBars"}>
+                {tickValues.reduce((acc:JSX.Element[],curr:any,i:number)=>{
+
+                    const shape = arc(
+                        {
+                            innerRadius:scale(tickValues[i]),
+                            outerRadius:scale(tickValues[i+1]),
+                            startAngle: startAngle,
+                            endAngle:endAngle 
+                        }
+                    )!
+                    
+                    const fill = i%2===0?evenFill:oddFill;
+                    acc.push(<path key={i} d={shape} fill={fill} {...attrs} />);
+                                 
+                    return acc;
+                },[])}
+        </g>
+    )
     // const {
     //     attrs,
     //     evenFill=defaultAxisBarsProps.evenFill,
