@@ -50,6 +50,8 @@ export default function PolarAxis(props: any) {
      // start at the root and go outwards
      const origin = figureScale({x:0,y:0});
     const theta = normalizeAngle(figureScale({x:dimensions.domainX[1],y:dimensions.domainY[1]}).theta);
+    const startAngle = figureScale({x:dimensions.domainX[1],y:dimensions.domainY[0]}).theta + Math.PI/2 ;  
+    const endAngle = startAngle + 0.05+ (figureScale({x:dimensions.domainX[1],y:dimensions.domainY[1]}).theta - figureScale({x:dimensions.domainX[1],y:dimensions.domainY[0]}).theta);
 
     let transform;
     if(x!==undefined && y!==undefined){
@@ -72,7 +74,9 @@ const rawBars = props.children
           dimensions,
           tickValues,
           gap,
-          reverse:props.reverse
+          reverse:props.reverse,
+          startAngle,
+          endAngle
         }),
       )
     : null
@@ -82,9 +86,9 @@ const rawBars = props.children
     return (
         <g className={"axis"} transform={transform} >
           {/*This is for Bars*/}
-    
+          
           {bars}
-    
+       
           <g transform={`rotate(${degrees(theta+0.1)})`}> 
              <path d={getPath(scale, direction)} stroke={"black"} strokeWidth={strokeWidth} />
              <g>

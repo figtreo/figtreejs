@@ -25,11 +25,10 @@ export  default function PolarAxisBars(props:any) {
         gap,
         direction,
         reverse,
+        startAngle,
+        endAngle
       } = props
 
-      // TODO update angles.
-        const startAngle = 0;
-        const endAngle = 2*Math.PI;
           return(
         <g className={"axisBars"}>
                 {tickValues.reduce((acc:JSX.Element[],curr:any,i:number)=>{
