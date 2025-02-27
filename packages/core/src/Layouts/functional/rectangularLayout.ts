@@ -25,7 +25,7 @@ export type FunctionalVertex = {
 
 export function baseLayout(lc:layoutClass){
     
-    function layout (tree:ImmutableTree):(node:NodeRef)=>FunctionalVertex { 
+    function layout (tree:ImmutableTree,options={}):(node:NodeRef)=>FunctionalVertex { 
         const map = new Map<NodeRef,FunctionalVertex>();
         
             let currentY = 0;
@@ -63,6 +63,7 @@ export function baseLayout(lc:layoutClass){
         return function(node:NodeRef):FunctionalVertex{
             if(map.has(node))return map.get(node)!;
             else{
+                console.log(node);
                 throw new Error("Node not found in layout -  has the tree changed")
             }
         }

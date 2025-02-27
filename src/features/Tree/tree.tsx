@@ -54,6 +54,7 @@ import { selectTitle } from "../Settings/panels/title/titleSlice"
 import { saveSvg } from "../../app/utils"
 import { selectTanglegram } from "../Settings/panels/tanglegram/tangleSlice"
 import { setTree } from "./treeSlice"
+import { max } from "d3-array"
 
 const margins = { top: 80, bottom: 80, left: 50, right: 100 }
 //todo make zoom and expansion based on number of tips
@@ -64,8 +65,34 @@ export function Tree({ panelRef }: any) {
   const selectionRoot = useAppSelector(selectSelectionRoot)
   const selectionMode = useAppSelector(selectSelectionMode)
   const title = useAppSelector(selectTitle)
-  const tree = useAppSelector(selectTree)
+  
   const { activated: tangle } = useAppSelector(selectTanglegram)
+
+  const {
+    expansion,
+    zoom,
+    layout,
+    rootAngle,
+    rootLength,
+    angleRange,
+    showRoot,
+    spread,
+    curvature,
+    fishEye,
+    pointOfInterest,
+    animate,
+    pollard,
+    minR,
+    invert,
+  } = useAppSelector(selectLayout)
+
+  let tree = useAppSelector(selectTree);
+  // if root length then we'll add it to the tree here
+  if(rootLength>0){
+    const maxDivergence = max(tree.getExternalNodes(),n=>tree.getDivergence(n));
+    tree = tree.setLength(tree.getRoot(),rootLength*maxDivergence!);
+  }
+
   //selection Box work //https://codesandbox.io/s/billowing-lake-rzhid4?file=/src/App.tsx
   const svgRef = useRef<SVGSVGElement>(null)
   //https://codesandbox.io/s/react-area-selection-hook-slggxd?file=/src/area-selection.ts
@@ -239,23 +266,7 @@ export function Tree({ panelRef }: any) {
     return cartoon && custom !== undefined ? (custom as string) : "none"
   }
 
-  const {
-    expansion,
-    zoom,
-    layout,
-    rootAngle,
-    rootLength,
-    angleRange,
-    showRoot,
-    spread,
-    curvature,
-    fishEye,
-    pointOfInterest,
-    animate,
-    pollard,
-    minR,
-    invert,
-  } = useAppSelector(selectLayout)
+
 
   const cartoonedNodes: Map<NodeRef, CartoonData> = new Map()
 

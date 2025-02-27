@@ -222,8 +222,8 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
     }
     return maxDiv - this.getDivergence(node);    
   }
-  hasBranchLength(node: NodeRef): number {
-    throw new Error("hasBranchLength not implemented.")
+  hasBranchLength(node: NodeRef): boolean {
+    return this.getLength(node) !== undefined
   }
   getLength(node: NodeRef): number | undefined {
     const length = (node as Node).length
@@ -381,7 +381,7 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
       if(l===undefined){
         //The root can have a length but doesn't need one.
         if(this.isRoot(n)){
-          l = 0;
+          l = this.hasBranchLength(n)? this.getLength(n)!:0;
         }else{
           console.warn(`Node ${n.number} has no length. Assuming a length of 1.`)
         l =1;

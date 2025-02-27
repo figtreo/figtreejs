@@ -6,11 +6,23 @@ import { layoutClass } from "../../Layouts/functional/rectangularLayout";
 const withBranch = (WrappedComponent: React.ComponentType<any>) => {
     function BranchedComponent(props:any){
         
-        const {parent,node,shapeProps,curvature=0,scale,layout,...rest} = props
+        const {parent,node,shapeProps,curvature=0,scale,layout,tree,...rest} = props
         const useVertex = useVertexFactory(layout);
 
-        const parentVertex = useVertex(parent);
+        let parentVertex;
         const nodeVertex = useVertex(node);
+        
+        if(parent===undefined){
+            if(tree.isRoot(node)){ // node has length so we'll show the root line
+                
+                parentVertex = {x:0,y:nodeVertex.y};
+            }else{
+                throw new Error(" Trying to make a branch for a node where parent is undefined and the node is not the root node")
+            }
+        }else{
+             parentVertex = useVertex(parent);
+        }
+
         const vP = scale(parentVertex);
         const {layoutClass} = nodeVertex;
 
@@ -18,7 +30,7 @@ const withBranch = (WrappedComponent: React.ComponentType<any>) => {
         
         // need to get the step here for polar
 
-        const step = scale({x:parentVertex.x,y:nodeVertex.y})
+        const step = scale({x:parentVertex!.x,y:nodeVertex.y})
         
         const points = [vP,vN,step];
 

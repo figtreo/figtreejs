@@ -17,8 +17,8 @@ export default function Branches(props:BranchProps) {
     const shapeProps = useAttributeMappers({attrs,interactions}); //TODO not obvious why in an object
     return (
         <g className={"branch-layer"}>
-             {[...preOrderIterator(tree)].filter(node=>filter(node) && !tree.isRoot(node)).map((node) => {
-                        return <Branch key={keyBy(node)} node={node}  parent={tree.getParent(node)} shapeProps={shapeProps} {...rest}/> 
+             {[...preOrderIterator(tree)].filter(node=>filter(node) && tree.hasBranchLength(node)).map((node) => {
+                        return <Branch key={keyBy(node)} node={node}  parent={tree.getParent(node)} shapeProps={shapeProps} tree={tree} {...rest}/> 
                     
                 })
                 }

@@ -25,7 +25,8 @@ export function getScale({
     invert = false,
     minRadius = 0,
     angleRange = 2 * Math.PI,
-    rootAngle = 0
+    rootAngle = 0,
+    rootLength = 0,
 }: {
     domainX: number[],
     domainY: number[],
@@ -35,15 +36,18 @@ export function getScale({
     invert?: boolean,
     minRadius?: number,
     angleRange?: number,
-    rootAngle?: number
+    rootAngle?: number,
+    rootLength?:number
 }) {
-    let xScale = scaleLinear().domain(domainX).range([0, canvasWidth]);
-    let yScale = scaleLinear().domain(domainY).range([0, canvasHeight]);
+
 
     switch (layoutClass) {
         case "Rectangular":
 
             return function (vertex: { x: number, y: number }) {
+                let xScale = scaleLinear().domain([0,domainX[1]]).range([0, canvasWidth]); // 0 to account for any root length
+                let yScale = scaleLinear().domain(domainY).range([0, canvasHeight]);
+
                 return { ...vertex, x: xScale(vertex.x), y: yScale(vertex.y) }
             }
         case "Polar":
@@ -66,11 +70,9 @@ export function getScale({
                     const xRange = [xShift,maxRange+xShift];
                     const yRange = [yShift,maxRange+yShift];
                     
-                    yScale = scaleLinear().domain(domain).range(yRange);
-                    xScale = scaleLinear().domain(domain).range(xRange);
+                    let yScale = scaleLinear().domain(domain).range(yRange);
+                    let xScale = scaleLinear().domain(domain).range(xRange);
             return function (vertex: { x: number, y: number }) {
-
-                
                 return { ...vertex,x: xScale(vertex.x), y: yScale(vertex.y) }
             }
         default:
