@@ -129,8 +129,8 @@ export function Header() {
         <p>Rotate</p>
       </div>
       <div className={optionClasses}>
-        <img src={annotate} />
-        <p>Annotate</p>
+        {/* <img src={annotate} />
+        <p>Annotate</p> */}
       </div>
       <div className={optionClasses}>
         <label>
@@ -212,8 +212,8 @@ export function Header() {
         <p>Highlight</p>
       </div>
       <div className="tool">
-        <img src={find} />
-        <p>Find</p>
+        {/* <img src={find} />
+        <p>Find</p> */}
       </div>
 
       <div className="tool">
