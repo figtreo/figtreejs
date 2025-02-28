@@ -102,16 +102,14 @@ export default function PolarAxis(props: any) {
     const titleYPadding = title.padding*Math.sin(theta);
 
     return (
-      <g>
-       <g >
+      <g className={"axis"} >
         {bars}
-       </g>
          <path d={axisPath} stroke={"black"} strokeWidth={strokeWidth} {...attrs}/> 
          <g>
                  {tickValues.map((t, i) => {
                   const point = figureScale({x:scale(t),y:axisY});
                     return (
-                        <g key={i} transform={`translate(${point.x},${point.y}) rotate(90)`}>
+                        <g key={`tick-${i}`} transform={`translate(${point.x},${point.y}) rotate(90)`}>
                             
                             <line x1={x2} y1={y2} x2={0} y2={0} stroke={"black"} strokeWidth={strokeWidth} {...attrs} />
                             <text transform={`translate(${ xPadding },${yPadding}) rotate(-90)`} textAnchor={"middle"} dominantBaseline={"center"}  {...ticks.style} >{ticks.format!(t)}</text>
@@ -133,7 +131,7 @@ export default function PolarAxis(props: any) {
 
 //TODO can make maxR and height the same parameter and use this  all axes
 
-function makeAxisScale(props: any, { domainX ,domainY }: {domainX:[number,number],domainY:[number,number]}) {
+export function makeAxisScale(props: any, { domainX ,domainY }: {domainX:[number,number],domainY:[number,number]}) {
     const { reverse = defaultAxisProps.reverse,
         offsetBy = defaultAxisProps.offsetBy,
         scaleBy = defaultAxisProps.scaleBy, 

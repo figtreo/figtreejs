@@ -17,8 +17,9 @@ export default function AxisBars(props: any): JSX.Element {
     tickValues,
     scale,
     gap,
-    direction,
+    figureScale,
     reverse,
+    axisY,
   } = props
 
   const { canvasHeight } = props.dimensions
@@ -26,38 +27,28 @@ export default function AxisBars(props: any): JSX.Element {
 
   return (
     <g className={"axisBars"} key="axisBars">
-      {tickValues.reduce((acc: JSX.Element[], curr: any, i: number) => {
-        let width;
-        let x;
-        if(reverse){
-            // then scale goes right to left 
-            width =
-            i === tickValues.length - 1
-              ? scale(tickValues[i]) - scale.range()[1] 
-              :scale(tickValues[i]) -  scale(tickValues[i + 1])
-            x=i === tickValues.length - 1?scale.range()[1] :scale(tickValues[i+1])
-        }else{
-        width =
-            i === tickValues.length - 1
-              ? scale.range()[1] - scale(tickValues[i])
-              : scale(tickValues[i + 1]) - scale(tickValues[i])
-            x=scale(tickValues[i])
-        }
+      {tickValues.filter((t:number,i:number,all:number[]) =>i<all.length-1).map((t:number,i:number)=>{
+
+    const start = figureScale({x:scale(t),y:axisY});
+    const end = figureScale({x:scale(t),y:-0.05});
+
+    const secondStart =  figureScale({x:scale(tickValues[i+1]),y:0});
+    
 
 
         const fill = i % 2 === 0 ? evenFill : oddFill
-        acc.push(
+       return(
           <rect
             key={`recBar-${i}`}
-            transform={`translate(${x},0)`} // to deal with reverse scales
-            width={width} // to deal with negative scales
-            y={-1 * (canvasHeight + gap + lift)}
-            height={canvasHeight + gap + lift}
+            x={start.x}
+            width={secondStart.x - start.x} // to deal with negative scales
+            y={end.y}
+            height={start.y-end.y}
             fill={fill}
             {...{ rx: 2, ry: 2, ...attrs }}
-          />,
+          />
         )
-        return acc
+
       }, [])}
     </g>
   )

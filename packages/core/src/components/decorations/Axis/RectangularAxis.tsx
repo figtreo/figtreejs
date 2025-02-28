@@ -8,6 +8,7 @@ import {
   AxisScaleContext,
   defaultAxisProps,
 } from "./Axis.types"
+import { makeAxisScale } from "./PolarAxis"
 
 export default function Axis(props: any) {
   const { dimensions, layoutClass } = props
@@ -17,6 +18,8 @@ export default function Axis(props: any) {
     strokeWidth = defaultAxisProps.strokeWidth!,
     x,
     y,
+    scale:figureScale,
+    attrs
   } = props
 
   const ticks = props.ticks
@@ -44,17 +47,11 @@ export default function Axis(props: any) {
     }
   }
 
-  //TODO this needs to be lifted so transmform can be applied to other axis
 
-  let transform
-  if (x !== undefined && y !== undefined) {
-    transform = `translate(${x},${y})`
-  } else {
-    transform =
-      direction === "horizontal"
-        ? `translate(${0},${dimensions.canvasHeight + gap})`
-        : `translate(${-1 * gap},${0})`
-  }
+  const axisY = dimensions.domainY[1]+dimensions.domainY[1]*0.01;
+  const start = figureScale({x:dimensions.domainX[0],y:axisY});
+  const end = figureScale({x:dimensions.domainX[1],y:axisY});
+  const axisPath = `M${start.x},${start.y} L${end.x},${end.y}`;
 
   const rawBars = props.children
     ? Array.isArray(props.children)
@@ -65,69 +62,42 @@ export default function Axis(props: any) {
     ? rawBars.map((b: React.ReactElement,i:number) =>
         React.cloneElement(b, {
           key:i,
+          figureScale,
           scale,
+          axisY,
           direction,
           layoutClass,
           dimensions,
           tickValues,
           gap,
-          reverse:props.reverse
+          reverse:props.reverse,
         }),
       )
     : null
   //TODO break this into parts HOC with logic horizontal/ vertical axis ect.
+   const titlePos = figureScale({x:mean(scale.range()),y:axisY})
   return (
-    <g className={"axis"} transform={transform}>
+    <g className={"axis"} >
       {/*This is for Bars*/}
 
       {bars}
 
-      <path
-        d={getPath(scale, direction)}
-        stroke={"black"}
-        strokeWidth={strokeWidth}
-      />
+      <path d={axisPath} stroke={"black"} strokeWidth={strokeWidth} {...attrs}/> 
       <g>
         {tickValues.map((t, i) => {
+            const point = figureScale({x:scale(t),y:axisY});
           return (
-            <g
-              key={`tick-${i}`}
-              transform={`translate(${
-                direction === "horizontal" ? scale(t) : 0
-              },${direction === "horizontal" ? 0 : scale(t)})`}
-            >
-              <line
-                key={`tickLine-${i}`}
-                {...getTickLine(ticks.length!, direction)}
-                stroke={"black"}
-                strokeWidth={strokeWidth}
-              />
-              <text
-                key={`tickText-${i}`}
-                transform={`translate(${
-                  direction === "horizontal" ? 0 : ticks.padding
-                },${direction === "horizontal" ? ticks.padding : 0})`}
-                textAnchor={"middle"}
-                alignmentBaseline={"middle"}
-                {...ticks.style}
-              >
-                {ticks.format!(t)}
-              </text>
-            </g>
+                  <g key={`tick-${i}`} transform={`translate(${point.x},${point.y})`}>
+               
+                    <line x1={0} y1={0} x2={0} y2={ticks.length} stroke={"black"} strokeWidth={strokeWidth} {...attrs} />
+                      <text transform={`translate(${ 0 },${ticks.padding})`} textAnchor={"middle"} dominantBaseline={"center"}  {...ticks.style} >{ticks.format!(t)}</text>
+                </g>
           )
         })}
         {/*TODO sometimes scale doesn't have a range*/}
-        <g
-          transform={`translate(${
-            direction === "horizontal" ? mean(scale.range()) : title.padding
-          },${
-            direction === "horizontal" ? title.padding : mean(scale.range())
-          })`}
-        >
-          <text textAnchor={"middle"} {...title.style}>
-            {title.text}
-          </text>
-        </g>
+        <g transform={`translate(${ titlePos.x},${ titlePos.y}) `}>
+                    <text textAnchor={"middle"} transform={`translate(${ 0},${ title.padding})` } >{title.text}</text>
+                </g>
       </g>
     </g>
   )
@@ -163,46 +133,3 @@ export function getTickLine(length: number, direction: AxisOrientation) {
   }
 }
 
-/**
- * A helper function to make the scale used in the axis. if supplied by props then no modifications are
- * applied.
- * @param props
- * @param contextScales
- * @returns {*}
- */
-
-function makeAxisScale(
-  props: any,
-  { canvasWidth, canvasHeight, domainX }: {canvasWidth: number, canvasHeight: number, domainX: number[]},
-) {
-  const {
-    reverse = defaultAxisProps.reverse,
-    offsetBy = defaultAxisProps.offsetBy,
-    scaleBy = defaultAxisProps.scaleBy,
-    _scale = defaultAxisProps.scale, // TODO can't be scale since that gets passed in by figure
-    direction = defaultAxisProps.direction,
-  } = props
-
-  //todo unify this code with the scale making code in layout
-  const axisScale = (
-    _scale === undefined
-      ? direction === "horizontal"
-        ? scaleLinear().domain([0, domainX[1]]).range([0, canvasWidth])
-        : scaleLinear().domain([0, domainX[1]]).range([0, canvasHeight])
-      : _scale
-  ).copy()
-
-  if (_scale === undefined) {
-    // assume domain goes 0 to max divergence make adjustments on this scale and then update min if it is not 0
-    const offset = domainX.map((d) => d + offsetBy)
-    const newDomain = offset.map((d, i) => (d - offsetBy) * scaleBy + offsetBy)
-
-    axisScale.domain(newDomain)
-
-    if (reverse) {
-      axisScale.domain([offsetBy - (newDomain[1] - newDomain[0]), offsetBy])
-    }
-  }
-
-  return axisScale //.nice();
-}
