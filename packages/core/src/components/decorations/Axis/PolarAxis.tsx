@@ -12,7 +12,7 @@ import { normalizeAngle } from '../../../store/polarScale';
 
 export default function PolarAxis(props: any) {
 
-  const { dimensions, layoutClass } = props
+  const { dimensions, layoutClass, attrs} = props
   const {
     direction = defaultAxisProps.direction!,
     gap = defaultAxisProps.gap!,
@@ -48,6 +48,7 @@ export default function PolarAxis(props: any) {
     }
     }
 
+
      // start at the root and go outwards
 
     const maxPoint = figureScale({x:dimensions.domainX[1],y:dimensions.domainY[1]+0.1}); // go a little bit past last tip
@@ -72,7 +73,7 @@ const rawBars = props.children
     ? rawBars.map((b: React.ReactElement,i:number) =>
         React.cloneElement(b, {
           key:i,
-          scale,
+          scale : scale.copy().range([0,-1*scale.range()[1]]),
           direction,
           layoutClass,
           dimensions,
@@ -84,13 +85,42 @@ const rawBars = props.children
         }),
       )
     : null
-// update scale to account for changing range 
-//move rotation off bars so we can calculate the angles better
-//TODO fix magic number 0.1 here and in bars
-// return (
-//   <path d={getPath(scale, direction)} stroke={"red"} strokeWidth={strokeWidth} /> 
-// )
-     
+
+    const axisY = dimensions.domainY[1]+dimensions.domainY[1]*0.005;
+    const start = figureScale({x:dimensions.domainX[0],y:axisY});
+    const end = figureScale({x:dimensions.domainX[1],y:axisY});
+    const axisPath = `M${start.x},${start.y} L${end.x},${end.y}`;
+
+      // We draw the ticks in line with the axis then rotate them 90 degrees
+      const x2 = ticks.length*Math.cos(theta);
+      const y2 = ticks.length*Math.sin(theta);
+
+      const xPadding = ticks.padding*Math.cos(theta);
+      const yPadding = ticks.padding*Math.sin(theta);
+
+//   <text transform={`translate(${ xPadding },${yPadding}) rotate(${-textSafeDegrees(normalizeAngle(point.theta))})`} 
+// textAnchor={"middle"} dominantBaseline={"center"}  {...ticks.style} >{ticks.format!(t)}</text>
+    return (
+      <g>
+         <path d={axisPath} stroke={"black"} strokeWidth={strokeWidth} {...attrs}/> 
+         <g>
+                 {tickValues.map((t, i) => {
+                  const point = figureScale({x:scale(t),y:axisY});
+                    return (
+                        <g key={i} transform={`translate(${point.x},${point.y}) rotate(90)`}>
+                            <line x1={x2} y1={y2} x2={0} y2={0} stroke={"black"} strokeWidth={strokeWidth} {...attrs} />
+                            <text transform={`translate(${ xPadding },${yPadding}) rotate(-90)`} textAnchor={"middle"} dominantBaseline={"center"}  {...ticks.style} >{ticks.format!(t)}</text>
+                        </g>
+                    )
+                })}
+                {/*TODO sometimes scale doesn't have a range*/}
+                <g transform={`translate(${ mean(scale.range()) },${ title.padding}) rotate(${-degrees(theta+0.1)})`}>
+                    <text textAnchor={"middle"}>{title.text}</text>
+                </g>
+            </g>
+        
+      </g>
+    )
 
     return (
        <g transform={transform}>
@@ -227,30 +257,19 @@ function makeAxisScale(props: any, { domainX ,domainY }: {domainX:[number,number
         _scale= defaultAxisProps.scale,
     scale} = props;
         
-
-    const origin = scale({x:domainX[0],y:domainY[0]});
-    const maxPoint = scale({x:domainX[1],y:domainY[0]}); //y doesn't matter. 
-    const maxRange = Math.sqrt((maxPoint.x-origin.x)**2+(maxPoint.y-origin.y)**2);
+// just radius
      // negative range to play nicely with transform above
-    const axisScale = _scale === undefined ?  scaleLinear().domain(domainX).range([0, -maxRange]) : _scale.copy();
+    const axisScale = _scale === undefined ?  scaleLinear().domain(domainX).range(domainX) : _scale.copy();
     if (_scale === undefined) {
-           // account for the fact we are drawing the axis backwards
-            const newMax = axisScale.domain()[0];
-            const newMin = axisScale.domain()[1];
-            axisScale.domain([newMin,newMax]);
-        
-          if(reverse){
-            // different than rectangular because of the above
-            const newMin = axisScale.domain()[1];
-            // const newMin = axisScale.domain()[0]-axisScale.domain()[1];
-            const newMax = axisScale.domain()[1]-axisScale.domain()[0];;
-            axisScale.domain([newMin,newMax]);
-          }
-
-        if (offsetBy !== 0 || scaleBy !== 1) {
-            const domain = axisScale.domain().map((d: number) => (d + offsetBy) * scaleBy)
-            axisScale.domain(domain);
-        }
+      // assume domain goes 0 to max divergence make adjustments on this scale and then update min if it is not 0
+      const offset = domainX.map((d) => d + offsetBy)
+      const newDomain = offset.map((d, i) => (d - offsetBy) * scaleBy + offsetBy)
+  
+      axisScale.domain(newDomain)
+  
+      if (reverse) {
+        axisScale.domain([offsetBy - (newDomain[1] - newDomain[0]), offsetBy])
+      }
     }
     return axisScale.nice();
 
