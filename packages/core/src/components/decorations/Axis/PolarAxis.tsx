@@ -19,7 +19,8 @@ export default function PolarAxis(props: any) {
     strokeWidth = defaultAxisProps.strokeWidth!,
     x,
     y,
-    scale:figureScale
+    scale:figureScale,
+
   } = props
   
   const ticks = props.ticks
@@ -48,7 +49,10 @@ export default function PolarAxis(props: any) {
     }
 
      // start at the root and go outwards
-     const origin = figureScale({x:0,y:0});
+
+    const maxPoint = figureScale({x:dimensions.domainX[1],y:dimensions.domainY[1]+0.1}); // go a little bit past last tip
+
+
     const theta = normalizeAngle(figureScale({x:dimensions.domainX[1],y:dimensions.domainY[1]}).theta);
     const startAngle = figureScale({x:dimensions.domainX[1],y:dimensions.domainY[0]}).theta + Math.PI/2 ;  
     const endAngle = startAngle + 0.05+ (figureScale({x:dimensions.domainX[1],y:dimensions.domainY[1]}).theta - figureScale({x:dimensions.domainX[1],y:dimensions.domainY[0]}).theta);
@@ -57,7 +61,7 @@ export default function PolarAxis(props: any) {
     if(x!==undefined && y!==undefined){
         transform = `translate(${x},${y})`;
     }else{
-        transform =  `translate(${origin.x},${origin.y})` 
+        transform =  `translate(${maxPoint.x},${maxPoint.y})` 
     }
 const rawBars = props.children
     ? Array.isArray(props.children)
@@ -83,14 +87,21 @@ const rawBars = props.children
 // update scale to account for changing range 
 //move rotation off bars so we can calculate the angles better
 //TODO fix magic number 0.1 here and in bars
+// return (
+//   <path d={getPath(scale, direction)} stroke={"red"} strokeWidth={strokeWidth} /> 
+// )
+     
+
     return (
-        <g className={"axis"} transform={transform} >
+       <g transform={transform}>
           {/*This is for Bars*/}
           
           {bars}
-       
-          <g transform={`rotate(${degrees(theta+0.1)})`}> 
-             <path d={getPath(scale, direction)} stroke={"black"} strokeWidth={strokeWidth} />
+
+     
+      <g className={"axis"}  >
+          <g  transform={`rotate(${degrees(theta)})`}> 
+             <path d={getPath(scale, direction)} stroke={"black"} strokeWidth={strokeWidth} /> 
              <g>
                  {tickValues.map((t, i) => {
                     return (
@@ -108,6 +119,7 @@ const rawBars = props.children
             </g>
             </g>
 
+        </g>
         </g>
       )
 }
@@ -217,16 +229,24 @@ function makeAxisScale(props: any, { domainX ,domainY }: {domainX:[number,number
         
 
     const origin = scale({x:domainX[0],y:domainY[0]});
-    const maxPoint = scale({x:domainX[1],y:domainY[1]}); //y doesn't matter. 
+    const maxPoint = scale({x:domainX[1],y:domainY[0]}); //y doesn't matter. 
     const maxRange = Math.sqrt((maxPoint.x-origin.x)**2+(maxPoint.y-origin.y)**2);
-
-    const axisScale = _scale === undefined ?  scaleLinear().domain(domainX).range([0, maxRange]) : _scale.copy();
+     // negative range to play nicely with transform above
+    const axisScale = _scale === undefined ?  scaleLinear().domain(domainX).range([0, -maxRange]) : _scale.copy();
     if (_scale === undefined) {
-        if (reverse) {
+           // account for the fact we are drawing the axis backwards
             const newMax = axisScale.domain()[0];
-            const newMin = axisScale.domain()[0]-axisScale.domain()[1];
+            const newMin = axisScale.domain()[1];
             axisScale.domain([newMin,newMax]);
-        }
+        
+          if(reverse){
+            // different than rectangular because of the above
+            const newMin = axisScale.domain()[1];
+            // const newMin = axisScale.domain()[0]-axisScale.domain()[1];
+            const newMax = axisScale.domain()[1]-axisScale.domain()[0];;
+            axisScale.domain([newMin,newMax]);
+          }
+
         if (offsetBy !== 0 || scaleBy !== 1) {
             const domain = axisScale.domain().map((d: number) => (d + offsetBy) * scaleBy)
             axisScale.domain(domain);
