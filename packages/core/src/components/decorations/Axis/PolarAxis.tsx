@@ -96,14 +96,16 @@ export default function PolarAxis(props: any) {
         }),
       )
     : null
+
+    const titlePos = figureScale({x:mean(scale.range()),y:axisY});
+    const titleXPadding = title.padding*Math.cos(theta);
+    const titleYPadding = title.padding*Math.sin(theta);
+
     return (
       <g>
        <g >
         {bars}
        </g>
-        
-        
-
          <path d={axisPath} stroke={"black"} strokeWidth={strokeWidth} {...attrs}/> 
          <g>
                  {tickValues.map((t, i) => {
@@ -118,8 +120,8 @@ export default function PolarAxis(props: any) {
                     )
                 })}
                 {/*TODO sometimes scale doesn't have a range*/}
-                <g transform={`translate(${ mean(scale.range()) },${ title.padding}) rotate(${-degrees(theta+0.1)})`}>
-                    <text textAnchor={"middle"}>{title.text}</text>
+                <g transform={`translate(${ titlePos.x},${ titlePos.y}) rotate(90)`}>
+                    <text textAnchor={"middle"} transform={`translate(${ titleXPadding},${ titleYPadding}) rotate(-90)` } >{title.text}</text>
                 </g>
             </g>
         
