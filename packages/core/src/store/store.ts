@@ -72,9 +72,13 @@ export function getScale({
         case "Radial":
 
                 //TODO need to update so x and y scales are equal otherwise horizontal branches will have a different scale than vertical branches
+// scale x and y to 0 1 
+// then scale to standard witdth height.
+                    const normalizeX = scaleLinear().domain(domainX).range([0,1]);
+                    const normalizeY = scaleLinear().domain(domainY).range([0,1]);
 
-                    // const ratio = (domainX[1]-domainX[0])/(domainY[1]-domainY[0]);
-                    const domain = extent(domainX.concat(domainY)) as [number,number];
+
+
 
                     const maxRange = min([canvasWidth,canvasHeight])!;
                     // const scaler = Math.min(canvasWidth,canvasHeight*ratio)
@@ -87,10 +91,10 @@ export function getScale({
                     const xRange = [xShift,maxRange+xShift];
                     const yRange = [yShift,maxRange+yShift];
                     
-                     yScale = scaleLinear().domain(domain).range(yRange);
-                     xScale = scaleLinear().domain(domain).range(xRange);
+                     yScale = scaleLinear().domain([0,1]).range(yRange);
+                     xScale = scaleLinear().domain([0,1]).range(xRange);
             return function (vertex: { x: number, y: number }) {
-                return { ...vertex,x: xScale(vertex.x), y: yScale(vertex.y) }
+                return { ...vertex,x: xScale(normalizeX(vertex.x)), y: yScale(normalizeY(vertex.y)) }
             }
         default:
             throw new Error("Not implemented in calcX")
