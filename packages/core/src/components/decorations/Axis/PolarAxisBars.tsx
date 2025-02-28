@@ -22,31 +22,43 @@ export  default function PolarAxisBars(props:any) {
         lift = defaultAxisBarsProps.lift,
         tickValues,
         scale,
+        figureScale,
+        axisY,
         gap,
         direction,
         reverse,
-        startAngle,
-        endAngle
+        // startAngle,
+        // endAngle
       } = props
+
 
           return(
         <g className={"axisBars"}>
-                {tickValues.reduce((acc:JSX.Element[],curr:any,i:number)=>{
+                {tickValues.filter((t:number,i:number,all:number[]) =>i<all.length-1).map((t:number,i:number)=>{
 
-                    const shape = arc(
-                        {
-                            innerRadius:scale(tickValues[i]),
-                            outerRadius:scale(tickValues[i+1]),
-                            startAngle: startAngle,
-                            endAngle:endAngle 
-                        }
-                    )!
                     
+
+                    const start = figureScale({x:scale(t),y:axisY});
+                    const end = figureScale({x:scale(t),y:0});
+
+                    const secondStart =  figureScale({x:scale(tickValues[i+1]),y:0});
+                    const secondEnd =  figureScale({x:scale(tickValues[i+1]),y:axisY});
+
+                    
+                    const arcBit = start.theta===end.theta||start.r===0?"":`A${start.r},${start.r} 0 1 0 ${end.x},${end.y}`; 
+
+
+                    const secondArcBit = secondStart.theta===secondEnd.theta||secondStart.r===0?"":`A${secondStart.r},${secondStart.r} 0 1 1 ${secondEnd.x},${secondEnd.y}`;
+                   
+                    const shape = `M${start.x},${start.y} ${arcBit} L${end.x},${end.y} L${secondStart.x},${secondStart.y} ${secondArcBit} L ${start.x} ${start.y} Z`; 
                     const fill = i%2===0?evenFill:oddFill;
-                    acc.push(<path key={i} d={shape} fill={fill} {...attrs} />);
+
+                    return (
+ 
+                        <path key={i} d={shape} fill={fill}  {...attrs} />
+                        );
                                  
-                    return acc;
-                },[])}
+                })}
         </g>
     )
     // const {
