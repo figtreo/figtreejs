@@ -2,7 +2,7 @@ import React from "react";
 import { createRoot } from 'react-dom/client';
 import { FigTreeOptions } from "./FigtreeOptions";
 import { FigTree } from '@figtreejs/core'
-
+import ReactDOMServer from "react-dom/server";
 const rootMap =new Map();
 
 
@@ -11,6 +11,10 @@ export default function figtreeRender(options:FigTreeOptions){
     
 
     const svg = options.svg;
+
+    if(svg==undefined){
+        return  ReactDOMServer.renderToStaticMarkup( React.createElement(FigTree, options,...options.baubles));
+    }
 
     if(rootMap.has(svg)){
         const root = rootMap.get(svg);
