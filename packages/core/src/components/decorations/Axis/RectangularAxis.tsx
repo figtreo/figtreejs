@@ -51,7 +51,7 @@ export default function Axis(props: any) {
   const axisY = dimensions.domainY[1]+dimensions.domainY[1]*0.01;
   const start = figureScale({x:dimensions.domainX[0],y:axisY});
   const end = figureScale({x:dimensions.domainX[1],y:axisY});
-  const axisPath = `M${start.x},${start.y} L${end.x},${end.y}`;
+  const axisPath = `M${start.x},${start.y+gap} L${end.x},${end.y+gap}`;
 
   const rawBars = props.children
     ? Array.isArray(props.children)
@@ -87,7 +87,7 @@ export default function Axis(props: any) {
         {tickValues.map((t, i) => {
             const point = figureScale({x:scale(t),y:axisY});
           return (
-                  <g key={`tick-${i}`} transform={`translate(${point.x},${point.y})`}>
+                  <g key={`tick-${i}`} transform={`translate(${point.x},${point.y+gap})`}>
                
                     <line x1={0} y1={0} x2={0} y2={ticks.length} stroke={"black"} strokeWidth={strokeWidth} {...attrs} />
                       <text transform={`translate(${ 0 },${ticks.padding})`} textAnchor={"middle"} dominantBaseline={"center"}  {...ticks.style} >{ticks.format!(t)}</text>
