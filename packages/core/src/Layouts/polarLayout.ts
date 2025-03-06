@@ -1,10 +1,5 @@
-import { extent,  maxIndex,  mean,  min } from "d3-array";
-import { scaleLinear } from "d3-scale";
-import { AbstractLayout, ArbitraryVertices, defaultInternalLayoutOptions, internalLayoutOptions,Vertices} from "./LayoutInterface";
-import { RectangularLayout, fishEyeTransform } from "./rectangularLayout";
-import { Tree } from "..";
 
-
+/*
 export class PolarLayout extends AbstractLayout {
 
     static getArbitraryLayout(tree: Tree, opts:internalLayoutOptions): ArbitraryVertices {
@@ -249,7 +244,7 @@ export class PolarLayout extends AbstractLayout {
 
 }
 
-
+*/
 
 
 

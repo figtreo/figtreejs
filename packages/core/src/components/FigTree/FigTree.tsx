@@ -53,9 +53,21 @@ function FigTree(props:FigtreeProps){
         invert = defaultOpts.opts.invert
     } = opts; 
  //todo this requires opts to not be undefined even though all the values are optional.
+    let canvasWidth;
+    let canvasHeight;
+    let {x,y} = props;
 
-    const canvasWidth = width - margins.left - margins.right;
-    const canvasHeight = height - margins.top - margins.bottom;
+    if(x!==undefined&&y!==undefined){
+        // if x and y are provide then these give the top left corner and width and height represent the whole area.
+        canvasWidth = width;
+        canvasHeight = height;
+    }else{
+        canvasWidth = width - margins.left - margins.right;
+        canvasHeight = height - margins.top - margins.bottom;
+        x = margins.left;
+        y = margins.top;
+    }
+
         
     const layoutMap = layout(tree,opts);
     const {layoutClass} = layoutMap(tree.getRoot())!;
@@ -81,7 +93,7 @@ function FigTree(props:FigtreeProps){
                     </defs>                      */}
                     {/*<rect x="0" y="0" width="100%" height="100%" fill="none" pointerEvents={"visible"} onClick={()=>nodeDispatch({type:"clearSelection"})}/>*/}
                     {/* <g transform={`translate(${margins.left},${margins.top})`} clipPath={'url(#clip)'} > */}
-                    <g transform={`translate(${margins.left},${margins.top})`} >
+                    <g transform={`translate(${x},${y})`} >
                         {children}
                     </g>
                 </g>

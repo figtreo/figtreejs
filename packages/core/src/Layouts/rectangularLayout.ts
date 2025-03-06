@@ -4,7 +4,7 @@ import { AbstractLayout, ArbitraryVertex, ArbitraryVertices, defaultInternalLayo
 import { NodeRef, Tree } from "../Evo/Tree";
 import { ImmutableTree, postOrderIterator } from "../Evo/Tree/NormalizedTree/ImmutableTree";
 
-
+/*
 export class RectangularLayout extends AbstractLayout {
 
     static getArbitraryLayout(tree: Tree, opts?: internalLayoutOptions): ArbitraryVertices {
@@ -233,7 +233,7 @@ export class RectangularLayout extends AbstractLayout {
     // }
 
 }
-
+*/
 // figtree 
 // const fishEyeTransform=(fishEye:number,tipCount:number,pointOfInterestY:number)=>(y:number)=>{ // point of interest is in layout scale.
 

@@ -33,4 +33,6 @@ export interface FigtreeProps {
     children:React.ReactNode,
     opts:layoutOptions
     animated:boolean,
+    x?:number,
+    y?:number
 }
