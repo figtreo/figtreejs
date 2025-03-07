@@ -96,7 +96,7 @@ export default function Axis(props: any) {
         })}
         {/*TODO sometimes scale doesn't have a range*/}
         <g transform={`translate(${ titlePos.x},${ titlePos.y+gap}) `}>
-                    <text textAnchor={"middle"} transform={`translate(${ 0},${ title.padding})` } >{title.text}</text>
+                    <text textAnchor={"middle"} transform={`translate(${ 0},${ title.padding})`} {...title.style } >{title.text}</text>
                 </g>
       </g>
     </g>
