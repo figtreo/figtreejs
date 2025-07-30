@@ -526,6 +526,7 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
   // ---------------- Setters ---------------------
 
   //TODO handle height and divergence changes still not very happy with how these are handled.
+  // This if the length goes negative the final heights may not be correct.
 
   setHeight(node: NodeRef, height: number): ImmutableTree {
     return produce(this, (draft) => {
@@ -536,7 +537,23 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
 
       const currentHeight = draft.getHeight(node)
       const change = currentHeight - height // positive change increases length
-      n.length = n.length! + change
+      if(n.length === undefined){
+        if(!draft.isRoot(node)){
+         throw new Error("Cannot set height on a node without length")
+        }
+      }else{
+        n.length = n.length! + change
+      }
+      // update length of children
+      for (const child of draft.getChildren(node)) {
+        const childNode = draft.getNode(child.number) as Node
+        const newLength = childNode.length! + change
+        if(newLength < 0){
+        //warning
+        console.warn(`Child node ${child.number} length is negative. Subsequent heights may not be correct.`)
+        }
+        childNode.length = newLength
+      }
     })
   }
 
