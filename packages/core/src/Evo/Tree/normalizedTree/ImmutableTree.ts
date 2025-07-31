@@ -88,8 +88,8 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
     return this
   }
 
-  addTaxon(name: string): ImmutableTree {
-    this.taxonSet.addTaxon(name)
+  addTaxon(taxonOrName: string | Taxon): ImmutableTree {
+    this.taxonSet.addTaxon(taxonOrName)
     return this
   }
   getTaxonByName(name: string): Taxon {
@@ -130,7 +130,71 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
     }
   }
 
-  // ------------------ Getters ----------------------
+  static fromTree(tree: ImmutableTree, rootNode: NodeRef): ImmutableTree {
+    // make a new tree.
+    let newTree = new this();
+
+
+    const traverseAndCopy=(tree:ImmutableTree,node: NodeRef): NodeRef=>{
+      const children = [];
+      let newNode: NodeRef;
+        for(const child of tree.getChildren(node)){
+          children.push(traverseAndCopy(tree,child));
+        }
+      
+        if(node!==rootNode){
+          newTree = this._addNodeWithMetadata(tree, node, newTree);
+          newNode = newTree.getNode(newTree.getNodeCount() - 1);
+        }else{ // already have the node
+          newNode = newTree.getRoot();
+          // add metadata
+          this._copyNodeMetadata(tree, node, newTree, newNode);
+        }
+        for(const child of children){
+          newTree = newTree.addChild(newNode, child);
+        }
+     return newNode;
+    }
+
+    traverseAndCopy(tree, rootNode);
+    newTree = newTree.setLength(newTree.getRoot(), undefined);
+
+    return newTree;
+  }
+
+
+    static _addNodeWithMetadata(tree: ImmutableTree, node: NodeRef, newTree: ImmutableTree): ImmutableTree {
+      const added = newTree.addNodes(1);
+      const newNode = added.nodes[0];
+      newTree = added.tree;
+      newTree = this._copyNodeMetadata(tree, node, newTree, newNode);
+      return newTree;
+    }
+    static _copyNodeMetadata(tree: ImmutableTree, node: NodeRef, newTree: ImmutableTree, newNode: NodeRef): ImmutableTree {
+      const taxon = tree.getTaxonFromNode(node);
+      if (taxon) {
+          newTree = newTree.addTaxon(taxon);
+          console.log("Current taxa:", newTree.taxonSet);
+          newTree = newTree.setTaxon(newNode, taxon);
+      }
+      const label = tree.getLabel(node);
+      if (label) {
+        newTree = newTree.setLabel(newNode, label);
+      }
+      for(const key of tree.getAnnotationKeys()){
+        const value = tree.getAnnotation(node, key);
+        if(value !== undefined){
+          newTree = newTree.annotateNode(newNode, {name:key,value:value});
+        }
+      }
+      const length = tree.getLength(node);
+      if (length !== undefined) {
+        newTree = newTree.setLength(newNode, length);
+      }
+
+      return newTree;
+    }
+      // ------------------ Getters ----------------------
 
   isRooted(): boolean {
     return this._data.is_rooted
@@ -393,6 +457,9 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
   }
 
   getChildCount(node: NodeRef): number {
+    if(!this._data.nodes.allNodes[node.number]) {
+      throw new Error(`Node ${node.number} not found`);
+    }
     return this._data.nodes.allNodes[node.number].children.length
   }
   getChild(node: NodeRef, index: number): NodeRef {
@@ -470,7 +537,7 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
   setTaxon(node: NodeRef, taxon: Taxon): ImmutableTree {
     // check we know about this taxon;
     if (taxon !== this.taxonSet.getTaxonByName(taxon.name)) {
-      throw new Error(`Taxon ${taxon.name} not in the taxon set`)
+      throw new Error(`Taxon ${taxon.name} is either not in the taxon set. Has it been copied?`)
     }
     return produce(this, (draft) => {
       const n = draft.getNode(node.number) as Node
@@ -557,7 +624,7 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
     })
   }
 
-  setLength(node: NodeRef, length: number): ImmutableTree {
+  setLength(node: NodeRef, length: number|undefined): ImmutableTree {
     return produce(this, (draft) => {
       const n = draft.getNode(node.number) as Node
       n.length = length

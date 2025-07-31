@@ -43,16 +43,26 @@ export class TaxonSet implements TaxonSetInterface{
         }
         return this;
     }
-    addTaxon(name:string):TaxonSet{
+    addTaxon(taxonOrName:string | Taxon):TaxonSet{
         if(this._data.finalized){
             throw new Error('Cannot add taxon to finalized set')
         }
-        if(this._data.byName[name]){
-            throw new Error(`taxon ${name} already exists in the set. Names must be unique`)
+        let taxon: Taxon;
+        if(typeof taxonOrName === "string"){
+          const name = taxonOrName;
+          if(this._data.byName[name]){
+              throw new Error(`taxon ${name} already exists in the set. Names must be unique`)
+          }
+        taxon = newTaxon(name,this._data.allNames.length)
+        }else{
+          taxon = taxonOrName;
+          if(this._data.byName[taxon.name]){
+              throw new Error(`taxon ${taxon.name} already exists in the set. Names must be unique`)
+          }
+          console.log("Adding existing taxon:", taxon.name);
         }
-        const taxon = newTaxon(name,this._data.allNames.length)
-        this._data.allNames.push(name);
-        this._data.byName[name] = taxon;
+        this._data.allNames.push(taxon.name);
+        this._data.byName[taxon.name] = taxon;
         return this;
     }
 
