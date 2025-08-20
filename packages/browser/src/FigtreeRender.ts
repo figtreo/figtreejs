@@ -12,8 +12,10 @@ export default function figtreeRender(options:FigTreeOptions){
 
     const svg = options.svg;
 
-    if(svg==undefined){
-        return  ReactDOMServer.renderToStaticMarkup( React.createElement(FigTree, options,...options.baubles));
+    if (svg == undefined) {
+        const element = React.createElement(FigTree, options, ...options.baubles);
+        const markup = ReactDOMServer.renderToStaticMarkup(element);
+        return `<svg xmlns="http://www.w3.org/2000/svg" width="${options.width}" height="${options.height}">${markup}</svg>`;
     }
 
     if(rootMap.has(svg)){
