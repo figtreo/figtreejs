@@ -15,9 +15,10 @@ type data = {
     number: number
 }
 
-export function radialLayout (tree:ImmutableTree,options:{}={}):(node:NodeRef)=>FunctionalVertex { 
+export function radialLayout (tree:ImmutableTree,options:{ spread?: number }={}):(node:NodeRef)=>FunctionalVertex { 
 
-    
+    const { spread = 1 } = options;
+    console.log("radial layout with spread",spread);
     const map = new Map<NodeRef,FunctionalVertex>();
     
         const dataStack: data[] = [{ angleStart: 0, angleEnd: 2 * Math.PI, xpos: 0, ypos: 0, level: 0, number: tree.getRoot()!.number }] // TODO start tree.
@@ -37,7 +38,7 @@ export function radialLayout (tree:ImmutableTree,options:{}={}):(node:NodeRef)=>
             const leftLabel = tree.getChildCount(node) > 0;
             let dx,dy;
            if(!leftLabel){
-                dx = Math.cos(branchAngle); // twice the gap as left label
+                dx = Math.cos(branchAngle); 
                 dy = Math.sin(branchAngle);
             }else{
                 dx = Math.cos(branchAngle);
@@ -52,7 +53,7 @@ export function radialLayout (tree:ImmutableTree,options:{}={}):(node:NodeRef)=>
                     dyFactor: dy,
                     alignmentBaseline: "middle",
                     textAnchor: normalizeAngle(branchAngle)>Math.PI/2 && normalizeAngle(branchAngle)<3*Math.PI/2?"end":"start",
-                    rotation:  textSafeDegrees(normalizeAngle(branchAngle))
+                    rotation: 0// textSafeDegrees(normalizeAngle(branchAngle))
                 }
             }
             
@@ -70,7 +71,7 @@ export function radialLayout (tree:ImmutableTree,options:{}={}):(node:NodeRef)=>
                 let updatedAngleEnd = angleEnd;
                 if (tree.getRoot() !== node) {
                     // span *= 1.0 + ((safeOpts.spread * Math.PI / 180) / 10.0);
-                    span *= 1.0 + (( Math.PI / 180) / 10.0);
+                    span *= 1.0 + ((spread * Math.PI / 180) / 10.0);
                     updatedAngleStart = branchAngle - (span / 2.0);
                     updatedAngleEnd = branchAngle + (span / 2.0);
                 }
