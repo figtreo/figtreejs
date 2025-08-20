@@ -284,33 +284,57 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
         maxDiv = d;
       }
     }
-    return maxDiv - this.getDivergence(node);    
+    return maxDiv - this.getDivergence(node);
   }
   hasBranchLength(node: NodeRef): boolean {
     return this.getLength(node) !== undefined
   }
+  
   getLength(node: NodeRef): number | undefined {
-    const length = (node as Node).length
+   const thisNode = this.getNode(node.number);
+    const length = (thisNode as Node).length
     return length
   }
 
-  _toString(node: NodeRef, blFormat = format("0.2")): string {
-    // pass formating on
+  _toString(node: NodeRef,  options?: { blFormat: (value: number) => string; includeAnnotations: boolean }): string {
+
+    if (options === undefined) {
+      options = { blFormat: format("0.2"), includeAnnotations: false }
+    }
     return (
       (this.getChildCount(node) > 0
         ? `(${this.getChildren(node)
-            .map((child) => this._toString(child))
+            .map((child) => this._toString(child, options))
             .join(",")})${this.getLabel(node) ? "#" + this.getLabel(node) : ""}`
         : `${
             this.getTaxonFromNode(node) ? this.getTaxonFromNode(node)!.name : ""
           }`) +
-      (this.getLength(node) ? `:${blFormat(this.getLength(node)!)}` : "")
+          (options.includeAnnotations ?
+          this._writeAnnotations(node) :"") +
+      (this.getLength(node)  ? `:${options.blFormat(this.getLength(node)!)}` : "")
     )
   }
 
-  toNewick(node?: NodeRef, options?: { includeAnnotations: boolean }): string {
+  _writeAnnotations(node:NodeRef):string {
+    const annotations = this._data.nodes.allNodes[node.number].annotations;
+    if (Object.keys(annotations).length === 0) {
+      return "";
+    }
+    let annotationString = "";
+    for (const [key, value] of Object.entries(annotations)) {
+      if (Array.isArray(value)) {
+        annotationString += `[&${key}={${value.join(",")}}]`;
+      } else {
+        annotationString += `[&${key}=${value}]`;
+      }
+    }
+    return annotationString;
+
+  }
+
+  toNewick(node?: NodeRef, options?: { blFormat: (value: number) => string; includeAnnotations: boolean }): string {
     if (options === undefined) {
-      options = { includeAnnotations: false }
+      options = { blFormat: format("0.2"), includeAnnotations: false }
     }
     if (node === undefined) {
       if (this.getRoot() === undefined) {
@@ -318,8 +342,7 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
       }
       node = this.getRoot()
     }
-
-    return this._toString(node!) + ";"
+    return this._toString(node!,options) + ";"
   }
 
   getMRCA(node1: NodeRef | NodeRef[], node2?: NodeRef): NodeRef {
@@ -604,6 +627,8 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
 
       const currentHeight = draft.getHeight(node)
       const change = currentHeight - height // positive change increases length
+      // height goes 2 to 3 length should decease  new length = length + (-1) childe lengths must increase
+      
       if(n.length === undefined){
         if(!draft.isRoot(node)){
          throw new Error("Cannot set height on a node without length")
@@ -614,7 +639,7 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
       // update length of children
       for (const child of draft.getChildren(node)) {
         const childNode = draft.getNode(child.number) as Node
-        const newLength = childNode.length! + change
+        const newLength = childNode.length! - change
         if(newLength < 0){
         //warning
         console.warn(`Child node ${child.number} length is negative. Subsequent heights may not be correct.`)
