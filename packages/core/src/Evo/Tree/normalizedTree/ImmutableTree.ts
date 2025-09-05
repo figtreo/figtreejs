@@ -144,7 +144,7 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
       
         if(node!==rootNode){
           newTree = this._addNodeWithMetadata(tree, node, newTree);
-          newNode = newTree.getNode(newTree.getNodeCount() - 1);
+          newNode = newTree.getNode(newTree.getNodeCount() - 1)!;
         }else{ // already have the node
           newNode = newTree.getRoot();
           // add metadata
@@ -235,7 +235,7 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
   getNodes(): NodeRef[] {
     return this._data.nodes.allNodes
   }
-  getNode(i: string | number | Taxon): NodeRef {
+  getNode(i: string | number | Taxon): NodeRef | undefined {
     if (typeof i === "number") {
       return this._data.nodes.allNodes[i]
     } else if (i instanceof Object) {
@@ -251,7 +251,8 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
         }
       }
     }
-    throw `Node ${i} not found`
+    return undefined
+    
   }
 
   getTaxonFromNode(node: NodeRef): Taxon | undefined {
@@ -500,7 +501,7 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
   }
   getChildren(node: NodeRef): NodeRef[] {
     return this._data.nodes.allNodes[node.number].children.map((n) =>
-      this.getNode(n),
+      this.getNode(n)!,
     )
   }
 
@@ -753,10 +754,10 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
 
   rotate(nodeRef: NodeRef, recursive: boolean = false): ImmutableTree {
     return produce(this, (draft) => {
-      const node = draft.getNode(nodeRef.number) as Node
+      const node = draft.getNode(nodeRef.number)! as Node
       node.children = node.children.reverse()
       if (recursive) {
-        for (const child of node.children.map((n) => draft.getNode(n))) {
+        for (const child of node.children.map((n) => draft.getNode(n)!)) {
           draft.rotate(child, recursive)
         }
       }
@@ -782,7 +783,7 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
       if (rootNode.children.length == 2) {
         // just sum them.
         rootLength = rootNode.children
-          .map((n) => draft.getNode(n))
+          .map((n) => draft.getNode(n)!)
           .map((n) => draft.getLength(n))
           .reduce((acc, l) => l! + acc!, 0)!
       } else {
@@ -931,7 +932,7 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
     return produce(this, (draft) => {
       draft._data.nodes.allNodes[node.number].children =
         this._data.nodes.allNodes[node.number].children
-          .map((n) => draft.getNode(n))
+          .map((n) => draft.getNode(n)!)
           .sort(compare)
           .map((n) => n.number)
     })
@@ -1201,7 +1202,7 @@ export function* preOrderIterator(
   node: NodeRef | undefined = undefined,
 ): Generator<NodeRef> {
   const traverse = function* (node: NodeRef): Generator<NodeRef> {
-    yield tree.getNode(node.number) // get from tree so we keep proxy when used in draft
+    yield tree.getNode(node.number)! // get from tree so we keep proxy when used in draft
     const childCount = tree.getChildCount(node)
     if (childCount > 0) {
       for (let i = 0; i < childCount; i++) {
@@ -1227,7 +1228,7 @@ export function* psuedoRootPreOrderIterator(
   sort: (a: NodeRef|undefined, b: NodeRef|undefined) => number = (a, b) => a!.number - b!.number,
 ):Generator<NodeRef> {
   const traverse = function* (node: NodeRef,visited:number|undefined = undefined): Generator<NodeRef> {
-    yield tree.getNode(node.number) // get from tree so we keep proxy when used in draft
+    yield tree.getNode(node.number)! // get from tree so we keep proxy when used in draft
     const branches = [...tree.getChildren(node),tree.getParent(node)].filter(n=>n!==undefined && n.number!==visited)
     branches.sort(sort);
     for(const branch of branches){
@@ -1257,7 +1258,7 @@ export function* psuedoRootPostOrderIterator(
     for(const branch of branches){
         yield* traverse(branch!,node.number)
     }
-    yield tree.getNode(node.number)
+    yield tree.getNode(node.number)!
   }
 
   if (node === undefined) {
