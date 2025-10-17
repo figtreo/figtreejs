@@ -1,27 +1,6 @@
-# vite-template-redux
+# Figtreejs
+Figtreejs aims to bring phylogenetic visualization to the browser. 
+The goal is to support small and large applications alike and make the power and fun of playing with tree visualizations accessible to researchers with little to no experience in web design. 
+## Acknowledgements 
+This repo is based on [https://github.com/rambaut/figtree.js/](https://github.com/rambaut/figtree.js/) and lessons learned from [https://github.com/jtmccr1/figtreejs-react](https://github.com/jtmccr1/figtreejs-react). But most of all it is inspired by the original [figtree](https://github.com/rambaut/figtree).
 
-Uses [Vite](https://vitejs.dev/), [Vitest](https://vitest.dev/), and [React Testing Library](https://github.com/testing-library/react-testing-library) to create a modern [React](https://react.dev/) app compatible with [Create React App](https://create-react-app.dev/)
-
-```sh
-npx degit reduxjs/redux-templates/packages/vite-template-redux my-app
-```
-
-## Goals
-
-- Easy migration from Create React App or Vite
-- As beginner friendly as Create React App
-- Optimized performance compared to Create React App
-- Customizable without ejecting
-
-## Scripts
-
-- `dev`/`start` - start dev server and open browser
-- `build` - build for production
-- `preview` - locally preview production build
-- `test` - launch test runner
-
-## Inspiration
-
-- [Create React App](https://github.com/facebook/create-react-app/tree/main/packages/cra-template)
-- [Vite](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react)
-- [Vitest](https://github.com/vitest-dev/vitest/tree/main/examples/react-testing-lib)
