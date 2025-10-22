@@ -6,7 +6,7 @@ export const createEslintConfig = () => {
     eslint.configs.recommended,
     ...tseslint.configs.recommended,
     {
-      ignores: ["node_modules", "dist"],
+      ignores: ["node_modules/", "dist/",'**/node_modules','**/dist/'],
     }
   );
 }

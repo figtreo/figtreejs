@@ -1,4 +1,4 @@
-import { extent, min } from 'd3-array'
+import {  min } from 'd3-array'
 import {  NodeRef } from '../Evo/Tree'
 import { FunctionalVertex,layoutClass } from '../Layouts/functional/rectangularLayout'
 import { polarScaleMaker } from './polarScale'
@@ -6,8 +6,9 @@ import { ScaleLinear, scaleLinear } from 'd3-scale'
 
 //todo remove props that are just the getting passed to children and use render props instead
 
+export type layout = (n:NodeRef)=>FunctionalVertex
 
-export const useVertexFactory =(layout:(n:NodeRef)=>FunctionalVertex)=> (node:NodeRef):FunctionalVertex=>{
+export const useVertexFactory =(layout:layout)=> (node:NodeRef):FunctionalVertex=>{
     const v = layout(node);
     if(v === undefined){
         throw new Error(`Node ${node} not found in layout`)
@@ -16,6 +17,24 @@ export const useVertexFactory =(layout:(n:NodeRef)=>FunctionalVertex)=> (node:No
 }
 
 //Todo cache these
+export type scaleOptions =  {
+    domainX: number[],
+    domainY: number[],
+    canvasWidth: number,
+    canvasHeight: number,
+    layoutClass: layoutClass,
+    invert?: boolean,
+    minRadius?: number,
+    angleRange?: number,
+    rootAngle?: number,
+    rootLength?:number,
+    pollard:number,
+    fishEye?: { x: number, y: number,scale:number },
+}
+
+export interface scaledVertex { x:number, y: number }
+export type scale = (v:FunctionalVertex)=>scaledVertex
+
 export function getScale({
     domainX,
     domainY,
@@ -29,26 +48,13 @@ export function getScale({
     pollard = 0,
     fishEye = { x: 0, y: 0 , scale:0},
 
-}: {
-    domainX: number[],
-    domainY: number[],
-    canvasWidth: number,
-    canvasHeight: number,
-    layoutClass: layoutClass,
-    invert?: boolean,
-    minRadius?: number,
-    angleRange?: number,
-    rootAngle?: number,
-    rootLength?:number,
-    pollard:number,
-    fishEye?: { x: number, y: number,scale:number },
-}) {
+}:scaleOptions):scale{
 
     let xScale:ScaleLinear<number,number>;
     let yScale:ScaleLinear<number,number>; 
 
     switch (layoutClass) {
-        case "Rectangular":
+        case "Rectangular": {
             const minX = domainX[1] *pollard;
              xScale = scaleLinear().domain([minX,domainX[1]]).range([0, canvasWidth]); // 0 to account for any root length
              yScale = scaleLinear().domain(domainY).range([0, canvasHeight]);
@@ -67,19 +73,16 @@ export function getScale({
             return function (vertex: { x: number, y: number }) {
                 return { ...vertex, x: xScale(vertex.x), y: calcY(vertex.y) }
             }
+        }
         case "Polar":
             return polarScaleMaker(domainX[1], domainY[1], canvasWidth, canvasHeight, invert, minRadius, angleRange, rootAngle,pollard)
-        case "Radial":
+        case "Radial":{
 
                 //TODO need to update so x and y scales are equal otherwise horizontal branches will have a different scale than vertical branches
 // scale x and y to 0 1 
 // then scale to standard witdth height.
                     const normalizeX = scaleLinear().domain(domainX).range([0,1]);
                     const normalizeY = scaleLinear().domain(domainY).range([0,1]);
-
-
-
-
                     const maxRange = min([canvasWidth,canvasHeight])!;
                     // const scaler = Math.min(canvasWidth,canvasHeight*ratio)
                     // const width = scaler;
@@ -96,6 +99,7 @@ export function getScale({
             return function (vertex: { x: number, y: number }) {
                 return { ...vertex,x: xScale(normalizeX(vertex.x)), y: yScale(normalizeY(vertex.y)) }
             }
+        }
         default:
             throw new Error("Not implemented in calcX")
     }

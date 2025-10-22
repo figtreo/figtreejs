@@ -1,6 +1,6 @@
 import { ImmutableTree } from "../../NormalizedTree"
 import { NexusImporter } from "./NexusImporter"
-
+import { describe, it, expect } from 'vitest';
 function stringToReadableStream(str: string) {
   return new ReadableStream({
     start(controller: any) {
@@ -31,7 +31,7 @@ describe("Testing nexus importer", () => {
       i++
     }
     expect(i).toBe(1)
-  }),
+  });
     it("parse  Nexus multiple trees", async function () {
       const nexusString = `#NEXUS
       Begin trees;
@@ -51,8 +51,7 @@ describe("Testing nexus importer", () => {
       }
       expect(i).toBe(2)
       expect(lastTree?.getTaxonCount()).toBe(15) //has taxa available from all trees
-    })
-
+    });
   it("parse  Nexus - treeannotations", async function () {
     const nexusString = `#NEXUS
     Begin trees;

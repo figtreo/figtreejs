@@ -1,4 +1,4 @@
 declare module 'parse-svg-path'{
-    const parse:any,
+    const parse:function,
     export default parse;
 }

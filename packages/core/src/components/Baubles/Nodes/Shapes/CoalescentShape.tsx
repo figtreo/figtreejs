@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React from "react"
 import {linkHorizontal} from "d3-shape";
 import {extent, max, min} from "d3-array";
@@ -28,7 +29,7 @@ export default function CoalescentShape (props:CoalescentProps){
     // const endingX= FadeEndpoint==="min"?100/slope:FadeEndpoint==="max"?100:parseFloat(FadeEndpoint)?parseFloat(FadeEndpoint):100/slope;
 
     // return  <FadedPath className="node-shape" attrs={{...attrs,d:d}} interactions={interactions} endingX={`${endingX}%`} colorRamper={()=>attrs.fill} opacityRamper={(i:number)=>1-i*1} />
-};
+}
 
 
 

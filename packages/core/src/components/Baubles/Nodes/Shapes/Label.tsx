@@ -1,7 +1,6 @@
 import React from "react";
 import { useSpring, to,  animated } from "@react-spring/web";
-import { BaseShapeProps } from "..";
-import { NodeRef } from "../../../../Evo/Tree";
+
 //We don't use the HOC here because of how the rotation transform is applied
 export default function Label(props: any) {
     const animation = props.animated;
@@ -21,9 +20,7 @@ export default function Label(props: any) {
                 {d?<animated.path strokeWidth={1} stroke='grey' strokeDasharray="2" d={animatedProperties.d.to((value:string)=>value as string)} />:null}
             </g>
         )
-    } else {
-
-    }
+    } 
     return (
 
         <g  className={"node-label"} node-id={id} >
@@ -33,18 +30,18 @@ export default function Label(props: any) {
     )
 }
 
-//TODO add defaults
-interface LabelProps extends BaseShapeProps{
-    alignmentBaseline:string,
-    textAnchor:string,
-    x:number,
-    y:number,
-    d:string,
-    node:NodeRef,
-    rotation?:number,
+// //TODO add defaults
+// interface LabelProps extends BaseShapeProps{
+//     alignmentBaseline:string,
+//     textAnchor:string,
+//     x:number,
+//     y:number,
+//     d:string,
+//     node:NodeRef,
+//     rotation?:number,
 
 
-    text:(n:NodeRef)=>string,
-}
+//     text:(n:NodeRef)=>string,
+// }
 
 

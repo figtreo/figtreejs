@@ -2,17 +2,13 @@ import React from "react"
 import { layoutClass } from "../../../Layouts"
 import { tipIterator } from "../../../Evo"
 import { useAttributeMappers } from "../../../hooks"
-import { toHaveTextContent } from "@testing-library/jest-dom/matchers"
-import { thresholdScott } from "d3-array"
 
 export function Cartoon(props: any) {
   const {
     node,
-    padding = 10,
     scale,
     layout,
     tree,
-    dimensions,
     layoutClass: layoutType,
   } = props
 

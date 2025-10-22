@@ -1,6 +1,6 @@
 import { ImmutableTree } from "../../Evo/Tree";
 import { rectangularLayout } from "./rectangularLayout";
-
+import { describe, it, expect } from 'vitest';
 describe("Test rectangular layout",()=>{
     it('check x and y on root', function() {
         const tree = ImmutableTree.fromNewick("((a:1,b:1):1,c:1);");
@@ -36,8 +36,8 @@ describe("Test rectangular layout",()=>{
         const c2 = tree2.getNodeByTaxon(tree.getTaxonByName("c")!)!;
         const cV2 = layout2(c2);
 
-        // expect(c2).toStrictEqual(c)
-        // expect(cV2).toStrictEqual(cV)
+        expect(c2).toStrictEqual(c)
+        expect(cV2).toStrictEqual(cV)
 
         expect(root2).not.toBe(root) //these are vertexes
         expect(root2.x).toBeCloseTo(0);

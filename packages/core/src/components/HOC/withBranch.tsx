@@ -67,9 +67,9 @@ function rectangularBranchPath(points: { x: number, y: number,r?:number,theta?:n
             return '';
         }
         case 3: {
-            const [parent,child,step] = points; //parent is parent and gets pushed to end of array
+            const [parent,child] = points; //parent is parent and gets pushed to end of array
             if (curvature === 0) { // no curve
-                var x1 = parent.x + 0.001;// tiny adjustment for faded line (can't have y or x dimension not change at all
+                const x1 = parent.x + 0.001;// tiny adjustment for faded line (can't have y or x dimension not change at all
                 return `M${x1},${parent.y}L${parent.x},${child.y}L${child.x},${child.y + 0.001}`;
             } else if (curvature < 1) {
                 // curve
@@ -111,7 +111,7 @@ function radialBranchPath(points: { x: number, y: number,r?:number,theta?:number
             return '';
         }
         case 3: {
-            const [parent,child,step] = points; //parent is parent and gets pushed to end of array
+            const [parent,child] = points; //parent is parent and gets pushed to end of array
                 return `M${parent.x},${parent.y}L${(parent.x + child.x) / 2},${(parent.y + child.y) / 2}L${child.x},${child.y}`;
             
         } default: {

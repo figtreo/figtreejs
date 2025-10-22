@@ -1,5 +1,5 @@
 import { ImmutableTree } from "../../NormalizedTree"
-import { Taxon, TaxonSet } from "../../Taxa/Taxon"
+import {  TaxonSet } from "../../Taxa/Taxon"
 
 import { NewickCharacterParser } from "../NewickCharacterParser"
 import { newickDeliminators, nexusTokenizer } from "./nexusTokenizer"
@@ -72,74 +72,86 @@ export class NexusImporter {
   }
 
   private async getNextBlockName() {
-    while (true) {
+    let keepGoing = true
+    let token;
+    while (keepGoing) {
       const value = await this.nextToken()
-
       if (value.match(/\bbegin/i)) {
-        const token = await this.nextToken()
+        token = await this.nextToken()
         this.skipSemiColon()
-        return token
+        keepGoing=false
       }
     }
+    return token
   }
 
   private async readToEndOfBlock() {
-    while (true) {
+    let keepGoing = true
+    while (keepGoing) {
       const value = await this.nextToken()
       if (value.match(/\bend;/i)) {
-        break
+       keepGoing=false;
       }
     }
   }
 
   private async getNextCommand(command: RegExp) {
-    while (true) {
-      const value = await this.nextToken()
+    let value;
+    let keepGoing = true
+    while (keepGoing) {
+      value = await this.nextToken()
       if (value === ";") {
         throw `Hit ; looking for ${command}`
       }
       if (command.test(value)) {
-        return value
-        break
+        keepGoing=false
       }
     }
+    return value
   }
   // skip until match and return match
   private async skipUntil(stopper: RegExp) {
-    while (true) {
-      const value = await this.nextToken()
+    let value;
+    let keepGoing = true
+    while (keepGoing) {
+      value = await this.nextToken()
       if (stopper.test(value)) {
-        return value
+          keepGoing=false;
       }
     }
+    return value
   }
   // read up to match return everything up to including the match
   private async readUntil(stopper: RegExp) {
-    let buffer = ""
-    while (true) {
+      let buffer = ""
+      let keepGoing = true
+      while (keepGoing) {
       const value = await this.nextToken()
       if (stopper.test(value)) {
-        return buffer + value
+        buffer+=value
+         keepGoing=false
       }
       buffer += value
     }
+    return buffer
   }
   private async parseTaxaBlock() {
     let ntax
     let keepGoing = true
     while (keepGoing) {
-      let command = await this.skipUntil(/dimensions|taxlabels|end/i)
+      const command = await this.skipUntil(/dimensions|taxlabels|end/i)
       switch (true) {
-        case /dimensions/i.test(command):
+        case /dimensions/i.test(command):{
           const taxaLine = await this.readUntil(/;/)
           const ntaxa = taxaLine.match(/ntax=(\d+);/)
           if (ntaxa) {
             ntax = parseInt(ntaxa[1])
           } else {
-            throw `Expected dimension in form of ntax=(\d+);. Got ${taxaLine}`
+            throw `Expected dimension in form of ntax=(\\d+);. Got ${taxaLine}`
           }
           break
-        case /taxlabels/i.test(command):
+        }
+        case /taxlabels/i.test(command):{
           let token = await this.nextToken()
           while (token !== ";") {
             this.taxonSet.addTaxon(token)
@@ -151,7 +163,8 @@ export class NexusImporter {
             }
           }
           break
-        case /end/i.test(command):
+        }
+        case /end/i.test(command):{
           if (this.taxonSet!.getTaxonCount() === 0) {
             throw "hit end of taxa section but didn't find any taxa"
           }
@@ -159,6 +172,7 @@ export class NexusImporter {
           this.skipSemiColon()
           keepGoing = false
           break
+        }
         default:
           throw `Reached impossible code looking for dimensions or taxlabels or end in taxa block "${command}"`
       }
@@ -169,9 +183,9 @@ export class NexusImporter {
     let token
     let keepGoing = true
     while (keepGoing) {
-      let command = await this.skipUntil(/translate|tree|end/i)
+      const command = await this.skipUntil(/translate|tree|end/i)
       switch (true) {
-        case /translate/i.test(command):
+        case /translate/i.test(command):{
           // all white space removed by tranformStream so will be
           // ['key','taxon,'] but may be ['key','taxon',','] if space tween taxa and ,
           this.translateTaxonMap = new Map()
@@ -205,7 +219,8 @@ export class NexusImporter {
           }
           this.taxonSet.lockTaxa()
           break
-        case /tree/i.test(command):
+        }
+        case /tree/i.test(command):{
           //parse tree
           // put this in loop so the next call parses the next tree;
 
@@ -214,7 +229,8 @@ export class NexusImporter {
           // Then =
           // then possible annotations
           // then tree
-          const treeId = await this.nextToken() //todo - read to'=' not just next token
+          //tree id = 
+          await this.nextToken() //todo - read to'=' not just next token
           const parser = new NewickCharacterParser(this.taxonSet,{translateTaxonNames:this.translateTaxonMap})
           // read to first '(';
           token = await this.skipUntil(/\(/)
@@ -239,6 +255,7 @@ export class NexusImporter {
           const tree = parser.getTree()
           yield tree
           break
+        }
         case /end/i.test(command):
           this.skipSemiColon()
           this.hasTree = false
@@ -252,14 +269,6 @@ export class NexusImporter {
       }
     }
   }
-}
-
-//TODO make these enums
-
-const ENDCHAR = {
-  SINGLE_QUOTE: "'",
-  DOUBLE_QUOTE: '"',
-  IN_COMMENT: "]",
 }
 
 

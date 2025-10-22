@@ -1,4 +1,4 @@
-import React, { useMemo } from "react"
+import React from "react"
 
 import {useAttributeMappers} from "../../../hooks";
 import Label from "../Nodes/Shapes/Label";
@@ -11,8 +11,7 @@ import { textSafeDegrees } from "../../../store/polarScale";
 
 export default function BranchLabels(props:any){
     const {tree,
-        filter=(n:NodeRef)=>true,
-        aligned=false,
+        filter=()=>true,
         gap=6,
         layout,
         scale,

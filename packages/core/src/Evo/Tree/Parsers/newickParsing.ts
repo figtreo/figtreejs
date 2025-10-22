@@ -13,7 +13,7 @@ export function parseNewick(newick: string,options:newickParsingOptions={}): Imm
     for (const token of tokens) {
         parser.parseCharacter(token);
     }
-    let tree = parser.getTree();
+    const tree = parser.getTree();
 
     return tree;
 }

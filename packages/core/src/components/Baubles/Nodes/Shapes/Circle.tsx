@@ -11,8 +11,8 @@ const BaseCircle = function(props:any){
  
    const {attrs,interactions,id} = props;
     return (
-    	<animated.circle  node-id={id} className={"node-shape"} {...attrs} {...interactions} cx={attrs.x} cy={attrs.y} />
-    	);
+        <animated.circle  node-id={id} className={"node-shape"} {...attrs} {...interactions} cx={attrs.x} cy={attrs.y} />
+        );
 };
 
 

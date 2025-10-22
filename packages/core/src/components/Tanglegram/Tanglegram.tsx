@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React from 'react';
 import { TanglegramProps } from "./Tanglegram.types";
 import { FigTree } from '../FigTree';

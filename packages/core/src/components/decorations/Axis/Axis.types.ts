@@ -11,7 +11,7 @@ export interface AxisProps {
     reverse?: boolean,
     gap?: number,
     title?: { text: string, padding: number, style: any },
-    ticks?: { number?: number, format?: (value: number) => string, padding?: number, style?: {}, length?: number },
+    ticks?: { number?: number, format?: (value: number) => string, padding?: number, style?: {[key:string]:number|string}, length?: number },
     direction?: AxisOrientation,
     scale?: ScaleContinuousNumeric<number, number> ,
     strokeWidth?: number,

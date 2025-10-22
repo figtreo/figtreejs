@@ -1,10 +1,11 @@
-import React, { ReactElement } from "react";
+import React from "react";
+import { withNodeProps } from "./types";
 /** an HOC that capture the layout logic around a node
  * 
  */
 
-const withNode = (WrappedComponent: React.ComponentType<any>) => {
-    function NodedComponent(props:any){
+const withNode = (WrappedComponent: React.ComponentType<object>) => {
+    function NodedComponent(props:withNodeProps){
 
         const {node,shapeProps,scale,layout,...rest} = props
         if(!layout) throw new Error("layout is required")!

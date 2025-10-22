@@ -23,7 +23,7 @@ export const defaultOpts:FigtreeProps = {
     layout:rectangularLayout,
     margins:{top:10,right:10,bottom:10,left:10},
     tree:defaultTree,
-    children:[<Branches tree={defaultTree} filter={(n)=>true} attrs={{fill:'none',stroke:"black",strokeWidth:1}} interactions={{}}/>],
+    children:[<Branches tree={defaultTree} filter={()=>true} attrs={{fill:'none',stroke:"black",strokeWidth:1}} interactions={{}}/>],
     animated:false,
 
 }
@@ -43,10 +43,7 @@ function FigTree(props:FigtreeProps){
     
     const opts = props.opts?props.opts:defaultOpts.opts;
     const {rootAngle = defaultOpts.opts.rootAngle,
-        rootLength = defaultOpts.opts.rootLength,
         angleRange = defaultOpts.opts.angleRange,
-        showRoot = defaultOpts.opts.showRoot,
-        spread = defaultOpts.opts.spread,
         fishEye = defaultOpts.opts.fishEye,
         pollard = defaultOpts.opts.pollard,
         minRadius = defaultOpts.opts.minRadius,

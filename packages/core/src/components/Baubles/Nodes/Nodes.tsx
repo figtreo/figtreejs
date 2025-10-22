@@ -10,13 +10,13 @@ import Rectangle from "./Shapes/Rectangle";
 import { NodeProps } from "./Node.types";
 import {  useVertexFactory } from "../../../store/store";
 import { preOrderIterator } from "../../../Evo/Tree";
-import { textSafeDegrees } from "../../../store/polarScale";
+
 
 // todo don't expose in index
 export function NodesHOC(ShapeComponent:React.ComponentType<any>) {
     return function Nodes(props:NodeProps) {
         const shapeProps = useAttributeMappers(props);
-        const {tree,filter=(n:NodeRef)=>true,
+        const {tree,filter=()=>true,
             keyBy=n=>n.number,...rest} = props;
         // pass x and y position here so can be animated with react-spring in useAnimation hook
         return (
@@ -35,7 +35,7 @@ export function NodesHOC(ShapeComponent:React.ComponentType<any>) {
 function NodeLabels(props:any){
 
         const {tree,
-            filter=(n:NodeRef)=>true,
+            filter=()=>true,
             keyBy=(n:NodeRef)=>n.number,
             aligned=false,
             gap = 6,

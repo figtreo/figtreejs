@@ -15,7 +15,6 @@ export  function RectNodeRender(options:RectangleNodeProps){
 //     return React.createElement(Nodes.Coalescent, options)
 
 // }
-export function NodeLabelRender(options:any){
+export function NodeLabelRender(options:object){
     return React.createElement(Nodes.Label, options)
 }
-7

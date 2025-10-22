@@ -1,7 +1,5 @@
 import React from "react"
 import {  useAttributeMappers,  } from "../../../hooks";
-
-import { NodeRef } from "../../../Evo/Tree/Tree.types";
 import { BranchProps } from "./Branches.types";
 import { Branch } from "./Branch";
 import { preOrderIterator } from "../../../Evo/Tree";
@@ -10,7 +8,7 @@ import { preOrderIterator } from "../../../Evo/Tree";
 //todo pull out defaults
 export default function Branches(props:BranchProps) {
 
-    const  {tree,filter= (n:NodeRef) => true, 
+    const  {tree,filter= () => true, 
     attrs= { stroke: "black", strokeWidth: 2,fill:"none" },interactions,
     keyBy=n=>n.number,
     ...rest} = props;
