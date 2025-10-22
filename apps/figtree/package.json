@@ -1,16 +1,16 @@
 {
-  "name": "@figtreejs/app",
+  "name": "@figtreejs/figtree",
   "version": "0.0.1",
   "type": "module",
   "scripts": {
     "dev": "vite --port 8080",
     "start": "vite",
-    "build": "tsc --noEmit && vite build",
+    "build": "vite build",
     "preview": "vite preview",
     "test": "vitest",
     "format": "prettier --write .",
     "lint": "eslint .",
-    "type-check": "tsc"
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@figtreejs/core": "^0.0.1",

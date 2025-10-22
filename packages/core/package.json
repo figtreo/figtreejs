@@ -8,9 +8,10 @@
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "tsc --noEmit && vite build",
+    "build": "vite build",
     "dev": "vite build --watch",
-    "test": "vitest"
+    "test": "vitest",
+    "check-types":"tsc --noEmit"
   },
   "exports": {
     ".": {
