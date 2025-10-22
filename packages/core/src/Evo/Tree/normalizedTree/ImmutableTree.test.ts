@@ -1,7 +1,7 @@
 //TODO test immutable tree include tests that check nodes to roots update as well.
 
 import { ImmutableTree } from "./ImmutableTree";
-
+import { describe, it, expect } from 'vitest';
 
 
 describe('ImmutableTree', () =>{
@@ -10,7 +10,6 @@ describe('ImmutableTree', () =>{
             const tree = new ImmutableTree();
             const added  = tree.addNodes();
             const tree1 = added.tree;
-            const node = added.nodes[0];
             expect(tree.getNodeCount()).toEqual(1);
             expect(tree1.getNodeCount()).toEqual(2);
             expect(tree1).not.toEqual(tree);
@@ -19,7 +18,7 @@ describe('ImmutableTree', () =>{
 //Add child used getNode and updates both node and child.
         it('build tree and check parent', function() {
             const prototree = new ImmutableTree()
-            const {tree:tree,nodes:[child,child2,...rest]}=prototree.addNodes(2)
+            const {tree:tree,nodes:[child,child2]}=prototree.addNodes(2)
 
             const parent = tree.getNode(0);
             if(!parent) throw new Error("no parent node");
@@ -76,11 +75,6 @@ describe('ImmutableTree', () =>{
             expect(orderedTree.toNewick()).toBe(`((virus9:0.04,virus10:0.03):0.6,(virus8:0.4,((virus6:0.45,virus7:0.4):0.02,(virus5:0.21,((virus1:0.1,virus2:0.12):0.08,(virus3:0.011,virus4:0.0087):0.15):0.03):0.2):0.1):0.1);`)
         }); 
 
-        // it('reroot',function(){
-        //     const tree = ImmutableTree.fromNewick("((A:1,B:1):1,C:2);");
-        //     const tree1 = tree.reroot(tree.getNodeByName("A")!,0.5);
-        //     expect(tree1.toNewick()).toBe("(A:0.5,(B:1,C:3):0.5);")
-        // });
         it('bigger reroot - caused issues once',function(){
             const newickString = `((((((virus1:0.1,virus2:0.12):0.08,(virus3:0.011,virus4:0.0087):0.15):0.03,virus5:0.21):0.2,(virus6:0.45,virus7:0.4):0.02):0.1,virus8:0.4):0.1,(virus9:0.04,virus10:0.03):0.6);`;
 
@@ -88,8 +82,9 @@ describe('ImmutableTree', () =>{
             const virus3 = tree.getTaxonByName("virus3")!;
             const tree1 = tree.reroot(tree.getParent(tree.getNodeByTaxon(virus3)!)!,0.5);
             expect(tree1.toNewick()).toBe("(((virus1:0.1,virus2:0.12):0.08,(virus5:0.21,((virus6:0.45,virus7:0.4):0.02,(virus8:0.4,(virus9:0.04,virus10:0.03):0.7):0.1):0.2):0.03):0.075,(virus3:0.011,virus4:0.0087):0.075);")
-        })
-        it('rotate',function(){
+        });
+
+        it('rotate', function(){ 
             const tree = ImmutableTree.fromNewick("((A:1,B:1):1,C:2);");
             const A = tree.getTaxonByName("A")!;
             const B = tree.getTaxonByName("B")!;
@@ -97,9 +92,10 @@ describe('ImmutableTree', () =>{
             const child1 = tree.getChild(node,0)!;
             const rotatedTree = tree.rotate(node);
             const child2 = rotatedTree.getChild(node,0)!;
+            
             expect(rotatedTree.getTaxonFromNode(child2)).toBe(B);
             expect(tree.getTaxonFromNode(child1)).toBe(A);
-        }),
+        });
         it('set height test',function(){
             const tree = ImmutableTree.fromNewick("((A:1,B:1):1,C:2);");
             const A = tree.getTaxonByName("A")!;
@@ -115,7 +111,7 @@ describe('ImmutableTree', () =>{
             expect(newTree.getLength(tree.getNodeByTaxon(A)!)).toBe(0.5);
             expect(newTree.getLength(tree.getNodeByTaxon(B)!)).toBe(0.5);
 
-        }),
+        });
         it('set height test - negative length',function(){
             const tree = ImmutableTree.fromNewick("((A:1,B:1):1,C:2);");
             const A = tree.getTaxonByName("A")!;

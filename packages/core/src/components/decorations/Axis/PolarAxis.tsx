@@ -1,10 +1,9 @@
 import React from 'react'
-import { line } from "d3-shape"
+
 import { mean, quantile, range } from "d3-array"
-import { ScaleContinuousNumeric, scaleLinear } from 'd3-scale';
-import { AxisOrientation, AxisProps, AxisScaleContext, defaultAxisProps } from './Axis.types';
-import { degrees, textSafeDegrees } from '../../../Layouts/polarLayout';
-import { getPath, getTickLine } from './RectangularAxis';
+import {  scaleLinear } from 'd3-scale';
+import { defaultAxisProps } from './Axis.types';
+
 import { normalizeAngle } from '../../../store/polarScale';
 
 //TODO do things to scale and allow date as origin not maxD.
@@ -17,8 +16,6 @@ export default function PolarAxis(props: any) {
     direction = defaultAxisProps.direction!,
     gap = defaultAxisProps.gap!,
     strokeWidth = defaultAxisProps.strokeWidth!,
-    x,
-    y,
     scale:figureScale,
 
   } = props
@@ -131,12 +128,11 @@ export default function PolarAxis(props: any) {
 
 //TODO can make maxR and height the same parameter and use this  all axes
 
-export function makeAxisScale(props: any, { domainX ,domainY }: {domainX:[number,number],domainY:[number,number]}) {
+export function makeAxisScale(props: any, { domainX  }: {domainX:[number,number],domainY:[number,number]}) {
     const { reverse = defaultAxisProps.reverse,
         offsetBy = defaultAxisProps.offsetBy,
         scaleBy = defaultAxisProps.scaleBy, 
-        _scale= defaultAxisProps.scale,
-    scale} = props;
+        _scale= defaultAxisProps.scale} = props;
         
 // just radius
      // negative range to play nicely with transform above
@@ -144,7 +140,7 @@ export function makeAxisScale(props: any, { domainX ,domainY }: {domainX:[number
     if (_scale === undefined) {
       // assume domain goes 0 to max divergence make adjustments on this scale and then update min if it is not 0
       const offset = domainX.map((d) => d + offsetBy)
-      const newDomain = offset.map((d, i) => (d - offsetBy) * scaleBy + offsetBy)
+      const newDomain = offset.map((d) => (d - offsetBy) * scaleBy + offsetBy)
   
       axisScale.domain(newDomain)
   

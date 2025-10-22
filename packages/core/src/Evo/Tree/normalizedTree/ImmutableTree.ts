@@ -6,7 +6,7 @@ import {
   Tree,
   newickParsingOptions,
 } from "../Tree.types"
-import { parseNewick, processAnnotationValue } from "../Parsers"
+import { parseNewick, parseNexus, processAnnotationValue } from "../Parsers"
 import { immerable, produce } from "immer"
 import { Taxon, TaxonSet, TaxonSetInterface } from "../Taxa/Taxon"
 import { format } from "d3-format"
@@ -49,7 +49,8 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
   constructor(
     input: { data?: ImmutableTreeData; taxonSet?: TaxonSet } = {},
   ) {
-    let { data, taxonSet } = input || {}
+    const { data:_data, taxonSet } = input || {}
+    let data = _data;
     if (taxonSet) {
       this.taxonSet = taxonSet
     } else {
@@ -116,8 +117,8 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
     options?: newickParsingOptions | undefined,
   ): ImmutableTree {
     const tree = new this()
-    // return parseNexus(tree, nexus, options)
-    throw new Error("Nexus parsing not implemented")
+    return parseNexus(tree, nexus, options)
+    // throw new Error("Nexus parsing not implemented")
   }
   static fromString(
     string: string,
@@ -689,7 +690,7 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
 
   // Topology changes  - updates to root and descendants
 
-  root(n: NodeRef, proportion:number =0.5): ImmutableTree {
+  root(n: NodeRef, proportion:number =0.5): ImmutableTree {// eslint-disable-line
     throw new Error("unroot not implemented in immutable tree")
   }
 
@@ -724,14 +725,14 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
       node.parent = newNode.number;
   })
 }
-  unroot(n: NodeRef): ImmutableTree {
+  unroot(n: NodeRef): ImmutableTree {  // eslint-disable-line
     throw new Error("unroot not implemented in immutable tree")
   }
-  deleteNode(n: NodeRef): ImmutableTree {
+  deleteNode(n: NodeRef): ImmutableTree {  // eslint-disable-line
     throw new Error("deleteNode not implemented in immutable tree")
   }
 
-  deleteClade(n: NodeRef): ImmutableTree {
+  deleteClade(n: NodeRef): ImmutableTree {  // eslint-disable-line
     throw new Error("deleteClade not implemented in immutable tree")
   }
 
@@ -957,8 +958,8 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
     name: string
     suggestedType: AnnotationType
   }): AnnotationType {
-    let annotationType = this.getAnnotationType(input.name)
-    let suggestedType = input.suggestedType
+    const annotationType = this.getAnnotationType(input.name)
+    const suggestedType = input.suggestedType
 
     if (!annotationType) {
       return suggestedType
@@ -1179,7 +1180,7 @@ function annotateNodeHelper(
   const suggestedType = annotation.type
     ? annotation
     : processAnnotationValue(annotation.value)
-  let checkedType = tree._checkAnnotation({
+  const checkedType = tree._checkAnnotation({
     name: annotation.name,
     suggestedType: suggestedType.type!,
   })

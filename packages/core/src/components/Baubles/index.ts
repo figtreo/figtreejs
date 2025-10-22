@@ -1,5 +1,6 @@
 import { NodeRef } from '../../Evo/Tree';
-import { ShapeProps } from './Nodes';
+import { ShapeProps } from '../../hooks';
+
 
 export * from './Nodes';
 export * from './Branches'

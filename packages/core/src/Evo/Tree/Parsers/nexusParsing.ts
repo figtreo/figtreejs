@@ -1,10 +1,11 @@
+/* eslint-disable */
 import { Tree } from "../Tree.types";
 import { ImmutableTree } from "../NormalizedTree/ImmutableTree";
 import { parseNewick } from "./newickParsing";
 
 //ONLY parses the first tree
 export function  parseNexus(tree:ImmutableTree,nexus:string,options={}):ImmutableTree{
-
+throw new Error("Nexus parsing not implemented")
 
    // odd parts ensure we're not in a taxon label
    //TODO make this parsing more robust
@@ -40,7 +41,7 @@ export function  parseNexus(tree:ImmutableTree,nexus:string,options={}):Immutabl
 
                         }else{
                             return parseNewick(treeString, {parseAnnotations: true,...options, tipNameMap: tipNameMap});
-                            ;
+                            
                         }
                     }
                 }

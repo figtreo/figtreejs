@@ -1,5 +1,5 @@
 import React from "react"
-import { AxisBarsProps, defaultAxisBarsProps } from "./Axis.types"
+import {  defaultAxisBarsProps } from "./Axis.types"
 
 /**
  * This component adds vertical bars to the backgound of a figure. It is used a child of an Axis component and gets
@@ -13,16 +13,12 @@ export default function AxisBars(props: any): JSX.Element {
     attrs,
     evenFill = defaultAxisBarsProps.evenFill,
     oddFill = defaultAxisBarsProps.oddFill,
-    lift = defaultAxisBarsProps.lift,
     tickValues,
     scale,
-    gap,
     figureScale,
-    reverse,
     axisY,
   } = props
 
-  const { canvasHeight } = props.dimensions
 
 
   return (

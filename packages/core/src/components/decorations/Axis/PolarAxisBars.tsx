@@ -1,11 +1,8 @@
 
 import React from 'react'
-import { AxisBarsProps, defaultAxisBarsProps } from './Axis.types';
-import {arc as arcgen} from "d3-shape"
-import { normalizeAngle } from '../../../Layouts/polarLayout';
-import Axis from './RectangularAxis';
+import {  defaultAxisBarsProps } from './Axis.types';
 
-const arc = arcgen();
+
 /**
  * This component adds vertical bars to the backgound of a figure. It is used a child of an Axis component and gets
  * it's size and position attributes from it's parent.
@@ -19,16 +16,10 @@ export  default function PolarAxisBars(props:any) {
         attrs,
         evenFill = defaultAxisBarsProps.evenFill,
         oddFill = defaultAxisBarsProps.oddFill,
-        lift = defaultAxisBarsProps.lift,
         tickValues,
         scale,
         figureScale,
         axisY,
-        gap,
-        direction,
-        reverse,
-        // startAngle,
-        // endAngle
       } = props
 
 

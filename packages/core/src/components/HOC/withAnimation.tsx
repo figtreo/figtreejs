@@ -9,7 +9,8 @@ import React from "react";
 const withAnimation = (WrappedComponent: React.ComponentType<any>) => {
     function AnimatedComponent(props: any) {
         const animation = props.animated;
-        let {attrs,d=null,x=null,y=null,...rest}=props; // d is the data for the path
+        const { attrs, d, x: _x = null, y: _y = null, ...rest } = props;
+        let x = _x, y = _y; // d is the data for the path
 
         if(attrs.width && attrs.height){
             //adjust rect to be centered on x,y

@@ -12,7 +12,9 @@
       "cache": false
     },
     "//#lint-staged": {
-  "cache": false
-}
+        "cache": false
+    },
+    "lint":{},
+    "test": {}
   }
 }

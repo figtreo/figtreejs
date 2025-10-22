@@ -8,8 +8,10 @@ export * from "./Shapes/index"
 //TODO separate exposed props from required
 
 
-export interface ShapeProps{
-    attrs: {
+
+export interface BaseShapeProps { // props for rendering something
+    id:string
+        attrs: {
         [key: string]: number | string | ((n: NodeRef) => number | string);
     };
     interactions?: {
@@ -18,8 +20,4 @@ export interface ShapeProps{
         OnEnter?: (n: NodeRef) => void;
         OnExit?: (n: NodeRef) => void;
     };
-}
-
-export interface BaseShapeProps extends ShapeProps {
-    id:string
 }

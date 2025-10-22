@@ -23,7 +23,7 @@ export function radialLayout (tree:ImmutableTree,options:{ spread?: number }={})
     
         const dataStack: data[] = [{ angleStart: 0, angleEnd: 2 * Math.PI, xpos: 0, ypos: 0, level: 0, number: tree.getRoot()!.number }] // TODO start tree.
         for (const node of preOrderIterator(tree)) { 
-            const { angleStart, angleEnd, xpos, ypos, level, number } = dataStack.pop()!
+            const { angleStart, angleEnd, xpos, ypos, level } = dataStack.pop()!
         
 
             const branchAngle = (angleStart + angleEnd) / 2.0;
@@ -68,18 +68,18 @@ export function radialLayout (tree:ImmutableTree,options:{ spread?: number }={})
 
                 let span = angleEnd - angleStart;
                 let updatedAngleStart = angleStart;
-                let updatedAngleEnd = angleEnd;
+
                 if (tree.getRoot() !== node) {
                     // span *= 1.0 + ((safeOpts.spread * Math.PI / 180) / 10.0);
                     span *= 1.0 + ((spread * Math.PI / 180) / 10.0);
                     updatedAngleStart = branchAngle - (span / 2.0);
-                    updatedAngleEnd = branchAngle + (span / 2.0);
+
                 }
 
                 let a2 = updatedAngleStart;
 
                 for (let i = tree.getChildCount(node) - 1; i > -1; i--) { // i think we need to go in reverse order here 
-                    let a1 = a2;
+                    const a1 = a2;
                     a2 = a1 + (span * childLeafs[i] / totalLeafs);
                     dataStack.push({ angleStart: a1, angleEnd: a2, xpos: x, ypos: y, level: level + 1, number: tree.getChild(node, i).number })
                 }

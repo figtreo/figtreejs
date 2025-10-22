@@ -4,6 +4,7 @@
   "scripts": {
     "build": "turbo build",
     "dev": "turbo dev",
+    "test": "turbo test",
     "lint-staged": "lint-staged",
     "lint": "turbo lint",
     "prepare": "husky"
@@ -15,11 +16,14 @@
     "apps/figtree"
   ],
   "devDependencies": {
+    "@figtreejs/eslint-config": "*",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.6",
     "prettier": "^3.6.2",
-    "turbo": "^2.5.8",
-    "@figtreejs/eslint-config": "*"
+    "turbo": "^2.5.8"
   },
-  "packageManager": "npm@11.6.2"
+  "packageManager": "npm@11.6.2",
+  "dependencies": {
+    "@changesets/cli": "^2.29.7"
+  }
 }

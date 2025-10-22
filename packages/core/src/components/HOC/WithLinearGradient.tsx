@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import React from "react";
 let counter =1;
 /**
  * This is an HOC that creates a linear gradient def and returns this def and the wrapped component with the def
@@ -30,28 +30,28 @@ const withLinearGradient = (WrappedContainer:React.ComponentType<any>)=>{
     }
     return WithLinearGradient;
 };
-function defaultProps(){
-    return {
-        startingX:"0%",
-        endingX:"100%",
-        staringY:"0%",
-        endingY:"0%",
-        n:10,
-        colorRamper: (i:number)=>"grey",
-        opacityRamper:(i:number)=>1,
-        gradientAttribute: "fill"
-    }
-}
+// function defaultProps(){
+//     return {
+//         startingX:"0%",
+//         endingX:"100%",
+//         staringY:"0%",
+//         endingY:"0%",
+//         n:10,
+//         colorRamper: (i:number)=>"grey",
+//         opacityRamper:(i:number)=>1,
+//         gradientAttribute: "fill"
+//     }
+// }
 
-function sameGradientProps(prev:{[key:string]:any},curr:{[key:string]:any}){
-    const gradientProps =["startingX","endingX","staringY","endingY","colorRamper","opacityRamper","n","gradientAttribute"];
-    for(const key of gradientProps){
-        if(prev[key]!==curr[key]){
-            return false
-        }
-    }
-    return true
+// function sameGradientProps(prev:{[key:string]:any},curr:{[key:string]:any}){
+//     const gradientProps =["startingX","endingX","staringY","endingY","colorRamper","opacityRamper","n","gradientAttribute"];
+//     for(const key of gradientProps){
+//         if(prev[key]!==curr[key]){
+//             return false
+//         }
+//     }
+//     return true
 
-}
+// }
 
 export default withLinearGradient;

@@ -1,4 +1,4 @@
-import { Taxon, TaxonSet, TaxonSetInterface } from "../Taxa/Taxon"
+import { Taxon, TaxonSet } from "../Taxa/Taxon"
 import { NodeRef } from "../Tree.types"
 import { ImmutableTree } from "../NormalizedTree/ImmutableTree"
 import { parseAnnotation } from "./AnnotationParser"
@@ -95,7 +95,7 @@ export class NewickCharacterParser {
         throw new Error("branch length missing")
       }
 
-      let parent = this.nodeStack.pop()! as NodeRef
+      const parent = this.nodeStack.pop()! as NodeRef
       this.tree = this.tree.addChild(parent, this.currentNode!)
       // tree.setParent(currentNode!,parent)
 
@@ -114,7 +114,7 @@ export class NewickCharacterParser {
       }
 
       // the end of an internal node
-      let parent = this.nodeStack.pop()! as NodeRef
+      const parent = this.nodeStack.pop()! as NodeRef
       this.tree = this.tree.addChild(parent, this.currentNode!)
       // tree.setParent(currentNode!,parent)
 
@@ -137,7 +137,7 @@ export class NewickCharacterParser {
             value = t
           }
           if (this.options.labelName) {
-            let label_annotation = {
+            const label_annotation = {
               name: this.options.labelName,
               value: value,
             }

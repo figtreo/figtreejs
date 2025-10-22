@@ -8,13 +8,13 @@ const arc = arcgen();
 
 function CladeHighlight(props:any ){
 
-    const {node, padding = 10,scale,layout,tree,dimensions,layoutClass:layoutType} = props;
+    const {node, padding = 10,scale,layout,tree,layoutClass:layoutType} = props;
 
     const v = layout(node);
     const shapeProps = useAttributeMappers(props);
     const {attrs,interactions} = shapeProps(node);
     if(layoutType===layoutClass.Rectangular){
-        const {x,y} = scale(v);
+        const {x} = scale(v);
         
         let maxX = -Infinity;
         let maxY = -Infinity;

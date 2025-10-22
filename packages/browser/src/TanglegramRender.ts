@@ -1,6 +1,6 @@
 // import { Tanglegram, TanglegramProps } from "@figtreejs/core";
-import React from "react";
-import ReactDOM from "react-dom";
+// import React from "react";
+// import ReactDOM from "react-dom";
 
 // export interface TanglgramOptions extends TanglegramProps {
 //     svg: SVGSVGElement;

@@ -1,6 +1,5 @@
-import { max, mean,min } from "d3-array";
+import {  mean } from "d3-array";
 import { ImmutableTree, NodeRef, postOrderIterator} from "../../";
-import { PreOrderTraversalCache } from "../../Evo/Tree/Traversals/PreOrderTraversal";
 
 export enum layoutClass{
     Rectangular = "Rectangular",
@@ -25,7 +24,7 @@ export type FunctionalVertex = {
 
 export function baseLayout(lc:layoutClass){
     
-    function layout (tree:ImmutableTree,options={}):(node:NodeRef)=>FunctionalVertex { 
+    function layout (tree:ImmutableTree):(node:NodeRef)=>FunctionalVertex { 
         const map = new Map<NodeRef,FunctionalVertex>();
         
             let currentY = 0;

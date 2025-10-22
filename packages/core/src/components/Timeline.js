@@ -1,5 +1,5 @@
 import React, {useReducer} from "react"
-import {scaleLinear, scaleTime} from "d3-scale";
+import { scaleTime} from "d3-scale";
 import timelineReducer from "../Context/reducers/timelineReducer";
 
 const  defaultTimeline =  scaleTime().domain([new Date(8640000000000000),new Date(-8640000000000000)]).range([0,220]);
@@ -14,7 +14,7 @@ export const XContext = React.createContext(100);
  * @constructor
  */
 export default function Timeline(props){
-    const{width,height,margins,padding} = props;
+    const{width,height,margins} = props;
     const componentWidth = width-margins.left-margins.right;
 
     defaultTimeline.range([margins.left,width-margins.left-margins.right]);

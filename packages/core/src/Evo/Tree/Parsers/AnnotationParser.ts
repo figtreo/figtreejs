@@ -10,7 +10,7 @@ export function parseAnnotation(annotationString: string):  {name:string, value:
     let inSubRange = false;
     let subValue: any[] = [];
     let value = null;
-    let annotations: {name:string, value:any}[] = [];
+    const annotations: {name:string, value:any}[] = [];
 
     // expect the first token to be a [& and last ]
     if (tokens[0] !== "[&" || tokens[tokens.length - 1] !== "]") {
@@ -124,9 +124,9 @@ export function processAnnotationValue(values: any):{type:AnnotationType, value:
         // is a set of properties with values
 
         let sum = 0.0;
-        let keys: string[] = [];
+        const keys: string[] = [];
         processedValue = {};
-        for (let [key, value] of Object.entries(values)) {
+        for (const [key, value] of Object.entries(values)) {
             let parsed
             if (keys.includes(key)) {
                 throw Error(`the states of annotation, ${key}, should be unique`);

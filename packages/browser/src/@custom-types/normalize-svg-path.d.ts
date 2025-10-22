@@ -1,4 +1,4 @@
 declare module 'normalize-svg-path'{
-    const normalize:any,
+    const normalize:function,
     export default normalize;
 }

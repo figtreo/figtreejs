@@ -1,11 +1,9 @@
 import React from "react"
 import { line } from "d3-shape"
 import { mean, quantile, range } from "d3-array"
-import { ScaleContinuousNumeric, scaleLinear } from "d3-scale"
+import { ScaleContinuousNumeric } from "d3-scale"
 import {
   AxisOrientation,
-  AxisProps,
-  AxisScaleContext,
   defaultAxisProps,
 } from "./Axis.types"
 import { makeAxisScale } from "./PolarAxis"
@@ -16,8 +14,6 @@ export default function Axis(props: any) {
     direction = defaultAxisProps.direction!,
     gap = defaultAxisProps.gap!,
     strokeWidth = defaultAxisProps.strokeWidth!,
-    x,
-    y,
     scale:figureScale,
     attrs
   } = props

@@ -13,14 +13,13 @@ export function nexusTokenizer() {
       start() {},
       transform(chunk: string, controller: { enqueue: (arg0: string) => void }) {
         // not really any but we'll see
-        let data = this.lastChunk + chunk
-        const tokens = []
+        const data = this.lastChunk + chunk
         let buffer = ""
         for (let i = 0; i < data.length; i++) {
           const char = data[i]
           if (this.status === STATUS.PARSING) {
             // on the look out for quotes and comments
-            ;[this.status, this.end] = getStatusAndEnd(char)
+            [this.status, this.end] = getStatusAndEnd(char)
             if (this.status === STATUS.IN_COMMENT) {
               // clear the buffer and send the comment separate
               if (buffer.length > 0) {
