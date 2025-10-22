@@ -22,6 +22,7 @@ describe('ImmutableTree', () =>{
             const {tree:tree,nodes:[child,child2,...rest]}=prototree.addNodes(2)
 
             const parent = tree.getNode(0);
+            if(!parent) throw new Error("no parent node");
             const tree1 = tree.addChild(parent,child)
                             .addChild(parent,child2);
             
@@ -126,7 +127,9 @@ describe('ImmutableTree', () =>{
             expect(newTree.getLength(node)).toBe(-0.5);
             expect(newTree.getHeight(node)).toBe(1.0);
 
-            expect(newTree.getLength(tree.getNode("C"))).toBe(0.5);
+            const Cnode = tree.getNode("C");
+            if(!Cnode) throw new Error("no C node");
+            expect(newTree.getLength(Cnode)).toBe(0.5);
             // expect(newTree.getLength(tree.getNodeByTaxon(B)!)).toBe(0.5);
 
         })

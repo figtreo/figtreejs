@@ -1,5 +1,13 @@
 {
   "name": "figtreejs-dev",
-  "private":true,
-  "workspaces": ["packages/core","packages/browser","packages/app"]
+  "private": true,
+  "workspaces": [
+    "packages/core",
+    "packages/browser",
+    "apps/figtree"
+  ],
+  "devDependencies": {
+    "turbo": "^2.5.8"
+  },
+  "packageManager": "npm@11.6.2"
 }
