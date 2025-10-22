@@ -7,21 +7,31 @@
   "main": "./dist/index.umd.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
+  "lint-staged": {
+    "*.{js,ts}": [
+      "eslint --fix",
+      "prettier --write --ignore-unknown"
+    ],
+    "!(*.js|*.ts)": [
+      "prettier --write --ignore-unknown"
+    ]
+  },
   "scripts": {
     "build": "vite build",
     "dev": "vite build --watch",
     "test": "vitest",
-    "check-types":"tsc --noEmit"
+    "check-types": "tsc --noEmit",
+    "lint": "eslint ."
   },
   "exports": {
     ".": {
       "import": {
-        "types":"./dist/index.d.mts",
-        "default":"./dist/index.mjs"
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
       },
       "require": {
-        "types":"./dist/index.d.ts",
-        "default":"./dist/index.umd.js"
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.umd.js"
       }
     }
   },
@@ -45,7 +55,8 @@
     "rollup-plugin-dts": "^6.1.1",
     "rollup-plugin-peer-deps-external": "^2.2.4",
     "typescript": "^5.7.3",
-    "vite-plugin-dts": "^4.5.0"
+    "vite-plugin-dts": "^4.5.0",
+    "@repo/eslint-config": "*"
   },
   "dependencies": {
     "@react-spring/web": "^9.7.5",
@@ -60,11 +71,11 @@
     "web-streams-polyfill": "^4.1.0"
   },
   "peerDependencies": {
-      "react": "^18.3.1",
+    "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/figtreo/figtreejs.git"
-    }
+  }
 }

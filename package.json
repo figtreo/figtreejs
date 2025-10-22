@@ -1,13 +1,25 @@
 {
   "name": "figtreejs-dev",
   "private": true,
+  "scripts": {
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "lint-staged": "lint-staged",
+    "lint": "turbo lint",
+    "prepare": "husky"
+  },
   "workspaces": [
     "packages/core",
     "packages/browser",
+    "packages/eslint-config",
     "apps/figtree"
   ],
   "devDependencies": {
-    "turbo": "^2.5.8"
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.6",
+    "prettier": "^3.6.2",
+    "turbo": "^2.5.8",
+    "@figtreejs/eslint-config": "*"
   },
   "packageManager": "npm@11.6.2"
 }
