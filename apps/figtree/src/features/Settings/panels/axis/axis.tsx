@@ -17,15 +17,15 @@ export function Axis() {
 
             <div>
                 <div>
-                    <input id="showGrid" type='checkbox' name="showGrid" checked={settings.showGrid} onClick={e => dispatch(flipShowGrid())} disabled={!settings.activated} />
+                    <input id="showGrid" type='checkbox' name="showGrid" checked={settings.showGrid} onClick={() => dispatch(flipShowGrid())} disabled={!settings.activated} />
                     <label htmlFor="showGrid">Show grid</label>
                 </div>
                 <div>
                     <label htmlFor="lineWeight">Line weight: </label>
-                    <input id="lineWeight" name="lineWeight" type="number" min={0} value={settings.lineWeight} onChange={e => dispatch(setLineWeight(e.target.value))} disabled={!settings.activated} />
+                    <input id="lineWeight" name="lineWeight" type="number" min={0} value={settings.lineWeight} onChange={(e) => dispatch(setLineWeight(e.target.value))} disabled={!settings.activated} />
                 </div>
                 <div>
-                    <input id="reverseAxis" name="reverseAxis" type='checkbox' checked={settings.reverseAxis} onChange={e => dispatch(flipReverseAxis())} disabled={!settings.activated} />
+                    <input id="reverseAxis" name="reverseAxis" type='checkbox' checked={settings.reverseAxis} onChange={() => dispatch(flipReverseAxis())} disabled={!settings.activated} />
                     <label htmlFor="reverseAxis">Reverse axis</label>
                 </div>
 

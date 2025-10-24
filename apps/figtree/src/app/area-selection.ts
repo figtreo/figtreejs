@@ -66,7 +66,7 @@ export function useAreaSelection({
     }
   };
 
-  const handleMouseUp = (e: MouseEvent) => {
+  const handleMouseUp = () => {
 
     document.body.style.userSelect = "initial";
     document.removeEventListener("mousemove", handleMouseMove);
@@ -118,7 +118,7 @@ export function useSelected(
   elementRef: RefObject<HTMLElement>, //svg
   selection: DOMRect | null
 ) {
-  const [isSelected, setIsSelected] = useState<Boolean>(false);
+  const [isSelected, setIsSelected] = useState<boolean>(false);
 
   useEffect(() => {
     if (!elementRef.current || !selection) {

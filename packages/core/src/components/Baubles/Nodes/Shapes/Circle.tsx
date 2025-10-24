@@ -1,54 +1,29 @@
 import {animated} from "@react-spring/web";
 import React from "react";
-import withAnimation from "../../../HOC/withAnimation";
-import { BaseShapeProps } from "../";
-import { NodeProps } from "../Node.types";
-import { NodeRef } from "../../../../Evo/Tree";
-import withNode from "../../../HOC/withNode";
+import withNode from "../../HOC/withNode";
+import withAnimation from "../../HOC/withAnimation";
+import { AnimatableBaubleProps, BaseAttrs, numericAttr, stringAttr } from "../../baubleTypes";
 
 
-const BaseCircle = function(props:any){
+
+const BaseCircle = function(props:CircleProps){
  
-   const {attrs,interactions,id} = props;
+   const {attrs,interactions} = props;
     return (
-        <animated.circle  node-id={id} className={"node-shape"} {...attrs} {...interactions} cx={attrs.x} cy={attrs.y} />
+        <animated.circle  className={"node-shape"} {...attrs} {...interactions} cx={attrs.x} cy={attrs.y} />
         );
 };
 
 
-export const Circle = withNode(withAnimation(BaseCircle));
+export const Circle = withNode<CircleAttrs>(withAnimation<CircleAttrs>(BaseCircle));
 
 
-// export function sameAttributes(prev:{{[key:string]:any},},curr:{[key:string]:any}){
-// 	for(const [key,val] of Object.entries(prev.attrs)){
-// 		if(curr.attrs[key]!==val){
-// 			return false
-// 		}
-// 	}
-// 	if("x" in prev){
-// 		return prev.x===curr.x && prev.y===curr.y;
-// 	}
-// 	return true;
-// }
-//TODO specify tooltip and interactions
-export type CircleProps = BaseShapeProps & {
-	attrs:{
-		r:number,
-		fill:string,
-		strokeWidth:number,
-		stroke:string,
-		x:number,
-		y:number
-	}
-	node:NodeRef
-}
 
-export interface CircleNodeProps extends NodeProps{
-	attrs:{
-		r:number,
-		fill:string,
-		strokeWidth:number,
-		stroke:string,
-	}
+export type CircleAttrs = BaseAttrs & {
+  fill?: stringAttr;
+  stroke?: stringAttr;
+  strokeWidth?: numericAttr;
+  r:numericAttr
+};
 
-}
+export type CircleProps = AnimatableBaubleProps<CircleAttrs>;

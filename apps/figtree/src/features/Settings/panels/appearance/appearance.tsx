@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import { useAppSelector, useAppDispatch } from '../../../../app/hooks';
 import { selectAppearance, setColourBy, setLineWidth, setMinWidth, setWidthBy, setColour } from './appearanceSlice';
 import { SettingPanel } from '../PanelHeader';

@@ -1,3 +1,4 @@
+import { ScaleOrdinal } from "d3-scale"
 import React from "react"
 
 
@@ -19,7 +20,19 @@ import React from "react"
  * @constructor
  */
 
-export default function DiscreteLegend(props:{scale:any,pos:{x:number,y:number},width:number,height:number,swatchSize:number,format:(s:string)=>string,fontSize:number,columns:number,title:string} ){
+interface DiscreteLegendProps{
+    scale: ScaleOrdinal<string,string>,
+    pos:{x:number,y:number},
+    width:number,
+    height:number
+    swatchSize:number,
+    format:(s:string)=>string,
+    fontSize:number,
+    columns:number,
+    title:string
+}
+
+export default function DiscreteLegend(props:DiscreteLegendProps ){
     // const dispatch = useInteractionsDispatch();
     // const onHover=useCallback((value)=>()=>dispatch({type:"hover",payload:{dataType:DataType.DISCRETE,key:annotation,value:value}}))
     // const onUnHover = useCallback(()=>dispatch({type:"unhover",payload:{}}));

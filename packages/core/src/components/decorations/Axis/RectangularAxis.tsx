@@ -4,11 +4,13 @@ import { mean, quantile, range } from "d3-array"
 import { ScaleContinuousNumeric } from "d3-scale"
 import {
   AxisOrientation,
+  AxisProps,
+  AxisTicksOptions,
   defaultAxisProps,
 } from "./Axis.types"
 import { makeAxisScale } from "./PolarAxis"
 
-export default function Axis(props: any) {
+export default function Axis(props: AxisProps) {
   const { dimensions, layoutClass } = props
   const {
     direction = defaultAxisProps.direction!,
@@ -31,8 +33,8 @@ export default function Axis(props: any) {
 
   // scaleSequentialQuantile doesn’t implement tickValues or tickFormat.
   let tickValues: number[]
-  if (ticks.values) {
-    tickValues = ticks.values
+  if ((ticks as AxisTicksOptions).values !=undefined) {
+    tickValues = (ticks as AxisTicksOptions).values!
   } else {
     if (!scale.ticks) {
       tickValues = range(ticks.number!).map((i) =>
@@ -71,7 +73,7 @@ export default function Axis(props: any) {
       )
     : null
   //TODO break this into parts HOC with logic horizontal/ vertical axis ect.
-   const titlePos = figureScale({x:mean(scale.range()),y:axisY})
+   const titlePos = figureScale({x:mean(scale.range())!,y:axisY})
   return (
     <g className={"axis"} >
       {/*This is for Bars*/}
@@ -86,7 +88,7 @@ export default function Axis(props: any) {
                   <g key={`tick-${i}`} transform={`translate(${point.x},${point.y+gap})`}>
                
                     <line x1={0} y1={0} x2={0} y2={ticks.length} stroke={"black"} strokeWidth={strokeWidth} {...attrs} />
-                      <text transform={`translate(${ 0 },${ticks.padding})`} textAnchor={"middle"} dominantBaseline={"center"}  {...ticks.style} >{ticks.format!(t)}</text>
+                      <text transform={`translate(${ 0 },${ticks.padding})`} textAnchor={"middle"} dominantBaseline={"central"}  {...ticks.style} >{ticks.format!(t)}</text>
                 </g>
           )
         })}

@@ -20,10 +20,10 @@ function romanize(num: number): string {
         IV: 4,
         I: 1
     };
-    var str = '';
+    let str = '';
 
-    for (var i of Object.keys(roman)) {
-        var q = Math.floor(num / roman[i]);
+    for (const i of Object.keys(roman)) {
+        const q = Math.floor(num / roman[i]);
         num -= q * roman[i];
         str += i.repeat(q);
     }
@@ -50,7 +50,7 @@ export function getNumericalFormatter(formatString: string, sigDigs: number): (n
 }
 
 export function getTextFunction(tree: ImmutableTree, settings: any) {
-    let numericalFormatter = getNumericalFormatter(settings.format, settings.sigDigs);
+    const numericalFormatter = getNumericalFormatter(settings.format, settings.sigDigs);
     let textFunction;
     switch (settings.display) {
         case "Name":

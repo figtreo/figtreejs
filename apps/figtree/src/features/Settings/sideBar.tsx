@@ -8,7 +8,7 @@ export function SideBar() {
     const [isResizing, setIsResizing] = useState(false);
     const [sidebarWidth, setSidebarWidth] = useState(250);
 
-    const startResizing = useCallback((mouseDownEvent: any) => {
+    const startResizing = useCallback(() => {
         setIsResizing(true);
     }, []);
 

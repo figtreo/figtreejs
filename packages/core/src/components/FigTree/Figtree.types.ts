@@ -1,5 +1,5 @@
 import { ImmutableTree,NodeRef } from "../../Evo/Tree";
-import { FunctionalVertex } from "../../Layouts/functional/rectangularLayout";
+import { FunctionalVertex, layoutClass } from "../../Layouts/functional/rectangularLayout";
 
 export interface Margins{
     top:number,
@@ -7,6 +7,23 @@ export interface Margins{
     left:number,
     right:number,
 }
+export type fishEyeOptions = { x: number; y: number; scale:number; };
+
+export interface dimensionType extends layoutOptions{
+    canvasWidth:number,
+    canvasHeight:number,
+    domainX:[number,number],
+    domainY:[number,number],
+    layoutClass:layoutClass,
+    invert:boolean,
+    pollard:number,
+    minRadius:number,
+    fishEye:fishEyeOptions,
+    rootAngle:number,
+    angleRange:number
+}
+
+
 
 export interface layoutOptions{
 
@@ -15,7 +32,7 @@ export interface layoutOptions{
     angleRange?: number,
     showRoot?: boolean,
     spread?: number
-    fishEye?: { x: number; y: number; scale:number; };
+    fishEye?: fishEyeOptions,
     pollard:number,
     invert?:boolean,
     minRadius?:number,

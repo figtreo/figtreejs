@@ -1,6 +1,6 @@
 import {  min } from 'd3-array'
 import {  NodeRef } from '../Evo/Tree'
-import { FunctionalVertex,layoutClass } from '../Layouts/functional/rectangularLayout'
+import { FunctionalVertex,layoutClass,simpleVertex} from '../Layouts/functional/rectangularLayout'
 import { polarScaleMaker } from './polarScale'
 import { ScaleLinear, scaleLinear } from 'd3-scale'
 
@@ -32,8 +32,10 @@ export type scaleOptions =  {
     fishEye?: { x: number, y: number,scale:number },
 }
 
-export interface scaledVertex { x:number, y: number }
-export type scale = (v:FunctionalVertex)=>scaledVertex
+
+// scale adds x and y to whatever comes in.
+type scaleInterface <T extends simpleVertex> = (obj: T) => T & { x: number; y: number };
+export type scale = scaleInterface<simpleVertex>
 
 export function getScale({
     domainX,

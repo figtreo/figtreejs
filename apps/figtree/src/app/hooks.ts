@@ -2,8 +2,7 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux"
 import type { RootState, AppDispatch } from "./store"
 import { createSelector } from "@reduxjs/toolkit"
 import { getScale } from "../features/Settings/panels/colorScales/colourSlice"
-import { ImmutableTree, Taxon, TaxonSet } from "@figtreejs/core"
-import { select } from "d3-selection"
+import { ImmutableTree,  TaxonSet } from "@figtreejs/core"
 
 // Use throughout your app instead of plain `useDispatch` and `useSelector`
 export const useAppDispatch: () => AppDispatch = useDispatch

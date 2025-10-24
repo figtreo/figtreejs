@@ -1,4 +1,4 @@
-import { ContinuousLegend, DiscreteLegend } from "@figtreejs/core";
+import {  DiscreteLegend } from "@figtreejs/core";
 import { getColorScale, useAppSelector } from "../../app/hooks";
 import { colorScale, selectColorableAttributes } from "../Settings/panels/colorScales/colourSlice";
 
@@ -30,7 +30,7 @@ function ColorLegend(props:{colorScale:colorScale}){
 
 }
 
-export function Legends(props:{}){
+export function Legends(){
     const attributes = useAppSelector(selectColorableAttributes)
     const colorScales = useAppSelector(state=>state.colorScales.byId)
     const activatedLegends = attributes.filter(attribute=>colorScales[attribute].legend.activated).map(attribute=>colorScales[attribute])

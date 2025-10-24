@@ -1,17 +1,18 @@
 import React from "react";
-import {  useVertexFactory } from "../../store/store";
 import { normalizePath } from "../../path.helpers";
 import { layoutClass } from "../../Layouts/functional/rectangularLayout";
+import { BranchedComponentProps, finalBranchProps, } from "./types";
 
-const withBranch = (WrappedComponent: React.ComponentType<any>) => {
-    function BranchedComponent(props:any){
+
+
+
+const withBranch = (WrappedComponent: React.ComponentType<finalBranchProps>) => {
+    function BranchedComponent(props:BranchedComponentProps){
         
         const {parent,node,shapeProps,curvature=0,scale,layout,tree,...rest} = props
-        const useVertex = useVertexFactory(layout);
 
         let parentVertex;
-        const nodeVertex = useVertex(node);
-        
+        const nodeVertex = layout(node);
         if(parent===undefined){
             if(tree.isRoot(node)){ // node has length so we'll show the root line
                 
@@ -20,7 +21,7 @@ const withBranch = (WrappedComponent: React.ComponentType<any>) => {
                 throw new Error(" Trying to make a branch for a node where parent is undefined and the node is not the root node")
             }
         }else{
-             parentVertex = useVertex(parent);
+             parentVertex = layout(parent);
         }
 
         const vP = scale(parentVertex);

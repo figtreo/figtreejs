@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState, createContext } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { useAppSelector, useAppDispatch, getColorScale } from "../../app/hooks"
 
 import {
@@ -21,7 +21,6 @@ import {
   Branches,
   NodeRef,
   Highlight,
-  CartoonData,
   AnnotationType,
   postOrderIterator,
   tipIterator,
@@ -42,7 +41,6 @@ import {
 import AxisElement from "./AxisElement"
 import {
   CARTOON_ANNOTATION,
-  COLLAPSE_ANNOTATION,
   COLOUR_ANNOTATION,
   HILIGHT_ANNOTATION,
 } from "../../app/constants"
@@ -112,7 +110,7 @@ export function Tree({ panelRef }: any) {
         .select("g")
         .selectAll(".branch-layer")
         .selectAll("path")
-        .select(function (d, i, n) {
+        .select(function () {
           const el = this as Element
           const a = el.getBoundingClientRect()
           const b = selection
@@ -132,7 +130,7 @@ export function Tree({ panelRef }: any) {
         .select("g")
         .selectAll(".node-label-layer")
         .selectAll(".node-label")
-        .select(function (d, i, n) {
+        .select(function () {
           const el = this as Element
           const a = el.getBoundingClientRect()
           const b = selection
@@ -145,13 +143,13 @@ export function Tree({ panelRef }: any) {
           return selected ? this : null
         })
       const out: Set<string> = new Set()
-      branches.each(function (d, i, b) {
+      branches.each(function () {
         const id = select(this).attr("node-id")
         out.add(id)
         //todo tree get tmrca of nodes.
       })
 
-      taxa.each(function (d, i, b) {
+      taxa.each(function () {
         const id = select(this).attr("node-id")
         out.add(id)
         //todo tree get tmrca of nodes.
@@ -177,7 +175,7 @@ export function Tree({ panelRef }: any) {
   })
   const [scrolled, setScrolled] = useState({ top: 0.5, left: 0.5 })
 
-  const startResizing = useCallback((mouseDownEvent: any) => {
+  const startResizing = useCallback(() => {
     setIsResizing(true)
   }, [])
 
@@ -186,7 +184,7 @@ export function Tree({ panelRef }: any) {
   }, [])
 
   const resize = useCallback(
-    (mouseMoveEvent: any) => {
+    () => {
       if (isResizing && panelRef.current != null) {
         const height = Math.max(
           minHeight,
@@ -222,9 +220,9 @@ export function Tree({ panelRef }: any) {
       }
     }
   }
-  const clearSelectionRoot = () => {
-    dispatch(setSelectionRoot(undefined))
-  }
+  // const clearSelectionRoot = () => {
+  //   dispatch(setSelectionRoot(undefined))
+  // }
   useEffect(() => {
     window.addEventListener("mouseup", getSelectedRoot)
     // window.addEventListener('mousedown',clearSelectionRoot)
