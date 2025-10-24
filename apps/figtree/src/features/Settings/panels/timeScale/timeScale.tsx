@@ -12,7 +12,7 @@ export function TimeScale() {
         <SettingPanel title="Time Scale">
             <div>
                 <input type="radio" id="factor" name="factor" value="factor" checked={scaleBy === "factor"}
-                    onChange={e => dispatch(setScaleBy("factor"))} />
+                    onChange={() => dispatch(setScaleBy("factor"))} />
                 <label htmlFor="factor">Scale by factor:</label>
 
                 <div>
@@ -39,7 +39,7 @@ export function TimeScale() {
             </div>
             <div>
                 <input type="radio" id="rootAge" name="rootAge" value="rootAge" checked={scaleBy === "rootAge"}
-                    onChange={e => dispatch(setScaleBy("rootAge"))} />
+                    onChange={() => dispatch(setScaleBy("rootAge"))} />
                 <label htmlFor="factor">Scale root to:</label>
 
                 <div>

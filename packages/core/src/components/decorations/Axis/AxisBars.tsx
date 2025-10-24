@@ -2,8 +2,9 @@ import React from "react";
 
 import RectangularAxisBars from "./RectangularAxisBars";
 import PolarAxisBars from "./PolarAxisBars";
+import { AxisBarsProps } from "./Axis.types";
 
-export default function AxisBars(props: any) {
+export default function AxisBars(props: AxisBarsProps) {
 
     const {layoutClass} = props; 
     if(layoutClass === "Polar"){

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Tree } from "./tree";
 import './treePanel.css'
 import { selectTree } from '../../app/hooks';
@@ -20,12 +20,12 @@ export function TreePanel(){
       
         if (ev.dataTransfer.items) {
           // Use DataTransferItemList interface to access the file(s)
-          [...ev.dataTransfer.items].forEach((item, i) => {
+          [...ev.dataTransfer.items].forEach((item) => {
             // If dropped items aren't files, reject them
             if (item.kind === "file") {
                 const file = item.getAsFile();
                 const reader = new FileReader();
-		        reader.onload = function(e) {
+                   reader.onload = function(e) {
                     tree.addFromString(e.target!.result as string);
                     for(const annotation of tree.getAnnotationKeys()){
                       const data = tree.getAnnotationData(annotation)
@@ -35,13 +35,13 @@ export function TreePanel(){
 
                       }
                   }
-		        }
-		        reader.readAsText(file);
+            }
+            reader.readAsText(file);
             }
           });
         } else {
           // Use DataTransfer interface to access the file(s)
-          [...ev.dataTransfer.files].forEach((file, i) => {
+          [...ev.dataTransfer.files].forEach((file) => {
             const reader = new FileReader();
             reader.onload = function(e) {
                 tree.addFromString(e.target!.result as string);

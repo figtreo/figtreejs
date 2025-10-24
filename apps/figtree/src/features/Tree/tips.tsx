@@ -1,8 +1,8 @@
 import { getColorScale, useAppSelector } from "../../app/hooks";
 import { selectShapeState } from "../Settings/panels/shapes/shapeSlice";
-import {  Nodes, NodeRef, Tree } from "@figtreejs/core";
+import {  Nodes, NodeRef } from "@figtreejs/core";
 import { COLOUR_ANNOTATION } from "../../app/constants";
-import { selectTree } from '../../app/hooks';
+
 
 function tipShapeGenerator(target: "tip" | "tipBackground" ) {
     return function(props:any){
@@ -42,7 +42,7 @@ function tipShapeGenerator(target: "tip" | "tipBackground" ) {
     // check if sizing by an attribute or by a constant
     const radius = settings.maxSize / 2;
 
-    const stroke = settings.outlineColour;;
+    const stroke = settings.outlineColour;
     const strokeWidth = settings.outlineWidth;
 
 

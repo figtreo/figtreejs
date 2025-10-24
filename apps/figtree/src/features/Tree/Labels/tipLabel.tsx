@@ -1,10 +1,10 @@
-import { format } from "d3-format";
+
 import { getColorScale, useAppSelector } from "../../../app/hooks";
 import { selectLabelState } from "../../Settings/panels/label/labelSlice";
 import { selectLayout } from "../../Settings/panels/layout/layoutSlice";
-import { AnnotationType, NodeRef, Nodes } from "@figtreejs/core";
+import {  NodeRef, Nodes } from "@figtreejs/core";
 import {  selectNodeDecorations } from "../../Header/headerSlice";
-import { selectTree } from '../../../app/hooks';
+
 import { getTextFunction } from "./labelUtils";
 
 export function TipLabels(props: any ) {
@@ -35,7 +35,7 @@ export function TipLabels(props: any ) {
 
     if (settings.activated) {
 
-        let textFunction = getTextFunction(tree,settings);
+        const textFunction = getTextFunction(tree,settings);
 
         return (
             <Nodes.Label {...props} filter={filter} attrs={{ fontSize: settings.fontSize,...attrs }} aligned={alignTipLabels} text={textFunction} />
@@ -51,29 +51,29 @@ export function TipLabels(props: any ) {
 
 // a function that converts a number to roman numerals
 //https://stackoverflow.com/questions/9083037/convert-a-number-into-a-roman-numeral-in-javascript
-function romanize(num: number):string {
-    const roman:any = {
-        M: 1000,
-        CM: 900,
-        D: 500,
-        CD: 400,
-        C: 100,
-        XC: 90,
-        L: 50,
-        XL: 40,
-        X: 10,
-        IX: 9,
-        V: 5,
-        IV: 4,
-        I: 1
-      };
-      var str = '';
+// function romanize(num: number):string {
+//     const roman:any = {
+//         M: 1000,
+//         CM: 900,
+//         D: 500,
+//         CD: 400,
+//         C: 100,
+//         XC: 90,
+//         L: 50,
+//         XL: 40,
+//         X: 10,
+//         IX: 9,
+//         V: 5,
+//         IV: 4,
+//         I: 1
+//       };
+//       let str = '';
     
-      for (var i of Object.keys(roman)) {
-        var q = Math.floor(num / roman[i]);
-        num -= q * roman[i];
-        str += i.repeat(q);
-      }
+//       for (const i of Object.keys(roman)) {
+//         const q = Math.floor(num / roman[i]);
+//         num -= q * roman[i];
+//         str += i.repeat(q);
+//       }
     
-      return str;
-    }
+//       return str;
+//     }

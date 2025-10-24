@@ -1,5 +1,5 @@
 import { useAppSelector, useAppDispatch } from '../../../../app/hooks';
-import { flipTangle, flipAnimate, selectLayout, setExpansion, setFisheye, setLayout, setPollard, setZoom } from './layoutSlice';
+import {  flipAnimate, selectLayout, setExpansion, setFisheye, setLayout, setPollard, setZoom } from './layoutSlice';
 import { SettingPanel } from '../PanelHeader';
 import './layout.css'
 import { RectangularOptions } from './rectangularOptions';

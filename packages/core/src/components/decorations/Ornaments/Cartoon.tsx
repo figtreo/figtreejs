@@ -1,9 +1,21 @@
 import React from "react"
 import { layoutClass } from "../../../Layouts"
-import { tipIterator } from "../../../Evo"
-import { useAttributeMappers } from "../../../hooks"
+import { NodeRef, tipIterator, Tree } from "../../../Evo"
+import { useAttributeMappers } from "../../Baubles/baubleHelpers"
+import { BaubleProps } from "../../Baubles/baubleTypes"
+import { layout, scale } from "../../../store/store"
+import { FunctionalVertex } from "../../../Layouts/functional/rectangularLayout"
 
-export function Cartoon(props: any) {
+interface CartoonProps extends BaubleProps{
+    node:NodeRef,
+    padding?:number,
+    scale:scale,
+    layout:layout,
+    tree:Tree,
+    layoutClass:layoutClass
+}
+
+export function Cartoon(props: CartoonProps) {
   const {
     node,
     scale,
@@ -40,24 +52,24 @@ export function Cartoon(props: any) {
       let maxR = -Infinity
       let maxTheta = -Infinity
       let minTheta = Infinity
-      let bottom =v;
-      let top =v;
+      let bottom =v ;
+      let top =v ;
       for (const tip of tipIterator(tree, node)) {
-        const v = scale(layout(tip))
+        const v = scale(layout(tip)) as FunctionalVertex
 
-        if (v.r > maxR) maxR = v.r
-        if (v.theta > maxTheta){
-          maxTheta = v.theta
+        if (v.r! > maxR) maxR = v.r!
+        if (v.theta! > maxTheta){
+          maxTheta = v.theta!
           bottom = v;
         }
         if (v.y < minTheta){
-          minTheta= v.theta;
+          minTheta= v.theta!;
           top=v;
         } 
       }
 
 
-      const arcBit =  top.theta===bottom.theta||top.r===0?"": `A${top.r},${top.r} 0 0 ${top.theta<bottom.theta ?1:0} ${bottom.x},${bottom.y}`; 
+      const arcBit =  top.theta===bottom.theta||top.r===0?"": `A${top.r},${top.r} 0 0 ${top.theta!<bottom.theta! ?1:0} ${bottom.x},${bottom.y}`; 
        d = `M${x},${y}L${top.x},${top.y} ${arcBit} Z`
       // return `${initial}${curvyBit}`
     }

@@ -1,12 +1,13 @@
+/* eslint-disable */
 import React from "react";
 let counter =1;
 /**
  * This is an HOC that creates a linear gradient def and returns this def and the wrapped component with the def
  * applied.
- * @param WrappedContainer
- * @return {function(*): *}
  */
 const withLinearGradient = (WrappedContainer:React.ComponentType<any>)=>{
+    throw new Error("withLinearGradient not implemented")
+
     function WithLinearGradient(props:any){
         // props = {...defaultProps(),...props};
         const {startingX,endingX,staringY,endingY,colorRamper,opacityRamper,n,gradientAttribute,attrs,...restProps} = props;

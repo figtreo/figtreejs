@@ -1,5 +1,5 @@
 import React from "react"
-import {  defaultAxisBarsProps } from "./Axis.types"
+import {  AxisBarsProps, defaultAxisBarsProps } from "./Axis.types"
 
 /**
  * This component adds vertical bars to the backgound of a figure. It is used a child of an Axis component and gets
@@ -8,7 +8,9 @@ import {  defaultAxisBarsProps } from "./Axis.types"
  * @return {*}
  * @constructor
  */
-export default function AxisBars(props: any): JSX.Element {
+
+
+export default function AxisBars(props: AxisBarsProps): JSX.Element {
   const {
     attrs,
     evenFill = defaultAxisBarsProps.evenFill,

@@ -1,15 +1,13 @@
 import { getColorScale, useAppSelector } from "../../../app/hooks";
 import { selectLabelState } from "../../Settings/panels/label/labelSlice";
 import {  NodeRef, BranchLabels as BL} from "@figtreejs/core";
-import { selectNodeDecorations } from "../../Header/headerSlice";
 import { getTextFunction } from "./labelUtils";
 import { COLOUR_ANNOTATION } from "../../../app/constants";
 
 export function BranchLabels(props:any) {
-    const { attrs={},filter=(n: NodeRef) => true } = props;
+    const { attrs={},filter=() => true } = props;
     const settings = useAppSelector(selectLabelState("branch"));
     const {tree} = props;
-    const taxaColours = useAppSelector(selectNodeDecorations)
 
     const fillColorScale = useAppSelector( (state)=>getColorScale(state,settings.colourBy));
     attrs.fill = (n:NodeRef)=>{
@@ -28,7 +26,7 @@ export function BranchLabels(props:any) {
 
     if (settings.activated) {
 
-        let textFunction = getTextFunction(tree,settings);
+        const textFunction = getTextFunction(tree,settings);
        
         return (
             <BL {...props} filter={filter} attrs={{ fontSize: settings.fontSize,...attrs }}  text={textFunction} /> 

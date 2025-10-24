@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import {  createSlice } from '@reduxjs/toolkit';
 import { Slice } from '@reduxjs/toolkit';
 import { RootState } from '../../../../app/store';
 
@@ -14,14 +14,14 @@ interface LabelState {
 }
 export type labelTarget = "node" | "tip" | "branch"
 
-const initialState: LabelState = {
-    display: "No Attributes",
-    colourBy: "User selection",
-    fontSize: 12,
-    format: "Decimal",
-    sigDigs: 2,
-    activated:false
-}
+// const initialState: LabelState = {
+//     display: "No Attributes",
+//     colourBy: "User selection",
+//     fontSize: 12,
+//     format: "Decimal",
+//     sigDigs: 2,
+//     activated:false
+// }
 
 const initialStates:{[key:string]:LabelState} = {
     tip:{

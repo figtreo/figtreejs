@@ -4,10 +4,7 @@ import cartoon from "../../figtreeGraphics/CartoonTool.png"
 import collapse from "../../figtreeGraphics/CollapseTool.png"
 import rooting from "../../figtreeGraphics/rootingTool.png"
 import rotatePic from "../../figtreeGraphics/rotateTool.png"
-import annotate from "../../figtreeGraphics/annotationTool.png"
 import colour from "../../figtreeGraphics/coloursTool.png"
-
-import find from "../../figtreeGraphics/findTool.png"
 import highlight from "../../figtreeGraphics/HilightTool.png"
 import { useAppDispatch, useAppSelector } from "../../app/hooks"
 import {
@@ -31,7 +28,7 @@ export function Header() {
 
   const selectionRoot = useAppSelector(selectSelectionRoot)
   const selectionMode = useAppSelector(selectSelectionMode)
-  let tree = useAppSelector(selectTree)
+  const tree = useAppSelector(selectTree)
 
   const optionClasses = selectionRoot ? "tool" : "tool deactivated"
 

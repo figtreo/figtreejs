@@ -3,11 +3,12 @@ import React from 'react'
 
 import PolarAxis from './PolarAxis';
 import RectangularAxis from './RectangularAxis';
+import { AxisProps } from './Axis.types';
 
 //TODO do things to scale and allow date as origin not maxD.
 
 
-export default function Axis(props: any) {
+export default function Axis(props: AxisProps) {
 
     const {layoutClass} = props.dimensions;
     if(layoutClass === "Polar"){

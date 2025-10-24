@@ -7,9 +7,8 @@ export enum layoutClass{
     Radial = "Radial"
 }
 
-export type FunctionalVertex = {
-    x:number,
-    y:number,
+export interface simpleVertex { x:number, y: number,theta?:number,r?:number } 
+export interface FunctionalVertex extends simpleVertex {
     layoutClass:layoutClass
     nodeLabel:{
         alignmentBaseline:string,

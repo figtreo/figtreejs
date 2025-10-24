@@ -30,7 +30,7 @@ export const HeaderSlice = createSlice({
         setSelectionRoot:(state, action: PayloadAction<number|undefined>) => {
                 state.selectionRoot = action.payload;
         },
-        clearSelection:(state,action)=>{
+        clearSelection:(state)=>{
             state.selectionRoot = undefined;
         },
         setSelectionMode:(state,action:PayloadAction<SelectionMode>)=>{

@@ -1,12 +1,23 @@
 import React from "react";
 import {arc as arcgen} from "d3-shape"
-import { useAttributeMappers } from "../../../hooks";
-import { tipIterator } from "../../../Evo";
+
+import { NodeRef, tipIterator, Tree } from "../../../Evo";
 import { layoutClass } from "../../../Layouts";
+import { useAttributeMappers } from "../../Baubles/baubleHelpers";
+import { layout, scale } from "../../../store/store";
+import { BaubleProps } from "../../Baubles/baubleTypes";
 
 const arc = arcgen();
 
-function CladeHighlight(props:any ){
+interface CladeProps extends BaubleProps{
+    node:NodeRef,
+    padding?:number,
+    scale:scale,
+    layout:layout,
+    tree:Tree,
+    layoutClass:layoutClass
+}
+function CladeHighlight(props:CladeProps ){
 
     const {node, padding = 10,scale,layout,tree,layoutClass:layoutType} = props;
 

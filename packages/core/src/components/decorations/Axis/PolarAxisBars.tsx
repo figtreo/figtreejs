@@ -1,6 +1,6 @@
 
 import React from 'react'
-import {  defaultAxisBarsProps } from './Axis.types';
+import {  AxisBarsProps, defaultAxisBarsProps } from './Axis.types';
 
 
 /**
@@ -11,7 +11,7 @@ import {  defaultAxisBarsProps } from './Axis.types';
  * @constructor
  */
 // we are already rotated by the axis parent
-export  default function PolarAxisBars(props:any) {
+export  default function PolarAxisBars(props:AxisBarsProps) {
       const {
         attrs,
         evenFill = defaultAxisBarsProps.evenFill,

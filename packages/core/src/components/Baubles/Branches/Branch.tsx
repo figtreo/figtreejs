@@ -1,12 +1,12 @@
 import React from "react";
 import { animated} from "@react-spring/web";
-import withAnimation from "../../HOC/withAnimation";
 import { BaseShapeProps } from "..";
-import withBranch from "../../HOC/withBranch";
+import withAnimation from "../HOC/withAnimation";
+import withBranch from "../HOC/withBranch";
 
 
 //props types
-function BaseBranch(props:BaseBranchProps){
+function BaseBranch(props){
     const {attrs,interactions,id}=props; //d is included in attrs here
 
     return (

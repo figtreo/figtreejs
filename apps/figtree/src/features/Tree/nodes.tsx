@@ -2,7 +2,7 @@ import { getColorScale, useAppSelector } from "../../app/hooks";
 import { selectShapeState } from "../Settings/panels/shapes/shapeSlice";
 import {  Nodes, NodeRef } from "@figtreejs/core";
 import { COLOUR_ANNOTATION } from "../../app/constants";
-import { selectTree } from '../../app/hooks';
+
 
 export function InternalNodes(props:any) {
     const settings = useAppSelector(selectShapeState("node"));
@@ -26,7 +26,7 @@ export function InternalNodes(props:any) {
     }
   }
     
-    const stroke = settings.outlineColour;;
+    const stroke = settings.outlineColour;
     const strokeWidth = settings.outlineWidth;
 
     if (settings.activated) {

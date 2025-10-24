@@ -1,6 +1,6 @@
 import React from 'react';
 import { FigtreeProps } from './Figtree.types';
-import { defaultInternalLayoutOptions, rectangularLayout } from '../../Layouts';
+import { defaultInternalLayoutOptions,  rectangularLayout } from '../../Layouts';
 import { Branches } from '../Baubles';
 import { ImmutableTree } from '../../Evo/Tree';
 import { getScale } from '../../store/store';
@@ -27,6 +27,7 @@ export const defaultOpts:FigtreeProps = {
     animated:false,
 
 }
+
 
 
 function FigTree(props:FigtreeProps){

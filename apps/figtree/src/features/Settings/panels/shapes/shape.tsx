@@ -1,8 +1,6 @@
-import React from "react";
 import { shapeActions, shapeTarget, selectShapeState } from "./shapeSlice";
 import { useAppDispatch, useAppSelector } from "../../../../app/hooks";
 import { SettingPanel } from "../PanelHeader";
-import { selectTree } from '../../../../app/hooks';
 import { selectColorableAttributes } from "../colorScales/colourSlice";
 
 const defaultOptions = ["Fixed","User selection",]
@@ -12,7 +10,6 @@ export function BaseShapes(props: { target: shapeTarget,activated:boolean }) {
 
     const dispatch = useAppDispatch();
     const settings = useAppSelector(selectShapeState(props.target))
-    const tree = useAppSelector(selectTree);
     const {activated} = props;
     //duplicate code
 
