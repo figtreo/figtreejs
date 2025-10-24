@@ -9,10 +9,11 @@ import { AttrAndInteractionApplier, BaseAttrs, BaseInteraction, Interaction, pla
  * This is needed to allow specifying the attribute as function. 
  * 
  */
-function mapAttrsToProps(attrs:{[key:string]:plainAttr|plainAttrGetter}):(n:NodeRef)=> plainAttrRecord {
+function mapAttrsToProps(attrs:{[key:string]:plainAttr|plainAttrGetter|undefined}):(n:NodeRef)=> plainAttrRecord {
     return function (node:NodeRef) { // all attrs held in this function and fulled out at render
         const props:{[key:string]:number|string} = {};
         for (const [key, value] of Object.entries(attrs)) {
+            if (value===undefined) continue;
             if (typeof value === "function") {
                 props[key] = value(node)
             } else {
@@ -44,7 +45,7 @@ computes how these attr and interactions should be calcualated for a node
 */
 
 
-export function useAttributeMappers<A extends BaseAttrs>(props:{attrs:{[key:string]:plainAttr|plainAttrGetter},interactions:{[key:string]:BaseInteraction}}):AttrAndInteractionApplier<UnwrappedAnimatableProps<A>>{
+export function useAttributeMappers<A extends BaseAttrs>(props:{attrs:{[key:string]:plainAttr|plainAttrGetter|undefined},interactions:{[key:string]:BaseInteraction}}):AttrAndInteractionApplier<UnwrappedAnimatableProps<A>>{
     const { attrs, interactions} = props;
 
     //This memorizes the functions so they are not made each time - maybe overkill.

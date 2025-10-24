@@ -1,5 +1,5 @@
 import React from "react";
-import { AttrAndInteractionApplier, BaseAttrs, plainAttrRecord, PlainProps, UnwrappedAnimatableProps } from "../baubleTypes";
+import { AttrAndInteractionApplier, BaseAttrs,  PlainProps, UnwrappedAnimatableProps } from "../baubleTypes";
 import { NodeRef } from "../../../Evo";
 import { layout, scale } from "../../../store/store";
 

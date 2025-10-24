@@ -12,7 +12,7 @@ export class NexusImporter {
   options: { labelName?: string }
   translateTaxonMap: Map<string, string> | undefined
   constructor(
-    stream: ReadableStream<any>,
+    stream: ReadableStream<BufferSource>,
     options: { labelName?: string } = {},
   ) {
     const tokenizer = new TransformStream(nexusTokenizer())

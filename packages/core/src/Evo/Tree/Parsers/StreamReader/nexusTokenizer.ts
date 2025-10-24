@@ -49,7 +49,7 @@ export function nexusTokenizer() {
         }
         this.lastChunk = buffer
       },
-      flush(controller: any) {
+      flush(controller: { enqueue: (arg0: string) => void }) {
         if (this.lastChunk) {
           controller.enqueue(this.lastChunk)
         }

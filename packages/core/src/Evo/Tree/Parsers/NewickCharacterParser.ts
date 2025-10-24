@@ -132,7 +132,7 @@ export class NewickCharacterParser {
         this.lengthNext = false
       } else if (this.labelNext) {
         if (!t.startsWith("#")) {
-          let value: number | any = parseFloat(t)
+          let value: number |string  = parseFloat(t)
           if (isNaN(value)) {
             value = t
           }

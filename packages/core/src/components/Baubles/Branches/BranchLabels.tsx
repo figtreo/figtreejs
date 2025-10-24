@@ -1,23 +1,28 @@
 import React from "react"
 
-import {useAttributeMappers} from "../../../hooks";
 import Label from "../Nodes/Shapes/Label";
 import { NodeRef } from "../../../Evo/Tree/Tree.types";
 import {  useVertexFactory } from "../../../store/store";
 import { preOrderIterator } from "../../../Evo/Tree";
 import { textSafeDegrees } from "../../../store/polarScale";
+import { useAttributeMappers } from "../baubleHelpers";
+import { LabelProps } from "../Nodes/Nodes";
 
 
 
-export default function BranchLabels(props:any){
+export default function BranchLabels(props:LabelProps){
     const {tree,
         filter=()=>true,
         gap=6,
         layout,
         scale,
         keyBy=(n:NodeRef)=>n.number,
-        ...rest} = props;
-    const shapeProps = useAttributeMappers(props);
+        text,
+        } = props;
+
+    const {attrs={},interactions={}} = props;
+    const shapeProps = useAttributeMappers({attrs,interactions});
+
     const useVertex = useVertexFactory(layout);
 
 return (
@@ -35,7 +40,7 @@ return (
                 const x = (layoutClass==="Polar"? (scaledV.x+step.x)/2 : (scaledV.x+scaledpV.x)/2 )+dx;
                 const y = (layoutClass==="Polar"? (scaledV.y+step.y)/2  : layoutClass==="Radial"? (scaledV.y+scaledpV.y)/2 : scaledV.y )+dy;
 
-                return <Label key={keyBy(node)} {...rest}  node={node}  alignmentBaseline={"bottom"} textAnchor={"middle"} rotation={rotation} x = {x}  y={y} {...shapeProps(node)}/> 
+                return <Label key={keyBy(node)}  text={text} node={node}  alignmentBaseline={"baseline"} textAnchor={"middle"} rotation={rotation} x = {x}  y={y} {...shapeProps(node)} id={node.number}/> 
                 // const element = <ShapeComponent key={v.id} {...rest}  {...shapeProps(v)}   vertex={v}  x={scales.x(v.x)} y={scales.y(v.y)}/> 
             })
         

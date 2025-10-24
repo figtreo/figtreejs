@@ -1,7 +1,9 @@
 import { extent } from "d3-array"
 import {
   Annotation,
+  AnnotationSummary,
   AnnotationType,
+  AnnotationValue,
   NodeRef,
   Tree,
   newickParsingOptions,
@@ -20,7 +22,7 @@ interface Node extends NodeRef {
   parent: number | undefined
   length: number | undefined
   level: number | undefined
-  annotations: { [annotation: string]: string | string[] | number | number[] }
+  annotations: { [annotation: string]: AnnotationValue}
   // _id: symbol // an id so we can mark updates to root when topology changes
 }
 
@@ -37,7 +39,7 @@ export interface ImmutableTreeData {
   rootNode: number
   is_rooted: boolean
 
-  annotations: { [annotation: string]: Annotation }
+  annotations: { [annotation: string]: AnnotationSummary }
 }
 
 export class ImmutableTree implements Tree, TaxonSetInterface {
@@ -211,7 +213,7 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
     return Object.keys(this._data.annotations)
   }
 
-  getAnnotationSummary(annotation: string): Annotation {
+  getAnnotationSummary(annotation: string): AnnotationSummary {
     return this._data.annotations[annotation]
   }
   getRoot(): NodeRef {
@@ -506,7 +508,7 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
     )
   }
 
-  getAnnotation(node: NodeRef, name: string): any | undefined {
+  getAnnotation(node: NodeRef, name: string): AnnotationValue | undefined {
     return (this.getNode(node.number) as Node).annotations[name]
   }
   getLabel(node: NodeRef): string | undefined {
@@ -583,23 +585,23 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
 
   annotateNode(
     node: NodeRef,
-    annotation: { name: string; value: any },
+    annotation: { name: string; value: AnnotationValue },
   ): ImmutableTree
   annotateNode(
     node: NodeRef,
-    annotation: { [name: string]: any },
+    annotation: { [name: string]: AnnotationValue },
   ): ImmutableTree
   annotateNode(
     node: NodeRef,
-    annotation: { name: string; value: any }[],
+    annotation: { name: string; value: AnnotationValue }[],
   ): ImmutableTree
 
   annotateNode(
     node: NodeRef,
     annotation:
-      | { name: string; value: any }
-      | { name: string; value: any }[]
-      | { [name: string]: any },
+      | { name: string; value: AnnotationValue }
+      | { name: string; value: AnnotationValue }[]
+      | { [name: string]: AnnotationValue },
   ): ImmutableTree {
     if (Array.isArray(annotation)) {
       return this._annotateNodeFromArrary(node, annotation)
@@ -607,7 +609,7 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
       if (annotation.name && annotation.value) {
         return this._annotateNodeFromNameValue(
           node,
-          annotation as { name: string; value: any },
+          annotation as { name: string; value: AnnotationValue },
         )
       } else {
         return this._annotateNodeFromObject(node, annotation)
@@ -996,8 +998,8 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
 
   _getUpdatedDomain(annotation: {
     id: string
-    value: any
-    type: AnnotationType
+    value:  number|string|boolean
+    type:AnnotationType
   }): [number, number] | string[] | number[] | [boolean, boolean] {
     const domain = this.getAnnotationDomain(annotation.id)
     // const type = this.getAnnotationType(annotation.id);
@@ -1077,7 +1079,7 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
 
   _annotateNodeFromNameValue(
     node: NodeRef,
-    annotation: { name: string; value: any; type?: AnnotationType },
+    annotation: { name: string; value: AnnotationValue; type?: AnnotationType },
   ): ImmutableTree {
     return produce(this, (draft) => {
       annotateNodeHelper(draft, node, annotation)
@@ -1085,7 +1087,7 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
   }
   _annotateNodeFromArrary(
     node: NodeRef,
-    annotation: { name: string; value: any; type?: AnnotationType }[],
+    annotation: { name: string; value: AnnotationValue; type?: AnnotationType }[],
   ): ImmutableTree {
     return produce(this, (draft) => {
       for (const a of annotation) {
@@ -1096,15 +1098,15 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
 
   _annotateNodeFromObject(
     node: NodeRef,
-    annotation: { [name: string]: any },
+    annotation: { [key:string]:AnnotationValue|Annotation },
   ): ImmutableTree {
     return produce(this, (draft) => {
       for (const a in annotation) {
-        if (annotation[a].type && annotation[a].value) {
+        if ((annotation[a] as Annotation).type && (annotation[a] as Annotation).value) {
           annotateNodeHelper(draft, node, {
             name: a,
-            value: annotation[a].value,
-            type: annotation[a].type,
+            value: (annotation[a] as Annotation).value,
+            type:(annotation[a] as Annotation).type,
           })
         } else {
           annotateNodeHelper(draft, node, { name: a, value: annotation[a] })
@@ -1175,7 +1177,7 @@ function orderNodes(
 function annotateNodeHelper(
   tree: ImmutableTree,
   node: NodeRef,
-  annotation: { name: string; value: any; type?: AnnotationType },
+  annotation: { name: string; value: AnnotationValue; type?: AnnotationType },
 ): void {
   const suggestedType = annotation.type
     ? annotation

@@ -3,11 +3,10 @@ import { TreeTraversal } from "./TraversalTypes";
 export class PreOrderTraversalCache implements TreeTraversal{
     _forwardCache:Map<NodeRef,NodeRef>
     _reverseCache:Map<NodeRef,NodeRef>
-    cache:Map<NodeRef,any>
     constructor(){
         this._forwardCache= new Map()
         this._reverseCache = new Map()
-        this.cache = new Map()
+
     }
     
 

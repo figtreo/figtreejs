@@ -7,7 +7,7 @@ import { ScaleLinear, scaleLinear } from 'd3-scale'
 //todo remove props that are just the getting passed to children and use render props instead
 
 export type layout = (n:NodeRef)=>FunctionalVertex
-
+// TODO remove this as unneeded
 export const useVertexFactory =(layout:layout)=> (node:NodeRef):FunctionalVertex=>{
     const v = layout(node);
     if(v === undefined){
@@ -35,7 +35,7 @@ export type scaleOptions =  {
 
 // scale adds x and y to whatever comes in.
 type scaleInterface <T extends simpleVertex> = (obj: T) => T & { x: number; y: number };
-export type scale = scaleInterface<simpleVertex>
+export type scale = scaleInterface<simpleVertex> // TODO use generics to clean up!
 
 export function getScale({
     domainX,

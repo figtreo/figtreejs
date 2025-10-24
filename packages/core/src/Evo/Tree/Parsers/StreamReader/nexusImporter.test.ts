@@ -3,7 +3,7 @@ import { NexusImporter } from "./NexusImporter"
 import { describe, it, expect } from 'vitest';
 function stringToReadableStream(str: string) {
   return new ReadableStream({
-    start(controller: any) {
+    start(controller: { enqueue: (arg0: Uint8Array<ArrayBuffer>) => void,close:()=>void }) {
       // Convert the string to a Uint8Array and enqueue it
       const encoder = new TextEncoder()
       const chunk = encoder.encode(str)
@@ -68,7 +68,7 @@ describe("Testing nexus importer", () => {
     }
     expect(i).toBe(1)
     
-  }),
+  });
     it("parse  Nexus multiple trees, taxa", async function () {
       const nexusString = `#NEXUS
     Begin taxa;

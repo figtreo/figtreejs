@@ -1,16 +1,16 @@
-import { AnnotationType } from "../Tree.types";
+import { AnnotationType, AnnotationValue } from "../Tree.types";
 
+//TODO clean this up to be more typscripty
 
-
-export function parseAnnotation(annotationString: string):  {name:string, value:any}[]  {
+export function parseAnnotation(annotationString: string):  {name:string, value:AnnotationValue}[]  {
     const tokens = annotationString.split(/\s*('[^']+'|"[^"]+"|;|\(|\)|,|:|=|\[&|\]|\{|\})\s*/).filter(token => token.length > 0);
     let annotationKeyNext = true;
     let annotationKey: string = "";
     let isAnnotationARange = false;
     let inSubRange = false;
-    let subValue: any[] = [];
+    let subValue: string[] = [];
     let value = null;
-    const annotations: {name:string, value:any}[] = [];
+    const annotations: {name:string, value:AnnotationValue}[] = [];
 
     // expect the first token to be a [& and last ]
     if (tokens[0] !== "[&" || tokens[tokens.length - 1] !== "]") {
@@ -44,7 +44,7 @@ export function parseAnnotation(annotationString: string):  {name:string, value:
         } else if (token === "}") {
             if (inSubRange) {
                 inSubRange = false;
-                (value as any[])!.push(subValue)
+                (value as AnnotationValue[])!.push(subValue)
             } else {
                 isAnnotationARange = false
             }
@@ -71,10 +71,10 @@ export function parseAnnotation(annotationString: string):  {name:string, value:
                     if (inSubRange) {
                         subValue.push(annotationToken)
                     } else {
-                        (value as any[]).push(annotationToken);
+                        (value as AnnotationValue[]).push(annotationToken);
                     }
                 } else {
-                    if (isNaN(annotationToken as any)) {
+                    if (isNaN(annotationToken as unknown as number)) {
                         value = annotationToken;
 
                     } else {
@@ -90,10 +90,10 @@ export function parseAnnotation(annotationString: string):  {name:string, value:
 
 
 
-export function processAnnotationValue(values: any):{type:AnnotationType, value: any}{
+export function processAnnotationValue(values: AnnotationValue):{type:AnnotationType, value: AnnotationValue}{
     
     let type=AnnotationType.DISCRETE;
-    let processedValue: {[key:string]:any}|any[] | any = values;
+    let processedValue: AnnotationValue = values;
     if (Array.isArray(values)) {
         // is a set of  values
 
@@ -114,10 +114,10 @@ export function processAnnotationValue(values: any):{type:AnnotationType, value:
         }
         else if (values.map(v => parseFloat(v)).reduce((acc, curr) => acc && Number.isInteger(curr), true)) {
             processedValue = values.map(v => parseInt(v))
-            type=processedValue.length===2?AnnotationType.RANGE:AnnotationType.SET;
+            type=(processedValue as Array<AnnotationValue>).length===2?AnnotationType.RANGE:AnnotationType.SET;
         } else if (values.map(v => parseFloat(v)).reduce((acc, curr) => acc || !Number.isInteger(curr), false)) {
             processedValue = values.map(v => parseFloat(v))
-            type=processedValue.length===2?AnnotationType.RANGE:AnnotationType.SET;
+            type=(processedValue as Array<AnnotationValue>).length===2?AnnotationType.RANGE:AnnotationType.SET;
         }
 
     } else if (Object.isExtensible(values)) {
@@ -144,16 +144,16 @@ export function processAnnotationValue(values: any):{type:AnnotationType, value:
                 type = AnnotationType.DISCRETE;
                 parsed = value as boolean;
             }
-            processedValue[key] = parsed;
+            (processedValue as {[key:string]:AnnotationValue})[key] = parsed!;
         }
 
     } else {
         if (typeof values === typeof true) {
             type = AnnotationType.BOOLEAN;
             processedValue = values //.map((v: string)=>v as unknown as boolean);
-        } else if (!isNaN(values)) {
-            type = (values % 1 === 0 ? AnnotationType.INTEGER : AnnotationType.CONTINUOUS);
-            processedValue = parseFloat(values);
+        } else if (!isNaN((values as number))) {
+            type = ((values as number) % 1 === 0 ? AnnotationType.INTEGER : AnnotationType.CONTINUOUS);
+            processedValue = parseFloat((values as string));
         }
     }
     return { type:type, value: processedValue }
