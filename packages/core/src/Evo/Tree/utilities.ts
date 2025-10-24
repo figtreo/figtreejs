@@ -36,13 +36,9 @@ export function dateToDecimal(date:Date){
     return year+day/totalNumberOfDays
 }
 
-export const compose=(...fns:Function[])=>(arg:any)=>{
-    return fns.reduceRight((res,fn)=>fn(res),arg);
-}
-
 
 //https://stackoverflow.com/questions/526559/testing-if-something-is-a-class-in-javascript
-export function isFunction(funcOrClass:any) {
+export function isFunction(funcOrClass:unknown) {
     const propertyNames = Object.getOwnPropertyNames(funcOrClass);
     return (!propertyNames.includes('prototype') || propertyNames.includes('arguments'));
 }

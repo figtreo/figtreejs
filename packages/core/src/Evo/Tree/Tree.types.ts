@@ -13,13 +13,20 @@ export enum AnnotationType {
     SET= "SET",
     PROBABILITIES = "PROBABILITIES",
     MARKOV_JUMP = "MARKOV_JUMP",
-
 }
 
-export interface Annotation {
+export type AnnotationValue =number| boolean | object | string | number[] | string[] | object[]
+
+export interface AnnotationSummary {
     id: string;
     type: AnnotationType;
     domain: [number, number] | string[] | number[] | [boolean, boolean] | undefined;
+}
+
+export interface Annotation {
+    name: string;
+    type: AnnotationType;
+    value : AnnotationValue,
 }
 
 // For small standalone apps we want a OO model with a figure subscribing to the tree
@@ -66,7 +73,7 @@ export interface Tree  {
     getParent(node: NodeRef): NodeRef | undefined
     getChildren(node: NodeRef): NodeRef[] 
 
-    getAnnotation(node: NodeRef, name: string): any | null 
+    getAnnotation(node: NodeRef, name: string): AnnotationValue | undefined 
     getLabel(node: NodeRef): string | undefined 
     getAnnotationKeys(): string[]
     getAnnotationType(name: string): string |undefined
@@ -83,7 +90,7 @@ export interface Tree  {
     setLength(node:NodeRef,length:number):Tree
     setTaxon(node:NodeRef,taxon:Taxon):Tree
     setLabel(node:NodeRef,label:string):Tree
-    annotateNode(node:NodeRef,annotation:{name:string,value:any,type:AnnotationType}):Tree
+    annotateNode(node:NodeRef,annotation:{name:string,value:AnnotationValue,type:AnnotationType}):Tree
 
     addChild(parent: NodeRef, child: NodeRef): Tree
     root(node: NodeRef,portion:number): Tree

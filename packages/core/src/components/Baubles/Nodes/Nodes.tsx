@@ -50,7 +50,7 @@ export function NodesHOC<A extends BaseAttrs>(ShapeComponent:React.ComponentType
 }
 
 
-type NodeLabelProps<A extends BaseAttrs=BaseAttrs> = {
+export type LabelProps<A extends BaseAttrs=BaseAttrs> = {
         tree:Tree,
         scale:scale;
         layout:layout;
@@ -65,7 +65,7 @@ type NodeLabelProps<A extends BaseAttrs=BaseAttrs> = {
 }
 
 
-function NodeLabels<A extends BaseAttrs=BaseAttrs>(props:NodeLabelProps<A>){
+function NodeLabels<A extends BaseAttrs=BaseAttrs>(props:LabelProps<A>){
 
         const {tree,
             filter=()=>true,

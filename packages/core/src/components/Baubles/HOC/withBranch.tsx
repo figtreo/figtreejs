@@ -1,16 +1,26 @@
 import React from "react";
-import { normalizePath } from "../../path.helpers";
-import { layoutClass } from "../../Layouts/functional/rectangularLayout";
-import { BranchedComponentProps, finalBranchProps, } from "./types";
+import { normalizePath } from "../../../path.helpers";
+import { layoutClass } from "../../../Layouts";
+import { BranchProps } from "../Branches";
+import { NodeRef, Tree } from "../../../Evo";
+import { layout, scale } from "../../../store/store";
+import { AttrAndInteractionApplier, UnwrappedAnimatableProps } from "../baubleTypes";
+import { BranchAttrs } from "../Branches/Branch";
 
 
+type BranchedComponentProps={
+    parent:NodeRef|undefined,
+    node:NodeRef,
+    curvature?:number,
+    scale:scale,
+    layout:layout,
+    tree:Tree,
+     applyAttrInteractions:AttrAndInteractionApplier<UnwrappedAnimatableProps<BranchAttrs>>;
+}
 
-
-const withBranch = (WrappedComponent: React.ComponentType<finalBranchProps>) => {
-    function BranchedComponent(props:BranchedComponentProps){
-        
-        const {parent,node,shapeProps,curvature=0,scale,layout,tree,...rest} = props
-
+const withBranch = (WrappedComponent: React.ComponentType<BranchProps>) => {
+    function BranchedComponent(props:BranchedComponentProps){        
+        const {parent,node,applyAttrInteractions,curvature=0,scale,layout,tree} = props
         let parentVertex;
         const nodeVertex = layout(node);
         if(parent===undefined){
@@ -23,12 +33,9 @@ const withBranch = (WrappedComponent: React.ComponentType<finalBranchProps>) => 
         }else{
              parentVertex = layout(parent);
         }
-
         const vP = scale(parentVertex);
         const {layoutClass} = nodeVertex;
-
         const vN =  scale(nodeVertex);
-        
         // need to get the step here for polar
 
         const step = scale({x:parentVertex!.x,y:nodeVertex.y})
@@ -36,7 +43,7 @@ const withBranch = (WrappedComponent: React.ComponentType<finalBranchProps>) => 
         const points = [vP,vN,step];
 
         const d = normalizePath(pathGenerator(points,curvature,layoutClass)); //normalized so we can use react spring to animate
-        return <WrappedComponent {...rest} {...shapeProps(node)} d={d} id={node.number}/>
+        return <WrappedComponent {...applyAttrInteractions(node)} d={d} id={node.number}/>
     } 
     return BranchedComponent;
 }

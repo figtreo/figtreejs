@@ -1,9 +1,6 @@
-// Layouts are classes that define the layout of the tree. They are responsible for
-// calculating those layouts, but they should not create side effects. So each class here 
-// is should only use static methods. and store any state as static constants.
 
-import { NodeRef, Tree } from "../Evo/Tree"
-import { ImmutableTree } from "../Evo/Tree/NormalizedTree/ImmutableTree"
+
+
 import { layoutOptions } from "../components/FigTree/Figtree.types"
 //TODO make tree
 
@@ -77,7 +74,7 @@ export const defaultInternalLayoutOptions = {
     rootLength: 0,
     rootAngle: 0,
     angleRange:( 2 * Math.PI )-0.3,
-    tipSpace: (tip1:NodeRef, tip2:NodeRef) => 1,
+    tipSpace: () => 1,
     curvature: 0,
     showRoot: false,
     spread: 1,
@@ -88,26 +85,4 @@ export const defaultInternalLayoutOptions = {
     invert:false,
     minRadius:0,
 }
-
-
-
-
-
-export abstract class AbstractLayout {
-    static layout(tree: Tree, layoutOptions?: internalLayoutOptions): Vertices {
-        const arbitraryLayout = this.getArbitraryLayout(tree, layoutOptions);
-        const treeStats = { tipCount: tree.getExternalNodes().length,rootId:tree.getRoot()!.number } //todo cache this count
-        return this.finalizeArbitraryLayout(arbitraryLayout, treeStats, layoutOptions);
-    }
-
-    static getArbitraryLayout(tree: Tree, opts?: internalLayoutOptions): ArbitraryVertices {
-        throw new Error("Method not implemented.")
-    }
-    static finalizeArbitraryLayout(arbitraryVertices: ArbitraryVertices, treeStats: { tipCount: number }, opts?: internalLayoutOptions): Vertices {
-        throw new Error("Method not implemented.")
-    }
-    //  cartoonGenerator(tree:NormalizedTree,vertices:Vertices,):string
-
-}
-
 
