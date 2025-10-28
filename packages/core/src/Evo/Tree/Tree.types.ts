@@ -33,7 +33,7 @@ export type ValueOf<T extends BaseAnnotationType> =
   T extends BaseAnnotationType.NUMERICAL       ? number :
   T extends BaseAnnotationType.NUMERICAL_SET       ? number[] :
   T extends BaseAnnotationType.DISCRETE_SET       ? string[] :
-  T extends BaseAnnotationType.MARKOV_JUMPS   ? [number,string,string][] :
+  T extends BaseAnnotationType.MARKOV_JUMPS   ? [number,string,string][] |[string,string,string][] :
   T extends BaseAnnotationType.DENSITIES ? Record<string, number> :
   never;
 
@@ -60,13 +60,14 @@ export type AbstractAnnotation<T extends BaseAnnotationType> = {
 export type Annotation = { [K in BaseAnnotationType]: AbstractAnnotation<K> }[BaseAnnotationType];
 
 
-
 export interface AbstractAnnotationSummary<T extends BaseAnnotationType> {
     id: string;
     type: T;
     domain: DomainOf<T>;
 }
 
+export type AnnotationDomain = { [K in BaseAnnotationType]: DomainOf<K> }[BaseAnnotationType];
+export type AnnotationValue = { [K in BaseAnnotationType]: ValueOf<K> }[BaseAnnotationType];
 export type AnnotationSummary = { [K in BaseAnnotationType]: AbstractAnnotationSummary<K> }[BaseAnnotationType];
 export type RawAnnotationValue ={ [K in BaseAnnotationType]: RawValueOf<K> }[BaseAnnotationType];
 

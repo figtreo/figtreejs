@@ -1,30 +1,31 @@
 import { ImmutableTree } from "../NormalizedTree/ImmutableTree";
+import { BaseAnnotationType } from "../Tree.types";
 import { processAnnotationValue } from "./AnnotationParser";
 import { describe, it, expect } from 'vitest';
 describe("Test annotation parsing",()=>{
 
     it('integer', function () {
         const annotation = processAnnotationValue("1");
-        expect(annotation).toEqual({ type: "INTEGER", value: 1 });
+        expect(annotation).toEqual({ type: "NUMERICAL", value: 1 });
     });
     it('integer array', function () {
         const annotation = processAnnotationValue(["1", "2", "3"]);
-        expect(annotation).toEqual({ type: "SET", value: [1, 2, 3] });
+        expect(annotation).toEqual({ type: "NUMERICAL_SET", value: [1,2,3] });
     });
 
     it('continuous array', function () {
         const annotation = processAnnotationValue(["1", "2.5", "3"]);
-        expect(annotation).toEqual({ type: "SET", value: [1, 2.5, 3] });
+        expect(annotation).toEqual({ type: "NUMERICAL_SET", value: [1, 2.5, 3] });
     });
 
     it('continuous range', function () {
         const annotation = processAnnotationValue([0.0,1]);
-        expect(annotation).toEqual({ type: "RANGE", value: [0,1] });
+        expect(annotation).toEqual({ type: "NUMERICAL_SET", value: [0,1] });
     });
 
     it('continuous', function () {
         const annotation = processAnnotationValue("1.3");
-        expect(annotation).toEqual({ type: "CONTINUOUS", value: 1.3 });
+        expect(annotation).toEqual({ type: "NUMERICAL", value: 1.3 });
     });
     it('discrete', function () {
         const annotation = processAnnotationValue("a");
@@ -32,19 +33,19 @@ describe("Test annotation parsing",()=>{
     });
     it('discrete array', function () {
         const annotation = processAnnotationValue(["a", "b", "c"]);
-        expect(annotation).toEqual({ type: "SET", value: ["a", "b", "c"] });
+        expect(annotation).toEqual({ type: "DISCRETE_SET", value: ["a", "b", "c"] });
     });
     it('markov jump', function () {
         const annotation = processAnnotationValue([["0.1", "U", "me"]]);
-        expect(annotation).toEqual({ type: "MARKOV_JUMP", value: [{ time: 0.1, from: "U", to: "me" }] });
+        expect(annotation).toEqual({ type: "MARKOV_JUMPS", value: [{ time: 0.1, from: "U", to: "me" }] });
     });
     it('markov jump array', function () {
         const annotation = processAnnotationValue([["0.1", "U", "me"], ["0.2", "me", "U"]]);
-        expect(annotation).toEqual({ type: "MARKOV_JUMP", value: [{ time: 0.1, from: "U", to: "me" }, { time: 0.2, from: "me", to: "U" }] });
+        expect(annotation).toEqual({ type: "MARKOV_JUMPS", value: [{ time: 0.1, from: "U", to: "me" }, { time: 0.2, from: "me", to: "U" }] });
     });
     it('probabilities', function () {
         const annotation = processAnnotationValue({ HERE: 0.3, THERE: 0.7 });
-        expect(annotation).toEqual({ type: "PROBABILITIES", value: { HERE: 0.3, THERE: 0.7 } });
+        expect(annotation).toEqual({ type: "DENSITIES", value: { HERE: 0.3, THERE: 0.7 } });
     });
 });
 
@@ -168,7 +169,7 @@ it('comment', function() {
     const tree = ImmutableTree.fromNewick("(a[&test=ok],b:1);",{parseAnnotations:true})
     const a = tree.getTaxonByName("a")!;
     const aNode = tree.getNodeByTaxon(a)!;
-    const testAnnotation =    tree.getAnnotation(aNode, "test");
+    const testAnnotation =    tree.getAnnotationValue(aNode, "test",BaseAnnotationType.DISCRETE);
     expect(testAnnotation).toEqual( "ok" );
 });
 
@@ -177,9 +178,9 @@ it('markov jump comment', function() {
     const tree = ImmutableTree.fromNewick("(a[&test=ok],b[&jump={{0.1,U,me}}]);",{parseAnnotations:true})
     const a = tree.getNodeByTaxon(tree.getTaxonByName("a"))!;
     const b = tree.getNodeByTaxon(tree.getTaxonByName("b"))!;
-    const testAnnotation =    tree.getAnnotation(a, "test");
+    const testAnnotation =    tree.getAnnotationValue(a, "test",BaseAnnotationType.DISCRETE);
     expect(testAnnotation).toEqual("ok");
-    const jumpAnnotation =    tree.getAnnotation(b, "jump");
+    const jumpAnnotation =    tree.getAnnotationValue(b, "jump",BaseAnnotationType.MARKOV_JUMPS);
     expect(jumpAnnotation).toEqual( [ {time:0.1, from:"U",to: "me"}]);
    
 });
@@ -188,9 +189,18 @@ it('double comment', function() {
     const tree = ImmutableTree.fromNewick("(a[&test=ok,other test = 1],b:1);",{parseAnnotations:true})
     const a = tree.getNodeByTaxon(tree.getTaxonByName("a"))!;
     const testAnnotation =    tree.getAnnotation(a, "test");
-    expect(testAnnotation).toEqual("ok");
+    
+    expect(testAnnotation).toEqual({
+                            "id": "test",
+                            "type": "DISCRETE",
+                            "value": "ok",
+                            });
     const otherTestAnnotation =    tree.getAnnotation(a, "other test");
-    expect(otherTestAnnotation).toEqual(1);
+    expect(otherTestAnnotation).toEqual({
+                            "id": "other test",
+                            "type": "NUMERICAL",
+                            "value": 1,
+                            });
 });
 
 it('label annotation', function(){
@@ -198,7 +208,7 @@ it('label annotation', function(){
     {parseAnnotations:true,labelName:"probability"});
     const virus1Node = tree.getNodeByTaxon(tree.getTaxonByName("virus1"))!;
 
-    const probability = tree.getAnnotation(tree.getParent(virus1Node)!, "probability");
+    const probability = tree.getAnnotationValue(tree.getParent(virus1Node)!, "probability",BaseAnnotationType.NUMERICAL);
     
     expect(probability).toEqual(0.95);
     
