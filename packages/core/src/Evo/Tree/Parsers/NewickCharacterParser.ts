@@ -57,7 +57,11 @@ export class NewickCharacterParser {
     if (t.length > 2 && t.substring(0, 2) === "[&") {
       const annotations = parseAnnotation(t)
 
-      this.tree = this.tree.annotateNode(this.currentNode!, annotations)
+      for(const annotation of annotations){
+        this.tree = this.tree.annotateNode(this.currentNode!, annotation) as ImmutableTree
+      }
+      
+
     } else if (t === ";") {
         // check if done.
         //set done.
@@ -144,7 +148,7 @@ export class NewickCharacterParser {
             this.tree = this.tree.annotateNode(
               this.currentNode!,
               label_annotation,
-            )
+            ) as ImmutableTree
           } else {
             console.warn(
               `No label name provided to newick parser but found label ${t}. It will be ignored`,

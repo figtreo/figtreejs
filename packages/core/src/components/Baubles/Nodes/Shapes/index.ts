@@ -1,4 +1,4 @@
-export type {CircleProps,CircleNodeProps} from './Circle';
-export type {RectangleProps,RectangleNodeProps} from './Rectangle';
+export type {CircleProps} from './Circle';
+export type {RectangleProps} from './Rectangle';
 // export{CoalescentProps,CoalescentNodeProps} from './CoalescentShape';
 

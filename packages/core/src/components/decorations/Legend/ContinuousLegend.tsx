@@ -37,28 +37,28 @@ function isContinuousScale(scale: possibleScale): boolean {
 //TODO also need to remove the scale context provider here so axis can be used in other contexts
 export default function ContinuousLegend(props:ContinuousLegendProps ){
     throw new Error("continuous scale is not implemented")
-    const {scale,pos,width,height,direction,title,ticks} = props;
-    let x;
-    let colorRamper;
-    //Continuous
-    if(isContinuousScale(scale) ){
-        const n = Math.min(scale.domain().length,scale.range().length);
-        x = scale.copy().rangeRound(quantize(interpolate(0, width), n)); // for numbers
-        colorRamper = scale.copy().domain(quantize(interpolate(0, 1), n)) // for colors
-    }  // Sequential
-    else if (isSequentialScale(scale)) {
-        x= Object.assign(( scale as ScaleSequential<number,number>).copy().interpolator(interpolateRound(0,width)), // update interpolator to work on x scale
-            {range(){return[0,width]}}) //vc assigns range function so we can use it later!
-        colorRamper=( scale as ScaleSequential<number,number>).interpolator();
-    }
-    //TODO need to remove the scale context provider here so axis can be used in other contexts
-    return(
-        <g className={"legend"} transform={`translate(${pos.x},${pos.y})`}>
-            <text transform={`translate(0,-6)`}>{title}</text>
-            <ColorRamp {...{colorRamper: colorRamper,width,height}}/>
-            <RectangularAxis x={0} y={height} {...{width,height,direction,ticks}} scale={x} />
-        </g>
-    )
+    // const {scale,pos,width,height,direction,title,ticks} = props;
+    // let x;
+    // let colorRamper;
+    // //Continuous
+    // if(isContinuousScale(scale) ){
+    //     const n = Math.min(scale.domain().length,scale.range().length);
+    //     x = scale.copy().rangeRound(quantize(interpolate(0, width), n)); // for numbers
+    //     colorRamper = scale.copy().domain(quantize(interpolate(0, 1), n)) // for colors
+    // }  // Sequential
+    // else if (isSequentialScale(scale)) {
+    //     x= Object.assign(( scale as ScaleSequential<number,number>).copy().interpolator(interpolateRound(0,width)), // update interpolator to work on x scale
+    //         {range(){return[0,width]}}) //vc assigns range function so we can use it later!
+    //     colorRamper=( scale as ScaleSequential<number,number>).interpolator();
+    // }
+    // //TODO need to remove the scale context provider here so axis can be used in other contexts
+    // return(
+    //     <g className={"legend"} transform={`translate(${pos.x},${pos.y})`}>
+    //         <text transform={`translate(0,-6)`}>{title}</text>
+    //         <ColorRamp {...{colorRamper: colorRamper,width,height}}/>
+    //         <RectangularAxis x={0} y={height} {...{width,height,direction,ticks}} scale={x} />
+    //     </g>
+    // )
 
 }
 

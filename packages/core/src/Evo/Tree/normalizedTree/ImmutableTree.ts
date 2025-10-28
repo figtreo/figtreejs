@@ -1,11 +1,12 @@
-import { extent } from "d3-array"
+
 import {
   Annotation,
   AnnotationSummary,
-  AnnotationType,
-  AnnotationValue,
+  BaseAnnotationType,
   NodeRef,
+  RawValueOf,
   Tree,
+  ValueOf,
   newickParsingOptions,
 } from "../Tree.types"
 import { parseNewick, parseNexus, processAnnotationValue } from "../Parsers"
@@ -22,7 +23,7 @@ interface Node extends NodeRef {
   parent: number | undefined
   length: number | undefined
   level: number | undefined
-  annotations: { [annotation: string]: AnnotationValue}
+  annotations: { [annotation: string]: Annotation}
   // _id: symbol // an id so we can mark updates to root when topology changes
 }
 
@@ -173,6 +174,7 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
       newTree = this._copyNodeMetadata(tree, node, newTree, newNode);
       return newTree;
     }
+
     static _copyNodeMetadata(tree: ImmutableTree, node: NodeRef, newTree: ImmutableTree, newNode: NodeRef): ImmutableTree {
       const taxon = tree.getTaxonFromNode(node);
       if (taxon) {
@@ -185,9 +187,15 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
         newTree = newTree.setLabel(newNode, label);
       }
       for(const key of tree.getAnnotationKeys()){
-        const value = tree.getAnnotation(node, key);
-        if(value !== undefined){
-          newTree = newTree.annotateNode(newNode, {name:key,value:value});
+        const annotation = tree.getAnnotation(node, key);
+        if(annotation !== undefined){
+          if(annotation.type===BaseAnnotationType.MARKOV_JUMPS){
+            const value = annotation.value.map(j=>[Number(j.time),String(j.from),String(j.to)]) as [number,string,string][]
+            newTree = newTree.annotateNode(newNode, {name:annotation.id,value}) as ImmutableTree; // TODO make tree interface genaric and return the same type of tree
+          } else{
+            newTree = newTree.annotateNode(newNode, {name:annotation.id,value:annotation.value}) as ImmutableTree; 
+          }
+          
         }
       }
       const length = tree.getLength(node);
@@ -202,9 +210,9 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
   isRooted(): boolean {
     return this._data.is_rooted
   }
-  getAnnotationType(name: string): AnnotationType | undefined {
+  getAnnotationType(name: string): BaseAnnotationType  {
     if (this._data.annotations[name] === undefined) {
-      return undefined
+      throw new Error(`No annotation found with name: ${name}`)
     }
     return this._data.annotations[name].type
   }
@@ -213,9 +221,6 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
     return Object.keys(this._data.annotations)
   }
 
-  getAnnotationSummary(annotation: string): AnnotationSummary {
-    return this._data.annotations[annotation]
-  }
   getRoot(): NodeRef {
     return this._data.nodes.allNodes[this._data.rootNode]
   }
@@ -508,9 +513,7 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
     )
   }
 
-  getAnnotation(node: NodeRef, name: string): AnnotationValue | undefined {
-    return (this.getNode(node.number) as Node).annotations[name]
-  }
+
   getLabel(node: NodeRef): string | undefined {
     return this._data.nodes.allNodes[node.number].label
   }
@@ -574,53 +577,42 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
     })
   }
 
-  getAnnotationDomain(
+  getAnnotationSummary(
     name: string,
-  ): [number, number] | [boolean, boolean] | string[] | number[] | undefined {
+  ): AnnotationSummary{
     if (this._data.annotations[name] === undefined) {
-      return undefined
+      throw new Error(`No annotation with name ${name} found in tree`)
     }
-    return this._data.annotations[name].domain
+    return this._data.annotations[name]
   }
 
-  annotateNode(
-    node: NodeRef,
-    annotation: { name: string; value: AnnotationValue },
-  ): ImmutableTree
-  annotateNode(
-    node: NodeRef,
-    annotation: { [name: string]: AnnotationValue },
-  ): ImmutableTree
-  annotateNode(
-    node: NodeRef,
-    annotation: { name: string; value: AnnotationValue }[],
-  ): ImmutableTree
-
-  annotateNode(
-    node: NodeRef,
-    annotation:
-      | { name: string; value: AnnotationValue }
-      | { name: string; value: AnnotationValue }[]
-      | { [name: string]: AnnotationValue },
-  ): ImmutableTree {
-    if (Array.isArray(annotation)) {
-      return this._annotateNodeFromArrary(node, annotation)
-    } else {
-      if (annotation.name && annotation.value) {
-        return this._annotateNodeFromNameValue(
-          node,
-          annotation as { name: string; value: AnnotationValue },
-        )
-      } else {
-        return this._annotateNodeFromObject(node, annotation)
-      }
-    }
+  getAnnotations(): AnnotationSummary[] {
+      return Object.values(this._data.annotations)
   }
+  getAnnotation(node: NodeRef, name: string): Annotation  {
+    const annotation = (this.getNode(node.number) as Node).annotations[name]
+    if(annotation===undefined) throw new Error(`Annotation ${name} not found on node ${node}`)
+    return annotation
+  }
+
+  getAnnotationValue<T extends BaseAnnotationType>(node: NodeRef, name: string, type: T): ValueOf<T> {
+      const knownType=  this.getAnnotationType(name)
+      if(knownType!==type) throw new Error(`The annotation ${name} is not a ${type} in the tree. It is of type ${knownType}`)
+      return this.getAnnotation(node,name).value as  ValueOf<T>
+  }
+
 
   // ---------------- Setters ---------------------
 
   //TODO handle height and divergence changes still not very happy with how these are handled.
   // This if the length goes negative the final heights may not be correct.
+
+  annotateNode<T extends BaseAnnotationType>(node: NodeRef, annotation: { name: string; value: RawValueOf<T>}): Tree {
+      const classifiedAnnotation = processAnnotationValue(annotation.value)
+      //TODO
+      return this ;
+  }
+
 
   setHeight(node: NodeRef, height: number): ImmutableTree {
     return produce(this, (draft) => {
@@ -956,164 +948,6 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
     })
   }
 
-  _checkAnnotation(input: {
-    name: string
-    suggestedType: AnnotationType
-  }): AnnotationType {
-    const annotationType = this.getAnnotationType(input.name)
-    const suggestedType = input.suggestedType
-
-    if (!annotationType) {
-      return suggestedType
-    } else if (annotationType === suggestedType) {
-      return annotationType
-    } else if (annotationType !== suggestedType) {
-      if (
-        (suggestedType === AnnotationType.INTEGER &&
-          annotationType === AnnotationType.CONTINUOUS) ||
-        (suggestedType === AnnotationType.CONTINUOUS &&
-          annotationType === AnnotationType.INTEGER)
-      ) {
-        // upgrade to float
-        return AnnotationType.CONTINUOUS
-      }
-      if (
-        suggestedType === AnnotationType.RANGE &&
-        annotationType === AnnotationType.SET
-      ) {
-        return AnnotationType.RANGE
-      }
-      if (
-        suggestedType === AnnotationType.SET &&
-        annotationType === AnnotationType.RANGE
-      ) {
-        return AnnotationType.RANGE
-      }
-    }
-
-    throw new Error(
-      `Annotation ${input.name} has type ${suggestedType} but previously seen as ${annotationType}`,
-    )
-  }
-
-  _getUpdatedDomain(annotation: {
-    id: string
-    value:  number|string|boolean
-    type:AnnotationType
-  }): [number, number] | string[] | number[] | [boolean, boolean] {
-    const domain = this.getAnnotationDomain(annotation.id)
-    // const type = this.getAnnotationType(annotation.id);
-    let newDomain = domain
-    switch (annotation.type) {
-      case AnnotationType.CONTINUOUS: {
-        if (domain === undefined) {
-          newDomain = [annotation.value, annotation.value]
-        } else {
-          newDomain = extent([...domain, annotation.value]) as [number, number]
-        }
-        break
-      }
-      case AnnotationType.INTEGER || AnnotationType.DISCRETE: {
-        if (domain === undefined) {
-          newDomain = [annotation.value]
-        } else {
-          newDomain = [...new Set([...domain, annotation.value])]
-          newDomain.sort()
-        }
-        break
-      }
-      case AnnotationType.BOOLEAN: {
-        newDomain = [true, false]
-        break
-      }
-      case AnnotationType.PROBABILITIES: {
-        newDomain = [0, 1]
-        break
-      }
-      case AnnotationType.MARKOV_JUMP: {
-        if (domain === undefined) {
-          newDomain = [annotation.value.to, annotation.value.from]
-        } else {
-          newDomain = [
-            ...new Set([...domain, annotation.value.to, annotation.value.from]),
-          ]
-        }
-        newDomain.sort()
-        break
-      }
-      case AnnotationType.DISCRETE: {
-        if (domain === undefined) {
-          newDomain = [annotation.value]
-        } else {
-          newDomain = [...new Set([...domain, annotation.value])]
-          newDomain.sort()
-        }
-        break
-      }
-      case AnnotationType.SET: {
-        if (domain === undefined) {
-          newDomain = [annotation.value]
-        } else {
-          newDomain = [...new Set([...domain, annotation.value])]
-          newDomain.sort()
-        }
-        break
-      }
-      case AnnotationType.RANGE: {
-        if (domain === undefined) {
-          newDomain = extent(annotation.value) as unknown as [number, number]
-        } else {
-          newDomain = extent([...domain, ...annotation.value]) as unknown as [
-            number,
-            number,
-          ]
-        }
-        break
-      }
-      default: {
-        throw new Error(`Unknown annotation type ${annotation.type}`)
-      }
-    }
-    return newDomain!
-  }
-
-  _annotateNodeFromNameValue(
-    node: NodeRef,
-    annotation: { name: string; value: AnnotationValue; type?: AnnotationType },
-  ): ImmutableTree {
-    return produce(this, (draft) => {
-      annotateNodeHelper(draft, node, annotation)
-    })
-  }
-  _annotateNodeFromArrary(
-    node: NodeRef,
-    annotation: { name: string; value: AnnotationValue; type?: AnnotationType }[],
-  ): ImmutableTree {
-    return produce(this, (draft) => {
-      for (const a of annotation) {
-        annotateNodeHelper(draft, node, a)
-      }
-    })
-  }
-
-  _annotateNodeFromObject(
-    node: NodeRef,
-    annotation: { [key:string]:AnnotationValue|Annotation },
-  ): ImmutableTree {
-    return produce(this, (draft) => {
-      for (const a in annotation) {
-        if ((annotation[a] as Annotation).type && (annotation[a] as Annotation).value) {
-          annotateNodeHelper(draft, node, {
-            name: a,
-            value: (annotation[a] as Annotation).value,
-            type:(annotation[a] as Annotation).type,
-          })
-        } else {
-          annotateNodeHelper(draft, node, { name: a, value: annotation[a] })
-        }
-      }
-    })
-  }
 }
 
 /**
@@ -1172,32 +1006,6 @@ function orderNodes(
     count = 1
   }
   return count
-}
-
-function annotateNodeHelper(
-  tree: ImmutableTree,
-  node: NodeRef,
-  annotation: { name: string; value: AnnotationValue; type?: AnnotationType },
-): void {
-  const suggestedType = annotation.type
-    ? annotation
-    : processAnnotationValue(annotation.value)
-  const checkedType = tree._checkAnnotation({
-    name: annotation.name,
-    suggestedType: suggestedType.type!,
-  })
-  tree._data.nodes.allNodes[node.number].annotations[annotation.name] =
-    suggestedType.value
-  const domain = tree._getUpdatedDomain({
-    id: annotation.name,
-    value: annotation.value,
-    type: checkedType,
-  })
-  tree._data.annotations[annotation.name] = {
-    id: annotation.name,
-    domain,
-    type: checkedType,
-  }
 }
 
 export function* preOrderIterator(

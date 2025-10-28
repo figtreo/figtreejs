@@ -5,17 +5,20 @@ import { NodeRef, tipIterator, Tree } from "../../../Evo";
 import { layoutClass } from "../../../Layouts";
 import { useAttributeMappers } from "../../Baubles/baubleHelpers";
 import { layout, scale } from "../../../store/store";
-import { BaubleProps } from "../../Baubles/baubleTypes";
+import { BaseInteraction, plainAttr, plainAttrGetter } from "../../Baubles/baubleTypes";
+
 
 const arc = arcgen();
 
-interface CladeProps extends BaubleProps{
+interface CladeProps {
     node:NodeRef,
     padding?:number,
     scale:scale,
     layout:layout,
     tree:Tree,
-    layoutClass:layoutClass
+    layoutClass:layoutClass,
+    attrs: { [key: string]: plainAttr | plainAttrGetter | undefined};
+    interactions: { [key: string]: BaseInteraction; };
 }
 function CladeHighlight(props:CladeProps ){
 

@@ -1,16 +1,41 @@
-import { AnnotationType, AnnotationValue } from "../Tree.types";
+import {   BaseAnnotationType, MarkovJumpValue, RawAnnotationValue, ValueOf } from "../Tree.types";
 
-//TODO clean this up to be more typscripty
+// helpers 
 
-export function parseAnnotation(annotationString: string):  {name:string, value:AnnotationValue}[]  {
+const numAsc = (a: number, b: number) => a - b;
+const strAsc = (a: string, b: string) => (a < b ? -1 : a > b ? 1 : 0);
+const uniq = <T>(xs: T[]) => Array.from(new Set(xs));
+
+
+
+
+/** What the *parser* can emit before classification */
+
+export type ClassifiedValue =
+  | { type: BaseAnnotationType.DISCRETE,      value: ValueOf<BaseAnnotationType.DISCRETE> }
+  | { type: BaseAnnotationType.NUMERICAL,       value: ValueOf<BaseAnnotationType.NUMERICAL> }
+  | { type: BaseAnnotationType.BOOLEAN,       value: ValueOf<BaseAnnotationType.BOOLEAN> }
+
+  | { type: BaseAnnotationType.NUMERICAL_SET,       value: ValueOf<BaseAnnotationType.NUMERICAL_SET> }
+  | { type: BaseAnnotationType.DISCRETE_SET,       value: ValueOf<BaseAnnotationType.DISCRETE_SET> }
+
+  | { type: BaseAnnotationType.MARKOV_JUMPS,   value: ValueOf<BaseAnnotationType.MARKOV_JUMPS> }
+  | { type: BaseAnnotationType.DENSITIES,   value: ValueOf<BaseAnnotationType.DENSITIES> }
+
+
+type ParsedAnnotationRaw = { name: string; value: RawAnnotationValue };
+
+// Parse the annotation found in a nexus (or newick string - perish the thought!)
+export function parseAnnotation(annotationString: string):  ParsedAnnotationRaw[]  {
     const tokens = annotationString.split(/\s*('[^']+'|"[^"]+"|;|\(|\)|,|:|=|\[&|\]|\{|\})\s*/).filter(token => token.length > 0);
     let annotationKeyNext = true;
     let annotationKey: string = "";
     let isAnnotationARange = false;
     let inSubRange = false;
     let subValue: string[] = [];
-    let value = null;
-    const annotations: {name:string, value:AnnotationValue}[] = [];
+    // eslint-disable-next-line
+    let value:any = null; 
+    const annotations: ParsedAnnotationRaw[] = [];
 
     // expect the first token to be a [& and last ]
     if (tokens[0] !== "[&" || tokens[tokens.length - 1] !== "]") {
@@ -27,7 +52,7 @@ export function parseAnnotation(annotationString: string):  {name:string, value:
             if (!isAnnotationARange) {
                 annotationKeyNext = true;
             
-
+                if(value ===null) throw (`Empty annotation value`)
             //finalize annotation
             annotations.push({ value: value, name: annotationKey });
             }else{
@@ -44,7 +69,8 @@ export function parseAnnotation(annotationString: string):  {name:string, value:
         } else if (token === "}") {
             if (inSubRange) {
                 inSubRange = false;
-                (value as AnnotationValue[])!.push(subValue)
+                // eslint-disable-next-line
+                (value as any[])!.push(subValue)
             } else {
                 isAnnotationARange = false
             }
@@ -53,6 +79,7 @@ export function parseAnnotation(annotationString: string):  {name:string, value:
             // close BEAST annotation
 
             //finalize annotation
+             if(value ===null) throw (`Empty annotation value`)
             annotations.push({ value: value, name: annotationKey })
         } else {
             // must be annotation
@@ -71,7 +98,8 @@ export function parseAnnotation(annotationString: string):  {name:string, value:
                     if (inSubRange) {
                         subValue.push(annotationToken)
                     } else {
-                        (value as AnnotationValue[]).push(annotationToken);
+                        // eslint-disable-next-line
+                        (value as any[]).push(annotationToken);
                     }
                 } else {
                     if (isNaN(annotationToken as unknown as number)) {
@@ -90,74 +118,113 @@ export function parseAnnotation(annotationString: string):  {name:string, value:
 
 
 
-export function processAnnotationValue(values: AnnotationValue):{type:AnnotationType, value: AnnotationValue}{
-    
-    let type=AnnotationType.DISCRETE;
-    let processedValue: AnnotationValue = values;
-    if (Array.isArray(values)) {
-        // is a set of  values
+export function processAnnotationValue(values: RawAnnotationValue):ClassifiedValue{
 
-        if (values[0] instanceof Array) {
-            type = AnnotationType.MARKOV_JUMP;
-            if (values.map(v => v.length === 3).reduce((acc, curr) => acc && curr, true)) {
-                processedValue = values.map(v => { return { time: parseFloat(v[0]), from: v[1], to: v[2] } })
+
+    if (Array.isArray(values)) { // if is it an array it could be markov jump or array of values
+        // is a set of  values
+        //Array of array?
+        if ((Array.isArray(values[0]))) { // an array of arrays is a markov jump
+            // This may be a markov jump array
+            const tuples = values as string[][];
+
+            if (tuples.map(v => v.length === 3).reduce((acc, curr) => acc && curr, true)) {
+                const jumps : MarkovJumpValue[] = tuples.map(([timeStr,source,dest])=>{
+                    const timeNum = Number(timeStr);
+                    if (!Number.isFinite(timeNum) ) {
+                       
+                    }
+                return { time: timeNum, from: String(source), to: String(dest) }
+            });
+            return {type:BaseAnnotationType.MARKOV_JUMPS,value:jumps}
             } else {
-                throw Error(`Markov jump with dimension ${values[0].length} detected. Expected 3.`)
+                throw Error(`Markov jump with dimension ${tuples[0].length} detected. Expected 3. ${tuples.map(t => t.length).join(",")}`)
             }
 
+        }else{
+            //check if already parsed Markov_JUMP value 
         }
+        // Flat array check types
+        const flat = values as Array<string | number >;
 
-        else if (values.map(v => isNaN(v)).reduce((acc, curr) => acc && curr, true)) {
-            type = AnnotationType.SET;
-            processedValue = values;
+        const allStrings = flat.every(v => typeof v === "string");
+        const allNumbersAfterCoerce = flat.every(v => Number.isFinite(Number(v)));
 
+        if (allStrings) {
+            return {
+                type: BaseAnnotationType.DISCRETE_SET,
+                value: (flat as string[]).slice()
+            };
+            }
+
+        if (allNumbersAfterCoerce) {
+        const nums = flat.map(v => Number(v));
+        return { type: BaseAnnotationType.NUMERICAL_SET, value: nums };
         }
-        else if (values.map(v => parseFloat(v)).reduce((acc, curr) => acc && Number.isInteger(curr), true)) {
-            processedValue = values.map(v => parseInt(v))
-            type=(processedValue as Array<AnnotationValue>).length===2?AnnotationType.RANGE:AnnotationType.SET;
-        } else if (values.map(v => parseFloat(v)).reduce((acc, curr) => acc || !Number.isInteger(curr), false)) {
-            processedValue = values.map(v => parseFloat(v))
-            type=(processedValue as Array<AnnotationValue>).length===2?AnnotationType.RANGE:AnnotationType.SET;
-        }
-
-    } else if (Object.isExtensible(values)) {
+    // coerce to strings
+        return {
+            type: BaseAnnotationType.DISCRETE_SET,
+            value: flat.map(String)
+            };
+    // densities
+    } else if (isPlainObject(values)) {
         // is a set of properties with values
 
-        let sum = 0.0;
-        const keys: string[] = [];
-        processedValue = {};
-        for (const [key, value] of Object.entries(values)) {
-            let parsed
-            if (keys.includes(key)) {
-                throw Error(`the states of annotation, ${key}, should be unique`);
-            }
-            if (typeof value === typeof 1.0) {
-                // This is a vector of probabilities of different states
-                type  = AnnotationType.PROBABILITIES;
-                parsed = parseFloat(value as string);
+        const obj = values as Record<string, string | number | boolean>;
+        const entries = Object.entries(obj);
 
-                sum += value as number;
-                if (sum > 1.01) {
-                    throw Error(`the values of annotation, ${key}, should be probabilities of states and add to 1.0`);
-                }
-            } else if (typeof value === typeof true) {
-                type = AnnotationType.DISCRETE;
-                parsed = value as boolean;
-            }
-            (processedValue as {[key:string]:AnnotationValue})[key] = parsed!;
+        const allNumbers = entries.every(([, v]) => Number.isFinite(Number(v)));
+        const allBooleans = entries.every(([, v]) => typeof v === "boolean");
+
+
+        if (allNumbers) {
+        const probs: Record<string, number> = {};
+        for (const [k, v] of entries) {
+            const n = Number(v);
+            probs[k] = n;
         }
+        return { type: BaseAnnotationType.DENSITIES, value: probs };
+        }
+
+
+    if (allBooleans) {
+      const set = entries.filter(([, v]) => v === true).map(([k]) => k).sort();
+      return { type: BaseAnnotationType.DISCRETE_SET, value: set };
+    }
+
+    throw new Error("Unsupported object value: expected numeric (probabilities) or boolean map");
 
     } else {
-        if (typeof values === typeof true) {
-            type = AnnotationType.BOOLEAN;
-            processedValue = values //.map((v: string)=>v as unknown as boolean);
-        } else if (!isNaN((values as number))) {
-            type = ((values as number) % 1 === 0 ? AnnotationType.INTEGER : AnnotationType.CONTINUOUS);
-            processedValue = parseFloat((values as string));
+      
+        if (typeof values === "boolean") {
+            return { type: BaseAnnotationType.BOOLEAN, value: values };
+        }
+
+        if (typeof values === "number") {
+            return { type: BaseAnnotationType.NUMERICAL, value: values };
+        }
+
+        if (typeof values === "string") {
+            // try boolean literal
+            const lower = values.toLowerCase();
+            if (lower === "true" || lower === "false") {
+            return { type: BaseAnnotationType.BOOLEAN, value: lower === "true" };
+            }
+        // try number
+        const n = Number(values);
+        if (Number.isFinite(n)) {
+            return { type: BaseAnnotationType.NUMERICAL, value: n };
+        }
+
+    // otherwise discrete label
+        return { type: BaseAnnotationType.DISCRETE, value: values };
         }
     }
-    return { type:type, value: processedValue }
-
+     throw new Error(`Unsupported annotation value: ${String(values)}`);
 
 }
 
+
+function isPlainObject(v: unknown): v is Record<string, unknown> {
+  return typeof v === "object" && v !== null && !Array.isArray(v);
+}

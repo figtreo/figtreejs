@@ -1,11 +1,10 @@
 import React from "react";
 import { normalizePath } from "../../../path.helpers";
 import { layoutClass } from "../../../Layouts";
-import { BranchProps } from "../Branches";
 import { NodeRef, Tree } from "../../../Evo";
 import { layout, scale } from "../../../store/store";
 import { AttrAndInteractionApplier, UnwrappedAnimatableProps } from "../baubleTypes";
-import { BranchAttrs } from "../Branches/Branch";
+import { BranchAttrs, BranchProps } from "../Branches/Branch";
 
 
 type BranchedComponentProps={
