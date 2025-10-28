@@ -1,5 +1,5 @@
 import React from "react";
-import { animated, SpringValue} from "@react-spring/web";
+import { animated} from "@react-spring/web";
 import withAnimation from "../HOC/withAnimation";
 import withBranch from "../HOC/withBranch";
 import { AnimatableBaubleProps, BaseAttrs, numericAttr, stringAttr } from "../baubleTypes";

@@ -1,12 +1,5 @@
 import {   BaseAnnotationType, MarkovJumpValue, RawAnnotationValue, ValueOf } from "../Tree.types";
 
-// helpers 
-
-const numAsc = (a: number, b: number) => a - b;
-const strAsc = (a: string, b: string) => (a < b ? -1 : a > b ? 1 : 0);
-const uniq = <T>(xs: T[]) => Array.from(new Set(xs));
-
-
 
 
 /** What the *parser* can emit before classification */
@@ -132,7 +125,7 @@ export function processAnnotationValue(values: RawAnnotationValue):ClassifiedVal
                 const jumps : MarkovJumpValue[] = tuples.map(([timeStr,source,dest])=>{
                     const timeNum = Number(timeStr);
                     if (!Number.isFinite(timeNum) ) {
-                       
+                       throw new Error(`Expected a markov jump annotation but the first entry ${timeStr} could not be make a number`)
                     }
                 return { time: timeNum, from: String(source), to: String(dest) }
             });
@@ -140,15 +133,17 @@ export function processAnnotationValue(values: RawAnnotationValue):ClassifiedVal
             } else {
                 throw Error(`Markov jump with dimension ${tuples[0].length} detected. Expected 3. ${tuples.map(t => t.length).join(",")}`)
             }
-
-        }else{
-            //check if already parsed Markov_JUMP value 
         }
         // Flat array check types
         const flat = values as Array<string | number >;
 
         const allStrings = flat.every(v => typeof v === "string");
         const allNumbersAfterCoerce = flat.every(v => Number.isFinite(Number(v)));
+
+        if (allNumbersAfterCoerce) {
+        const nums = flat.map(v => Number(v));
+        return { type: BaseAnnotationType.NUMERICAL_SET, value: nums };
+        }
 
         if (allStrings) {
             return {
@@ -157,10 +152,6 @@ export function processAnnotationValue(values: RawAnnotationValue):ClassifiedVal
             };
             }
 
-        if (allNumbersAfterCoerce) {
-        const nums = flat.map(v => Number(v));
-        return { type: BaseAnnotationType.NUMERICAL_SET, value: nums };
-        }
     // coerce to strings
         return {
             type: BaseAnnotationType.DISCRETE_SET,

@@ -1,10 +1,14 @@
 
 import {
   Annotation,
+  AnnotationDomain,
   AnnotationSummary,
+  AnnotationValue,
   BaseAnnotationType,
+  DomainOf,
+  MarkovJumpValue,
   NodeRef,
-  RawValueOf,
+  RawAnnotationValue,
   Tree,
   ValueOf,
   newickParsingOptions,
@@ -13,6 +17,7 @@ import { parseNewick, parseNexus, processAnnotationValue } from "../Parsers"
 import { immerable, produce } from "immer"
 import { Taxon, TaxonSet, TaxonSetInterface } from "../Taxa/Taxon"
 import { format } from "d3-format"
+import { extent } from "d3-array"
 
 //TODO will need to think about taxonsets and immutability.
 interface Node extends NodeRef {
@@ -605,12 +610,24 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
   // ---------------- Setters ---------------------
 
   //TODO handle height and divergence changes still not very happy with how these are handled.
-  // This if the length goes negative the final heights may not be correct.
 
-  annotateNode<T extends BaseAnnotationType>(node: NodeRef, annotation: { name: string; value: RawValueOf<T>}): Tree {
+  annotateNode(node: NodeRef, annotation: { name: string; value: RawAnnotationValue}): Tree {
       const classifiedAnnotation = processAnnotationValue(annotation.value)
-      //TODO
-      return this ;
+
+      const currentSummary = this._data.annotations[annotation.name]
+      if(currentSummary!==undefined){
+        if(currentSummary.type!==classifiedAnnotation.type){
+          throw new Error(`Tried annotation ${annotation.name} was parsed as ${classifiedAnnotation.type} - but is ${currentSummary.type} in tree.`)
+        }
+      }
+      return produce(this, (draft) => {
+        const currentDomain = currentSummary?currentSummary.domain:undefined
+        const domain = updateDomain(classifiedAnnotation,currentDomain)
+        draft._data.nodes.allNodes[node.number].annotations[annotation.name] = {id:annotation.name,type:classifiedAnnotation.type,value:classifiedAnnotation.value} as Annotation
+        draft._data.annotations[annotation.name] = {id:annotation.name,type:classifiedAnnotation.type,domain:domain} as AnnotationSummary
+      })
+      // update summary
+      // update node with value
   }
 
 
@@ -1133,3 +1150,56 @@ export function* pathToRootIterator(
   }
 }
 
+function updateDomain(annotation:{ type: BaseAnnotationType; value: AnnotationValue},currentDomain:AnnotationDomain|undefined):AnnotationDomain{
+
+  switch(annotation.type){
+    case BaseAnnotationType.BOOLEAN:
+      return [true,false] 
+
+    case BaseAnnotationType.DISCRETE:{
+      const value = annotation.value as string
+      if(currentDomain!==undefined){
+        const curr = currentDomain as DomainOf<BaseAnnotationType.DISCRETE>
+        return [...new Set([...curr,value])].sort()  
+      }else{
+         return [value] 
+      }
+    }
+    case BaseAnnotationType.NUMERICAL:{
+        const value = annotation.value as number
+        const curr = currentDomain? currentDomain as [number,number] : []
+        return extent([...curr,value]) as [number,number]
+    }
+
+    case BaseAnnotationType.DISCRETE_SET:{
+      const value = annotation.value as string[]
+      const curr = currentDomain? currentDomain as string[] : []
+       return [...new Set([...curr,...value])].sort()  
+    }
+
+    case BaseAnnotationType.NUMERICAL_SET:{
+        const value = annotation.value as number[]
+        const curr = currentDomain? currentDomain as [number,number] : []
+        return extent([...curr,...value]) as [number,number]
+    }
+
+    case BaseAnnotationType.DENSITIES:{
+      if(currentDomain!==undefined){
+        const curr = currentDomain as DomainOf<BaseAnnotationType.DENSITIES>
+        return [...new Set([...curr,... Object.keys(annotation.value)])].sort()  
+      }else{
+         return [...new Set(Object.keys(annotation.value))].sort().filter(d=>d)  
+    }
+  }
+
+  case BaseAnnotationType.MARKOV_JUMPS:{
+      const value = (annotation.value as MarkovJumpValue[]).reduce<string[]>((acc: string[], d: MarkovJumpValue) => acc.concat([String(d.to), String(d.from)]), [])
+      const curr = currentDomain? currentDomain as string[] : []
+       return [...new Set([...curr,...value])].sort()  
+  }
+
+    default:
+      throw new Error(`Unrecognized type ${annotation.type} when updating domain`)
+  }
+  
+}
