@@ -4,34 +4,74 @@ import { Taxon, TaxonSet } from "./Taxa/Taxon";
 export interface NodeRef{
     number:number
 }
-export enum AnnotationType {
-    DISCRETE = "DISCRETE",
-    BOOLEAN = "BOOLEAN",
-    INTEGER = "INTEGER",
-    CONTINUOUS = "CONTINUOUS",
-    RANGE = "RANGE",
-    SET= "SET",
-    PROBABILITIES = "PROBABILITIES",
-    MARKOV_JUMP = "MARKOV_JUMP",
+export enum BaseAnnotationType {
+    DISCRETE = "DISCRETE",// string  could also be stringy numbers
+    BOOLEAN = "BOOLEAN", // true false
+    NUMERICAL = "NUMERICAL", // float
+    
+    NUMERICAL_SET = "NUMERICAL_SET", // number[]
+    DISCRETE_SET= "DISCRETE_SET", // string[] 
+  
+    MARKOV_JUMPS = "MARKOV_JUMPS", // {from: to: time:}
+    DENSITIES = "DENSITIES" // Record<string, number>
 }
+export type MarkovJumpValue = { from: string; to: string; time?: number };
 
-export type AnnotationValue =number| boolean | object | string | number[] | string[] | object[]
+export type ValueOf<T extends BaseAnnotationType> =
+  T extends BaseAnnotationType.DISCRETE      ? string :
+  T extends BaseAnnotationType.BOOLEAN       ? boolean :
+  T extends BaseAnnotationType.NUMERICAL       ? number :
+  T extends BaseAnnotationType.NUMERICAL_SET       ? number[] :
+  T extends BaseAnnotationType.DISCRETE_SET       ? string[] :
+  T extends BaseAnnotationType.MARKOV_JUMPS   ? MarkovJumpValue[] :
+  T extends BaseAnnotationType.DENSITIES ? Record<string, number> :
+  never;
 
-export interface AnnotationSummary {
+  export type RawValueOf<T extends BaseAnnotationType> =
+  T extends BaseAnnotationType.DISCRETE      ? string :
+  T extends BaseAnnotationType.BOOLEAN       ? boolean :
+  T extends BaseAnnotationType.NUMERICAL       ? number :
+  T extends BaseAnnotationType.NUMERICAL_SET       ? number[] :
+  T extends BaseAnnotationType.DISCRETE_SET       ? string[] :
+  T extends BaseAnnotationType.MARKOV_JUMPS   ? [number,string,string][] :
+  T extends BaseAnnotationType.DENSITIES ? Record<string, number> :
+  never;
+
+export type DomainOf<T extends BaseAnnotationType> =
+  T extends BaseAnnotationType.DISCRETE      ? string[] :
+  T extends BaseAnnotationType.BOOLEAN       ? [boolean, boolean] :
+  T extends BaseAnnotationType.NUMERICAL       ? [number,number] :
+  T extends BaseAnnotationType.NUMERICAL_SET    ? [number, number] :
+  T extends BaseAnnotationType.DISCRETE_SET           ? string[] | number[] :
+  T extends BaseAnnotationType.MARKOV_JUMPS   ? string[] : // just locations
+  T extends BaseAnnotationType.DENSITIES   ? string[] : // just states
+  never;
+
+
+
+/** A single, generic annotation, discriminated by `type`. */
+export type AbstractAnnotation<T extends BaseAnnotationType> = {
+  id: string;
+  type: T;
+  value: ValueOf<T>; 
+};
+
+
+export type Annotation = { [K in BaseAnnotationType]: AbstractAnnotation<K> }[BaseAnnotationType];
+
+
+
+export interface AbstractAnnotationSummary<T extends BaseAnnotationType> {
     id: string;
-    type: AnnotationType;
-    domain: [number, number] | string[] | number[] | [boolean, boolean] | undefined;
+    type: T;
+    domain: DomainOf<T>;
 }
 
-export interface Annotation {
-    name: string;
-    type: AnnotationType;
-    value : AnnotationValue,
-}
+export type AnnotationSummary = { [K in BaseAnnotationType]: AbstractAnnotationSummary<K> }[BaseAnnotationType];
+export type RawAnnotationValue ={ [K in BaseAnnotationType]: RawValueOf<K> }[BaseAnnotationType];
 
-// For small standalone apps we want a OO model with a figure subscribing to the tree
-// for observable we want a functional, immutable approach. 
-// Does the functional immutable approach pretend to be a class
+
+
 
 
 export interface newickParsingOptions  {
@@ -73,11 +113,17 @@ export interface Tree  {
     getParent(node: NodeRef): NodeRef | undefined
     getChildren(node: NodeRef): NodeRef[] 
 
-    getAnnotation(node: NodeRef, name: string): AnnotationValue | undefined 
+    getAnnotation(node: NodeRef, name: string): Annotation
+    getAnnotationValue<T extends BaseAnnotationType>(node:NodeRef, name:string,type:T):ValueOf<T>
+    annotateNode<T extends BaseAnnotationType>(node:NodeRef,annotation:{name:string,value:RawValueOf<T>}):Tree
+
     getLabel(node: NodeRef): string | undefined 
     getAnnotationKeys(): string[]
-    getAnnotationType(name: string): string |undefined
+    getAnnotationType(name: string): BaseAnnotationType
 
+    getAnnotations():AnnotationSummary[]
+    getAnnotationSummary(name:string):AnnotationSummary;
+   
     addNodes(n?:number):  {tree:Tree,nodes:NodeRef[]}
     deleteNode(n:NodeRef):Tree
     removeChild(parent:NodeRef,child:NodeRef):Tree
@@ -90,7 +136,6 @@ export interface Tree  {
     setLength(node:NodeRef,length:number):Tree
     setTaxon(node:NodeRef,taxon:Taxon):Tree
     setLabel(node:NodeRef,label:string):Tree
-    annotateNode(node:NodeRef,annotation:{name:string,value:AnnotationValue,type:AnnotationType}):Tree
 
     addChild(parent: NodeRef, child: NodeRef): Tree
     root(node: NodeRef,portion:number): Tree
@@ -103,8 +148,7 @@ export interface Tree  {
     getMRCA(nodes:NodeRef[]):NodeRef;
     rotate(node:NodeRef,recursive:boolean):Tree;
     reroot(node:NodeRef,proportion:number):Tree;
-    //TODO decide if we want to keep integers different from continuous
-    getAnnotationDomain(name:string):[number,number]|[boolean,boolean]|string[]|number[]|undefined;
+
 
 
 }

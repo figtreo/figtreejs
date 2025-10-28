@@ -39,7 +39,7 @@ describe("Test annotation parsing",()=>{
         expect(annotation).toEqual({ type: "MARKOV_JUMP", value: [{ time: 0.1, from: "U", to: "me" }] });
     });
     it('markov jump array', function () {
-        const annotation = processAnnotationValue([[0.1, "U", "me"], [0.2, "me", "U"]]);
+        const annotation = processAnnotationValue([["0.1", "U", "me"], ["0.2", "me", "U"]]);
         expect(annotation).toEqual({ type: "MARKOV_JUMP", value: [{ time: 0.1, from: "U", to: "me" }, { time: 0.2, from: "me", to: "U" }] });
     });
     it('probabilities', function () {

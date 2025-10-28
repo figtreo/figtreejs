@@ -1,6 +1,7 @@
 /* eslint-disable */
 import React from "react";
-import withLinearGradient from "../../HOC/WithLinearGradient";
+import withLinearGradient from "../../Baubles/HOC/WithLinearGradient";
+
 
 
 function Rect(props:{width:number,height:number,attrs:{[key:string]:any}}){

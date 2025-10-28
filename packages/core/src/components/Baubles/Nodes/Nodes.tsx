@@ -114,6 +114,8 @@ function NodeLabels<A extends BaseAttrs=BaseAttrs>(props:LabelProps<A>){
 
 
 
+
+
 const CircleNodes = NodesHOC<CircleAttrs>(Circle);
 const RectangularNodes = NodesHOC<RectangleAttrs>(Rectangle);
 

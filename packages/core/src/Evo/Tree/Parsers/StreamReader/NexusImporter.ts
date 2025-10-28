@@ -110,7 +110,7 @@ export class NexusImporter {
     return value
   }
   // skip until match and return match
-  private async skipUntil(stopper: RegExp) {
+  private async skipUntil(stopper: RegExp):Promise<string> {
     let value;
     let keepGoing = true
     while (keepGoing) {
@@ -119,6 +119,7 @@ export class NexusImporter {
           keepGoing=false;
       }
     }
+    if(value==undefined) throw new Error(`Internal parsing error: ${stopper.source} not found `)
     return value
   }
   // read up to match return everything up to including the match

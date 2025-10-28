@@ -2,8 +2,6 @@ import { NodeRef } from '../../../Evo/Tree';
 
 export {default as Nodes} from './Nodes';
 
-export type { NodeProps } from './Node.types';
-
 export * from "./Shapes/index"
 //TODO separate exposed props from required
 

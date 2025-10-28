@@ -2,17 +2,19 @@ import React from "react"
 import { layoutClass } from "../../../Layouts"
 import { NodeRef, tipIterator, Tree } from "../../../Evo"
 import { useAttributeMappers } from "../../Baubles/baubleHelpers"
-import { BaubleProps } from "../../Baubles/baubleTypes"
 import { layout, scale } from "../../../store/store"
 import { FunctionalVertex } from "../../../Layouts/functional/rectangularLayout"
+import { BaseInteraction, plainAttr, plainAttrGetter } from "../../Baubles/baubleTypes"
 
-interface CartoonProps extends BaubleProps{
+interface CartoonProps{
     node:NodeRef,
     padding?:number,
     scale:scale,
     layout:layout,
     tree:Tree,
-    layoutClass:layoutClass
+    layoutClass:layoutClass,
+    attrs: { [key: string]: plainAttr | plainAttrGetter | undefined};
+    interactions: { [key: string]: BaseInteraction; };
 }
 
 export function Cartoon(props: CartoonProps) {
