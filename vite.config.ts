@@ -2,6 +2,7 @@ import { defineConfig } from "vitest/config"
 import react from "@vitejs/plugin-react"
 
 // https://vitejs.dev/config/
+//TODO move this to react packages? only 
 export default defineConfig({
   plugins: [react()],
   server: {

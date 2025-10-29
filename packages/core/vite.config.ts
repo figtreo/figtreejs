@@ -1,7 +1,7 @@
 import { dirname, resolve } from 'node:path'
 import { copyFileSync } from "node:fs"
 import { fileURLToPath } from 'node:url'
-import { defineConfig } from 'vite'
+import { defineConfig, UserConfig } from 'vite'
 import react from "@vitejs/plugin-react"
 import dts from 'vite-plugin-dts'
 
@@ -46,4 +46,9 @@ export default defineConfig({
     },
     sourcemap: true,
   },
-})
+  test:{
+     globals: true,
+    environment: "jsdom",
+  }
+   
+}as UserConfig)

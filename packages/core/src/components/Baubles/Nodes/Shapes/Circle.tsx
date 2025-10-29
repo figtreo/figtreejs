@@ -8,9 +8,9 @@ import { AnimatableBaubleProps, BaseAttrs, numericAttr, stringAttr } from "../..
 
 const BaseCircle = function(props:CircleProps){
  
-   const {attrs,interactions} = props;
+   const {attrs,interactions,x,y} = props;
     return (
-        <animated.circle  className={"node-shape"} {...attrs} {...interactions} cx={attrs.x} cy={attrs.y} />
+        <animated.circle  className={"node-shape"} {...attrs} {...interactions} cx={x} cy={y} />
         );
 };
 
