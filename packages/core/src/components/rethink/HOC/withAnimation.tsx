@@ -1,19 +1,8 @@
 import React from "react";
-import { DeSpring, Interactions, numerical, stringy, StripSprings } from "./types";
+
 import { useSpring } from "@react-spring/web";
+import { BaseBaubleProps, StripProps } from "../shapes/types";
 
-
-type BaseAttrs = Record<string, numerical | stringy>;
-
-
-/** Strip x/y/d/attrs value types while preserving required/optional-ness */
-// infer prop types here
-type StripProps<P> = {
-  [K in keyof P]:
-    K extends "attrs" ? StripSprings<P[K]> :
-    K extends "x" | "y" | "d" ? DeSpring<P[K]> :
-    P[K];
-};
 
 
 // keep this as a const tuple to narrow keys
@@ -21,15 +10,11 @@ const animatableProperties = ["stroke", "strokeWidth", "fill", "width", "height"
 
 // animatableKeys?: readonly (keyof CProps["attrs"])[]
 
+
+
 export function withAnimation
 <
-CProps extends {
-    attrs: BaseAttrs;
-    interactions?: Interactions;
-    x?: numerical;
-    y?: numerical;
-    d?: stringy;
-  }
+CProps extends BaseBaubleProps
 >
 (
   AnimatableShape: React.FC<CProps>

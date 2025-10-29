@@ -1,7 +1,7 @@
 import React from "react";
 import { animated,  useSpring} from "@react-spring/web";
 import { Interactions, numerical, stringy, StripSprings } from "./types";
-import { withAnimation } from "./withAnimation";
+import { withAnimation } from "../HOC/withAnimation";
 
 
 export type BaseBranchAttrs = {
