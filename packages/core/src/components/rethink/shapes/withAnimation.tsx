@@ -1,38 +1,40 @@
 import React from "react";
-import { BaseBaubleProps, BaubleProps, Interactions, numerical, stringy, StripSprings } from "./types";
+import { DeSpring, Interactions, numerical, stringy, StripSprings } from "./types";
 import { useSpring } from "@react-spring/web";
 
 
 type BaseAttrs = Record<string, numerical | stringy>;
 
 
-type AnimIn<InBase extends BaseBaubleProps, TAttrs extends BaseAttrs> =
-  InBase & { attrs: TAttrs };
-
-
-  // remove any springvalues from base and attrs and add animated
-type ExposedOut<InBase extends BaseBaubleProps, TAttrs extends BaseAttrs> =
-  StripSprings<InBase> & { animated?: boolean } & { attrs: StripSprings<TAttrs> };
-
-
-
+/** Strip x/y/d/attrs value types while preserving required/optional-ness */
+// infer prop types here
+type StripProps<P> = {
+  [K in keyof P]:
+    K extends "attrs" ? StripSprings<P[K]> :
+    K extends "x" | "y" | "d" ? DeSpring<P[K]> :
+    P[K];
+};
 
 
 // keep this as a const tuple to narrow keys
 const animatableProperties = ["stroke", "strokeWidth", "fill", "width", "height", "r"] as const;
 
-
+// animatableKeys?: readonly (keyof CProps["attrs"])[]
 
 export function withAnimation
 <
-  InBase extends BaseBaubleProps, // base type
-  TAttrs extends BaseAttrs, // Attrs type
-  TExtra extends object = {} // anything else
+CProps extends {
+    attrs: BaseAttrs;
+    interactions?: Interactions;
+    x?: numerical;
+    y?: numerical;
+    d?: stringy;
+  }
 >
 (
-  AnimatableShape: React.FC<TExtra & AnimIn<InBase, TAttrs>>
-): React.FC<TExtra & ExposedOut<InBase, TAttrs>> {
-  const AnimatedComponent: React.FC<TExtra & ExposedOut<InBase, TAttrs>>  = (props) => {
+  AnimatableShape: React.FC<CProps>
+): React.FC<StripProps<CProps> & { animated?: boolean }> {
+  const AnimatedComponent: React.FC<StripProps<CProps> & { animated?: boolean }>  = (props) => {
     const { attrs, x, y, d, interactions, animated, ...rest } = props;
 
     // Pick only attrs we plan to animate
@@ -66,17 +68,17 @@ export function withAnimation
     const finalAttrs = {
       ...attrs,
       ...possiblyAnimatedAttrs,
-    } as TAttrs;
+    } as CProps["attrs"];
 
     // Exact prop shape expected by the wrapped component
     const shapeProps = {
-      ...(rest as TExtra),
-      x: xFinal as BaseBaubleProps["x"],
-      y: yFinal as BaseBaubleProps["y"],
-      d: dFinal as BaseBaubleProps["d"],
+      ...(rest as Omit<StripProps<CProps>, "x" | "y" | "d" | "attrs" | "animated">), // remove the ones we'll add
+      x: xFinal as CProps["x"],
+      y: yFinal as CProps["y"],
+      d: dFinal as CProps["d"],
       attrs: finalAttrs,
       interactions,
-    } as TExtra & AnimIn<InBase, TAttrs>;
+    } as CProps;
 
     return <AnimatableShape {...shapeProps} />;
   };
