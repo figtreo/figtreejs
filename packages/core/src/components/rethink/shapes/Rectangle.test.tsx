@@ -3,7 +3,7 @@ import React from "react";
 
 import { describe, expect, test } from "vitest";
 import { render,screen} from "@testing-library/react";
-import { BaseRectangle,  BaseRectAttrs,  Rectangle,  RectAttrs } from "./Rectangle";
+import { BaseRectangle, Rectangle,  RectAttrs } from "./Rectangle";
 import { WithTestId } from "./types";
 
 
