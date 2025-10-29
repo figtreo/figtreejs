@@ -6,10 +6,10 @@ export * from "./Shapes/index"
 //TODO separate exposed props from required
 
 
-
+// These are the props that the user passes in. 
 export interface BaseShapeProps { // props for rendering something
-    id:string
-        attrs: {
+    filter?:(n:NodeRef)=>boolean
+    attrs?: {
         [key: string]: number | string | ((n: NodeRef) => number | string);
     };
     interactions?: {

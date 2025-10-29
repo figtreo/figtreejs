@@ -17,10 +17,12 @@
   ],
   "devDependencies": {
     "@figtreejs/eslint-config": "*",
+    "@testing-library/react": "^16.3.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.6",
     "prettier": "^3.6.2",
-    "turbo": "^2.5.8"
+    "turbo": "^2.5.8",
+    "vitest": "^4.0.5"
   },
   "packageManager": "npm@11.6.2",
   "dependencies": {
