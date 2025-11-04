@@ -91,7 +91,7 @@ function FigTree(props:FigtreeProps){
                     {/*<rect x="0" y="0" width="100%" height="100%" fill="none" pointerEvents={"visible"} onClick={()=>nodeDispatch({type:"clearSelection"})}/>*/}
                     {/* <g transform={`translate(${margins.left},${margins.top})`} clipPath={'url(#clip)'} > */}
                     <g transform={`translate(${x},${y})`} >
-                        {baubles.map((b,i)=>b({key:i,tree,scale,layout:layoutMap}))}
+                        {baubles.map((b,i)=>b({key:i,tree,scale,layout:layoutMap,dimensions}))}
                     </g>
                 </g>
 
