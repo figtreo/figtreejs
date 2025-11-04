@@ -2,7 +2,7 @@
 import React from 'react'
 import { Attrs } from '../types';
 import { layoutClass } from "../../../Layouts";
-import { BasePath } from '../shapes/Branch';
+import { BasePath } from '../Shapes/Branch';
 import { CladeProps } from './makeClade';
 import { normalizePath } from '../../../path.helpers';
 

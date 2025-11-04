@@ -46,10 +46,10 @@ export interface FigtreeProps {
     height:number,
     layout:layoutFunction,
     tree:ImmutableTree,
-    margins:Margins,
-    children:React.ReactNode,
-    opts:layoutOptions
-    animated:boolean,
+    margins?:Margins,
+    baubles?:any[]
+    opts?:layoutOptions
+    animated?:boolean,
     x?:number,
     y?:number
 }

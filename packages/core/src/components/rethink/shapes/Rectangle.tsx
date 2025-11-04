@@ -31,6 +31,7 @@ export type BaseRectangleProps ={
     y:numerical
     interactions?:Interactions
     attrs:BaseRectAttrs,
+    animated?:boolean
 }
 
 

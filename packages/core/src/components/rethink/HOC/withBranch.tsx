@@ -1,12 +1,9 @@
 import React from 'react'
 import { NodeRef } from '../../../Evo';
-import { Interaction } from '../../Baubles/baubleTypes';
 import { layout, scale } from '../../../store/store';
 import { AttrAndInteractionApplier, Attrs, DShape} from '../types';
 import { layoutClass } from '../../../Layouts';
 import { normalizePath } from '../../../path.helpers';
-import { withAnimation } from './withAnimation';
-import { BasePath } from '../shapes/Branch';
 
 
 
@@ -22,20 +19,21 @@ export type BranchedProps<A extends Attrs> ={
     scale:scale;
     layout:layout;
     curvature?:number,
+    animated?:boolean
 
 }
 
 
 function withBranch<
   A extends Attrs,
-  E extends object = {}
+//   E extends object = {}
     >
     (
-    WrappedComponent: React.FC<DShape<A> & E>
-    ):React.FC<BranchedProps<A> & E> {
+    WrappedComponent: React.FC<DShape<A> >
+    ):React.FC<BranchedProps<A>> {
         // we will now calculate the x,y, attrs, and interactions
     function BranchedComponent(props:BranchedProps<A>){
-        const {node,parent,applyAttrInteractions,scale,layout,curvature=0,...rest} = props
+        const {node,parent,applyAttrInteractions,scale,layout,curvature=0,animated=false} = props
        
         const v = layout(node);
         const {layoutClass} = v;
@@ -45,7 +43,7 @@ function withBranch<
         const d=normalizePath(pathGenerator(points,curvature,layoutClass))
 
         const {attrs,interactions} = applyAttrInteractions(node)
-        return <WrappedComponent  attrs={attrs} interactions={interactions} d={d} {...(rest as E)} />
+        return <WrappedComponent  attrs={attrs} interactions={interactions} d={d} animated={animated} />
     } 
     return BranchedComponent;
 }

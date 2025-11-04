@@ -5,6 +5,7 @@ import { defineConfig, UserConfig } from 'vite'
 import react from "@vitejs/plugin-react"
 import dts from 'vite-plugin-dts'
 
+
 import packageJson from "./package.json";
 const __dirname = dirname(fileURLToPath(import.meta.url))
 

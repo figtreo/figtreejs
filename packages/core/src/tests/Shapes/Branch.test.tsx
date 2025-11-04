@@ -2,9 +2,11 @@ import React from "react";
 
 import { describe, expect, test } from "vitest";
 import { render,screen} from "@testing-library/react";
-import { BasePath, BaseBranchAttrs, BranchAttrs } from "./Branch";
-import { WithTestId } from "../types";
-import { withAnimation } from "../HOC/withAnimation";
+import { BaseBranchAttrs, BasePath, BranchAttrs } from "../../components/rethink/Shapes/Branch";
+import { WithTestId } from "./types";
+import { withAnimation } from "../../components/rethink/HOC/withAnimation";
+
+
 
 const Path = withAnimation(BasePath)
 
