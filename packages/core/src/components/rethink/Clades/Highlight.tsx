@@ -1,0 +1,65 @@
+import React from 'react'
+import { Attrs } from '../types';
+import { layoutClass } from "../../../Layouts";
+import { BasicRectangle } from '../shapes/Rectangle';
+import { BasePath } from '../shapes/Branch';
+import {arc as arcgen} from "d3-shape"
+import { CladeProps } from './makeClade';
+const arc = arcgen();
+//TODO add padding
+const padding = 10;
+
+export function Highlight<A extends Attrs>(props:CladeProps<A>){
+           const {clade,applyAttrInteractions,scale,layout,...rest} = props
+           const {root,leftMost,rightMost,mostDiverged} = clade
+        const v = scale(layout(root));
+        const {attrs,interactions} = applyAttrInteractions(root)
+        const lmv = scale(layout(leftMost)) // left most child v (top of highlight)
+        const rmv = scale(layout(rightMost)) // right most child v (top of highlight)
+        const mdv = scale(layout(mostDiverged)) // right most child v (top of highlight)
+        const {layoutClass:layoutType} = layout(root);
+        if(layoutType ===layoutClass.Rectangular){
+
+           
+            const width = mdv.x - v.x;
+            const height = Math.abs(lmv.x-rmv.x)
+
+            return (<BasicRectangle 
+                interactions = {interactions} 
+                attrs={{...attrs,width,height}}
+                x={v.x}
+                y={Math.min(lmv.y,rmv.y)} 
+                {...rest}
+                />)
+        }else if(layoutType ===layoutClass.Polar){
+                const origin = scale({x:0,y:0});
+                const transform =  `translate(${origin.x},${origin.y})` 
+                // const scaleR = scaleLinear().domain([0,scaleContext.maxR!]).range([0,verticies.axisLength!])
+                const minR =  v.r!; //padding?
+                let maxR = mdv.r!;
+                //TODO check this
+                let maxTheta=lmv.theta!;
+                let minTheta = rmv.theta!;
+              
+                const angleRange =  minTheta>maxTheta?2*Math.PI-(minTheta-(maxTheta)):(maxTheta)-minTheta;
+        
+                const startAngle = minTheta-padding+Math.PI/2
+                const endAngle = startAngle+angleRange +(padding*2)
+        
+                const shape = arc( {
+                    innerRadius:minR, 
+                    outerRadius:maxR+5,
+                    startAngle: startAngle,
+                    endAngle: endAngle
+                }
+            )!
+        
+                return <BasePath d={shape} attrs={attrs} transform={transform} interactions={interactions} {...rest}/> //transform={transform}
+            
+        }else{
+            return null
+        }
+
+
+
+}

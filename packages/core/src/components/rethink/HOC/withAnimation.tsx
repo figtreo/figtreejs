@@ -1,7 +1,7 @@
 import React from "react";
 
 import { useSpring } from "@react-spring/web";
-import { BaseBaubleProps, StripProps } from "../shapes/types";
+import {  BaseAttrs, BaseBaubleProps, StripProps } from "../types";
 
 
 
@@ -12,13 +12,15 @@ const animatableProperties = ["stroke", "strokeWidth", "fill", "width", "height"
 
 
 
-export function withAnimation
-<
-CProps extends BaseBaubleProps
+export function withAnimation<
+A extends BaseAttrs,
+CProps extends BaseBaubleProps & {attrs:A}
 >
 (
   AnimatableShape: React.FC<CProps>
-): React.FC<StripProps<CProps> & { animated?: boolean }> {
+): 
+React.FC<StripProps<CProps> & { animated?: boolean }> 
+{
   const AnimatedComponent: React.FC<StripProps<CProps> & { animated?: boolean }>  = (props) => {
     const { attrs, x, y, d, interactions, animated, ...rest } = props;
 

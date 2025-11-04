@@ -1,6 +1,6 @@
 import React from "react";
 import { animated, Interpolation, SpringValue, to, useSpring } from "@react-spring/web";
-import {Interactions, numerical,stringy, StripSprings} from "./types"
+import {Interactions, numerical,stringy, StripSprings} from "../types"
 import { isSpringNumber } from "./utils";
 import { withAnimation } from "../HOC/withAnimation";
 
@@ -34,7 +34,7 @@ export type BaseRectangleProps ={
 }
 
 
-export const BaseRectangle = function(props:BaseRectangleProps){
+export const CenteredRectangle = function(props:BaseRectangleProps){
    const {attrs,interactions,x,y} = props;
 
         const xCentered = centerNumber((x as numerical), attrs.width);
@@ -44,10 +44,17 @@ export const BaseRectangle = function(props:BaseRectangleProps){
         );
 };
 
+export const BaseRectangle = function(props:BaseRectangleProps){
+   const {attrs,interactions,x,y} = props;
+    return (
+        <animated.rect  className={"node-shape"} {...attrs} {...interactions} x={x} y={y} />
+        );
+};
 
 
 export  type RectAttrs= StripSprings<BaseRectAttrs>
 
 
-export const Rectangle = withAnimation(BaseRectangle)
+export const Rectangle = withAnimation(CenteredRectangle)
+export const BasicRectangle = withAnimation(BaseRectangle)
 
