@@ -1,7 +1,7 @@
 import React from "react";
 
 import { describe, test } from "vitest";
-import { render,screen} from "@testing-library/react";
+import { render} from "@testing-library/react";
 import { ImmutableTree } from "../../Evo";
 import { FigTree } from "../../components";
 import { rectangularLayout } from "../../Layouts";
@@ -44,8 +44,7 @@ describe("Figures", () => {
     );
     
      expect(fig).toMatchSnapshot()
-    // screen.debug()
-      // expect(fig).toBeInTheDocument();
+
 
   });
 
@@ -84,7 +83,7 @@ describe("Figures", () => {
         tree={tree}
         layout={rectangularLayout}
         baubles={[
-          Branches({attrs:{strokeWidth:2,stroke:(n)=>"black"}}),
+          Branches({attrs:{strokeWidth:2,stroke:()=>"black"}}),
           CircleNodes({filter:(n)=>tree.isExternal(n),attrs:{fill:"black",r:n=>n.number}}),
           RectangleNodes({filter:(n)=>!tree.isExternal(n),attrs:{fill:"black",width:10,height:4}}),
 

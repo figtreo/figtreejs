@@ -4,7 +4,7 @@ import { layout, scale } from "../../../store/store";
 import { withAnimation } from "../HOC/withAnimation";
 import withBranch, { BranchedProps } from "../HOC/withBranch";
 import { BasePath } from "../Shapes/Branch";
-import { Attrs, ResolvedAttrs, UserAttrs } from "../types";
+import { Attrs,  UserAttrs } from "../types";
 import { LiftToUser, useAttributeMappers } from "./helpers";
 
 

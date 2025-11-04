@@ -1,5 +1,5 @@
 import React from "react";
-import { AttrAndInteractionApplier, Attrs, ResolvedAttrs, UserAttrs } from "../types";
+import { AttrAndInteractionApplier, Attrs,  UserAttrs } from "../types";
 import { NodeRef, tipIterator, Tree } from "../../../Evo";
 import { layout, scale } from "../../../store/store";
 import { LiftToUser, useAttributeMappers } from '../Baubles/helpers';

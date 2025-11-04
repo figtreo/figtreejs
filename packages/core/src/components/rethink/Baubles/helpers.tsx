@@ -55,7 +55,7 @@ export function useAttributeMappers<A extends Attrs>(
 
     const baseAttrMapper = mapAttrsToProps((attrs));
 
-    const baseInteractionMapper = interactions?applyInteractions((interactions)):(n:NodeRef)=>undefined
+    const baseInteractionMapper = interactions?applyInteractions((interactions)):()=>undefined
 
     return function shapeProps(node:NodeRef) {
         return {attrs: baseAttrMapper(node),

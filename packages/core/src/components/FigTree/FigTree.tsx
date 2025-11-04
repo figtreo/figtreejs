@@ -49,12 +49,12 @@ function FigTree(props:FigtreeProps){
     
     const opts = props.opts?props.opts:defaultOpts.opts;
     
-    const {rootAngle = defaultOpts.opts!.rootAngle,
-        angleRange = defaultOpts.opts!.angleRange,
-        fishEye = defaultOpts.opts!.fishEye,
-        pollard = defaultOpts.opts!.pollard,
-        minRadius = defaultOpts.opts!.minRadius,
-        invert = defaultOpts.opts!.invert
+    const {rootAngle = defaultOpts.opts!.rootAngle!,
+        angleRange = defaultOpts.opts!.angleRange!,
+        fishEye = defaultOpts.opts!.fishEye!,
+        pollard = defaultOpts.opts!.pollard!,
+        minRadius = defaultOpts.opts!.minRadius!,
+        invert = defaultOpts.opts!.invert!
     } = opts!; 
  //todo this requires opts to not be undefined even though all the values are optional.
     let canvasWidth;
@@ -78,7 +78,7 @@ function FigTree(props:FigtreeProps){
     const [minY,maxY] = extent(tree.getNodes().map(n=>layoutMap(n)!.y));
 
 
-    const dimensions = {canvasWidth,canvasHeight,domainX:[minX!,maxX!],domainY:[minY!,maxY!],layoutClass,invert,pollard,minRadius,fishEye,rootAngle,angleRange};
+    const dimensions = {canvasWidth,canvasHeight,domainX:[minX!,maxX!] as [number,number],domainY:[minY!,maxY!] as [number,number],layoutClass,invert,pollard,minRadius,fishEye,rootAngle,angleRange};
     const scale = getScale(dimensions);
 
     return (
@@ -91,7 +91,7 @@ function FigTree(props:FigtreeProps){
                     {/*<rect x="0" y="0" width="100%" height="100%" fill="none" pointerEvents={"visible"} onClick={()=>nodeDispatch({type:"clearSelection"})}/>*/}
                     {/* <g transform={`translate(${margins.left},${margins.top})`} clipPath={'url(#clip)'} > */}
                     <g transform={`translate(${x},${y})`} >
-                        {baubles.map((b,i)=>b({key:i,tree,scale,layout:layoutMap,dimensions}))}
+                        {baubles.map((b)=>b({tree,scale,layout:layoutMap,dimensions,animated}))}
                     </g>
                 </g>
 
