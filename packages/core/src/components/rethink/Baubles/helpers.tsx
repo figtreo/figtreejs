@@ -1,10 +1,10 @@
 import { NodeRef } from "../../../Evo";
 import { Interaction } from "../../Baubles/baubleTypes";
-import { AttrAndInteractionApplier, Attrs, Fn, ResolvedAttrs, UserAttrs } from "../types";
+import { AttrAndInteractionApplier, Attrs, Fn  } from "../types";
 
 
 
-function isFn(x: unknown): x is Fn {
+export function isFn(x: unknown): x is Fn {
   return typeof x === "function";
 }
 
