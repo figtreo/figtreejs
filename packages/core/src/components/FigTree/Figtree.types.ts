@@ -1,5 +1,6 @@
-import { ImmutableTree,NodeRef } from "../../Evo/Tree";
+import { ImmutableTree,NodeRef, Tree } from "../../Evo/Tree";
 import { FunctionalVertex, layoutClass } from "../../Layouts/functional/rectangularLayout";
+import { layout, scale } from "../../store/store";
 
 export interface Margins{
     top:number,
@@ -41,13 +42,23 @@ export interface layoutOptions{
 
 type layoutFunction=(tree:ImmutableTree,options?:layoutOptions)=>(node:NodeRef)=>FunctionalVertex;
 
+//TODO sort this out with dimensions
+type BaubleTypes = {
+    tree:Tree,
+    scale:scale,
+    layout:layout,
+    dimensions?:dimensionType,
+    animated?:boolean
+}
+type Bauble = React.FC<BaubleTypes>
+
 export interface FigtreeProps {
     width:number,
     height:number,
     layout:layoutFunction,
     tree:ImmutableTree,
     margins?:Margins,
-    baubles?:any[]
+    baubles?:Bauble[]
     opts?:layoutOptions
     animated?:boolean,
     x?:number,

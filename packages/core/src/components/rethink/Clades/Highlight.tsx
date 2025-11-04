@@ -7,7 +7,7 @@ import {arc as arcgen} from "d3-shape"
 import { CladeProps } from './makeClade';
 const arc = arcgen();
 //TODO add padding
-const padding = 10;
+// const padding = 10;
 
 export function Highlight<A extends Attrs>(props:CladeProps<A>){
            const {clade,applyAttrInteractions,scale,layout,...rest} = props
@@ -36,10 +36,10 @@ export function Highlight<A extends Attrs>(props:CladeProps<A>){
                 const transform =  `translate(${origin.x},${origin.y})` 
                 // const scaleR = scaleLinear().domain([0,scaleContext.maxR!]).range([0,verticies.axisLength!])
                 const minR =  v.r!; //padding?
-                let maxR = mdv.r!;
+                const maxR = mdv.r!;
                 //TODO check this
-                let maxTheta=lmv.theta!;
-                let minTheta = rmv.theta!;
+                const maxTheta=lmv.theta!;
+                const minTheta = rmv.theta!;
                 const shape = arc( {
                     innerRadius:minR, 
                     outerRadius:maxR+5,

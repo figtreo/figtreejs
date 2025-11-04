@@ -1,12 +1,11 @@
 
 import React from "react";
 import Label, { BaseLabelProps } from "../Shapes/Label";
-import { Attrs, stringy, UserAttrs } from "../types";
+import { Attrs,  UserAttrs } from "../types";
 import { NodeRef, preOrderIterator, Tree } from "../../../Evo";
 import { isFn, LiftToUser, useAttributeMappers } from "./helpers";
 import { dimensionType } from "../../FigTree/Figtree.types";
 import { layout, scale } from "../../../store/store";
-import { simpleVertex } from "../../../Layouts/functional/rectangularLayout";
 import { textSafeDegrees } from "../../../store/polarScale";
 // TODO think about passing dimensions to all children
 

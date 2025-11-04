@@ -4,7 +4,7 @@ import { ImmutableTree } from "../../Evo";
 import { FigTree } from "../../components";
 import { polarLayout, rectangularLayout } from "../../Layouts";
 import { Branches } from "../../components/rethink/Baubles/Branches";
-import { CladeCartoon, CladeHighlight } from "../../components/rethink/Clades/makeClade";
+import { CladeCartoon } from "../../components/rethink/Clades/makeClade";
 
  const tree = ImmutableTree.fromNewick("((A:1,B:1):2,C:1);")
 
