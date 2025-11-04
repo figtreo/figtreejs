@@ -2,14 +2,14 @@ import React from 'react'
 import { NodeRef, preOrderIterator, Tree } from "../../../Evo";
 import { layout, scale } from "../../../store/store";
 
-import { AttrAndInteractionApplier, Attrs, ResolvedAttrs, UserAttrs } from "../types";
+import {  Attrs,  UserAttrs } from "../types";
 import { LiftToUser, useAttributeMappers } from './helpers';
 
 import withNode, { NodedProps } from "../HOC/withNode";
 import { withAnimation } from '../HOC/withAnimation';
 import { BaseCircle } from '../Shapes/Circle';
 import { CenteredRectangle } from '../Shapes/Rectangle';
-import { Interaction } from '../../Baubles/baubleTypes';
+
 // We will return a component that accepts (tree,scale, and layout) -  
 // the main class will use this
 

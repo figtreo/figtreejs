@@ -11,7 +11,7 @@ import { CladeHighlight } from "../../components/rethink/Clades/makeClade";
 describe("Figures", () => {
   test("renders a single highlight", () => {
     
-   render(
+   const fig = render(
       <svg width="400px" height="400px" data-testid="figure" xmlns="http://www.w3.org/2000/svg">
         <FigTree 
         width={400} 
@@ -26,14 +26,13 @@ describe("Figures", () => {
       </svg>
     );
     
-    const fig = screen.getByTestId('figure')
-        screen.debug()
+    expect(fig).toMatchSnapshot()
       // expect(fig).toBeInTheDocument();
 
   });
     test("renders a single polar highlight", () => {
     
-   render(
+   const fig = render(
       <svg width="400px" height="400px" data-testid="figure" xmlns="http://www.w3.org/2000/svg">
         <FigTree 
         width={400} 
@@ -49,8 +48,7 @@ describe("Figures", () => {
       </svg>
     );
     
-    const fig = screen.getByTestId('figure')
-        screen.debug()
+   expect(fig).toMatchSnapshot()
       // expect(fig).toBeInTheDocument();
 
   });
