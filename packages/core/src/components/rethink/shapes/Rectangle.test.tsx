@@ -3,15 +3,15 @@ import React from "react";
 
 import { describe, expect, test } from "vitest";
 import { render,screen} from "@testing-library/react";
-import { BaseRectangle, Rectangle,  RectAttrs } from "./Rectangle";
-import { WithTestId } from "./types";
+import { CenteredRectangle, Rectangle,  RectAttrs } from "./Rectangle";
+import { WithTestId } from "../types";
 
 
 describe("BaseRectangle", () => {
   test("renders an SVG rect which is centered and has the right attributes", () => {
    render(
       <svg>
-        <BaseRectangle x={2} y={2} attrs={{ width:2, height:3, 'data-testid': 'rect'} as WithTestId<RectAttrs>}  />
+        <CenteredRectangle x={2} y={2} attrs={{ width:2, height:3, 'data-testid': 'rect'} as WithTestId<RectAttrs>}  />
       </svg>
     );
     

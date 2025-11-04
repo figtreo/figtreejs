@@ -1,6 +1,6 @@
 import React from "react";
 import { to,  animated, SpringValue, Interpolation } from "@react-spring/web";
-import { numerical, stringy, StripSprings } from "./types";
+import { numerical, stringy, StripSprings } from "../types";
 import { isSpringNumber } from "./utils";
 import { withAnimation } from "../HOC/withAnimation";
 
