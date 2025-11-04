@@ -13,7 +13,7 @@ import { CircleNodes, RectangleNodes } from "../../components/rethink/Baubles/No
 describe("Figures", () => {
   test("renders a simple figure", () => {
     
-   render(
+   const fig = render(
       <svg width="400px" height="400px" data-testid="figure" xmlns="http://www.w3.org/2000/svg">
         <FigTree 
         width={400} 
@@ -24,14 +24,14 @@ describe("Figures", () => {
       </svg>
     );
     
-    const fig = screen.getByTestId('figure')
+     expect(fig).toMatchSnapshot()
 
       // expect(fig).toBeInTheDocument();
 
   });
   test("renders a tree with branch baubles", () => {
      const tree = ImmutableTree.fromNewick("((A:1,B:1):2,C:1);")
-   render(
+   const fig =render(
       <svg width="400px" height="400px" data-testid="figure" xmlns="http://www.w3.org/2000/svg">
         <FigTree 
         width={400} 
@@ -43,7 +43,7 @@ describe("Figures", () => {
       </svg>
     );
     
-    const fig = screen.getByTestId('figure')
+     expect(fig).toMatchSnapshot()
     // screen.debug()
       // expect(fig).toBeInTheDocument();
 
@@ -51,7 +51,7 @@ describe("Figures", () => {
 
     test("renders a tree with branch baubles and nodes", () => {
      const tree = ImmutableTree.fromNewick("((A:1,B:1):2,C:1);")
-   render(
+    const fig =render(
       <svg width="400px" height="400px" data-testid="figure" xmlns="http://www.w3.org/2000/svg">
         <FigTree 
         width={400} 
@@ -68,7 +68,7 @@ describe("Figures", () => {
       </svg>
     );
     
-    const fig = screen.getByTestId('figure')
+     expect(fig).toMatchSnapshot()
     // screen.debug()
       // expect(fig).toBeInTheDocument();
 
@@ -76,7 +76,7 @@ describe("Figures", () => {
 
       test("renders a tree with branch baubles and and functions", () => {
      const tree = ImmutableTree.fromNewick("((A:1,B:1):2,C:1);")
-   render(
+    const fig = render(
       <svg width="400px" height="400px" data-testid="figure" xmlns="http://www.w3.org/2000/svg">
         <FigTree 
         width={400} 
@@ -93,8 +93,7 @@ describe("Figures", () => {
       </svg>
     );
     
-    const fig = screen.getByTestId('figure')
-    screen.debug()
+   expect(fig).toMatchSnapshot()
       // expect(fig).toBeInTheDocument();
 
   });

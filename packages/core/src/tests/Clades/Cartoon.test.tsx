@@ -1,5 +1,5 @@
 import React from "react";
-import { render,screen} from "@testing-library/react";
+import { render} from "@testing-library/react";
 import { ImmutableTree } from "../../Evo";
 import { FigTree } from "../../components";
 import { polarLayout, rectangularLayout } from "../../Layouts";
@@ -11,7 +11,7 @@ import { CladeCartoon, CladeHighlight } from "../../components/rethink/Clades/ma
 describe("Figures", () => {
   test("renders a single highlight", () => {
     
-   render(
+   const fig = render(
       <svg width="400px" height="400px" data-testid="figure" xmlns="http://www.w3.org/2000/svg">
         <FigTree 
         width={400} 
@@ -26,14 +26,13 @@ describe("Figures", () => {
       </svg>
     );
     
-    const fig = screen.getByTestId('figure')
-        screen.debug()
-      // expect(fig).toBeInTheDocument();
+    
+    expect(fig).toMatchSnapshot()
 
   });
     test("renders a single polar highlight", () => {
     
-   render(
+   const fig = render(
       <svg width="400px" height="400px" data-testid="figure" xmlns="http://www.w3.org/2000/svg">
         <FigTree 
         width={400} 
@@ -49,8 +48,7 @@ describe("Figures", () => {
       </svg>
     );
     
-    const fig = screen.getByTestId('figure')
-        screen.debug()
+   expect(fig).toMatchSnapshot()
       // expect(fig).toBeInTheDocument();
 
   });
