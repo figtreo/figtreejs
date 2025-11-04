@@ -9,19 +9,19 @@ function isFn(x: unknown): x is Fn {
 }
 
 function mapAttrsToProps
-<U extends UserAttrs,>
-(attrs:U):
-(n:NodeRef)=>ResolvedAttrs<U>
+<A extends Attrs,>
+(attrs:LiftToUser<A>):
+(n:NodeRef)=>A
 {
     return function (node:NodeRef) { 
-        const props= {} as  Record<keyof U, number | string>;
+        const props= {} as  Record<keyof A, number | string>;
         for (const key in attrs) {
-            const k = key as keyof U;
+            const k = key as keyof A;
             const v = attrs[k];
             props[k] = isFn(v) ? v(node) : v as number|string;
             
         }
-        return props as ResolvedAttrs<U>;;
+        return props as A;
 }
 }
 
@@ -36,12 +36,14 @@ function applyInteractions(interactions:Record<string,(n:NodeRef)=>void>):(n:Nod
     }
 }
 
-
-export function useAttributeMappers
-<U extends UserAttrs>(
-  attrs: U,
-  interactions?:Record<string,(n:NodeRef)=>void>
-): AttrAndInteractionApplier<ResolvedAttrs<U>>
+type NodeFn<T> = (n: NodeRef) => T;
+export type LiftToUser<A extends Attrs> = {
+  [K in keyof A]: A[K] | NodeFn<A[K]>;
+};
+export function useAttributeMappers<A extends Attrs>(
+  attrs: LiftToUser<A>,
+  interactions?: Record<string,(n:NodeRef)=>void>
+): AttrAndInteractionApplier<A>
 {
 
     // const { attrs, interactions} = props;

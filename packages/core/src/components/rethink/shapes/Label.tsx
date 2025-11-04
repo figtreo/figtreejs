@@ -20,6 +20,7 @@ export interface BaseLabelProps  {
     attrs:BaseLabelAttrs,
     text:string;
     d?:stringy // path
+    animated?:boolean
 }
 // transform={to([animatedProperties.x, animatedProperties.y, animatedProperties.rotation], (x, y, rotation) => `translate(${x},${y}) rotate(${rotation})`)}
 function getTransform(x:numerical,y:numerical,rotation:numerical):string| SpringValue<string> | Interpolation<string>{

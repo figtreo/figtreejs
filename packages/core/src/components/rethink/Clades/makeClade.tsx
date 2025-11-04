@@ -2,7 +2,7 @@ import React from "react";
 import { AttrAndInteractionApplier, Attrs, ResolvedAttrs, UserAttrs } from "../types";
 import { NodeRef, tipIterator, Tree } from "../../../Evo";
 import { layout, scale } from "../../../store/store";
-import { useAttributeMappers } from '../Baubles/helpers';
+import { LiftToUser, useAttributeMappers } from '../Baubles/helpers';
 import { maxIndex } from "d3-array";
 import { Highlight } from "./Highlight";
 import { Cartoon } from "./Cartoon";
@@ -45,10 +45,9 @@ export type Clade={
 }
 
 function makeClade<
-A extends UserAttrs,
-E extends object
->(Clade:React.FC<CladeProps<ResolvedAttrs<A>> & E>): // TODO make this Cartooned props
-(initial:CartoonProps<A> & E) => React.FC<RemainingProps<A>>{
+A extends Attrs
+>(Clade:React.FC<CladeProps<A> >): // TODO make this Cartooned props
+(initial:CartoonProps<LiftToUser<A>>) => React.FC<RemainingProps<A>>{
     return (initial) =>{
         
         const Clades:React.FC<RemainingProps<A>> = ({scale,layout,tree}) =>{
@@ -56,8 +55,7 @@ E extends object
                            nodes,
                             keyBy = (n: NodeRef) => n.number, // or whatever your NodeRef key is
                             attrs,
-                            interactions,
-                            ...rest // all shape-specific extras E
+                            interactions
                         } = initial;
                     const applyAttrInteractions = useAttributeMappers<A>(attrs,interactions);
                     // construct clade
@@ -82,7 +80,7 @@ E extends object
                             applyAttrInteractions={applyAttrInteractions}
                             scale={scale} 
                             layout={layout} 
-                            {...(rest as E)}/>
+                           />
                         ))}
                         </g>
                     )

@@ -1,8 +1,8 @@
 import React from 'react'
 import { Attrs } from '../types';
 import { layoutClass } from "../../../Layouts";
-import { BasicRectangle } from '../shapes/Rectangle';
-import { BasePath } from '../shapes/Branch';
+import { BasicRectangle } from '../Shapes/Rectangle';
+import { BasePath } from '../Shapes/Branch';
 import {arc as arcgen} from "d3-shape"
 import { CladeProps } from './makeClade';
 const arc = arcgen();
@@ -22,7 +22,7 @@ export function Highlight<A extends Attrs>(props:CladeProps<A>){
 
            
             const width = mdv.x - v.x;
-            const height = Math.abs(lmv.x-rmv.x)
+            const height = Math.abs(lmv.y-rmv.y)
 
             return (<BasicRectangle 
                 interactions = {interactions} 
@@ -40,17 +40,11 @@ export function Highlight<A extends Attrs>(props:CladeProps<A>){
                 //TODO check this
                 let maxTheta=lmv.theta!;
                 let minTheta = rmv.theta!;
-              
-                const angleRange =  minTheta>maxTheta?2*Math.PI-(minTheta-(maxTheta)):(maxTheta)-minTheta;
-        
-                const startAngle = minTheta-padding+Math.PI/2
-                const endAngle = startAngle+angleRange +(padding*2)
-        
                 const shape = arc( {
                     innerRadius:minR, 
                     outerRadius:maxR+5,
-                    startAngle: startAngle,
-                    endAngle: endAngle
+                    startAngle: minTheta +Math.PI/2,
+                    endAngle: maxTheta + Math.PI/2
                 }
             )!
         

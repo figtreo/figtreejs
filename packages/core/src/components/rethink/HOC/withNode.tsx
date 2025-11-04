@@ -15,22 +15,22 @@ export type NodedProps<A extends Attrs> ={
     applyAttrInteractions:AttrAndInteractionApplier<A>;
     scale:scale;
     layout:layout;
+    animated?:boolean
 }
 
 // TODO may need to think about options here for caching
 function withNode<
   A extends Attrs,
-  E extends object = {}
     >
     (
-    WrappedComponent: React.FC<XYShape<A> & E>
-    ):React.FC<NodedProps<A> & E> {
+    WrappedComponent: React.FC<XYShape<A>>
+    ):React.FC<NodedProps<A>> {
         // we will now calculate the x,y, attrs, and interactions
     function NodedComponent(props:NodedProps<A>){
-        const {node,applyAttrInteractions,scale,layout,...rest} = props
+        const {node,applyAttrInteractions,scale,layout,animated=false} = props
         const v = scale(layout(node));
         const {attrs,interactions} = applyAttrInteractions(node)
-        return <WrappedComponent  attrs={attrs} interactions={interactions} x={v.x} y={v.y} {...(rest as E)} />
+        return <WrappedComponent  attrs={attrs} interactions={interactions} x={v.x} y={v.y} animated={animated} />
     } 
     return NodedComponent;
 }

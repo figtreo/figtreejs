@@ -19,9 +19,9 @@ CProps extends BaseBaubleProps & {attrs:A}
 (
   AnimatableShape: React.FC<CProps>
 ): 
-React.FC<StripProps<CProps> & { animated?: boolean }> 
+React.FC<StripProps<CProps> & { }> 
 {
-  const AnimatedComponent: React.FC<StripProps<CProps> & { animated?: boolean }>  = (props) => {
+  const AnimatedComponent: React.FC<StripProps<CProps>>  = (props) => {
     const { attrs, x, y, d, interactions, animated, ...rest } = props;
 
     // Pick only attrs we plan to animate

@@ -3,8 +3,8 @@ import React from "react";
 
 import { describe, expect, test } from "vitest";
 import { render,screen} from "@testing-library/react";
-import { BaseCircle, CircleAttrs, BaseCircleAttrs, Circle} from "./circle";
-import { WithTestId } from "../types";
+import { BaseCircle, BaseCircleAttrs, Circle, CircleAttrs } from "../../components/rethink/Shapes/Circle";
+import { WithTestId } from "./types";
 
 
 describe("BaseCircle", () => {

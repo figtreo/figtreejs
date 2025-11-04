@@ -10,7 +10,7 @@ import withNode, { NodedProps } from "./withNode";
 import { Attrs, ResolvedAttrs, UserAttrs } from "../types";
 import { useAttributeMappers } from '../Baubles/helpers';
 import { withAnimation } from './withAnimation';
-import { BaseCircle } from '../shapes/Circle';
+import { BaseCircle } from '../Shapes/Circle';
 
 // We will return a component that accepts (tree,scale, and layout) -  
 // the main class will use this

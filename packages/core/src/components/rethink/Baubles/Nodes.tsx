@@ -2,13 +2,14 @@ import React from 'react'
 import { NodeRef, preOrderIterator, Tree } from "../../../Evo";
 import { layout, scale } from "../../../store/store";
 
-import { ResolvedAttrs, UserAttrs } from "../types";
-import { useAttributeMappers } from '../Baubles/helpers';
+import { AttrAndInteractionApplier, Attrs, ResolvedAttrs, UserAttrs } from "../types";
+import { LiftToUser, useAttributeMappers } from './helpers';
 
 import withNode, { NodedProps } from "../HOC/withNode";
 import { withAnimation } from '../HOC/withAnimation';
-import { BaseCircle } from '../shapes/Circle';
-import { CenteredRectangle } from '../shapes/Rectangle';
+import { BaseCircle } from '../Shapes/Circle';
+import { CenteredRectangle } from '../Shapes/Rectangle';
+import { Interaction } from '../../Baubles/baubleTypes';
 // We will return a component that accepts (tree,scale, and layout) -  
 // the main class will use this
 
@@ -37,25 +38,26 @@ type RemainingProps<U extends UserAttrs> =
   Omit<NodeHOCProps<U>, keyof BaubleProps<U>>;
 
 
+// Lift a resolved attrs shape (A) so each key allows literal or function-of-node
+
+
 // todo don't expose in index
 function makeNodes<
-    U extends UserAttrs,
-    E extends object={}
-    >(ShapeComponent:React.FC<NodedProps<ResolvedAttrs<U>> & E>)
-    :(initial: BaubleProps<U> & E) => React.FC<RemainingProps<U>>  {
+    AResolved extends Attrs
+    >(ShapeComponent:React.FC<NodedProps<AResolved>>)
+    :(initial: BaubleProps<LiftToUser<AResolved>>) => React.FC<RemainingProps<AResolved>>  {
     
         return (initial)=>{
 
-        const Nodes: React.FC<RemainingProps<U>> = ({ tree, scale, layout }) => {
+        const Nodes: React.FC<RemainingProps<AResolved>> = ({ tree, scale, layout }) => {
                 const {
                     filter = () => true,
                     keyBy = (n: NodeRef) => n.number, // or whatever your NodeRef key is
                     attrs,
                     interactions,
-                    ...rest // all shape-specific extras E
                 } = initial;
 
-                const applyAttrInteractions = useAttributeMappers<U>(attrs,interactions);
+                const applyAttrInteractions = useAttributeMappers<AResolved>(attrs,interactions);
                 // pass x and y position here so can be animated with react-spring in useAnimation hook
                 return (
                     <g className={"node-layer"}>
@@ -68,7 +70,7 @@ function makeNodes<
                             applyAttrInteractions={applyAttrInteractions} 
                             scale={scale} 
                             layout={layout} 
-                            {...(rest as E)}/> 
+                            /> 
                         ))}
                     </g>
                 )

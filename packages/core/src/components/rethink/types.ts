@@ -21,8 +21,6 @@ export type Interactions = {
     }
 
 
-export type WithTestId<T> = T & { 'data-testid'?: string };
-
 
 
 export type BaseAttrs = Record<string, numerical | stringy>;
@@ -44,6 +42,7 @@ export type BaseBaubleProps= {
     x?: numerical;
     y?: numerical;
     d?: stringy;
+    animated?:boolean
   }
 
 export type BaubleProps = StripProps<BaseBaubleProps>

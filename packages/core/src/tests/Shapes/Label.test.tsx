@@ -3,7 +3,8 @@ import React from "react";
 
 import { describe, expect, test } from "vitest";
 import { render,screen} from "@testing-library/react";
-import BaseLabel, { Label } from "./Label";
+import BaseLabel, { Label } from "../../components/rethink/Shapes/Label";
+
 
 describe("BaseLabel", () => {
   test("renders an SVG text element that uses transform to position", () => {

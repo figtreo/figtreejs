@@ -14,7 +14,8 @@ export type BaseCircleProps ={
     x:numerical
     y:numerical
     interactions?:Interactions
-    attrs:BaseCircleAttrs
+    attrs:BaseCircleAttrs,
+    animated?:boolean
 }
 
 export const BaseCircle = function(props:BaseCircleProps){

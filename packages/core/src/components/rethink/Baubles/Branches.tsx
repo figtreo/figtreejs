@@ -3,9 +3,9 @@ import { NodeRef, preOrderIterator, Tree } from "../../../Evo";
 import { layout, scale } from "../../../store/store";
 import { withAnimation } from "../HOC/withAnimation";
 import withBranch, { BranchedProps } from "../HOC/withBranch";
-import { BasePath } from "../shapes/Branch";
-import { ResolvedAttrs, UserAttrs } from "../types";
-import { useAttributeMappers } from "./helpers";
+import { BasePath } from "../Shapes/Branch";
+import { Attrs, ResolvedAttrs, UserAttrs } from "../types";
+import { LiftToUser, useAttributeMappers } from "./helpers";
 
 
 export type BranchHOCProps<A extends UserAttrs> = {
@@ -18,6 +18,7 @@ export type BranchHOCProps<A extends UserAttrs> = {
         scale:scale,
         layout:layout
 }
+
 
 export type BranchProps<A extends UserAttrs> = {
         filter?:(n:NodeRef)=>boolean,
@@ -33,24 +34,23 @@ type RemainingProps<U extends UserAttrs> =
   Omit<BranchHOCProps<U>, keyof BranchProps<U>>;
 
 function makeBranches<
-    U extends UserAttrs,
-    E extends object={}
-    >(ShapeComponent:React.FC<BranchedProps<ResolvedAttrs<U>> & E>)
-    :(initial: BranchProps<U> & E) => React.FC<RemainingProps<U>>  {
+     AResolved extends Attrs,
+    >(ShapeComponent:React.FC<BranchedProps<AResolved>>)
+    :(initial: BranchProps<LiftToUser<AResolved>>) => React.FC<RemainingProps<AResolved>>  {
     
         return (initial)=>{
 
-        const Nodes: React.FC<RemainingProps<U>> = ({ tree, scale, layout }) => {
+        const Branches: React.FC<RemainingProps<AResolved>> = ({ tree, scale, layout }) => {
                 const {
                     filter = () => true,
                     keyBy = (n: NodeRef) => n.number, // or whatever your NodeRef key is
                     attrs,
                     interactions,
                     curvature,
-                    ...rest // all shape-specific extras E
+                    // ...rest // all shape-specific extras E
                 } = initial;
 
-                const applyAttrInteractions = useAttributeMappers<U>(attrs,interactions);
+                const applyAttrInteractions = useAttributeMappers<AResolved>(attrs,interactions);
                 // pass x and y position here so can be animated with react-spring in useAnimation hook
                 return (
                     <g className={"branch-layer"}>
@@ -65,13 +65,12 @@ function makeBranches<
                             curvature={curvature}
                             scale={scale} 
                             layout={layout} 
-                            
-                            {...(rest as E)}/> 
+                            /> 
                         ))}
                     </g>
                 )
             }
-        return Nodes;
+        return Branches;
     }
 }
 export const Branches = makeBranches(withBranch(withAnimation(BasePath)));

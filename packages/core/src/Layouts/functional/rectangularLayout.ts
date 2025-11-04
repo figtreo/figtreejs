@@ -25,7 +25,7 @@ export function baseLayout(lc:layoutClass){
     
     function layout (tree:ImmutableTree):(node:NodeRef)=>FunctionalVertex { 
         const map = new Map<NodeRef,FunctionalVertex>();
-        
+            
             let currentY = 0;
             for( const node of postOrderIterator(tree)){
     
