@@ -2,11 +2,12 @@ import React from "react";
 
 import { describe, expect, test } from "vitest";
 import { render,screen} from "@testing-library/react";
-import { BaseBranchAttrs, BasePath, BranchAttrs } from "../../components/rethink/Shapes/Branch";
 import { WithTestId } from "./types";
-import { withAnimation } from "../../components/rethink/HOC/withAnimation";
+import { withAnimation } from "../../components/HOC/withAnimation";
+import { StripSprings } from "../../components/Baubles/types";
+import { BaseBranchAttrsType, BasePath } from "../../components/Baubles/Shapes";
 
-
+export type BranchAttrs =StripSprings<BaseBranchAttrsType>
 
 const Path = withAnimation(BasePath)
 
@@ -15,7 +16,7 @@ describe("BaseBranch", () => {
      const d = "M 10,30 A 20,20 0,0,1 50,30 A 20,20 0,0,1 90,30Q 90,60 50,90 Q 10,60 10,30 z"
    render(
       <svg>
-        <BasePath d={d} attrs={{ stroke:"blue",'data-testid': 'branch'} as WithTestId<BaseBranchAttrs>}  />
+        <BasePath d={d} attrs={{ stroke:"blue",'data-testid': 'branch'} as WithTestId<BaseBranchAttrsType>}  />
       </svg>
     );
     

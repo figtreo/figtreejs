@@ -5,8 +5,9 @@ import { render} from "@testing-library/react";
 import { ImmutableTree } from "../../Evo";
 import { FigTree } from "../../components";
 import { rectangularLayout } from "../../Layouts";
-import { Branches } from "../../components/rethink/Baubles/Branches";
-import { CircleNodes, RectangleNodes } from "../../components/rethink/Baubles/Nodes";
+import { Branches } from "../../components/Baubles/Branches";
+import { CircleNodes, RectangleNodes } from "../../components/Baubles/Nodes";
+
 
  const tree = ImmutableTree.fromNewick("((A:1,B:1):2,C:1);")
 
@@ -27,6 +28,7 @@ describe("Figures", () => {
      expect(fig).toMatchSnapshot()
 
       // expect(fig).toBeInTheDocument();
+
 
   });
   test("renders a tree with branch baubles", () => {

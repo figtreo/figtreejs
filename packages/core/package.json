@@ -21,7 +21,9 @@
     "dev": "vite build --watch",
     "test": "vitest",
     "check-types": "tsc --noEmit",
-    "lint": "eslint src/"
+    "lint": "eslint src/",
+    "vitest-preview": "vitest-preview"
+
   },
   "exports": {
     ".": {

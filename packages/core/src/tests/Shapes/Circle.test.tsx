@@ -3,15 +3,20 @@ import React from "react";
 
 import { describe, expect, test } from "vitest";
 import { render,screen} from "@testing-library/react";
-import { BaseCircle, BaseCircleAttrs, Circle, CircleAttrs } from "../../components/rethink/Shapes/Circle";
 import { WithTestId } from "./types";
 
+import { withAnimation } from "../../components/HOC/withAnimation";
+import { StripSprings } from "../../components/Baubles/types";
+import { BaseCircle, BaseCircleAttrsType } from "../../components/Baubles/Shapes";
+
+const Circle = withAnimation(BaseCircle)
+type CircleAttrs = StripSprings<BaseCircleAttrsType>
 
 describe("BaseCircle", () => {
   test("renders an SVG circle with the right attributes", () => {
      render(
       <svg>
-        <BaseCircle x={0} y={0} attrs={{ r: 1,fill:"blue", 'data-testid': 'circle'} as WithTestId<BaseCircleAttrs>}  />
+        <BaseCircle x={0} y={0} attrs={{ r: 1,fill:"blue", 'data-testid': 'circle'} as WithTestId<BaseCircleAttrsType>}  />
       </svg>
     );
     

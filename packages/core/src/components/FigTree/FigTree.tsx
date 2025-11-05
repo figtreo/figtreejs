@@ -5,7 +5,8 @@ import { defaultInternalLayoutOptions,  rectangularLayout } from '../../Layouts'
 import { ImmutableTree } from '../../Evo/Tree';
 import { getScale } from '../../store/store';
 import { extent } from 'd3-array';
-import { Branches } from '../rethink/Baubles/Branches';
+import { Branches } from '../Baubles/Branches';
+
 
 
 /**

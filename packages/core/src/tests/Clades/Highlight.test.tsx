@@ -3,8 +3,9 @@ import { render} from "@testing-library/react";
 import { ImmutableTree } from "../../Evo";
 import { FigTree } from "../../components";
 import { polarLayout, rectangularLayout } from "../../Layouts";
-import { Branches } from "../../components/rethink/Baubles/Branches";
-import { CladeHighlight } from "../../components/rethink/Clades/makeClade";
+import { Branches } from "../../components/Baubles/Branches";
+import { CladeHighlight } from "../../components/Baubles/Clades/makeClade";
+
 
  const tree = ImmutableTree.fromNewick("((A:1,B:1):2,C:1);")
 

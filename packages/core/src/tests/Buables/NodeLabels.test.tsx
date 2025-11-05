@@ -3,9 +3,10 @@ import { render} from "@testing-library/react";
 import { ImmutableTree } from "../../Evo";
 import { FigTree } from "../../components";
 import { polarLayout, radialLayout, rectangularLayout } from "../../Layouts";
-import { Branches } from "../../components/rethink/Baubles/Branches";
 import React from "react";
-import { NodeLabels } from "../../components/rethink/Baubles/NodeLabels";
+import { Branches } from "../../components/Baubles/Branches";
+import { NodeLabels } from "../../components/Baubles/NodeLabels";
+
 
  const tree = ImmutableTree.fromNewick("((A:1,B:1):2,C:1);")
 

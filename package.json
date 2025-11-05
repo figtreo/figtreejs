@@ -22,7 +22,8 @@
     "lint-staged": "^16.2.6",
     "prettier": "^3.6.2",
     "turbo": "^2.5.8",
-    "vitest": "^4.0.5"
+    "vitest": "^4.0.5",
+    "vitest-preview": "^0.0.3"
   },
   "packageManager": "npm@11.6.2",
   "dependencies": {
