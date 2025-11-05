@@ -6,7 +6,8 @@ import { render,screen} from "@testing-library/react";
 import { WithTestId } from "./types";
 import { BaseRectangle, BaseRectAttrsType, CenteredRectangle } from "../../components/Baubles/Shapes";
 import { StripSprings } from "../../components/Baubles/types";
-import { withAnimation } from "../../components/HOC";
+
+import { withAnimation } from "../../components/HOC/withAnimation";
 
 export  type RectAttrs= StripSprings<BaseRectAttrsType>
 
@@ -40,8 +41,8 @@ describe("Rectangle", () => {
       );
       
       const rect = screen.getByTestId('rect')
-      expect(rect!.getAttribute('x')).toBe('1');
-      expect(rect!.getAttribute('y')).toBe('0.5');
+      expect(rect!.getAttribute('x')).toBe('2');
+      expect(rect!.getAttribute('y')).toBe('2');
       expect(rect!.getAttribute('width')).toBe('2');
       expect(rect!.getAttribute('height')).toBe('3');
     });
@@ -53,8 +54,8 @@ describe("Rectangle", () => {
       );
       
       const rect = screen.getByTestId('rect')
-      expect(rect!.getAttribute('x')).toBe('1');
-      expect(rect!.getAttribute('y')).toBe('0.5');
+      expect(rect!.getAttribute('x')).toBe('2');
+      expect(rect!.getAttribute('y')).toBe('2');
       expect(rect!.getAttribute('width')).toBe('2');
       expect(rect!.getAttribute('height')).toBe('3');
   });
