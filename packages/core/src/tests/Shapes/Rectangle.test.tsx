@@ -3,9 +3,15 @@ import React from "react";
 
 import { describe, expect, test } from "vitest";
 import { render,screen} from "@testing-library/react";
-import { CenteredRectangle, Rectangle, RectAttrs } from "../../components/rethink/Shapes/Rectangle";
 import { WithTestId } from "./types";
+import { BaseRectangle, BaseRectAttrsType, CenteredRectangle } from "../../components/Baubles/Shapes";
+import { StripSprings } from "../../components/Baubles/types";
+import { withAnimation } from "../../components/HOC";
 
+export  type RectAttrs= StripSprings<BaseRectAttrsType>
+
+
+const Rectangle = withAnimation(BaseRectangle)
 
 describe("BaseRectangle", () => {
   test("renders an SVG rect which is centered and has the right attributes", () => {

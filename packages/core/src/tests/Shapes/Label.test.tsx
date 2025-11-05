@@ -3,8 +3,15 @@ import React from "react";
 
 import { describe, expect, test } from "vitest";
 import { render,screen} from "@testing-library/react";
-import BaseLabel, { Label } from "../../components/rethink/Shapes/Label";
 
+import { StripSprings } from "../../components/Baubles/types";
+import  { BaseLabelAttrsType,BaseLabel } from "../../components/Baubles/Shapes/Label";
+import { withAnimation } from "../../components/HOC/withAnimation";
+
+export type LabelAttrs=StripSprings<BaseLabelAttrsType>
+
+
+export const Label = withAnimation(BaseLabel)
 
 describe("BaseLabel", () => {
   test("renders an SVG text element that uses transform to position", () => {

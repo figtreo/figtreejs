@@ -3,7 +3,8 @@ import { ScaleContinuousNumeric } from "d3-scale";
 import { scale } from "../../../store/store";
 import { layoutClass } from "../../../Layouts";
 import { dimensionType } from "../../FigTree/Figtree.types";
-import { plainAttr } from "../../Baubles/baubleTypes";
+import { Attrs } from "../../Baubles/types";
+
 
 
 export type AxisOrientation = "horizontal" | "vertical" | "polar"
@@ -16,7 +17,7 @@ export interface AxisProps {
     scaleBy?: number,
     reverse?: boolean,
     gap?: number,
-    title?: { text: string, padding: number, style: {[key:string]:plainAttr} },
+    title?: { text: string, padding: number, style: Attrs },
     ticks?: AxisTicksOptions ,
     direction?: AxisOrientation,
     scale: scale,
@@ -27,7 +28,7 @@ export interface AxisProps {
     children?: React.ReactNode,
     dimensions:dimensionType,
     layoutClass:layoutClass,
-    attrs:{[key:string]:plainAttr}
+    attrs:Attrs
     type?: "Polar" | "Rectangular" //yuck
 }
 
@@ -69,7 +70,7 @@ export const defaultAxisBarsProps={
 export interface AxisBarsProps{
     evenFill?:string,
     oddFill?:string,
-    attrs?:{[key:string]:plainAttr},
+    attrs?:Attrs,
     lift?:number,
     type?:"Rectangular"|"Polar"
     tickValues:number[],
