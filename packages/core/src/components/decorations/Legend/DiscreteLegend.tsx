@@ -1,4 +1,4 @@
-import { ScaleOrdinal } from "d3-scale"
+import type { ScaleOrdinal } from "d3-scale"
 import React from "react"
 
 

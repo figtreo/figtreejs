@@ -1,12 +1,14 @@
 
 import React from "react";
 import { isFn, useAttributeMappers } from "./helpers";
-import { LiftToUser } from "./types";
-import { Attrs, StripProps, UserAttrs } from "./types";
-import { NodeRef, preOrderIterator } from "../../Evo";
-import { BaubleTypes } from "../FigTree/Figtree.types";
+import type { LiftToUser } from "./types";
+import type { Attrs, StripProps, UserAttrs } from "./types";
+import type { NodeRef} from "../../Evo";
+import { preOrderIterator } from "../../Evo";
+import type { BaubleTypes } from "../FigTree/Figtree.types";
 import { textSafeDegrees } from "../../store/polarScale";
-import { BaseLabelProps,BaseLabel } from "./Shapes/Label";
+import type { BaseLabelProps} from "./Shapes/Label";
+import {BaseLabel } from "./Shapes/Label";
 import { withAnimation } from "../HOC/withAnimation";
 
 
@@ -50,20 +52,20 @@ function makeBranchLabels<
                         //move text to attrs so it can be applied
                       const fullAttrs = {...attrs,text}
                       const applyAttrInteractions = useAttributeMappers<A>(fullAttrs,{});
-                      const texter = isFn(text) ? (n:NodeRef)=> text(n) : ()=> text as string;
+                      const texter = isFn(text) ? (n:NodeRef)=> text(n) : ()=> text;
                       const {layoutClass} = dimensions
 
                     return (
                             <g className={"branch-label-layer"}>
                                 {[...preOrderIterator(tree)].filter(n=>filter(n) && !tree.isRoot(n)).map((node) => { 
                                         const v = layout(node);
-                                        const parentVertex = layout(tree.getParent(node)!);
+                                        const parentVertex = layout(tree.getParent(node));
                                         const scaledV = scale(v);
                                         const scaledpV = scale(parentVertex);
                                        
-                                        const rotation = layoutClass==="Polar"?textSafeDegrees(scaledV.theta!):0;
+                                        const rotation = layoutClass==="Polar"?textSafeDegrees(scaledV.theta):0;
                                         const step = scale({x:parentVertex.x,y:v.y})
-                                        const {dx,dy} = layoutClass==="Polar"? getPolarBranchDs(scaledV.theta!,gap):{dx:0,dy:-1*gap};
+                                        const {dx,dy} = layoutClass==="Polar"? getPolarBranchDs(scaledV.theta,gap):{dx:0,dy:-1*gap};
                                         const x = (layoutClass==="Polar"? (scaledV.x+step.x)/2 : (scaledV.x+scaledpV.x)/2 )+dx;
                                         const y = (layoutClass==="Polar"? (scaledV.y+step.y)/2  : layoutClass==="Radial"? (scaledV.y+scaledpV.y)/2 : scaledV.y )+dy;
 

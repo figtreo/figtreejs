@@ -4,7 +4,10 @@
 export * from  "./Clades"
 
 // exports from this directory
-export {Branches,BranchOptionsType} from "./Branches"
-export {BranchLabels,LabelOptionsType as LabelOptions} from "./BranchLabels"
+export type { BranchOptionsType } from './Branches';
+export { Branches } from "./Branches"
+export type { LabelOptionsType as LabelOptions } from './BranchLabels';
+export { BranchLabels } from "./BranchLabels"
 export {NodeLabels} from "./NodeLabels"
-export {CircleNodes,RectangleNodes,NodeOptionsType} from "./Nodes"
+export type { NodeOptionsType } from './Nodes';
+export { CircleNodes, RectangleNodes } from "./Nodes"

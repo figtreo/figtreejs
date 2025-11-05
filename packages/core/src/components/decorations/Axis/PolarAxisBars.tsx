@@ -1,6 +1,7 @@
 
 import React from 'react'
-import {  AxisBarsProps, defaultAxisBarsProps } from './Axis.types';
+import type {  AxisBarsProps} from './Axis.types';
+import { defaultAxisBarsProps } from './Axis.types';
 
 
 /**

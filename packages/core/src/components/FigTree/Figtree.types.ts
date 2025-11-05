@@ -1,6 +1,6 @@
-import { ImmutableTree,NodeRef, Tree } from "../../Evo/Tree";
-import { FunctionalVertex, layoutClass } from "../../Layouts/functional/rectangularLayout";
-import { layout, scale } from "../../store/store";
+import type { ImmutableTree,NodeRef, Tree } from "../../Evo/Tree";
+import type { FunctionalVertex, layoutClass } from "../../Layouts/functional/rectangularLayout";
+import type { layout, scale } from "../../store/store";
 
 export interface Margins{
     top:number,

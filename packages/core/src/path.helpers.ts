@@ -37,7 +37,7 @@ export function normalizePath(path:string):string{ //TODO this might remove the 
 
     while(curves.length<NUMBER_OF_POINTS){
         const toSplit = curves.pop();
-        const {left,right} = splitCubicB(toSplit!,0.5);
+        const {left,right} = splitCubicB(toSplit,0.5);
         curves.push(left);
         curves.push(right.reverse());
     }

@@ -1,4 +1,4 @@
-import { ImmutableTree } from "../../NormalizedTree"
+import type { ImmutableTree } from "../../NormalizedTree"
 import {  TaxonSet } from "../../Taxa/Taxon"
 
 import { NewickCharacterParser } from "../NewickCharacterParser"
@@ -166,7 +166,7 @@ export class NexusImporter {
           break
         }
         case /end/i.test(command):{
-          if (this.taxonSet!.getTaxonCount() === 0) {
+          if (this.taxonSet.getTaxonCount() === 0) {
             throw "hit end of taxa section but didn't find any taxa"
           }
           this.taxonSet.lockTaxa() // no more taxa can be added since we parsed a block;
@@ -210,7 +210,7 @@ export class NexusImporter {
                 this.taxonSet.addTaxon(token)
               }
               // const taxon = this.taxonSet.getTaxonByName(token)
-              this.translateTaxonMap.set(key!, token)
+              this.translateTaxonMap.set(key, token)
             }
             token = await this.nextToken()
             while (token === ",") {

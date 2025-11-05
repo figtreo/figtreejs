@@ -1,4 +1,4 @@
-import { Taxon, TaxonSet } from "./Taxa/Taxon";
+import type { Taxon, TaxonSet } from "./Taxa/Taxon";
 
 
 export interface NodeRef{

@@ -3,9 +3,10 @@ import React from "react";
 
 import { describe, expect, test } from "vitest";
 import { render,screen} from "@testing-library/react";
-import { WithTestId } from "./types";
-import { BaseRectangle, BaseRectAttrsType, CenteredRectangle } from "../../components/Baubles/Shapes";
-import { StripSprings } from "../../components/Baubles/types";
+import type { WithTestId } from "./types";
+import type { BaseRectAttrsType} from "../../components/Baubles/Shapes";
+import { BaseRectangle, CenteredRectangle } from "../../components/Baubles/Shapes";
+import type { StripSprings } from "../../components/Baubles/types";
 
 import { withAnimation } from "../../components/HOC/withAnimation";
 
@@ -26,10 +27,10 @@ describe("BaseRectangle", () => {
     // const circle = container.querySelector("circle");
 
     // expect(rect).toBeInTheDocument();
-    expect(rect!.getAttribute('x')).toBe('1');
-    expect(rect!.getAttribute('y')).toBe('0.5');
-    expect(rect!.getAttribute('width')).toBe('2');
-    expect(rect!.getAttribute('height')).toBe('3');
+    expect(rect.getAttribute('x')).toBe('1');
+    expect(rect.getAttribute('y')).toBe('0.5');
+    expect(rect.getAttribute('width')).toBe('2');
+    expect(rect.getAttribute('height')).toBe('3');
   });
 });
 describe("Rectangle", () => {
@@ -41,10 +42,10 @@ describe("Rectangle", () => {
       );
       
       const rect = screen.getByTestId('rect')
-      expect(rect!.getAttribute('x')).toBe('2');
-      expect(rect!.getAttribute('y')).toBe('2');
-      expect(rect!.getAttribute('width')).toBe('2');
-      expect(rect!.getAttribute('height')).toBe('3');
+      expect(rect.getAttribute('x')).toBe('2');
+      expect(rect.getAttribute('y')).toBe('2');
+      expect(rect.getAttribute('width')).toBe('2');
+      expect(rect.getAttribute('height')).toBe('3');
     });
     test("renders an animated rect which is centered and has the right attributes", () => {
     render(
@@ -54,9 +55,9 @@ describe("Rectangle", () => {
       );
       
       const rect = screen.getByTestId('rect')
-      expect(rect!.getAttribute('x')).toBe('2');
-      expect(rect!.getAttribute('y')).toBe('2');
-      expect(rect!.getAttribute('width')).toBe('2');
-      expect(rect!.getAttribute('height')).toBe('3');
+      expect(rect.getAttribute('x')).toBe('2');
+      expect(rect.getAttribute('y')).toBe('2');
+      expect(rect.getAttribute('width')).toBe('2');
+      expect(rect.getAttribute('height')).toBe('3');
   });
   });

@@ -62,20 +62,20 @@ describe("Test tree parsing and normalized Tree",()=>{
     it('height', function() {
         const newickString = `((((((virus1:0.1,virus2:0.12):0.08,(virus3:0.011,virus4:0.0087):0.15):0.03,virus5:0.21):0.2,(virus6:0.45,virus7:0.4):0.02):0.1,virus8:0.4):0.1,(virus9:0.04,virus10:0.03):0.6);`;
         const tree = ImmutableTree.fromNewick(newickString,{labelName:"prob"});
-        const virus1 = tree.getTaxonByName("virus1")!
+        const virus1 = tree.getTaxonByName("virus1")
         const virus1Node = tree.getNodeByTaxon(virus1)!
         expect(tree.getHeight(virus1Node)).toBeCloseTo(0.06,1e-6)
   })
   it('divergence', function() {
     const newickString = `((((((virus1:0.1,virus2:0.12):0.08,(virus3:0.011,virus4:0.0087):0.15):0.03,virus5:0.21):0.2,(virus6:0.45,virus7:0.4):0.02):0.1,virus8:0.4):0.1,(virus9:0.04,virus10:0.03):0.6);`;
     const tree = ImmutableTree.fromNewick(newickString,{labelName:"prob"});
-    const virus6 = tree.getTaxonByName("virus6")!;
+    const virus6 = tree.getTaxonByName("virus6");
     const virus6Node = tree.getNodeByTaxon(virus6)!
     expect(tree.getDivergence(virus6Node)).toBeCloseTo(0.67,1e-6)
 })
  it('general_parse', function() {
     const tree = ImmutableTree.fromNewick("(a:1,b:4)#l;"); 
-    const root = tree.getRoot()!;
+    const root = tree.getRoot();
     const label = tree.getLabel(root)
     expect(label).toEqual( "l");
 
@@ -102,7 +102,7 @@ describe("Test tree parsing and normalized Tree",()=>{
 
 it('scientific notation', function() {
     const tree = ImmutableTree.fromNewick("(a:1E1,b:2e-5);");
-    const root = tree.getRoot()!;
+    const root = tree.getRoot();
     const bl = [];
     const count = tree.getChildCount(root);
     const rootLength = tree.getLength(root);
@@ -131,20 +131,20 @@ it('whitespace', function() {
 });
 it('node id', function() {
     const tree = ImmutableTree.fromNewick("((A,T)#Node_1:1,(a,b:1));")
-    const A = tree.getTaxonByName("A")!;
-    const B = tree.getTaxonByName("b")!;
+    const A = tree.getTaxonByName("A");
+    const B = tree.getTaxonByName("b");
     const Anode = tree.getNodeByTaxon(A)!;
     const node1 = tree.getNodeByLabel("Node_1")!;
     const parent = tree.getParent(Anode);
 
     expect(parent).toEqual(node1);
 
-    expect(tree.getLength(tree.getNodeByTaxon(B)!)).toEqual(1);
+    expect(tree.getLength(tree.getNodeByTaxon(B))).toEqual(1);
     expect(tree.toNewick()).toEqual("((A,T)#Node_1:1,(a,b:1));")
 });
 it('root length and label', function() {
     const tree = ImmutableTree.fromNewick("((A,T)#Node_1:1,(a,b:1))#root:0.1;")
-    const root = tree.getRoot()!;
+    const root = tree.getRoot();
     const rootLength = tree.getLength(root);
     expect(rootLength).toEqual(0.1);
     const label = tree.getLabel(root);
@@ -167,7 +167,7 @@ it('fail unbalanced (', function(){
 
 it('comment', function() {
     const tree = ImmutableTree.fromNewick("(a[&test=ok],b:1);",{parseAnnotations:true})
-    const a = tree.getTaxonByName("a")!;
+    const a = tree.getTaxonByName("a");
     const aNode = tree.getNodeByTaxon(a)!;
     const testAnnotation =    tree.getAnnotationValue(aNode, "test",BaseAnnotationType.DISCRETE);
     expect(testAnnotation).toEqual( "ok" );
@@ -208,7 +208,7 @@ it('label annotation', function(){
     {parseAnnotations:true,labelName:"probability"});
     const virus1Node = tree.getNodeByTaxon(tree.getTaxonByName("virus1"))!;
 
-    const probability = tree.getAnnotationValue(tree.getParent(virus1Node)!, "probability",BaseAnnotationType.NUMERICAL);
+    const probability = tree.getAnnotationValue(tree.getParent(virus1Node), "probability",BaseAnnotationType.NUMERICAL);
     
     expect(probability).toEqual(0.95);
     

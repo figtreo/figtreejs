@@ -1,5 +1,5 @@
 import React from 'react';
-import { FigtreeProps } from './Figtree.types';
+import type { FigtreeProps } from './Figtree.types';
 import { defaultInternalLayoutOptions,  rectangularLayout } from '../../Layouts';
 
 import { ImmutableTree } from '../../Evo/Tree';
@@ -53,7 +53,7 @@ function FigTree(props:FigtreeProps){
     const {rootAngle = defaultOpts.opts!.rootAngle!,
         angleRange = defaultOpts.opts!.angleRange!,
         fishEye = defaultOpts.opts!.fishEye!,
-        pollard = defaultOpts.opts!.pollard!,
+        pollard = defaultOpts.opts!.pollard,
         minRadius = defaultOpts.opts!.minRadius!,
         invert = defaultOpts.opts!.invert!
     } = opts!; 
@@ -74,9 +74,9 @@ function FigTree(props:FigtreeProps){
     }
 
     const layoutMap = layout(tree,opts);
-    const {layoutClass} = layoutMap(tree.getRoot())!;
-    const [minX,maxX] = extent(tree.getNodes().map(n=>layoutMap(n)!.x));
-    const [minY,maxY] = extent(tree.getNodes().map(n=>layoutMap(n)!.y));
+    const {layoutClass} = layoutMap(tree.getRoot());
+    const [minX,maxX] = extent(tree.getNodes().map(n=>layoutMap(n).x));
+    const [minY,maxY] = extent(tree.getNodes().map(n=>layoutMap(n).y));
 
 
     const dimensions = {canvasWidth,canvasHeight,domainX:[minX!,maxX!] as [number,number],domainY:[minY!,maxY!] as [number,number],layoutClass,invert,pollard,minRadius,fishEye,rootAngle,angleRange};

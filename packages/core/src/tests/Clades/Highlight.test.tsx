@@ -21,7 +21,7 @@ describe("Figures", () => {
         layout={rectangularLayout}
         baubles={[
             Branches({attrs:{strokeWidth:2,stroke:"black"}}),
-            CladeHighlight({attrs:{fill:"red",opacity:0.5},nodes:[tree.getParent(tree.getNode("A")!)!]})
+            CladeHighlight({attrs:{fill:"red",opacity:0.5},nodes:[tree.getParent(tree.getNode("A"))!]})
         ]}
         />
       </svg>
@@ -42,7 +42,7 @@ describe("Figures", () => {
         layout={polarLayout}
         baubles={[
             Branches({attrs:{strokeWidth:2,stroke:"black"}}),
-            CladeHighlight({attrs:{fill:"red",opacity:0.5},nodes:[tree.getParent(tree.getNode("A")!)!]})
+            CladeHighlight({attrs:{fill:"red",opacity:0.5},nodes:[tree.getParent(tree.getNode("A"))!]})
         ]}
         />
         

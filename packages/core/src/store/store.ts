@@ -1,8 +1,9 @@
 import {  min } from 'd3-array'
-import {  NodeRef } from '../Evo/Tree'
-import { FunctionalVertex,layoutClass,simpleVertex} from '../Layouts/functional/rectangularLayout'
+import type {  NodeRef } from '../Evo/Tree'
+import type { FunctionalVertex,layoutClass,simpleVertex} from '../Layouts/functional/rectangularLayout'
 import { polarScaleMaker } from './polarScale'
-import { ScaleLinear, scaleLinear } from 'd3-scale'
+import type { ScaleLinear} from 'd3-scale';
+import { scaleLinear } from 'd3-scale'
 
 //todo remove props that are just the getting passed to children and use render props instead
 
@@ -13,7 +14,7 @@ export const useVertexFactory =(layout:layout)=> (node:NodeRef):FunctionalVertex
     if(v === undefined){
         throw new Error(`Node ${node} not found in layout`)
     }
-    return v!;
+    return v;
 }
 
 //Todo cache these

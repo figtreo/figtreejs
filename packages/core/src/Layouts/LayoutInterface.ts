@@ -1,7 +1,7 @@
 
 
 
-import { layoutOptions } from "../components/FigTree/Figtree.types"
+import type { layoutOptions } from "../components/FigTree/Figtree.types"
 //TODO make tree
 
 // TODO caching

@@ -1,13 +1,15 @@
 
 import React from "react";
 import { isFn, useAttributeMappers } from "./helpers";
-import { LiftToUser } from "./types";
-import { Attrs, StripProps } from "./types";
-import { NodeRef, preOrderIterator } from "../../Evo";
-import { BaubleTypes } from "../FigTree/Figtree.types";
+import type { LiftToUser } from "./types";
+import type { Attrs, StripProps } from "./types";
+import type { NodeRef} from "../../Evo";
+import { preOrderIterator } from "../../Evo";
+import type { BaubleTypes } from "../FigTree/Figtree.types";
 import { simpleVertex } from "../../Layouts/functional/rectangularLayout";
-import { LabelOptionsType } from "./BranchLabels";
-import  { BaseLabelProps,BaseLabel } from "./Shapes";
+import type { LabelOptionsType } from "./BranchLabels";
+import type { BaseLabelProps} from "./Shapes";
+import  {BaseLabel } from "./Shapes";
 import { withAnimation } from "../HOC/withAnimation";
 
 // TODO think about passing dimensions to all children
@@ -43,7 +45,7 @@ function makeNodeLabels<
                         //move text to attrs so it can be applied
                       const fullAttrs = {...attrs,text}
                       const applyAttrInteractions = useAttributeMappers<A>(fullAttrs,{});
-                      const texter = isFn(text) ? (n:NodeRef)=> (text as textFn)(n) : ()=> text as string;
+                      const texter = isFn(text) ? (n:NodeRef)=> (text as textFn)(n) : ()=> text;
                       const {domainX,layoutClass} = dimensions
 
                     return (
@@ -51,7 +53,7 @@ function makeNodeLabels<
                                 {[...preOrderIterator(tree)].filter(filter).map((node) => { 
                                         const v = layout(node);
                                        
-                                        const scaledV = scale(v) as simpleVertex &{nodeLabel:{dxFactor:number,dyFactor:number,alignmentBaseline: React.SVGAttributes<SVGTextElement>['alignmentBaseline'],rotation:number,textAnchor:React.SVGAttributes<SVGTextElement>['textAnchor']}}; // todo don't like that this is not really inherent
+                                        const scaledV = scale(v); // todo don't like that this is not really inherent
                                         const nodeLabel = scaledV.nodeLabel;
                                         const dx = nodeLabel.dxFactor*gap; 
                                         const dy = nodeLabel.dyFactor*gap;

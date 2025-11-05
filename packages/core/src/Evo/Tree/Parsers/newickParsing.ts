@@ -1,7 +1,8 @@
 
 
 import { NewickCharacterParser } from "./NewickCharacterParser";
-import { ImmutableTree, newickParsingOptions,TaxonSet } from "..";
+import type { ImmutableTree, newickParsingOptions} from "..";
+import {TaxonSet } from "..";
 
 export function parseNewick(newick: string,options:newickParsingOptions={}): ImmutableTree {
 

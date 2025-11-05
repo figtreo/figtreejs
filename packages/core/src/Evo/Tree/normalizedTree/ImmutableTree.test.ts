@@ -52,18 +52,18 @@ describe('ImmutableTree', () =>{
         });
         it('change height', function() {
             const tree=  ImmutableTree.fromNewick("((A:1,B:1):1,C:2);");
-            const A = tree.getTaxonByName("A")!;
-            const B = tree.getTaxonByName("B")!;
-            expect(tree.getHeight(tree.getNodeByTaxon(A)!)).toBe(0);
-            const tree1 = tree.setHeight(tree.getNodeByTaxon(A)!,0.5);
+            const A = tree.getTaxonByName("A");
+            const B = tree.getTaxonByName("B");
+            expect(tree.getHeight(tree.getNodeByTaxon(A))).toBe(0);
+            const tree1 = tree.setHeight(tree.getNodeByTaxon(A),0.5);
 
-            expect(tree1.getHeight(tree1.getNodeByTaxon(A)!)).toBe(0.5);
+            expect(tree1.getHeight(tree1.getNodeByTaxon(A))).toBe(0.5);
 
-            expect(tree1.getHeight(tree1.getNodeByTaxon(tree.getTaxonByName("B")!)!)).toBe(0);
-            expect(tree1.getLength(tree1.getNodeByTaxon(A)!)).toBe(0.5);
+            expect(tree1.getHeight(tree1.getNodeByTaxon(tree.getTaxonByName("B")))).toBe(0);
+            expect(tree1.getLength(tree1.getNodeByTaxon(A))).toBe(0.5);
 
-            expect(tree1.getDivergence(tree1.getNodeByTaxon(A)!)).toBe(1.5);
-            expect(tree1.getDivergence(tree1.getNodeByTaxon(B)!)).toBe(2);
+            expect(tree1.getDivergence(tree1.getNodeByTaxon(A))).toBe(1.5);
+            expect(tree1.getDivergence(tree1.getNodeByTaxon(B))).toBe(2);
         });
         it('order', function() {
 
@@ -79,28 +79,28 @@ describe('ImmutableTree', () =>{
             const newickString = `((((((virus1:0.1,virus2:0.12):0.08,(virus3:0.011,virus4:0.0087):0.15):0.03,virus5:0.21):0.2,(virus6:0.45,virus7:0.4):0.02):0.1,virus8:0.4):0.1,(virus9:0.04,virus10:0.03):0.6);`;
 
             const tree = ImmutableTree.fromNewick(newickString)
-            const virus3 = tree.getTaxonByName("virus3")!;
-            const tree1 = tree.reroot(tree.getParent(tree.getNodeByTaxon(virus3)!)!,0.5);
+            const virus3 = tree.getTaxonByName("virus3");
+            const tree1 = tree.reroot(tree.getParent(tree.getNodeByTaxon(virus3)),0.5);
             expect(tree1.toNewick()).toBe("(((virus1:0.1,virus2:0.12):0.08,(virus5:0.21,((virus6:0.45,virus7:0.4):0.02,(virus8:0.4,(virus9:0.04,virus10:0.03):0.7):0.1):0.2):0.03):0.075,(virus3:0.011,virus4:0.0087):0.075);")
         });
 
         it('rotate', function(){ 
             const tree = ImmutableTree.fromNewick("((A:1,B:1):1,C:2);");
-            const A = tree.getTaxonByName("A")!;
-            const B = tree.getTaxonByName("B")!;
-            const node = tree.getParent(tree.getNodeByTaxon(A)!)!;
-            const child1 = tree.getChild(node,0)!;
+            const A = tree.getTaxonByName("A");
+            const B = tree.getTaxonByName("B");
+            const node = tree.getParent(tree.getNodeByTaxon(A))!;
+            const child1 = tree.getChild(node,0);
             const rotatedTree = tree.rotate(node);
-            const child2 = rotatedTree.getChild(node,0)!;
+            const child2 = rotatedTree.getChild(node,0);
             
             expect(rotatedTree.getTaxonFromNode(child2)).toBe(B);
             expect(tree.getTaxonFromNode(child1)).toBe(A);
         });
         it('set height test',function(){
             const tree = ImmutableTree.fromNewick("((A:1,B:1):1,C:2);");
-            const A = tree.getTaxonByName("A")!;
-            const B = tree.getTaxonByName("B")!;
-            const node = tree.getParent(tree.getNodeByTaxon(A)!)!;  // current height is 1.
+            const A = tree.getTaxonByName("A");
+            const B = tree.getTaxonByName("B");
+            const node = tree.getParent(tree.getNodeByTaxon(A))!;  // current height is 1.
             // const child1 = tree.getChild(node,0)!;
             // const child2 = tree.getChild(node,1)!;
             expect(tree.getHeight(node)).toBe(1);
@@ -108,15 +108,15 @@ describe('ImmutableTree', () =>{
             expect(newTree.getLength(node)).toBe(1.5);
             expect(newTree.getHeight(node)).toBe(0.5);
 
-            expect(newTree.getLength(tree.getNodeByTaxon(A)!)).toBe(0.5);
-            expect(newTree.getLength(tree.getNodeByTaxon(B)!)).toBe(0.5);
+            expect(newTree.getLength(tree.getNodeByTaxon(A))).toBe(0.5);
+            expect(newTree.getLength(tree.getNodeByTaxon(B))).toBe(0.5);
 
         });
         it('set height test - negative length',function(){
             const tree = ImmutableTree.fromNewick("((A:1,B:1):1,C:2);");
-            const A = tree.getTaxonByName("A")!;
+            const A = tree.getTaxonByName("A");
 
-            const node = tree.getParent(tree.getNodeByTaxon(A)!)!;  // current height is 1.
+            const node = tree.getParent(tree.getNodeByTaxon(A))!;  // current height is 1.
             const root = tree.getRoot();
 
             const newTree = tree.setHeight(root,0.5);

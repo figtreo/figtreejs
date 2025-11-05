@@ -1,8 +1,10 @@
 
 // export function layout (tree:ImmutableTree,node?:NodeRef):Map<NodeRef,FunctionalVertex>{
 
-import { ImmutableTree, NodeRef, preOrderIterator, tipIterator } from "../../Evo";
-import { FunctionalVertex,layoutClass } from "./rectangularLayout";
+import type { ImmutableTree, NodeRef} from "../../Evo";
+import { preOrderIterator, tipIterator } from "../../Evo";
+import type { FunctionalVertex} from "./rectangularLayout";
+import {layoutClass } from "./rectangularLayout";
 
 //       //todo set some map for fixing the traversal of the tree.
 //       const vertexMap = new Map();
@@ -21,7 +23,7 @@ export function radialLayout (tree:ImmutableTree,options:{ spread?: number }={})
     console.log("radial layout with spread",spread);
     const map = new Map<NodeRef,FunctionalVertex>();
     
-        const dataStack: data[] = [{ angleStart: 0, angleEnd: 2 * Math.PI, xpos: 0, ypos: 0, level: 0, number: tree.getRoot()!.number }] // TODO start tree.
+        const dataStack: data[] = [{ angleStart: 0, angleEnd: 2 * Math.PI, xpos: 0, ypos: 0, level: 0, number: tree.getRoot().number }] // TODO start tree.
         for (const node of preOrderIterator(tree)) { 
             const { angleStart, angleEnd, xpos, ypos, level } = dataStack.pop()!
         
