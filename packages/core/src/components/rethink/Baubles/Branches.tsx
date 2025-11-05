@@ -6,6 +6,7 @@ import withBranch, { BranchedProps } from "../HOC/withBranch";
 import { BasePath } from "../Shapes/Branch";
 import { Attrs,  UserAttrs } from "../types";
 import { LiftToUser, useAttributeMappers } from "./helpers";
+import { BaubleTypes } from '../../FigTree/Figtree.types';
 
 
 export type BranchHOCProps<A extends UserAttrs> = {
@@ -29,18 +30,17 @@ export type BranchProps<A extends UserAttrs> = {
         animated?:boolean
 }
 
+type BranchPropTypes = Omit< BaubleTypes, "dimensions"|"animated"> & {animated?:boolean} // don't need dimensions here and animation is optional
 
-type RemainingProps<U extends UserAttrs> =
-  Omit<BranchHOCProps<U>, keyof BranchProps<U>>;
 
 function makeBranches<
      AResolved extends Attrs,
     >(ShapeComponent:React.FC<BranchedProps<AResolved>>)
-    :(initial: BranchProps<LiftToUser<AResolved>>) => React.FC<RemainingProps<AResolved>>  {
+    :(initial: BranchProps<LiftToUser<AResolved>>) => React.FC<BranchPropTypes>  {
     
         return (initial)=>{
 
-        const Branches: React.FC<RemainingProps<AResolved>> = ({ tree, scale, layout }) => {
+        const Branches: React.FC<BranchPropTypes> = ({ tree, scale, layout,animated=false }) => {
                 const {
                     filter = () => true,
                     keyBy = (n: NodeRef) => n.number, // or whatever your NodeRef key is
@@ -65,6 +65,7 @@ function makeBranches<
                             curvature={curvature}
                             scale={scale} 
                             layout={layout} 
+                            animated={animated}
                             /> 
                         ))}
                     </g>

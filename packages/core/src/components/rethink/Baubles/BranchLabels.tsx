@@ -4,7 +4,7 @@ import Label, { BaseLabelProps } from "../Shapes/Label";
 import { Attrs,  UserAttrs } from "../types";
 import { NodeRef, preOrderIterator, Tree } from "../../../Evo";
 import { isFn, LiftToUser, useAttributeMappers } from "./helpers";
-import { dimensionType } from "../../FigTree/Figtree.types";
+import { BaubleTypes, dimensionType } from "../../FigTree/Figtree.types";
 import { layout, scale } from "../../../store/store";
 import { textSafeDegrees } from "../../../store/polarScale";
 // TODO think about passing dimensions to all children
@@ -18,30 +18,19 @@ type LabelProps<A extends UserAttrs>={
         text:string | ((n:NodeRef)=>string)
 }
 
-type InternalLabelProps<A extends UserAttrs>={
-        filter?:(n:NodeRef)=>boolean,
-        keyBy?:(n:NodeRef)=>number|string,
-        attrs?:A,
-        aligned?:false,
-        gap? :number,
-        text:string | ((n:NodeRef)=>string)
-        tree:Tree,
-        scale:scale,
-        layout:layout,
-        dimensions:dimensionType
-}
 
-type RemainingProps<U extends UserAttrs> =
-  Omit<InternalLabelProps<U>, keyof LabelProps<U>>;
+type BranchLabelPropTypes = Omit< BaubleTypes, "animated"> & {animated?:boolean} //  animation is optional
+
+
 
 function makeBranchLabels<
  A extends Attrs,
 >(LabelComponent:React.FC<BaseLabelProps>):
- ( initial:LabelProps<LiftToUser<A>> ) => React.FC<RemainingProps<A>>{
+ ( initial:LabelProps<LiftToUser<A>> ) =>  React.FC<BranchLabelPropTypes>{
 
     return ( initial ) =>{
 
-        const Labels:React.FC<RemainingProps<A>> = ({ tree, scale, layout,dimensions }) => {
+        const Labels:React.FC<BranchLabelPropTypes> = ({ tree, scale, layout,dimensions, animated=false }) => {
                         const {
                             filter = () => true,
                             keyBy = (n: NodeRef) => n.number, // or whatever your NodeRef key is
@@ -85,6 +74,7 @@ function makeBranchLabels<
                                         x={x}
                                         y={y} 
                                         attrs={finalAttrs}
+                                        animated={animated}
                                         /> 
                                     })
                                 

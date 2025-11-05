@@ -4,7 +4,7 @@ import Label, { BaseLabelProps } from "../Shapes/Label";
 import { Attrs,  UserAttrs } from "../types";
 import { NodeRef, preOrderIterator, Tree } from "../../../Evo";
 import { isFn, LiftToUser, useAttributeMappers } from "./helpers";
-import { dimensionType } from "../../FigTree/Figtree.types";
+import { BaubleTypes, dimensionType } from "../../FigTree/Figtree.types";
 import { layout, scale } from "../../../store/store";
 import { simpleVertex } from "../../../Layouts/functional/rectangularLayout";
 // TODO think about passing dimensions to all children
@@ -19,31 +19,19 @@ type LabelProps<A extends UserAttrs>={
         text:string | ((n:NodeRef)=>string)
 }
 
-type InternalLabelProps<A extends UserAttrs>={
-        filter?:(n:NodeRef)=>boolean,
-        keyBy?:(n:NodeRef)=>number|string,
-        attrs?:A,
 
-        aligned?:boolean,
-        gap? :number,
-        text:string | ((n:NodeRef)=>string)
-        tree:Tree,
-        scale:scale,
-        layout:layout,
-        dimensions:dimensionType
-}
+type NodeLabelPropTypes = Omit< BaubleTypes, "animated"> & {animated?:boolean} //  animation is optional
 
-type RemainingProps<U extends UserAttrs> =
-  Omit<InternalLabelProps<U>, keyof LabelProps<U>>;
+
 
 function makeNodeLabels<
  A extends Attrs,
 >(LabelComponent:React.FC<BaseLabelProps>):
- ( initial:LabelProps<LiftToUser<A>> ) => React.FC<RemainingProps<A>>{
+ ( initial:LabelProps<LiftToUser<A>> ) => React.FC<NodeLabelPropTypes>{
 
     return ( initial ) =>{
 
-        const Labels:React.FC<RemainingProps<A>> = ({ tree, scale, layout,dimensions }) => {
+        const Labels:React.FC<NodeLabelPropTypes> = ({ tree, scale, layout,dimensions, animated=false}) => {
                         const {
                             filter = () => true,
                             keyBy = (n: NodeRef) => n.number, // or whatever your NodeRef key is
@@ -90,7 +78,7 @@ function makeNodeLabels<
                                         x={xpos}
                                         y={ypos} 
                                         attrs={finalAttrs}
-                                        
+                                        animated={animated}
                                         /> 
                                         // const element = <ShapeComponent key={v.id} {...rest}  {...shapeProps(v)}   vertex={v}  x={scales.x(v.x)} y={scales.y(v.y)}/> 
                                     })

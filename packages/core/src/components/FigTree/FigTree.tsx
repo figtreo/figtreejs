@@ -42,7 +42,7 @@ function FigTree(props:FigtreeProps){
         margins = defaultOpts.margins!,
         tree = defaultOpts.tree,
         layout = defaultOpts.layout,
-        animated=defaultOpts.animated,
+        animated=defaultOpts.animated!,
         baubles =defaultOpts.baubles!,
         // margins = defaultOpts.margins
     } = props;
