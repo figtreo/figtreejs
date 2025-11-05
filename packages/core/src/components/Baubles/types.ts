@@ -1,5 +1,5 @@
 import { SpringValue } from "@react-spring/web";
-import { NodeRef } from "../../Evo";
+import type { NodeRef } from "../../Evo";
 
 
 // **Types for animated shapes that can accept either animated values or primitives */

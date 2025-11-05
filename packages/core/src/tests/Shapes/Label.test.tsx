@@ -4,8 +4,9 @@ import React from "react";
 import { describe, expect, test } from "vitest";
 import { render,screen} from "@testing-library/react";
 
-import { StripSprings } from "../../components/Baubles/types";
-import  { BaseLabelAttrsType,BaseLabel } from "../../components/Baubles/Shapes/Label";
+import type { StripSprings } from "../../components/Baubles/types";
+import type { BaseLabelAttrsType} from "../../components/Baubles/Shapes/Label";
+import  {BaseLabel } from "../../components/Baubles/Shapes/Label";
 import { withAnimation } from "../../components/HOC/withAnimation";
 
 export type LabelAttrs=StripSprings<BaseLabelAttrsType>
@@ -22,7 +23,7 @@ describe("BaseLabel", () => {
     );
         const textEl = screen.getByText("TEST");
         expect(textEl.tagName.toLowerCase()).toBe("text");
-        expect(textEl!.getAttribute('transform')).toBe('translate(2,2) rotate(0)');
+        expect(textEl.getAttribute('transform')).toBe('translate(2,2) rotate(0)');
   });
     test("renders an SVG text element an alignment line", () => {
         const d = "M 10,30 A 20,20 0,0,1 50,30 A 20,20 0,0,1 90,30Q 90,60 50,90 Q 10,60 10,30 z"
@@ -48,7 +49,7 @@ describe("Label", () => {
     );
         const textEl = screen.getByText("TEST");
         expect(textEl.tagName.toLowerCase()).toBe("text");
-        expect(textEl!.getAttribute('transform')).toBe('translate(2,2) rotate(0)');
+        expect(textEl.getAttribute('transform')).toBe('translate(2,2) rotate(0)');
   });
     test("renders a label element an alignment line", () => {
         const d = "M 10,30 A 20,20 0,0,1 50,30 A 20,20 0,0,1 90,30Q 90,60 50,90 Q 10,60 10,30 z"
@@ -72,7 +73,7 @@ describe("Label", () => {
     );
         const textEl = screen.getByText("TEST");
         expect(textEl.tagName.toLowerCase()).toBe("text");
-        expect(textEl!.getAttribute('transform')).toBe('translate(2,2) rotate(0)');
+        expect(textEl.getAttribute('transform')).toBe('translate(2,2) rotate(0)');
   });
     test("renders an animated label element an alignment line", () => {
         const d = "M 10,30 A 20,20 0,0,1 50,30 A 20,20 0,0,1 90,30Q 90,60 50,90 Q 10,60 10,30 z"

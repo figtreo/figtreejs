@@ -42,7 +42,7 @@ export class TaxonSet implements TaxonSetInterface{
         }
         return this;
     }
-    addTaxon(taxonOrName:string | Taxon):TaxonSet{
+    addTaxon(taxonOrName:string | Taxon):this{
         if(this._data.finalized){
             throw new Error('Cannot add taxon to finalized set')
         }

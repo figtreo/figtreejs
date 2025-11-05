@@ -1,6 +1,8 @@
 import React from "react";
-import { to,  animated, SpringValue, Interpolation } from "@react-spring/web";
-import { BaseAttrs, isSpringNumber, numerical, stringy } from "../types";
+import type { SpringValue, Interpolation } from "@react-spring/web";
+import { to,  animated } from "@react-spring/web";
+import type { BaseAttrs, numerical, stringy } from "../types";
+import { isSpringNumber } from "../types";
 
 
 

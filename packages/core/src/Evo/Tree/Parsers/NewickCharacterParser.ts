@@ -1,5 +1,6 @@
-import { Taxon, TaxonSet } from "../Taxa/Taxon"
-import { NodeRef } from "../Tree.types"
+import type { Taxon} from "../Taxa/Taxon";
+import { TaxonSet } from "../Taxa/Taxon"
+import type { NodeRef } from "../Tree.types"
 import { ImmutableTree } from "../NormalizedTree/ImmutableTree"
 import { parseAnnotation } from "./AnnotationParser"
 
@@ -58,7 +59,7 @@ export class NewickCharacterParser {
       const annotations = parseAnnotation(t)
 
       for(const annotation of annotations){
-        this.tree = this.tree.annotateNode(this.currentNode!, annotation) as ImmutableTree
+        this.tree = this.tree.annotateNode(this.currentNode, annotation) as ImmutableTree
       }
       
 
@@ -99,8 +100,8 @@ export class NewickCharacterParser {
         throw new Error("branch length missing")
       }
 
-      const parent = this.nodeStack.pop()! as NodeRef
-      this.tree = this.tree.addChild(parent, this.currentNode!)
+      const parent = this.nodeStack.pop()!
+      this.tree = this.tree.addChild(parent, this.currentNode)
       // tree.setParent(currentNode!,parent)
 
       this.currentNode = parent
@@ -118,8 +119,8 @@ export class NewickCharacterParser {
       }
 
       // the end of an internal node
-      const parent = this.nodeStack.pop()! as NodeRef
-      this.tree = this.tree.addChild(parent, this.currentNode!)
+      const parent = this.nodeStack.pop()!
+      this.tree = this.tree.addChild(parent, this.currentNode)
       // tree.setParent(currentNode!,parent)
 
       this.level -= 1
@@ -132,7 +133,7 @@ export class NewickCharacterParser {
     } else {
       // not any specific token so may be a label, a length, or an external node name
       if (this.lengthNext) {
-        this.tree = this.tree._setLength(this.currentNode!, parseFloat(t))
+        this.tree = this.tree._setLength(this.currentNode, parseFloat(t))
         this.lengthNext = false
       } else if (this.labelNext) {
         if (!t.startsWith("#")) {
@@ -146,7 +147,7 @@ export class NewickCharacterParser {
               value: value,
             }
             this.tree = this.tree.annotateNode(
-              this.currentNode!,
+              this.currentNode,
               label_annotation,
             ) as ImmutableTree
           } else {
@@ -155,7 +156,7 @@ export class NewickCharacterParser {
             )
           }
         } else {
-          this.tree = this.tree.setLabel(this.currentNode!, t.slice(1)) //remove the # todo put it back when writing to newick
+          this.tree = this.tree.setLabel(this.currentNode, t.slice(1)) //remove the # todo put it back when writing to newick
         }
         this.labelNext = false
       } else {

@@ -6,6 +6,7 @@ import { polarLayout, rectangularLayout } from "../../Layouts";
 import { Branches } from "../../components/Baubles/Branches";
 import { CladeCartoon } from "../../components/Baubles/Clades/makeClade";
 
+
  const tree = ImmutableTree.fromNewick("((A:1,B:1):2,C:1);")
 
 describe("Figures", () => {
@@ -20,7 +21,7 @@ describe("Figures", () => {
         layout={rectangularLayout}
         baubles={[
             Branches({attrs:{strokeWidth:2,stroke:"black"}}),
-            CladeCartoon({attrs:{fill:"red",opacity:0.5},nodes:[tree.getParent(tree.getNode("A")!)!]})
+            CladeCartoon({attrs:{fill:"red",opacity:0.5},nodes:[tree.getParent(tree.getNode("A"))!]})
         ]}
         />
       </svg>
@@ -41,7 +42,7 @@ describe("Figures", () => {
         layout={polarLayout}
         baubles={[
             Branches({attrs:{strokeWidth:2,stroke:"black"}}),
-            CladeCartoon({attrs:{fill:"red",opacity:0.5},nodes:[tree.getParent(tree.getNode("A")!)!]})
+            CladeCartoon({attrs:{fill:"red",opacity:0.5},nodes:[tree.getParent(tree.getNode("A"))!]})
         ]}
         />
         

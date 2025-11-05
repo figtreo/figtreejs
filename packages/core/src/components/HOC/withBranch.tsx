@@ -1,7 +1,7 @@
 import React from 'react'
-import { NodeRef } from '../../Evo';
-import { layout, scale } from '../../store/store';
-import { AttrAndInteractionApplier, Attrs, DShape} from '../Baubles/types';
+import type { NodeRef } from '../../Evo';
+import type { layout, scale } from '../../store/store';
+import type { AttrAndInteractionApplier, Attrs, DShape} from '../Baubles/types';
 import { layoutClass } from '../../Layouts';
 import { normalizePath } from '../../path.helpers';
 

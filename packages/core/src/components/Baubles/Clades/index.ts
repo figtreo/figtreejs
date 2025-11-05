@@ -1,2 +1,3 @@
 // exporting for public use
-export {CladeHighlight,CladeCartoon,CladeOptionsType} from "./makeClade"
+export type { CladeOptionsType } from './makeClade';
+export { CladeHighlight, CladeCartoon } from "./makeClade"

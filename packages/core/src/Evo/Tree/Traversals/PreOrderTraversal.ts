@@ -1,5 +1,5 @@
-import { Tree, NodeRef } from "../Tree.types";
-import { TreeTraversal } from "./TraversalTypes";
+import type { Tree, NodeRef } from "../Tree.types";
+import type { TreeTraversal } from "./TraversalTypes";
 export class PreOrderTraversalCache implements TreeTraversal{
     _forwardCache:Map<NodeRef,NodeRef>
     _reverseCache:Map<NodeRef,NodeRef>
@@ -29,12 +29,12 @@ export class PreOrderTraversalCache implements TreeTraversal{
                 throw new Error("Tree has no root node. Cannot traverse tree");
             }
         }
-        yield* traverse(node!);
+        yield* traverse(node);
     }
     
 //Check we've been to next otherwise we need to update again.
     getNext(tree: Tree, node: NodeRef): NodeRef|undefined{
-        if(this._forwardCache.has(node) && this._forwardCache.has(this._forwardCache.get(node)!)) return this._forwardCache.get(node)! //if this node hasn't changed nor the next
+        if(this._forwardCache.has(node) && this._forwardCache.has(this._forwardCache.get(node))) return this._forwardCache.get(node)! //if this node hasn't changed nor the next
         if(tree.isRoot(node)){ //start over
            return undefined;
         }
@@ -51,13 +51,13 @@ export class PreOrderTraversalCache implements TreeTraversal{
       
     }
     getPrevious(tree: Tree, node: NodeRef): NodeRef|undefined {
-        if(this._reverseCache.has(node) && this._reverseCache.has(this._reverseCache.get(node)!)) return this._reverseCache.get(node); //if this node hasn't changed nor the next
+        if(this._reverseCache.has(node) && this._reverseCache.has(this._reverseCache.get(node))) return this._reverseCache.get(node); //if this node hasn't changed nor the next
         if(node ===this.traverse(tree).next().value){
             return undefined;
         }
         if(tree.isInternal(node)){
             const childCount = tree.getChildCount(node)-1;
-            const lastChild = tree.getChild(node,childCount)!;
+            const lastChild = tree.getChild(node,childCount);
             this._reverseCache.set(node,lastChild);
             this._forwardCache.set(lastChild,node);
         }

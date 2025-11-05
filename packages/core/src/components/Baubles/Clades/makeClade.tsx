@@ -1,13 +1,14 @@
 import React from "react";
-import { NodeRef, tipIterator } from "../../../Evo";
-import { layout, scale } from "../../../store/store";
+import type { NodeRef} from "../../../Evo";
+import { tipIterator } from "../../../Evo";
+import type { layout, scale } from "../../../store/store";
 import { maxIndex } from "d3-array";
 import { Highlight } from "./Highlight";
 import { Cartoon } from "./Cartoon";
-import { AttrAndInteractionApplier, Attrs, UserAttrs } from "../types";
+import type { AttrAndInteractionApplier, Attrs, UserAttrs } from "../types";
 import { useAttributeMappers } from "../helpers";
-import { LiftToUser } from "../types";
-import { BaubleTypes } from "../../FigTree/Figtree.types";
+import type { LiftToUser } from "../types";
+import type { BaubleTypes } from "../../FigTree/Figtree.types";
 
 
 

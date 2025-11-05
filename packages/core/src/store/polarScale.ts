@@ -79,7 +79,7 @@ export function polarScaleMaker(maxX:number,maxY:number,canvasWidth:number,canva
 
             const nodeLabel= {
                 alignmentBaseline:"middle",
-                textAnchor: (nTheta!>Math.PI/2 && nTheta!<3*Math.PI/2?"end":" start"),
+                textAnchor: (nTheta>Math.PI/2 && nTheta<3*Math.PI/2?"end":" start"),
                 dxFactor:Math.cos(nTheta),
                 dyFactor:Math.sin(nTheta),
                 rotation:textSafeDegrees(nTheta)}

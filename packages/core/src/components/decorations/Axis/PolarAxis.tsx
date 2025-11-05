@@ -2,10 +2,11 @@ import React from 'react'
 
 import { mean, quantile, range } from "d3-array"
 import {  scaleLinear } from 'd3-scale';
-import { AxisProps, AxisTicksOptions, defaultAxisProps } from './Axis.types';
+import type { AxisProps, AxisTicksOptions} from './Axis.types';
+import { defaultAxisProps } from './Axis.types';
 
 import { normalizeAngle } from '../../../store/polarScale';
-import { dimensionType } from '../../FigTree/Figtree.types';
+import type { dimensionType } from '../../FigTree/Figtree.types';
 
 //TODO do things to scale and allow date as origin not maxD.
 
@@ -14,19 +15,19 @@ export default function PolarAxis(props: AxisProps) {
 
   const { dimensions, layoutClass, attrs} = props
   const {
-    direction = defaultAxisProps.direction!,
-    gap = defaultAxisProps.gap!,
-    strokeWidth = defaultAxisProps.strokeWidth!,
+    direction = defaultAxisProps.direction,
+    gap = defaultAxisProps.gap,
+    strokeWidth = defaultAxisProps.strokeWidth,
     scale:figureScale,
 
   } = props
   
   const ticks = props.ticks
-    ? { ...defaultAxisProps.ticks!, ...props.ticks }
-    : defaultAxisProps.ticks!
+    ? { ...defaultAxisProps.ticks, ...props.ticks }
+    : defaultAxisProps.ticks
   const title = props.title
-    ? { ...defaultAxisProps.title!, ...props.title }
-    : defaultAxisProps.title!
+    ? { ...defaultAxisProps.title, ...props.title }
+    : defaultAxisProps.title
 
    
   // todo options to provide tick values so can specify breaks
@@ -38,8 +39,8 @@ export default function PolarAxis(props: AxisProps) {
     tickValues = (ticks as AxisTicksOptions).values!
     } else {
       if (!scale.ticks) {
-          tickValues = range(ticks.number!).map((i) =>
-          quantile(scale.domain(), i / (ticks.number! - 1)),
+          tickValues = range(ticks.number).map((i) =>
+          quantile(scale.domain(), i / (ticks.number - 1)),
           ) as number[]
       } else {
           tickValues = scale.ticks(ticks.number)
@@ -50,7 +51,7 @@ export default function PolarAxis(props: AxisProps) {
      // start at the root and go outwards
 
 
-    const theta = normalizeAngle(figureScale({x:dimensions.domainX[1],y:dimensions.domainY[1]}).theta!);
+    const theta = normalizeAngle(figureScale({x:dimensions.domainX[1],y:dimensions.domainY[1]}).theta);
     const startAngle = figureScale({x:dimensions.domainX[1],y:dimensions.domainY[0]}).theta! + Math.PI/2 ;  
     const endAngle = startAngle + 0.05+ (figureScale({x:dimensions.domainX[1],y:dimensions.domainY[1]}).theta! - figureScale({x:dimensions.domainX[1],y:dimensions.domainY[0]}).theta!);
 
@@ -110,7 +111,7 @@ export default function PolarAxis(props: AxisProps) {
                         <g key={`tick-${i}`} transform={`translate(${point.x},${point.y}) rotate(90)`}>
                             
                             <line x1={x2} y1={y2} x2={0} y2={0} stroke={"black"} strokeWidth={strokeWidth} {...attrs} />
-                            <text transform={`translate(${ xPadding },${yPadding}) rotate(-90)`} textAnchor={"middle"} dominantBaseline={"central"}  {...ticks.style} >{ticks.format!(t)}</text>
+                            <text transform={`translate(${ xPadding },${yPadding}) rotate(-90)`} textAnchor={"middle"} dominantBaseline={"central"}  {...ticks.style} >{ticks.format(t)}</text>
                         </g>
                        
                     )

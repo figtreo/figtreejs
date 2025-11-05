@@ -1,6 +1,8 @@
 import React from "react";
-import { animated, Interpolation, SpringValue, to } from "@react-spring/web";
-import {BaseAttrs, InternalInteractionType, isSpringNumber, numerical} from "../types"
+import type { Interpolation, SpringValue} from "@react-spring/web";
+import { animated, to } from "@react-spring/web";
+import type {BaseAttrs, InternalInteractionType, numerical} from "../types";
+import { isSpringNumber} from "../types"
 
 
 
@@ -41,8 +43,8 @@ export type BaseRectangleProps ={
 export const CenteredRectangle = function(props:BaseRectangleProps){
    const {attrs,interactions,x,y} = props;
 
-        const xCentered = centerNumber((x as numerical), attrs.width);
-        const yCentered = centerNumber((y as numerical), attrs.height);
+        const xCentered = centerNumber((x), attrs.width);
+        const yCentered = centerNumber((y), attrs.height);
     return (
         <animated.rect  className={"node-shape"} {...attrs} {...interactions} x={xCentered} y={yCentered} />
         );

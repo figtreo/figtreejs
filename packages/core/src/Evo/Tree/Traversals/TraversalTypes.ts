@@ -1,4 +1,4 @@
-import { NodeRef, Tree } from "../Tree.types";
+import type { NodeRef, Tree } from "../Tree.types";
 
 export  interface TreeTraversal{
     getNext(tree:Tree,node:NodeRef):NodeRef|undefined;

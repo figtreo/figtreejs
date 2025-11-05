@@ -1,7 +1,7 @@
 import React from "react";
 
 import { useSpring } from "@react-spring/web";
-import {  BaseAttrs, BaseBaubleProps, StripProps } from "../Baubles/types";
+import type {  BaseAttrs, BaseBaubleProps, StripProps } from "../Baubles/types";
 
 
 

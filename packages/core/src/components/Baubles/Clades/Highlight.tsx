@@ -2,8 +2,8 @@ import React from 'react'
 
 import { layoutClass } from "../../../Layouts";
 import {arc as arcgen} from "d3-shape"
-import { InternalCladePropType } from './makeClade';
-import { Attrs } from '../types';
+import type { InternalCladePropType } from './makeClade';
+import type { Attrs } from '../types';
 import { BasePath, BaseRectangle} from '../Shapes';
 const arc = arcgen();
 //TODO add padding

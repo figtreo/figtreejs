@@ -1,6 +1,7 @@
 {
   "name": "figtreejs-dev",
   "private": true,
+  "type": "module",
   "scripts": {
     "build": "turbo build",
     "dev": "turbo dev",
@@ -12,18 +13,20 @@
   "workspaces": [
     "packages/core",
     "packages/browser",
-    "packages/eslint-config",
     "apps/figtree"
   ],
   "devDependencies": {
-    "@figtreejs/eslint-config": "*",
+    "@eslint/js": "^9.39.1",
     "@testing-library/react": "^16.3.0",
+    "eslint": "^9.39.1",
+    "eslint-plugin-vitest": "^0.5.4",
     "husky": "^9.1.7",
+    "jiti": "^2.6.1",
     "lint-staged": "^16.2.6",
     "prettier": "^3.6.2",
     "turbo": "^2.5.8",
-    "vitest": "^4.0.5",
-    "vitest-preview": "^0.0.3"
+    "typescript-eslint": "^8.46.3",
+    "vitest": "^4.0.5"
   },
   "packageManager": "npm@11.6.2",
   "dependencies": {

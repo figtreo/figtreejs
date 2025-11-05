@@ -1,6 +1,10 @@
 
 // Package exports
-export {BaseCircle,BaseCircleAttrsType} from "./Circle"
-export {BaseBranchAttrsType,BasePath} from "./Branch"
-export {BaseRectAttrsType,BaseRectangle,CenteredRectangle} from "./Rectangle"
-export {BaseLabelProps,BaseLabel} from "./Label"
+export type { BaseCircleAttrsType } from './Circle';
+export { BaseCircle } from "./Circle"
+export type { BaseBranchAttrsType } from './Branch';
+export { BasePath } from "./Branch"
+export type { BaseRectAttrsType } from './Rectangle';
+export { BaseRectangle, CenteredRectangle } from "./Rectangle"
+export type { BaseLabelProps } from './Label';
+export { BaseLabel } from "./Label"

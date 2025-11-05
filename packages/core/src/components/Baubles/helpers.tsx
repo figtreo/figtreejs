@@ -1,5 +1,5 @@
-import { NodeRef } from "../../Evo";
-import { AttrAndInteractionApplier, Attrs, Fn, LiftToUser } from "./types";
+import type { NodeRef } from "../../Evo";
+import type { AttrAndInteractionApplier, Attrs, Fn, LiftToUser } from "./types";
 
 
 export function isFn(x: unknown): x is Fn {
@@ -16,7 +16,7 @@ function mapAttrsToProps
         for (const key in attrs) {
             const k = key as keyof A;
             const v = attrs[k];
-            props[k] = isFn(v) ? v(node) : v as number|string;
+            props[k] = isFn(v) ? v(node) : v;
             
         }
         return props as A;
@@ -28,7 +28,7 @@ function applyInteractions(interactions:Record<string,(n:NodeRef)=>void>):(n:Nod
     return function (node:NodeRef) {
         const props:Record<string,()=>void> = {};
         for (const [key, value] of Object.entries(interactions)) {
-                props[key] = () => value(node) // wraps base interaction
+                props[key] = () => { value(node); } // wraps base interaction
         }
         return props;
     }

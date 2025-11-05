@@ -1,11 +1,12 @@
 import React from "react"
 import { line } from "d3-shape"
 import { mean, quantile, range } from "d3-array"
-import { ScaleContinuousNumeric } from "d3-scale"
-import {
+import type { ScaleContinuousNumeric } from "d3-scale"
+import type {
   AxisOrientation,
   AxisProps,
-  AxisTicksOptions,
+  AxisTicksOptions} from "./Axis.types";
+import {
   defaultAxisProps,
 } from "./Axis.types"
 import { makeAxisScale } from "./PolarAxis"
@@ -13,19 +14,19 @@ import { makeAxisScale } from "./PolarAxis"
 export default function Axis(props: AxisProps) {
   const { dimensions, layoutClass } = props
   const {
-    direction = defaultAxisProps.direction!,
-    gap = defaultAxisProps.gap!,
-    strokeWidth = defaultAxisProps.strokeWidth!,
+    direction = defaultAxisProps.direction,
+    gap = defaultAxisProps.gap,
+    strokeWidth = defaultAxisProps.strokeWidth,
     scale:figureScale,
     attrs
   } = props
 
   const ticks = props.ticks
-    ? { ...defaultAxisProps.ticks!, ...props.ticks }
-    : defaultAxisProps.ticks!
+    ? { ...defaultAxisProps.ticks, ...props.ticks }
+    : defaultAxisProps.ticks
   const title = props.title
-    ? { ...defaultAxisProps.title!, ...props.title }
-    : defaultAxisProps.title!
+    ? { ...defaultAxisProps.title, ...props.title }
+    : defaultAxisProps.title
 
   // todo options to provide tick values so can specify breaks
 
@@ -37,8 +38,8 @@ export default function Axis(props: AxisProps) {
     tickValues = (ticks as AxisTicksOptions).values!
   } else {
     if (!scale.ticks) {
-      tickValues = range(ticks.number!).map((i) =>
-        quantile(scale.domain(), i / (ticks.number! - 1)),
+      tickValues = range(ticks.number).map((i) =>
+        quantile(scale.domain(), i / (ticks.number - 1)),
       ) as number[]
     } else {
       tickValues = scale.ticks(ticks.number)
@@ -88,13 +89,13 @@ export default function Axis(props: AxisProps) {
                   <g key={`tick-${i}`} transform={`translate(${point.x},${point.y+gap})`}>
                
                     <line x1={0} y1={0} x2={0} y2={ticks.length} stroke={"black"} strokeWidth={strokeWidth} {...attrs} />
-                      <text transform={`translate(${ 0 },${ticks.padding})`} textAnchor={"middle"} dominantBaseline={"central"}  {...ticks.style} >{ticks.format!(t)}</text>
+                      <text transform={`translate(0,${ticks.padding})`} textAnchor={"middle"} dominantBaseline={"central"}  {...ticks.style} >{ticks.format(t)}</text>
                 </g>
           )
         })}
         {/*TODO sometimes scale doesn't have a range*/}
         <g transform={`translate(${ titlePos.x},${ titlePos.y+gap}) `}>
-                    <text textAnchor={"middle"} transform={`translate(${ 0},${ title.padding})`} {...title.style } >{title.text}</text>
+                    <text textAnchor={"middle"} transform={`translate(0,${ title.padding})`} {...title.style } >{title.text}</text>
                 </g>
       </g>
     </g>
@@ -103,10 +104,10 @@ export default function Axis(props: AxisProps) {
 //TODO merge these in instead of overwriting;
 
 export function getPath(
-  scale: ScaleContinuousNumeric<number, number, never>,
+  scale: ScaleContinuousNumeric<number, number>,
   direction: AxisOrientation,
 ): string {
-  const f = line<[number, number]>()
+  const f = line()
     .x((d) => d[0])
     .y((d) => d[1])
 

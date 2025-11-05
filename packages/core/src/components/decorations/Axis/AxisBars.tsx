@@ -2,7 +2,7 @@ import React from "react";
 
 import RectangularAxisBars from "./RectangularAxisBars";
 import PolarAxisBars from "./PolarAxisBars";
-import { AxisBarsProps } from "./Axis.types";
+import type { AxisBarsProps } from "./Axis.types";
 
 export default function AxisBars(props: AxisBarsProps) {
 

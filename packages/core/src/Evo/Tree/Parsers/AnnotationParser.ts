@@ -1,4 +1,5 @@
-import {   BaseAnnotationType, MarkovJumpValue, RawAnnotationValue, ValueOf } from "../Tree.types";
+import type { MarkovJumpValue, RawAnnotationValue, ValueOf } from "../Tree.types";
+import {   BaseAnnotationType } from "../Tree.types";
 
 
 
@@ -148,7 +149,7 @@ export function processAnnotationValue(values: RawAnnotationValue):ClassifiedVal
         if (allStrings) {
             return {
                 type: BaseAnnotationType.DISCRETE_SET,
-                value: (flat as string[]).slice()
+                value: (flat).slice()
             };
             }
 

@@ -3,13 +3,15 @@ import { withAnimation } from "../HOC/withAnimation";
 
 
 import { useAttributeMappers } from "./helpers";
-import { LiftToUser } from "./types";
-import { Attrs, UserAttrs } from './types';
-import { NodeRef, preOrderIterator } from '../../Evo';
+import type { LiftToUser } from "./types";
+import type { Attrs, UserAttrs } from './types';
+import type { NodeRef} from '../../Evo';
+import { preOrderIterator } from '../../Evo';
 
-import { BaubleTypes } from '../FigTree/Figtree.types';
+import type { BaubleTypes } from '../FigTree/Figtree.types';
 import { BasePath } from './Shapes';
-import { BranchedProps, withBranch } from '../HOC';
+import type { BranchedProps} from '../HOC';
+import { withBranch } from '../HOC';
 
 
 

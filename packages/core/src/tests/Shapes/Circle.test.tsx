@@ -3,11 +3,12 @@ import React from "react";
 
 import { describe, expect, test } from "vitest";
 import { render,screen} from "@testing-library/react";
-import { WithTestId } from "./types";
+import type { WithTestId } from "./types";
 
 import { withAnimation } from "../../components/HOC/withAnimation";
-import { StripSprings } from "../../components/Baubles/types";
-import { BaseCircle, BaseCircleAttrsType } from "../../components/Baubles/Shapes";
+import type { StripSprings } from "../../components/Baubles/types";
+import type { BaseCircleAttrsType } from "../../components/Baubles/Shapes";
+import { BaseCircle } from "../../components/Baubles/Shapes";
 
 const Circle = withAnimation(BaseCircle)
 type CircleAttrs = StripSprings<BaseCircleAttrsType>
@@ -23,10 +24,10 @@ describe("BaseCircle", () => {
     const circle = screen.getByTestId('circle')    // const circle = container.querySelector("circle");
 
     expect(circle).not.toBeNull();
-    expect(circle!.getAttribute('cx')).toBe('0');
-    expect(circle!.getAttribute('cy')).toBe('0');
-    expect(circle!.getAttribute('r')).toBe('1');
-    expect(circle!.getAttribute('fill')).toBe('blue');
+    expect(circle.getAttribute('cx')).toBe('0');
+    expect(circle.getAttribute('cy')).toBe('0');
+    expect(circle.getAttribute('r')).toBe('1');
+    expect(circle.getAttribute('fill')).toBe('blue');
   });
 });
 
@@ -41,10 +42,10 @@ describe("Circle", () => {
     const circle = screen.getByTestId('circle')    // const circle = container.querySelector("circle");
 
     expect(circle).not.toBeNull();
-    expect(circle!.getAttribute('cx')).toBe('0');
-    expect(circle!.getAttribute('cy')).toBe('0');
-    expect(circle!.getAttribute('r')).toBe('1');
-    expect(circle!.getAttribute('fill')).toBe('blue');
+    expect(circle.getAttribute('cx')).toBe('0');
+    expect(circle.getAttribute('cy')).toBe('0');
+    expect(circle.getAttribute('r')).toBe('1');
+    expect(circle.getAttribute('fill')).toBe('blue');
   });
     test("renders an animated circle with the right attributes", () => {
      render(
@@ -56,10 +57,10 @@ describe("Circle", () => {
     const circle = screen.getByTestId('circle')    // const circle = container.querySelector("circle");
 
     expect(circle).not.toBeNull();
-    expect(circle!.getAttribute('cx')).toBe('0');
-    expect(circle!.getAttribute('cy')).toBe('0');
-    expect(circle!.getAttribute('r')).toBe('1');
-    expect(circle!.getAttribute('fill')).toBe('rgba(0, 0, 255, 1)');
+    expect(circle.getAttribute('cx')).toBe('0');
+    expect(circle.getAttribute('cy')).toBe('0');
+    expect(circle.getAttribute('r')).toBe('1');
+    expect(circle.getAttribute('fill')).toBe('rgba(0, 0, 255, 1)');
   });
 });
 

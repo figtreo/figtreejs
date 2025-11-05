@@ -1,7 +1,7 @@
 import React from 'react'
-import { NodeRef } from '../../Evo';
-import { layout, scale } from '../../store/store';
-import { AttrAndInteractionApplier, Attrs,  XYShape } from '../Baubles/types';
+import type { NodeRef } from '../../Evo';
+import type { layout, scale } from '../../store/store';
+import type { AttrAndInteractionApplier, Attrs,  XYShape } from '../Baubles/types';
 
 
 

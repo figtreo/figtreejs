@@ -1,5 +1,6 @@
 import {  mean } from "d3-array";
-import { ImmutableTree, NodeRef, postOrderIterator} from "../../";
+import type { ImmutableTree, NodeRef} from "../../";
+import { postOrderIterator} from "../../";
 
 export enum layoutClass{
     Rectangular = "Rectangular",
@@ -30,9 +31,9 @@ export function baseLayout(lc:layoutClass){
             for( const node of postOrderIterator(tree)){
     
             let protoVertex:{x:number,y:number};
-            const x = tree.getDivergence(node)!;
+            const x = tree.getDivergence(node);
             const leftLabel = tree.getChildCount(node) > 0;
-            const labelBelow = (tree.getChildCount(node) > 0 && (tree.getParent(node) === undefined || tree.getChild(tree.getParent(node)!, 0) !== node));
+            const labelBelow = (tree.getChildCount(node) > 0 && (tree.getParent(node) === undefined || tree.getChild(tree.getParent(node), 0) !== node));
     
     
             if(tree.isExternal(node)){

@@ -1,9 +1,9 @@
 
 import React from 'react'
 import { layoutClass } from "../../../Layouts";
-import { InternalCladePropType } from './makeClade';
+import type { InternalCladePropType } from './makeClade';
 import { normalizePath } from '../../../path.helpers';
-import { Attrs } from '../types';
+import type { Attrs } from '../types';
 import { BasePath } from '../Shapes';
 
 //TODO add padding

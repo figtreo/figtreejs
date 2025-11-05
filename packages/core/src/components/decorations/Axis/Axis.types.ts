@@ -1,9 +1,9 @@
 import { format } from "d3-format";
-import { ScaleContinuousNumeric } from "d3-scale";
-import { scale } from "../../../store/store";
-import { layoutClass } from "../../../Layouts";
-import { dimensionType } from "../../FigTree/Figtree.types";
-import { Attrs } from "../../Baubles/types";
+import type { ScaleContinuousNumeric } from "d3-scale";
+import type { scale } from "../../../store/store";
+import type { layoutClass } from "../../../Layouts";
+import type { dimensionType } from "../../FigTree/Figtree.types";
+import type { Attrs } from "../../Baubles/types";
 
 
 
