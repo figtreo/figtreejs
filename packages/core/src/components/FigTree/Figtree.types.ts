@@ -43,11 +43,11 @@ export interface layoutOptions{
 type layoutFunction=(tree:ImmutableTree,options?:layoutOptions)=>(node:NodeRef)=>FunctionalVertex;
 
 //TODO sort this out with dimensions
-type BaubleTypes = {
+export type BaubleTypes = {
     tree:Tree,
     scale:scale,
     layout:layout,
-    dimensions?:dimensionType,
+    dimensions:dimensionType,
     animated?:boolean
 }
 type Bauble = React.FC<BaubleTypes>
