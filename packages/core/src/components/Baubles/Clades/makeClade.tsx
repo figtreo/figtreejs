@@ -1,5 +1,5 @@
 import React from "react";
-import { NodeRef, tipIterator, Tree } from "../../../Evo";
+import { NodeRef, tipIterator } from "../../../Evo";
 import { layout, scale } from "../../../store/store";
 import { maxIndex } from "d3-array";
 import { Highlight } from "./Highlight";
