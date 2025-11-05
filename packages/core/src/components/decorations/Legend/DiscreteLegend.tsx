@@ -32,7 +32,7 @@ interface DiscreteLegendProps{
     title:string
 }
 
-export default function DiscreteLegend(props:DiscreteLegendProps ){
+export function DiscreteLegend(props:DiscreteLegendProps ){
     // const dispatch = useInteractionsDispatch();
     // const onHover=useCallback((value)=>()=>dispatch({type:"hover",payload:{dataType:DataType.DISCRETE,key:annotation,value:value}}))
     // const onUnHover = useCallback(()=>dispatch({type:"unhover",payload:{}}));

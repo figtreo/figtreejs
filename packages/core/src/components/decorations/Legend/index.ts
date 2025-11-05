@@ -1,3 +1,3 @@
-export {default as ContinuousLegend} from "./ContinuousLegend";
-export {default as DiscreteLegend} from "./DiscreteLegend";
+
+export { DiscreteLegend} from "./DiscreteLegend";
 
