@@ -6,7 +6,7 @@ in an observable page. The main themes are the same for adding a figure to a web
 
 
 ```js
-import {ImmutableTree as Tree,figtree,rectangularLayout,Branches, NodeLabels,BranchLabels,CircleNodes,RectNodes} from "@figtreejs/browser"
+import {ImmutableTree as Tree,figtree,rectangularLayout,Branches, NodeLabels,BranchLabels,CircleNodes,RectangleNodes} from "@figtreejs/browser"
 ```
 
 We'll import a tree and some data. 
@@ -62,8 +62,7 @@ const options1  = {
     height:width*9/16,
     tree,
     margins:{top:10,right:10,bottom:10,left:10},
-    layout:rectangularLayout,
-    baubles:[Branches()]
+    layout:rectangularLayout
 }
 ```
 And now we draw it.
@@ -90,7 +89,7 @@ const options2 = {...options1,
                     svg:svg2,
                     margins:{...options1.margins,right:60},
                     baubles:[
-                        Branches(),
+                        Branches({attrs:{stroke:"black"}}),
                         NodeLabels(
                             {filter:n=>tree.isExternal(n),
                             text:n=>tree.getTaxon(n).name,
@@ -139,7 +138,7 @@ I'll also add rectangle at the root.
 
 First we'll make a color scale.
 ```js echo
-const fillScale = d3.scaleOrdinal(d3.schemeAccent).domain(tree.getAnnotationDomain("host"))
+const fillScale = d3.scaleOrdinal(d3.schemeAccent).domain(tree.getAnnotationSummary("host").domain)
 ```
 
 ```js  echo
@@ -154,17 +153,17 @@ const options3 = {...options2,
                     svg:svg2b,
                     
                      baubles:[
-                       ...options1.baubles,
+                       Branches({attrs:{stroke:"black",strokeDasharray:"6 13"}}),
                        CircleNodes({
                         filter:n=>tree.isExternal(n),
                         attrs:{
                             r:6,
-                            fill:n=>fillScale(tree.getAnnotation(n,'host')),
+                            fill:n=>fillScale(tree.getAnnotation(n,'host').value),
                             stroke:'black',
                             strokeWidth:2
                         }
                        }),
-                       RectNodes({
+                       RectangleNodes({
                         filter:n=>tree.isRoot(n),
                         attrs:{
                             height:10,
