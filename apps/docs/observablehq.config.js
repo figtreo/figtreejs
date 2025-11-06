@@ -16,7 +16,10 @@ export default {
     {
       name: "Examples",
       pages: [
-        {name: "Rectangular Figure", path: "/figtree/rectangularFigure"},
+        {name: "My first figure", path: "/figtree/rectangularFigure"},
+        {name: "Introduction to layouts", path: "/figtree/Layouts"},
+        {name: "Introduction to animation", path: "/figtree/animation"},
+        {name: "Animating with the tree", path: "/figtree/treeAnimations"},
       ]
     }
   ],
