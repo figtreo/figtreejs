@@ -134,4 +134,17 @@ describe('ImmutableTree', () =>{
 
         })
 })
-
+describe('testing annotating', ()=>{
+    it('basic annotation',()=>{
+        const tree = ImmutableTree.fromNewick("((A:1,B:1):1,C:2);");
+        const A = tree.getTaxon("A");
+        const annotatedTree = tree.annotateNode(A,"state","WA")
+        annotatedTree.getAnnotation(A,"state")
+    });
+    it('basic annotation multiple keys',()=>{
+        const tree = ImmutableTree.fromNewick("((A:1,B:1):1,C:2);");
+        const A = tree.getTaxon("A");
+        const annotatedTree = tree.annotateNode(A,{state:"WA"})
+        annotatedTree.getAnnotation(A,"state")
+    })
+})

@@ -619,27 +619,45 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
 
   // ---------------- Setters ---------------------
 
-  //TODO handle height and divergence changes still not very happy with how these are handled.
 
-  annotateNode(node: NodeRef, annotation: { name: string; value: RawAnnotationValue}): Tree {
-      const classifiedAnnotation = processAnnotationValue(annotation.value)
 
-      const currentSummary = this._data.annotations[annotation.name]
+  annotateNode(node: NodeRef, name: string, value: RawAnnotationValue): Tree
+  annotateNode(node: NodeRef, annotation: Record<string, RawAnnotationValue>): Tree
+  annotateNode(
+    node: NodeRef,
+    a: string | Record<string, RawAnnotationValue>,
+    b?: RawAnnotationValue
+  ): Tree
+  {
+    if(typeof a==='string'){
+      const name =a;
+      const value =b as RawAnnotationValue;
+        const classifiedAnnotation = processAnnotationValue(value)
+      const currentSummary = this._data.annotations[name]
       if(currentSummary!==undefined){
         if(currentSummary.type!==classifiedAnnotation.type){
-          throw new Error(`Tried annotation ${annotation.name} was parsed as ${classifiedAnnotation.type} - but is ${currentSummary.type} in tree.`)
+          throw new Error(`Tried annotation ${name} was parsed as ${classifiedAnnotation.type} - but is ${currentSummary.type} in tree.`)
         }
       }
       return produce(this, (draft) => {
         const currentDomain = currentSummary?currentSummary.domain:undefined
         const domain = updateDomain(classifiedAnnotation,currentDomain)
-        draft._data.nodes.allNodes[node.number].annotations[annotation.name] = {id:annotation.name,type:classifiedAnnotation.type,value:classifiedAnnotation.value} as Annotation
-        draft._data.annotations[annotation.name] = {id:annotation.name,type:classifiedAnnotation.type,domain:domain} as AnnotationSummary
+        draft._data.nodes.allNodes[node.number].annotations[name] = {id:name,type:classifiedAnnotation.type,value:classifiedAnnotation.value} as Annotation
+        draft._data.annotations[name] = {id:name,type:classifiedAnnotation.type,domain:domain} as AnnotationSummary
       })
-      // update summary
-      // update node with value
+    }else{
+      // loop over entries 
+      let t: Tree = this as Tree;
+          for (const [k, v] of Object.entries(a)) {
+            t = t.annotateNode(node, k, v);
+          }
+          return t;
+
+    }
   }
 
+
+  //TODO handle height and divergence changes still not very happy with how these are handled.
 
   setHeight(node: NodeRef, height: number): this {
     return produce(this, (draft) => {

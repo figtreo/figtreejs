@@ -17,10 +17,10 @@ export type ClassifiedValue =
   | { type: BaseAnnotationType.DENSITIES,   value: ValueOf<BaseAnnotationType.DENSITIES> }
 
 
-type ParsedAnnotationRaw = { name: string; value: RawAnnotationValue };
+type ParsedAnnotationRaw = Record<string, RawAnnotationValue>;
 
 // Parse the annotation found in a nexus (or newick string - perish the thought!)
-export function parseAnnotation(annotationString: string):  ParsedAnnotationRaw[]  {
+export function parseAnnotation(annotationString: string):  ParsedAnnotationRaw  {
     const tokens = annotationString.split(/\s*('[^']+'|"[^"]+"|;|\(|\)|,|:|=|\[&|\]|\{|\})\s*/).filter(token => token.length > 0);
     let annotationKeyNext = true;
     let annotationKey: string = "";
@@ -29,7 +29,7 @@ export function parseAnnotation(annotationString: string):  ParsedAnnotationRaw[
     let subValue: string[] = [];
     // eslint-disable-next-line
     let value:any = null; 
-    const annotations: ParsedAnnotationRaw[] = [];
+    const annotations: ParsedAnnotationRaw = {};
 
     // expect the first token to be a [& and last ]
     if (tokens[0] !== "[&" || tokens[tokens.length - 1] !== "]") {
@@ -48,7 +48,7 @@ export function parseAnnotation(annotationString: string):  ParsedAnnotationRaw[
             
                 if(value ===null) throw (`Empty annotation value`)
             //finalize annotation
-            annotations.push({ value: value, name: annotationKey });
+            annotations[annotationKey] = value;
             }else{
                 continue; //to next value in range
             }
@@ -74,7 +74,7 @@ export function parseAnnotation(annotationString: string):  ParsedAnnotationRaw[
 
             //finalize annotation
              if(value ===null) throw (`Empty annotation value`)
-            annotations.push({ value: value, name: annotationKey })
+            annotations[annotationKey] = value;
         } else {
             // must be annotation
             // remove any quoting and then trim whitespace

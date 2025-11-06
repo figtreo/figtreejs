@@ -59,10 +59,10 @@ export class NewickCharacterParser {
     if (t.length > 2 && t.substring(0, 2) === "[&") {
       const annotations = parseAnnotation(t)
 
-      for(const annotation of annotations){
+      // for(const annotation of annotations){
         notNull(this.currentNode,"Internal Parsing error - Current not is not defined")
-        this.tree = this.tree.annotateNode(this.currentNode, annotation) as ImmutableTree
-      }
+        this.tree = this.tree.annotateNode(this.currentNode, annotations) as ImmutableTree
+      // }
       
 
     } else if (t === ";") {
@@ -147,14 +147,12 @@ export class NewickCharacterParser {
             value = t
           }
           if (this.options.labelName) {
-            const label_annotation = {
-              name: this.options.labelName,
-              value: value,
-            }
+
             notNull(this.currentNode,"Internal Parsing error - Current not is not defined")
             this.tree = this.tree.annotateNode(
               this.currentNode,
-              label_annotation,
+             this.options.labelName,
+             value
             ) as ImmutableTree
           } else {
             console.warn(

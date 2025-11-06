@@ -9,7 +9,7 @@ Any method that changes a tree or any node in a tree returns a new reference.
 Under the hood we use immer for immutability, so we do not copy the entire tree - only the changes.
 
 ```js echo=true 
-import {ImmutableTree} from "@figtreejs/core"
+import {ImmutableTree} from "@figtreejs/browser"
 ```
 Internally, trees save their data in normalized object _data which can be stored in a 
 redux store. Trees also have a taxonSet, which will be made by the tree if one is not provided.
