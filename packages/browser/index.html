@@ -121,7 +121,7 @@
     <div>
         <figure>
             <svg id="phylogram_1a" width="800" height="600"></svg>
-            <svg id="phylogram_1b" width="600" height="500"></svg>
+            <!-- <svg id="phylogram_1b" width="600" height="500"></svg> -->
 
         </figure>
         <button id="sort_up_button">Sort ascending</button>
@@ -237,10 +237,10 @@
             layout = ft.polarLayout
             ft.figtree(figureOptions())
         };
-        // document.getElementById('radialLayout_button').onclick = function () {
-        //     figureOptions = { ...figureOptions, layout:ft.radialLayout }
-        //     ft.figtree(figureOptions)
-        // };
+        document.getElementById('radialLayout_button').onclick = function () {
+           layout =ft.radialLayout;
+            ft.figtree(figureOptions())
+        };
     </script>
 
 <div>
