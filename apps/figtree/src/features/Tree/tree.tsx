@@ -9,12 +9,7 @@ import {
   selectLayout,
   setPointOfInterest,
 } from "../Settings/panels/layout/layoutSlice"
-import { Tips, TipsBackground } from "./tips"
-import { InternalNodes } from "./nodes"
-
-import { TipLabels } from "./Labels/tipLabel"
-import { NodeLabels } from "./Labels/nodeLabels"
-import { BranchLabels } from "./Labels/branchLabels"
+import { selectLabelState } from "../Settings/panels/label/labelSlice";
 
 import {
   FigTree,
@@ -53,6 +48,9 @@ import { saveSvg } from "../../app/utils"
 import { selectTanglegram } from "../Settings/panels/tanglegram/tangleSlice"
 import { setTree } from "./treeSlice"
 import { max } from "d3-array"
+import {  createLabelsComponent } from "./Labels/createLabel";
+import { BranchLabels } from "@figtreejs/core";
+import { NodeLabels } from "@figtreejs/core";
 
 const margins = { top: 80, bottom: 80, left: 50, right: 100 }
 //todo make zoom and expansion based on number of tips
@@ -63,7 +61,6 @@ export function Tree({ panelRef }: any) {
   const selectionRoot = useAppSelector(selectSelectionRoot)
   const selectionMode = useAppSelector(selectSelectionMode)
   const title = useAppSelector(selectTitle)
-  
   const { activated: tangle } = useAppSelector(selectTanglegram)
 
   const {
@@ -148,7 +145,7 @@ export function Tree({ panelRef }: any) {
         out.add(id)
         //todo tree get tmrca of nodes.
       })
-
+// TODO broken since nodes don't keep id in svg anymore
       taxa.each(function () {
         const id = select(this).attr("node-id")
         out.add(id)
@@ -465,6 +462,21 @@ export function Tree({ panelRef }: any) {
     }
   }
 
+
+   const bLabelSettings = useAppSelector(selectLabelState('branch'));
+   const bLabelFill = useAppSelector( (state)=>getColorScale(state,bLabelSettings.colourBy));
+
+   const nodeLabelSettings = useAppSelector(selectLabelState('node'));
+   const nodeLabelFill = useAppSelector( (state)=>getColorScale(state,bLabelSettings.colourBy));
+   
+   const tipLabelSettings = useAppSelector(selectLabelState('tip'));
+   const tipLabelFill = useAppSelector( (state)=>getColorScale(state,bLabelSettings.colourBy));
+
+
+
+
+  // --- No hooks below here!!!! ------------ //
+
   // if (tree.getCurrentIndex() > -1) {
   if (tree.getNodeCount() > 1) {
 
@@ -533,7 +545,7 @@ export function Tree({ panelRef }: any) {
           },
           filter:(n:NodeRef)=>!dontShow.has(n),
           curvature:curvature}),
-        // BranchLabels({filter:(n:NodeRef)=>!dontShow.has(n),tree}),// tODO
+        // useBranchLabelComponent({filter:(n:NodeRef)=>!dontShow.has(n),tree}),// tODO
         // TipsBackground({filter:(n:NodeRef)=>!dontShow.has(n),tree}),// tODO
         
       //   TipLabels({
@@ -554,7 +566,33 @@ export function Tree({ panelRef }: any) {
       // NodeLabels({ // todo
       //   filter:(n:NodeRef)=>!dontShow.has(n), tree
       // })
-    ].filter(d=>d)
+    ]
+
+
+    // add optional Baubles
+    //BranchLabels 
+   
+    
+    if(bLabelSettings.activated){
+      //add it
+      const bLabels = createLabelsComponent({tree,settings:bLabelSettings,fillColorScale:bLabelFill,factory:BranchLabels})
+      figureElements.push(bLabels)
+    }
+    // const tipLabelSettings = useAppSelector(selectLabelState('tip'));
+    if(tipLabelSettings.activated){
+      //add it
+      const tipLabels = createLabelsComponent({tree,settings:tipLabelSettings,fillColorScale:tipLabelFill,factory:NodeLabels,filter:n=>tree.isExternal(n)})
+      figureElements.push(tipLabels)
+    }
+
+    //     const nodeLabelSettings = useAppSelector(selectLabelState('node'));
+    if(nodeLabelSettings.activated){
+      //add it
+      const nodeLabels = createLabelsComponent({tree,settings:nodeLabelSettings,fillColorScale:nodeLabelFill,factory:NodeLabels,filter:n=>!tree.isExternal(n)})
+      figureElements.push(nodeLabels)
+    }
+
+
 
     return (
       <div>

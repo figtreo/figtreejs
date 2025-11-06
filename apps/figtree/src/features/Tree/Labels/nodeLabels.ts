@@ -21,8 +21,11 @@ export function NodeLabels(props:{ attrs?:{[key:string]:any},filter:(n:NodeRef)=
         const annotation = tree.getAnnotation(n,settings.colourBy);
         if(annotation===undefined){
           return settings.colour;
+        }else{
+           
+            return fillColorScale(annotation.value) as string;
         }
-        return fillColorScale(tree.getAnnotation(n,settings.colourBy)) as string;
+       
       }
     }
 
@@ -36,12 +39,6 @@ export function NodeLabels(props:{ attrs?:{[key:string]:any},filter:(n:NodeRef)=
         return (
             nl({...props, filter, attrs:{ fontSize: settings.fontSize,...attrs }, text:textFunction} )
         )
-
-    } else {
-        return <g></g>;
-    }
-
-
-
+    } 
 }
 

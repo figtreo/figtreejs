@@ -44,12 +44,7 @@ export function TipLabels(props: any ) {
 
         )
 
-    } else {
-        return <g></g>;
     }
-
-
-
 }
 
 // a function that converts a number to roman numerals
