@@ -1,9 +1,10 @@
-import {  createSlice, PayloadAction } from '@reduxjs/toolkit';
+import {  createSlice } from '@reduxjs/toolkit';
+import type {  PayloadAction } from '@reduxjs/toolkit';
 
-import { Annotation, BaseAnnotationType } from '@figtreejs/core';
+import {  BaseAnnotationType,type AnnotationSummary } from '@figtreejs/core';
 import { scaleOrdinal, scaleSequential } from 'd3-scale';
 import * as d3 from 'd3-scale-chromatic';
-import { RootState } from '../../../../app/store';
+import type { RootState } from '../../../../app/store';
 
 export interface colorScale {
     attribute:string
@@ -204,11 +205,11 @@ export const colorScalesSlice = createSlice({
                 
 
         },
-            prepare: (annotation: Annotation) => {
-                if(annotation.type===AnnotationType.RANGE|| annotation.type===AnnotationType.SET){
+            prepare: (annotation: AnnotationSummary) => {
+                if(annotation.type===BaseAnnotationType.DISCRETE_SET|| annotation.type===BaseAnnotationType.NUMERICAL_SET){
                     throw new Error("Cannot create color scale from range or set annotation")
                 }
-                const type = annotation.type === AnnotationType.CONTINUOUS || annotation.type === AnnotationType.INTEGER ? "continuous" : "discrete";
+                const type = annotation.type === BaseAnnotationType.NUMERICAL ? "continuous" : "discrete";
 
                 switch (type) {
                     case "continuous":

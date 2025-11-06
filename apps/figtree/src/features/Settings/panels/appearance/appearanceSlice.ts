@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit"
-import { RootState } from "../../../../app/store";
+import type { RootState } from "../../../../app/store";
 
 export interface AppearanceState {
     colourBy:string,

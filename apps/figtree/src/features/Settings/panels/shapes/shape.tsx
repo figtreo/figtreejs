@@ -1,4 +1,4 @@
-import { shapeActions, shapeTarget, selectShapeState } from "./shapeSlice";
+import { shapeActions, type shapeTarget, selectShapeState } from "./shapeSlice";
 import { useAppDispatch, useAppSelector } from "../../../../app/hooks";
 import { SettingPanel } from "../PanelHeader";
 import { selectColorableAttributes } from "../colorScales/colourSlice";

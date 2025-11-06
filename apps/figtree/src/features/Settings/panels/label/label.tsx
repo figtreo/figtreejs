@@ -1,5 +1,5 @@
 import React from "react";
-import { labelActions, labelTarget, selectLabelState } from "./labelSlice";
+import { labelActions, type labelTarget, selectLabelState } from "./labelSlice";
 import { useAppDispatch, useAppSelector } from "../../../../app/hooks";
 import { SettingPanel } from "../PanelHeader";
 import { selectColorableAttributes } from "../colorScales/colourSlice";

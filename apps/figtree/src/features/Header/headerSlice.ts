@@ -1,24 +1,23 @@
-import { RootState } from '../../app/store';
-import { PayloadAction, createSlice } from '@reduxjs/toolkit';
-import { NodeDecoration } from '@figtreejs/core'; //TODO taxa list 
+import type { RootState } from '../../app/store';
+import {  createSlice } from '@reduxjs/toolkit';
+import type  { PayloadAction } from '@reduxjs/toolkit';
 //TODO tree list or count to include multiple trees
 
 
 type SelectionMode = "Node"|"Clade"|"Taxa"
 
+type NodeDecoration = Record< number,string>&{taxaCustomColor?:string}
 
 interface HeaderData{
     selectionMode:SelectionMode,
     selectionRoot:number|undefined,
-    nodeDecorations:{
-        [key:number]:NodeDecoration
-    }
+    nodeDecorations: NodeDecoration[]
 }
 
 const initialState:HeaderData = {
     selectionMode: "Node",
     selectionRoot: undefined,
-    nodeDecorations:{}
+    nodeDecorations:[]
 
 }
 

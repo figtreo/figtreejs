@@ -1,4 +1,4 @@
-import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
+import { configureStore, type ThunkAction, type Action } from '@reduxjs/toolkit';
 import treeReducer from '../features/Tree/treeSlice';
 import settingReducer from '../features/Settings/settingsSlice';
 import headerReducer from '../features/Header/headerSlice';

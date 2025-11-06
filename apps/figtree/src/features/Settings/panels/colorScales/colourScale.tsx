@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { getColorData, useAppDispatch, useAppSelector } from "../../../../app/hooks";
 import { SettingPanel } from "../PanelHeader";
-import { colorScale, flipLegendActivation, schemes, selectColorableAttributes, setLegendColumns, setLegendDirection, setLegendFontSize, setLegendHeight, setLegendSwatchSize, setLegendTitle, setLegendWidth, setLegendX, setLegendY, setScheme } from "./colourSlice";
+import { type colorScale, flipLegendActivation, schemes, selectColorableAttributes, setLegendColumns, setLegendDirection, setLegendFontSize, setLegendHeight, setLegendSwatchSize, setLegendTitle, setLegendWidth, setLegendX, setLegendY, setScheme } from "./colourSlice";
 
 export function ColourScales() {
 

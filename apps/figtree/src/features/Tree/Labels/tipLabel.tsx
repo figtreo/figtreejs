@@ -1,16 +1,18 @@
 
-import { getColorScale, useAppSelector } from "../../../app/hooks";
+import { getColorScale, selectTree, useAppSelector } from "../../../app/hooks";
 import { selectLabelState } from "../../Settings/panels/label/labelSlice";
 import { selectLayout } from "../../Settings/panels/layout/layoutSlice";
-import {  NodeRef, NodeLabels } from "@figtreejs/core";
+import { type NodeRef, NodeLabels } from "@figtreejs/core";
 import {  selectNodeDecorations } from "../../Header/headerSlice";
 
 import { getTextFunction } from "./labelUtils";
 
 export function TipLabels(props: any ) {
-    const { attrs={},tree,filter:baseFilter } = props;
+    const { attrs={},filter:baseFilter } = props;
     const settings = useAppSelector(selectLabelState("tip"));
-    // const tree = useAppSelector(selectTree);
+    
+    const tree = useAppSelector(selectTree);
+
     const { alignTipLabels } = useAppSelector(selectLayout)
 
     const filter = (n: NodeRef) =>baseFilter(n) && tree.getChildCount(n) === 0;
@@ -38,7 +40,8 @@ export function TipLabels(props: any ) {
         const textFunction = getTextFunction(tree,settings);
 
         return (
-            <NodeLabels {...props} filter={filter} attrs={{ fontSize: settings.fontSize,...attrs }} aligned={alignTipLabels} text={textFunction} />
+             NodeLabels({...props, filter, attrs:{ fontSize: settings.fontSize,...attrs }, aligned:alignTipLabels, text:textFunction} )
+
         )
 
     } else {

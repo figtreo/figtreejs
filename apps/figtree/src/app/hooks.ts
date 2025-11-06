@@ -1,4 +1,4 @@
-import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux"
+import {type TypedUseSelectorHook, useDispatch, useSelector } from "react-redux"
 import type { RootState, AppDispatch } from "./store"
 import { createSelector } from "@reduxjs/toolkit"
 import { getScale } from "../features/Settings/panels/colorScales/colourSlice"

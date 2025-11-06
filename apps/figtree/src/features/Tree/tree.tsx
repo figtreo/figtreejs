@@ -19,9 +19,7 @@ import { BranchLabels } from "./Labels/branchLabels"
 import {
   FigTree,
   Branches,
-  NodeRef,
-  Highlight,
-  AnnotationType,
+  CladeHighlight,
   postOrderIterator,
   tipIterator,
   ImmutableTree,
@@ -29,7 +27,9 @@ import {
   polarLayout,
   layoutClass,
   radialLayout,
-  Cartoon,
+  CladeCartoon,
+  type NodeRef,
+  BaseAnnotationType,
 } from "@figtreejs/core"
 import { useAreaSelection } from "../../app/area-selection"
 import { select } from "d3-selection"
@@ -258,7 +258,7 @@ export function Tree({ panelRef }: any) {
   const branchSettings = useAppSelector(selectAppearance)
 
   const branchFiller = (n: NodeRef): string => {
-    const custom = tree.getAnnotation(n, COLOUR_ANNOTATION)
+    const custom = tree.getAnnotation(n, COLOUR_ANNOTATION).value
     const cartoon = tree.getAnnotation(n, CARTOON_ANNOTATION)
     return cartoon && custom !== undefined ? (custom as string) : "none"
   }
@@ -272,7 +272,7 @@ export function Tree({ panelRef }: any) {
 
   function branchColourur(n: NodeRef): string {
     if (branchSettings.colourBy === "User selection") {
-      const custom = tree.getAnnotation(n, COLOUR_ANNOTATION)
+      const custom = tree.getAnnotation(n, COLOUR_ANNOTATION)?.value
       return custom === undefined ? branchSettings.colour : (custom as string)
     } else {
       const annotation = tree.getAnnotation(n, branchSettings.colourBy)
@@ -316,8 +316,8 @@ export function Tree({ panelRef }: any) {
       const data = tree.getAnnotationSummary(annotation)
       const type = tree.getAnnotationType(annotation)
       if (
-        type === AnnotationType.DISCRETE ||
-        type === AnnotationType.CONTINUOUS
+        type === BaseAnnotationType.DISCRETE ||
+        type === BaseAnnotationType.NUMERICAL
       ) {
         dispatch(addScaleFromAnnotation(data))
       }
@@ -484,76 +484,74 @@ export function Tree({ panelRef }: any) {
     }
 
     const dontShow = new Set();
-    const ornaments = tree
+    const highlightedNodes =  tree
       .getInternalNodes()
-      .filter((n) => tree.getAnnotation(n, HILIGHT_ANNOTATION) !== undefined || tree.getAnnotation(n, CARTOON_ANNOTATION))
-      .map((n, i) => {
-        if(tree.getAnnotation(n, HILIGHT_ANNOTATION) !== undefined ){
-          return ( <Highlight
-            key={i + 1}
-            attrs={{
+      .filter((n) => tree.getAnnotation(n, HILIGHT_ANNOTATION) !== undefined)
+    const cartoonNodes = tree
+      .getInternalNodes()
+      .filter((n) => tree.getAnnotation(n, CARTOON_ANNOTATION)!== undefined)
+    // hide these branches/nodes
+      for(const n of cartoonNodes){
+        for(const node of postOrderIterator(tree,n)){
+                if(node!==n){
+                  dontShow.add(node)
+                }
+            }
+      }
+
+      const highlights = CladeHighlight({nodes:highlightedNodes,attrs:{
               fill: (n: NodeRef) =>
-                tree.getAnnotation(n, HILIGHT_ANNOTATION)! as string,
+                tree.getAnnotation(n, HILIGHT_ANNOTATION)?.value as string,
               opacity: 0.4,
-            }}
-            node={n}
-          />)
-        }else{
-          for(const node of postOrderIterator(tree,n)){
-              if(node!==n){
-                dontShow.add(node)
-              }
-          }
-          return (
-            <Cartoon key={i+1} node={n}  attrs={{
-              fill: branchFiller,
+            }})
+      const cartoons = CladeCartoon({nodes:cartoonNodes,attrs:{ fill: branchFiller,
               strokeWidth: lineWidth,
               stroke: branchColourur,
-            }}/>
-          );
-        }
-      })
+            }})
+    
 
       const figureElements = [
-      <AxisElement key={0} />,
-      ...ornaments,
-      <Legends key={ornaments.length + 1} />,
-      <Branches
-        key={ornaments.length + 2}
-        attrs={{
+      // <AxisElement key={0} />,
+      // ...ornaments,
+      // <Legends key={ornaments.length + 1} />,
+      highlights,
+      cartoons,
+      Branches({attrs:{
           fill: "none",
           strokeWidth: lineWidth + 4,
           stroke: "#959ABF",
           strokeLinecap: "round",
           strokeLinejoin: "round",
-        }}
-        filter={(n: NodeRef) => selectedNodes.has(n.number)}
-        curvature={curvature}
-      />, // highlight selected branches
-      <Branches
-        key={ornaments.length + 3}
-        attrs={{
+        },
+        filter:(n: NodeRef) => selectedNodes.has(n.number),
+        curvature:curvature}),
+      // highlight selected branches
+       Branches({attrs:{
           fill: branchFiller,
           strokeWidth: lineWidth,
           stroke: branchColourur,
-        }}
-        filter={(n:NodeRef)=>!dontShow.has(n)}
-        curvature={curvature}
-      />,
-      <BranchLabels key={ornaments.length + 4} filter={(n:NodeRef)=>!dontShow.has(n)}/>,
-      <TipsBackground key={ornaments.length + 5} filter={(n:NodeRef)=>!dontShow.has(n)} />,
-      <TipLabels
-        key={ornaments.length + 6}
-        filter={(n:NodeRef)=>!dontShow.has(n)}
-        attrs={{
-          filter: (n: NodeRef) =>
-            selectedTaxa.has(n.number)  ? "url(#solid)" : null,
+          },
+          filter:(n:NodeRef)=>!dontShow.has(n),
+          curvature:curvature}),
+        BranchLabels({filter:(n:NodeRef)=>!dontShow.has(n)}),// tODO
+        TipsBackground({filter:(n:NodeRef)=>!dontShow.has(n)}),// tODO
         
-        }}
-      />,
-      <Tips key={ornaments.length + 7} filter={(n:NodeRef)=>!dontShow.has(n)}/>,
-      <InternalNodes key={ornaments.length + 8} filter={(n:NodeRef)=>!dontShow.has(n)}/>,
-      <NodeLabels key={ornaments.length + 9} filter={(n:NodeRef)=>!dontShow.has(n)}/>,
+        TipLabels({
+            filter:(n:NodeRef)=>!dontShow.has(n),
+            attrs:{
+            filter: (n: NodeRef) =>
+              selectedTaxa.has(n.number)  ? "url(#solid)" : null,
+          }
+        }),
+      Tips({
+        filter:(n:NodeRef)=>!dontShow.has(n)
+      }),
+      InternalNodes({
+           filter:(n:NodeRef)=>!dontShow.has(n)
+      }),
+      NodeLabels({ // todo
+        filter:(n:NodeRef)=>!dontShow.has(n)
+      })
     ]
 
     return (
@@ -601,9 +599,9 @@ export function Tree({ panelRef }: any) {
               layout={treeLayout}
               margins={margins}
               opts={layoutOpts}
-            >
-              {figureElements}
-            </FigTree>
+              baubles={figureElements}
+            />
+              
           )}
         </svg>
       </div>

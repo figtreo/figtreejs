@@ -1,5 +1,6 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { RootState } from '../../../../app/store';
+import { createSlice,  } from '@reduxjs/toolkit';
+import type{  PayloadAction } from '@reduxjs/toolkit';
+import type{ RootState } from '../../../../app/store';
 
 /*
 setting for the time scale options. There will be 2 scale options
