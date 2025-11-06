@@ -1,5 +1,5 @@
-import {   createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { ImmutableTree,ImmutableTreeData, TaxonSetData, TaxonSet } from '@figtreejs/core';
+import {   createSlice, type PayloadAction } from '@reduxjs/toolkit';
+import { ImmutableTree,type ImmutableTreeData, type TaxonSetData, TaxonSet } from '@figtreejs/core';
 const tree = createSlice({
     name: 'tree',
     initialState: {tree:new ImmutableTree()._data,taxa:new TaxonSet()._data},

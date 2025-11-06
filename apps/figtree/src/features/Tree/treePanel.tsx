@@ -4,7 +4,7 @@ import './treePanel.css'
 import { selectTree } from '../../app/hooks';
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { addScaleFromAnnotation } from "../Settings/panels/colorScales/colourSlice";
-import { AnnotationType } from "@figtreejs/core";
+import { BaseAnnotationType } from "@figtreejs/core";
 export function TreePanel(){
   const tree = useAppSelector(selectTree);
   const dispatch = useAppDispatch();
@@ -28,9 +28,9 @@ export function TreePanel(){
                    reader.onload = function(e) {
                     tree.addFromString(e.target!.result as string);
                     for(const annotation of tree.getAnnotationKeys()){
-                      const data = tree.getAnnotationData(annotation)
+                      const data = tree.getAnnotationSummary(annotation).domain
                       const type = tree.getAnnotationType(annotation);
-                      if(type===AnnotationType.DISCRETE||type===AnnotationType.CONTINUOUS){
+                      if(type===BaseAnnotationType.DISCRETE||type===BaseAnnotationType.NUMERICAL){
                         dispatch(addScaleFromAnnotation(data));
 
                       }
@@ -46,9 +46,9 @@ export function TreePanel(){
             reader.onload = function(e) {
                 tree.addFromString(e.target!.result as string);
                 for(const annotation of tree.getAnnotationKeys()){
-                  const data = tree.getAnnotationData(annotation)
+                  const data = tree.getAnnotationSummary(annotation).domain;
                   const type = tree.getAnnotationType(annotation);
-                  if(type===AnnotationType.DISCRETE||type===AnnotationType.CONTINUOUS){
+                  if(type===BaseAnnotationType.DISCRETE||type===BaseAnnotationType.BaseAnnotationType){
                     dispatch(addScaleFromAnnotation(data));
 
                   }

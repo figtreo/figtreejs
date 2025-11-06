@@ -1,5 +1,5 @@
 import { format } from "d3-format";
-import { NodeRef, decimalToDate, BaseAnnotationType, ImmutableTree } from "@figtreejs/core";
+import {type NodeRef, decimalToDate, BaseAnnotationType, ImmutableTree } from "@figtreejs/core";
 import { timeFormat } from "d3-time-format";
 
 // a function that converts a number to roman numerals
@@ -74,7 +74,7 @@ export function getTextFunction(tree: ImmutableTree, settings: any) {
             if (type === BaseAnnotationType.NUMERICAL) {
                 textFunction = (node: NodeRef) => {
                     if (tree.getAnnotation(node, settings.display)) {
-                        return numericalFormatter(tree.getAnnotation(node, settings.display));
+                        return numericalFormatter(tree.getAnnotation(node, settings.display)?.value as number??'');
                     }else{
                         return '';
                     }
@@ -82,12 +82,12 @@ export function getTextFunction(tree: ImmutableTree, settings: any) {
             } else if (type === BaseAnnotationType.NUMERICAL_SET) {
                 textFunction = (node: NodeRef) => {
                     if (tree.getAnnotation(node, settings.display)) {
-                        return `[${tree.getAnnotation(node, settings.display).map(numericalFormatter).join(", ")}]`;
+                        return `[${(tree.getAnnotation(node, settings.display)?.value as number[]??[]).map(numericalFormatter).join(", ")}]`;
                     }
                     return '';
                 };
             } else {
-                textFunction = (node: NodeRef) => tree.getAnnotation(node, settings.display);
+                textFunction = (node: NodeRef) => String(tree.getAnnotation(node, settings.display)?.value??'');
             }
 
         // throw new Error(`Unknown tip label display type ${settings.display}}`);

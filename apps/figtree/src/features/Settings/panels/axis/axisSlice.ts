@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit"
-import { RootState } from "../../../../app/store"
-import { numericalFormat } from "../label/labelSlice"
+import type { RootState } from "../../../../app/store"
+import type { numericalFormat } from "../label/labelSlice"
 
 
 interface axisState {

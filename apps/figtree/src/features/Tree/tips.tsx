@@ -1,6 +1,6 @@
 import { getColorScale, useAppSelector } from "../../app/hooks";
 import { selectShapeState } from "../Settings/panels/shapes/shapeSlice";
-import {  Nodes, NodeRef } from "@figtreejs/core";
+import {   CircleNodes, RectangleNodes, type NodeRef } from "@figtreejs/core";
 import { COLOUR_ANNOTATION } from "../../app/constants";
 
 
@@ -49,19 +49,19 @@ function tipShapeGenerator(target: "tip" | "tipBackground" ) {
     if (activated) {
         if (settings.shape === "Circle") {
             return (
-                <Nodes.Circle {...props} filter={filter} attrs={{ r: radius, fill:filler, stroke, strokeWidth }} />
+               CircleNodes({...props, filter, attrs:{ r: radius, fill:filler, stroke, strokeWidth }} )
 
             )
         } else if (settings.shape === "Rectangle") {
             return (
-                <Nodes.Rectangle {...props} filter={filter} attrs={{ width: settings.maxSize, height: settings.maxSize, fill:filler, stroke, strokeWidth }} />
+                RectangleNodes({...props, filter, attrs:{ width: settings.maxSize, height: settings.maxSize, fill:filler, stroke, strokeWidth }})
             )
         }
         else {
             throw new Error("Invalid tip shape")
         }
     } else {
-        return <g></g>;
+        return null;
     }
 
     }

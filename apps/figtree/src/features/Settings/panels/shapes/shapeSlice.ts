@@ -1,6 +1,6 @@
 import {  createSlice } from '@reduxjs/toolkit';
-import { Slice } from '@reduxjs/toolkit';
-import { RootState } from '../../../../app/store';
+import type { Slice } from '@reduxjs/toolkit';
+import type { RootState } from '../../../../app/store';
 
 type shapes = "Circle" | "Rectangle" | "Swoosh"
 
