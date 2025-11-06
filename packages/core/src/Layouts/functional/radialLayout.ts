@@ -3,6 +3,7 @@
 
 import type { ImmutableTree, NodeRef} from "../../Evo";
 import { preOrderIterator, tipIterator } from "../../Evo";
+import type { NodeLabelType } from "../../store/store";
 import type { FunctionalVertex} from "./rectangularLayout";
 import {layoutClass } from "./rectangularLayout";
 
@@ -56,7 +57,7 @@ export function radialLayout (tree:ImmutableTree,options:{ spread?: number }={})
                     alignmentBaseline: "middle",
                     textAnchor: normalizeAngle(branchAngle)>Math.PI/2 && normalizeAngle(branchAngle)<3*Math.PI/2?"end":"start",
                     rotation: 0// textSafeDegrees(normalizeAngle(branchAngle))
-                }
+                } as NodeLabelType
             }
             
             if (tree.getChildCount(node) > 0) {

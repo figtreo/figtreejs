@@ -197,7 +197,7 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
         const annotation = tree.getAnnotation(node, key);
         if(annotation !== undefined){
           if(annotation.type===BaseAnnotationType.MARKOV_JUMPS){
-            const value = annotation.value.map(j=>[Number(j.time),String(j.from),String(j.to)])
+            const value = annotation.value.map(j=>[Number(j.time),String(j.from),String(j.to)]) as [[number,string,string]] // todo infer type from above
             newTree = newTree.annotateNode(newNode, {name:annotation.id,value}) as ImmutableTree; // TODO make tree interface genaric and return the same type of tree
           } else{
             newTree = newTree.annotateNode(newNode, {name:annotation.id,value:annotation.value}) as ImmutableTree; 
@@ -270,16 +270,17 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
     
   }
 
-  getTaxonFromNode(node: NodeRef): Taxon | undefined {
+  getTaxonFromNode(node: NodeRef): Taxon  {
     const taxaIndex = this._data.nodeToTaxon[node.number]
     if (taxaIndex === undefined) {
-      return undefined
+      throw new Error(`Node ${node} not found in Tree`)
     }
     return this.taxonSet.getTaxon(taxaIndex)
   }
   //TODO overload as above.
-  getTaxon(id: number | NodeRef|string): Taxon | undefined {
+  getTaxon(id: number | NodeRef|string): Taxon  {
     if (typeof id === "number") {
+
       return this.taxonSet.getTaxon(id)
     } else if(typeof id === "string") {
       return this.getTaxonByName(id)
@@ -374,8 +375,10 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
       }
       return mrca
     } else {
+      if(node2===undefined){throw new Error(`No second node provided. A node must be provided if the first value is not an array`)}
       const path1 = [...this.getPathToRoot(node1)]
       let mrca = null
+     
       for (const ancestor of this.getPathToRoot(node2)) {
         if (path1.includes(ancestor)) {
           mrca = ancestor
@@ -433,44 +436,51 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
       n = this.getParent(n)
     }
   }
-  getNextSibling(node: NodeRef): NodeRef | undefined {
-    const parent =
-      this._data.nodes.allNodes[this._data.nodes.allNodes[node.number].parent!]
-    const index = parent.children.map((c) => c).indexOf(node.number)
-    if (this.getChildCount(this.getParent(node)) === 1) {
+  getNextSibling(node: NodeRef): NodeRef |undefined {
+    const parent = this.getParent(node)
+    if(parent==undefined){
+      return undefined
+    }
+    const index = (parent as Node).children.map((c) => c).indexOf(node.number)
+    if (this.getChildCount(parent) === 1) {
       console.warn(`Node ${node.number} has only no sibling`)
       return undefined
-    } else if (index === this.getChildCount(this.getParent(node)) - 1) {
-      return this.getChild(this.getParent(node), 0)
+    } else if (index === this.getChildCount(parent) - 1) {
+      return this.getChild(parent, 0)
     } else {
-      return this.getChild(this.getParent(node), index + 1)
+      return this.getChild(parent, index + 1)
     }
   }
 
-  getRightSibling(node: NodeRef): NodeRef | undefined {
-    const parent =
-      this._data.nodes.allNodes[this._data.nodes.allNodes[node.number].parent!]
-    const index = parent.children.map((c) => c).indexOf(node.number)
-    if (this.getChildCount(this.getParent(node)) === 1) {
+  getRightSibling(node: NodeRef): NodeRef |undefined {
+    const parent = this.getParent(node)
+    if(parent==undefined){
+      return undefined
+    }
+    const index = (parent as Node).children.map((c) => c).indexOf(node.number)
+
+    if (this.getChildCount(parent) === 1) {
       console.warn(`Node ${node.number} has no sibling`)
       return undefined
-    } else if (index === this.getChildCount(this.getParent(node)) - 1) {
+    } else if (index === this.getChildCount(parent) - 1) {
       return undefined
     } else {
-      return this.getChild(this.getParent(node), index + 1)
+      return this.getChild(parent, index + 1)
     }
   }
   getLeftSibling(node: NodeRef): NodeRef | undefined {
-    const parent =
-      this._data.nodes.allNodes[this._data.nodes.allNodes[node.number].parent!]
-    const index = parent.children.map((c) => c).indexOf(node.number)
-    if (this.getChildCount(this.getParent(node)) === 1) {
+    const parent = this.getParent(node)
+    if(parent==undefined){
+      return undefined
+    }
+    const index = (parent as Node).children.map((c) => c).indexOf(node.number)
+    if (this.getChildCount(parent) === 1) {
       console.warn(`Node ${node.number} has no sibling`)
       return undefined
     } else if (index === 0) {
       return undefined
     } else {
-      return this.getChild(this.getParent(node), index - 1)
+      return this.getChild(parent, index - 1)
     }
   }
 
@@ -1053,11 +1063,11 @@ export function* preOrderIterator(
 export function* psuedoRootPreOrderIterator(
   tree:Tree,
   node: NodeRef | undefined = undefined,
-  sort: (a: NodeRef|undefined, b: NodeRef|undefined) => number = (a, b) => a!.number - b!.number,
+  sort: (a: NodeRef, b: NodeRef) => number = (a, b) => a!.number - b!.number,
 ):Generator<NodeRef> {
   const traverse = function* (node: NodeRef,visited:number|undefined = undefined): Generator<NodeRef> {
     yield tree.getNode(node.number)! // get from tree so we keep proxy when used in draft
-    const branches = [...tree.getChildren(node),tree.getParent(node)].filter(n=>n!==undefined && n.number!==visited)
+    const branches = [...tree.getChildren(node),tree.getParent(node)].filter(n=>n!==undefined && n.number!==visited) as NodeRef[] // 
     branches.sort(sort);
     for(const branch of branches){
         yield* traverse(branch,node.number)
@@ -1081,7 +1091,7 @@ export function* psuedoRootPostOrderIterator(
 ):Generator<NodeRef> {
   const traverse = function* (node: NodeRef,visited:number|undefined = undefined): Generator<NodeRef> {
     // get from tree so we keep proxy when used in draft
-    const branches = [...tree.getChildren(node),tree.getParent(node)].filter(n=>n!==undefined && n.number!==visited)
+    const branches = [...tree.getChildren(node),tree.getParent(node)].filter(n=>n!==undefined && n.number!==visited) as NodeRef[]
     branches.sort(sort);
     for(const branch of branches){
         yield* traverse(branch,node.number)

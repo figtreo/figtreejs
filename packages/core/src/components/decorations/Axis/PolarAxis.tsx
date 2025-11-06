@@ -5,7 +5,7 @@ import {  scaleLinear } from 'd3-scale';
 import type { AxisProps, AxisTicksOptions} from './Axis.types';
 import { defaultAxisProps } from './Axis.types';
 
-import { normalizeAngle } from '../../../store/polarScale';
+import { normalizeAngle, type PolarScaleType } from '../../../store/polarScale';
 import type { dimensionType } from '../../FigTree/Figtree.types';
 
 //TODO do things to scale and allow date as origin not maxD.
@@ -18,9 +18,9 @@ export default function PolarAxis(props: AxisProps) {
     direction = defaultAxisProps.direction,
     gap = defaultAxisProps.gap,
     strokeWidth = defaultAxisProps.strokeWidth,
-    scale:figureScale,
+    scale  : figureScale,
 
-  } = props
+  } = props as { scale: PolarScaleType } & AxisProps;
   
   const ticks = props.ticks
     ? { ...defaultAxisProps.ticks, ...props.ticks }

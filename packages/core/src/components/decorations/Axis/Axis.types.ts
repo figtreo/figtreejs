@@ -1,6 +1,6 @@
 import { format } from "d3-format";
 import type { ScaleContinuousNumeric } from "d3-scale";
-import type { scale } from "../../../store/store";
+import type { scaleType } from "../../../store/store";
 import type { layoutClass } from "../../../Layouts";
 import type { dimensionType } from "../../FigTree/Figtree.types";
 import type { Attrs } from "../../Baubles/types";
@@ -20,7 +20,7 @@ export interface AxisProps {
     title?: { text: string, padding: number, style: Attrs },
     ticks?: AxisTicksOptions ,
     direction?: AxisOrientation,
-    scale: scale,
+    scale: scaleType,
     axisScale?:ScaleContinuousNumeric<number,number>,
     strokeWidth?: number,
     x: number,
@@ -75,7 +75,7 @@ export interface AxisBarsProps{
     type?:"Rectangular"|"Polar"
     tickValues:number[],
     scale:ScaleContinuousNumeric<number,number>,
-    figureScale:scale,
+    figureScale:scaleType,
     axisY:number,
     layoutClass:layoutClass
 

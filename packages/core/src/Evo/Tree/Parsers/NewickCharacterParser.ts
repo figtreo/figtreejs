@@ -3,6 +3,7 @@ import { TaxonSet } from "../Taxa/Taxon"
 import type { NodeRef } from "../Tree.types"
 import { ImmutableTree } from "../NormalizedTree/ImmutableTree"
 import { parseAnnotation } from "./AnnotationParser"
+import { notNull } from "../../../utils";
 
 export class NewickCharacterParser {
   done: boolean
@@ -59,6 +60,7 @@ export class NewickCharacterParser {
       const annotations = parseAnnotation(t)
 
       for(const annotation of annotations){
+        notNull(this.currentNode,"Internal Parsing error - Current not is not defined")
         this.tree = this.tree.annotateNode(this.currentNode, annotation) as ImmutableTree
       }
       
@@ -101,6 +103,7 @@ export class NewickCharacterParser {
       }
 
       const parent = this.nodeStack.pop()!
+      notNull(this.currentNode,"Internal Parsing error - Current not is not defined")
       this.tree = this.tree.addChild(parent, this.currentNode)
       // tree.setParent(currentNode!,parent)
 
@@ -120,6 +123,7 @@ export class NewickCharacterParser {
 
       // the end of an internal node
       const parent = this.nodeStack.pop()!
+      notNull(this.currentNode,"Internal Parsing error - Current not is not defined")
       this.tree = this.tree.addChild(parent, this.currentNode)
       // tree.setParent(currentNode!,parent)
 
@@ -133,6 +137,7 @@ export class NewickCharacterParser {
     } else {
       // not any specific token so may be a label, a length, or an external node name
       if (this.lengthNext) {
+        notNull(this.currentNode,"Internal Parsing error - Current not is not defined")
         this.tree = this.tree._setLength(this.currentNode, parseFloat(t))
         this.lengthNext = false
       } else if (this.labelNext) {
@@ -146,6 +151,7 @@ export class NewickCharacterParser {
               name: this.options.labelName,
               value: value,
             }
+            notNull(this.currentNode,"Internal Parsing error - Current not is not defined")
             this.tree = this.tree.annotateNode(
               this.currentNode,
               label_annotation,
@@ -156,6 +162,7 @@ export class NewickCharacterParser {
             )
           }
         } else {
+          notNull(this.currentNode,"Internal Parsing error - Current not is not defined")
           this.tree = this.tree.setLabel(this.currentNode, t.slice(1)) //remove the # todo put it back when writing to newick
         }
         this.labelNext = false

@@ -1,5 +1,4 @@
 /* eslint-disable */
-import { Tree } from "../Tree.types";
 import { ImmutableTree } from "../NormalizedTree/ImmutableTree";
 import { parseNewick } from "./newickParsing";
 

@@ -7,9 +7,9 @@ import { scaleLinear } from 'd3-scale'
 
 //todo remove props that are just the getting passed to children and use render props instead
 
-export type layout = (n:NodeRef)=>FunctionalVertex
+export type layoutType = (n:NodeRef)=>FunctionalVertex
 // TODO remove this as unneeded
-export const useVertexFactory =(layout:layout)=> (node:NodeRef):FunctionalVertex=>{
+export const useVertexFactory =(layout:layoutType)=> (node:NodeRef):FunctionalVertex=>{
     const v = layout(node);
     if(v === undefined){
         throw new Error(`Node ${node} not found in layout`)
@@ -33,10 +33,17 @@ export type scaleOptions =  {
     fishEye?: { x: number, y: number,scale:number },
 }
 
+export type NodeLabelType = {
+                    alignmentBaseline: React.SVGAttributes<SVGTextElement>['alignmentBaseline'];
+                    textAnchor: React.SVGAttributes<SVGTextElement>['textAnchor'];
+                    dxFactor: number
+                    dyFactor:number
+                    rotation:number
+                }
 
 // scale adds x and y to whatever comes in.
-type scaleInterface <T extends simpleVertex> = (obj: T) => T & { x: number; y: number };
-export type scale = scaleInterface<simpleVertex> // TODO use generics to clean up!
+export type scaleType = <T extends simpleVertex>(vertex: T) => T & { x: number; y: number };
+// export type scale = scaleType<simpleVertex>  // TODO use generics to clean up!
 
 export function getScale({
     domainX,
@@ -51,7 +58,7 @@ export function getScale({
     pollard = 0,
     fishEye = { x: 0, y: 0 , scale:0},
 
-}:scaleOptions):scale{
+}:scaleOptions):scaleType{
 
     let xScale:ScaleLinear<number,number>;
     let yScale:ScaleLinear<number,number>; 
@@ -73,7 +80,7 @@ export function getScale({
             if(invert){
                 xScale.range([canvasWidth,0]);
             }
-            return function (vertex: { x: number, y: number }) {
+            return function scale<T extends simpleVertex>(vertex: T): T & { x: number; y: number } {
                 return { ...vertex, x: xScale(vertex.x), y: calcY(vertex.y) }
             }
         }
@@ -99,7 +106,7 @@ export function getScale({
                     
                      yScale = scaleLinear().domain([0,1]).range(yRange);
                      xScale = scaleLinear().domain([0,1]).range(xRange);
-            return function (vertex: { x: number, y: number }) {
+            return function scale<T extends simpleVertex>(vertex: T): T & { x: number; y: number }{
                 return { ...vertex,x: xScale(normalizeX(vertex.x)), y: yScale(normalizeY(vertex.y)) }
             }
         }

@@ -1,7 +1,7 @@
 import React from "react";
 import type { NodeRef} from "../../../Evo";
 import { tipIterator } from "../../../Evo";
-import type { layout, scale } from "../../../store/store";
+import type { layoutType, scaleType } from "../../../store/store";
 import { maxIndex } from "d3-array";
 import { Highlight } from "./Highlight";
 import { Cartoon } from "./Cartoon";
@@ -31,8 +31,8 @@ export type CladeOptionsType<A extends UserAttrs> = {
 export type InternalCladePropType <A extends Attrs>={
     clade:Clade,
     applyAttrInteractions:AttrAndInteractionApplier<A>;
-    scale:scale;
-    layout:layout;
+    scale:scaleType;
+    layout:layoutType;
 }
 
 /**

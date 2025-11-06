@@ -1,3 +1,4 @@
+import { notNull } from "../../../../utils"
 import type { ImmutableTree } from "../../NormalizedTree"
 import {  TaxonSet } from "../../Taxa/Taxon"
 
@@ -210,6 +211,7 @@ export class NexusImporter {
                 this.taxonSet.addTaxon(token)
               }
               // const taxon = this.taxonSet.getTaxonByName(token)
+              notNull(key,'Error parsing nexus. Expected key for taxa but found nothing')
               this.translateTaxonMap.set(key, token)
             }
             token = await this.nextToken()

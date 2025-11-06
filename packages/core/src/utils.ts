@@ -34,3 +34,17 @@ export function dateToDecimal(date:Date){
     const totalNumberOfDays = leapYear(year)? 366:365;
     return year+day/totalNumberOfDays
 }
+export function panic(message: string): never { throw new Error(message); }
+
+
+export function u<T>(x: T | undefined): NonNullable<T> {
+  if (x === undefined) {
+    throw new Error('internal bug! unhandled undefined');
+  }
+  return x as NonNullable<T>;
+}
+
+export function notNull<T>(x: T,message:string): asserts x is NonNullable<T> {
+  if (x === undefined) throw new Error(message);
+}
+

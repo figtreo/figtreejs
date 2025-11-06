@@ -6,7 +6,6 @@ import type { Attrs, StripProps } from "./types";
 import type { NodeRef} from "../../Evo";
 import { preOrderIterator } from "../../Evo";
 import type { BaubleTypes } from "../FigTree/Figtree.types";
-import { simpleVertex } from "../../Layouts/functional/rectangularLayout";
 import type { LabelOptionsType } from "./BranchLabels";
 import type { BaseLabelProps} from "./Shapes";
 import  {BaseLabel } from "./Shapes";

@@ -16,7 +16,7 @@ function mapAttrsToProps
         for (const key in attrs) {
             const k = key as keyof A;
             const v = attrs[k];
-            props[k] = isFn(v) ? v(node) : v;
+            props[k] = isFn(v) ? (v as Fn)(node) : v as number|string;
             
         }
         return props as A;
