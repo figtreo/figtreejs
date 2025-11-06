@@ -1,8 +1,9 @@
 import React from "react";
 import { createRoot } from 'react-dom/client';
-import { FigTreeOptions } from "./FigtreeOptions";
-import { FigTree } from '@figtreejs/core'
+
+import { FigTree, type FigtreeProps } from '@figtreejs/core'
 import ReactDOMServer from "react-dom/server";
+import type { FigTreeOptions } from "./FigtreeOptions";
 const rootMap =new Map();
 
 
@@ -13,19 +14,19 @@ export default function figtreeRender(options:FigTreeOptions){
     const svg = options.svg;
 
     if (svg == undefined) {
-        const element = React.createElement(FigTree, options, ...options.baubles);
+        const element = React.createElement(FigTree, options);
         const markup = ReactDOMServer.renderToStaticMarkup(element);
         return `<svg xmlns="http://www.w3.org/2000/svg" width="${options.width}" height="${options.height}">${markup}</svg>`;
     }
 
     if(rootMap.has(svg)){
         const root = rootMap.get(svg);
-        root.render(React.createElement(FigTree, options,...options.baubles));
+        root.render(React.createElement(FigTree, options));
     }
     else{
         const root = createRoot(svg);
         rootMap.set(svg,root);
-        root.render(React.createElement(FigTree, options,...options.baubles));
+        root.render(React.createElement(FigTree, options));
 
     }
 }
