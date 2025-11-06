@@ -2,6 +2,7 @@
 import React from 'react'
 import type {  AxisBarsProps} from './Axis.types';
 import { defaultAxisBarsProps } from './Axis.types';
+import type { PolarScaleType } from '../../../store/polarScale';
 
 
 /**
@@ -21,7 +22,7 @@ export  default function PolarAxisBars(props:AxisBarsProps) {
         scale,
         figureScale,
         axisY,
-      } = props
+      } = props as { figureScale: PolarScaleType } & AxisBarsProps;
 
 
           return(

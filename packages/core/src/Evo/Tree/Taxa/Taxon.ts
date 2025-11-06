@@ -68,7 +68,7 @@ export class TaxonSet implements TaxonSetInterface{
         return this;
     }
 
-    getTaxon(id:number):Taxon|undefined{
+    getTaxon(id:number):Taxon{
         return this._data.byName[this._data.allNames[id]]
     }
     getTaxonByName(name:string):Taxon{

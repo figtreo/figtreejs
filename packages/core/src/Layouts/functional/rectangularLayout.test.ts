@@ -1,4 +1,5 @@
 import { ImmutableTree } from "../../Evo/Tree";
+import { u } from "../../utils";
 import { rectangularLayout } from "./rectangularLayout";
 import { describe, it, expect } from 'vitest';
 describe("Test rectangular layout",()=>{
@@ -30,7 +31,7 @@ describe("Test rectangular layout",()=>{
         const root = layout(tree.getRoot());
         const c = tree.getNodeByTaxon(tree.getTaxonByName("c"))!;
         const cV = layout(c) 
-        const tree2 = tree.setDivergence(tree.getNodeByTaxon(tree.getTaxonByName("a")),3.0)
+        const tree2 = tree.setDivergence(u(tree.getNodeByTaxon(tree.getTaxonByName("a"))),3.0)
         const layout2 =rectangularLayout(tree2);
         const root2 = layout2(tree2.getRoot());
         const c2 = tree2.getNodeByTaxon(tree.getTaxonByName("c"))!;

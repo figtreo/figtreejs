@@ -34,7 +34,7 @@ export class PreOrderTraversalCache implements TreeTraversal{
     
 //Check we've been to next otherwise we need to update again.
     getNext(tree: Tree, node: NodeRef): NodeRef|undefined{
-        if(this._forwardCache.has(node) && this._forwardCache.has(this._forwardCache.get(node))) return this._forwardCache.get(node)! //if this node hasn't changed nor the next
+        if(this._forwardCache.has(node) && this._forwardCache.has(this._forwardCache.get(node)!)) return this._forwardCache.get(node)! //if this node hasn't changed nor the next
         if(tree.isRoot(node)){ //start over
            return undefined;
         }
@@ -51,7 +51,7 @@ export class PreOrderTraversalCache implements TreeTraversal{
       
     }
     getPrevious(tree: Tree, node: NodeRef): NodeRef|undefined {
-        if(this._reverseCache.has(node) && this._reverseCache.has(this._reverseCache.get(node))) return this._reverseCache.get(node); //if this node hasn't changed nor the next
+        if(this._reverseCache.has(node) && this._reverseCache.has(this._reverseCache.get(node)!)) return this._reverseCache.get(node); //if this node hasn't changed nor the next
         if(node ===this.traverse(tree).next().value){
             return undefined;
         }

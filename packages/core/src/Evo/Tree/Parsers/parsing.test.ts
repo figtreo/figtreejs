@@ -1,3 +1,4 @@
+import { u } from "../../../utils";
 import { ImmutableTree } from "../NormalizedTree/ImmutableTree";
 import { BaseAnnotationType } from "../Tree.types";
 import { processAnnotationValue } from "./AnnotationParser";
@@ -139,7 +140,7 @@ it('node id', function() {
 
     expect(parent).toEqual(node1);
 
-    expect(tree.getLength(tree.getNodeByTaxon(B))).toEqual(1);
+    expect(tree.getLength(u(tree.getNodeByTaxon(B)))).toEqual(1);
     expect(tree.toNewick()).toEqual("((A,T)#Node_1:1,(a,b:1));")
 });
 it('root length and label', function() {
@@ -208,7 +209,7 @@ it('label annotation', function(){
     {parseAnnotations:true,labelName:"probability"});
     const virus1Node = tree.getNodeByTaxon(tree.getTaxonByName("virus1"))!;
 
-    const probability = tree.getAnnotationValue(tree.getParent(virus1Node), "probability",BaseAnnotationType.NUMERICAL);
+    const probability = tree.getAnnotationValue(tree.getParent(virus1Node)!, "probability",BaseAnnotationType.NUMERICAL);
     
     expect(probability).toEqual(0.95);
     

@@ -1,6 +1,6 @@
 import React from 'react'
 import type { NodeRef } from '../../Evo';
-import type { layout, scale } from '../../store/store';
+import type { layoutType, scaleType } from '../../store/store';
 import type { AttrAndInteractionApplier, Attrs,  XYShape } from '../Baubles/types';
 
 
@@ -13,8 +13,8 @@ import type { AttrAndInteractionApplier, Attrs,  XYShape } from '../Baubles/type
 export type NodedProps<A extends Attrs> ={
     node:NodeRef,
     applyAttrInteractions:AttrAndInteractionApplier<A>;
-    scale:scale;
-    layout:layout;
+    scale:scaleType;
+    layout:layoutType;
     animated?:boolean
 }
 

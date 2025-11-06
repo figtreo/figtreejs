@@ -1,6 +1,7 @@
 import {  mean } from "d3-array";
 import type { ImmutableTree, NodeRef} from "../../";
 import { postOrderIterator} from "../../";
+import type { NodeLabelType } from "../../store/store";
 
 export enum layoutClass{
     Rectangular = "Rectangular",
@@ -9,15 +10,11 @@ export enum layoutClass{
 }
 
 export interface simpleVertex { x:number, y: number,theta?:number,r?:number } 
+
 export interface FunctionalVertex extends simpleVertex {
-    layoutClass:layoutClass
-    nodeLabel:{
-        alignmentBaseline:string,
-        textAnchor:string,
-        dxFactor:number,
-        dyFactor:number,
-        rotation:number
-    }
+    layoutClass:layoutClass,
+    nodeLabel:NodeLabelType
+    
 }
 
 
@@ -33,7 +30,8 @@ export function baseLayout(lc:layoutClass){
             let protoVertex:{x:number,y:number};
             const x = tree.getDivergence(node);
             const leftLabel = tree.getChildCount(node) > 0;
-            const labelBelow = (tree.getChildCount(node) > 0 && (tree.getParent(node) === undefined || tree.getChild(tree.getParent(node), 0) !== node));
+            const hasParent = tree.getParent(node) !== undefined 
+            const labelBelow = (tree.getChildCount(node) > 0 && (!hasParent || tree.getChild(tree.getParent(node)!, 0) !== node));
     
     
             if(tree.isExternal(node)){
@@ -54,7 +52,7 @@ export function baseLayout(lc:layoutClass){
                     textAnchor:leftLabel?"end":"start",
                     dxFactor: leftLabel?-1:1,
                     dyFactor:leftLabel ? (labelBelow ? -1 : 1) : 0,
-                    rotation:0}
+                    rotation:0} as NodeLabelType
                 }
                 map.set(node,vertex);
             }

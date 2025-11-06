@@ -1,6 +1,6 @@
 import React from 'react'
 import type { NodeRef } from '../../Evo';
-import type { layout, scale } from '../../store/store';
+import type { layoutType, scaleType } from '../../store/store';
 import type { AttrAndInteractionApplier, Attrs, DShape} from '../Baubles/types';
 import { layoutClass } from '../../Layouts';
 import { normalizePath } from '../../path.helpers';
@@ -16,8 +16,8 @@ export type BranchedProps<A extends Attrs> ={
     node:NodeRef,
     parent?:NodeRef,
     applyAttrInteractions:AttrAndInteractionApplier<A>;
-    scale:scale;
-    layout:layout;
+    scale:scaleType;
+    layout:layoutType;
     curvature?:number,
     animated?:boolean
 

@@ -20,6 +20,8 @@ export default defineConfig(
       },
     },
     rules: {
+
+
       '@typescript-eslint/consistent-type-imports': [
         'error',
         { fixStyle: 'separate-type-imports' },
@@ -27,5 +29,5 @@ export default defineConfig(
       '@typescript-eslint/consistent-type-exports': 'error',
         'vitest/no-focused-tests': 'error',
     },
-  }
+  } 
 )

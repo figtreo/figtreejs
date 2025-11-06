@@ -1,6 +1,8 @@
 import { extent, min } from "d3-array";
 import { scaleLinear } from "d3-scale";
+import type { simpleVertex } from "../Layouts/functional/rectangularLayout";
 
+export type PolarScaleType = <T extends simpleVertex>(vertex: T)=> T & { x: number; y: number; r:number; theta:number}
 
 export function polarScaleMaker(maxX:number,maxY:number,canvasWidth:number,canvasHeight:number,invert:boolean=false,minRadius:number=0,angleRange:number=1.7*Math.PI,rootAngle:number=0,pollard=0){
 
@@ -70,7 +72,7 @@ export function polarScaleMaker(maxX:number,maxY:number,canvasWidth:number,canva
     const x = scaleLinear().domain(xDomain).range(xRange);
     const y = scaleLinear().domain(yDomain).range(yRange);
 
-    return function(vertex:{x:number,y:number}){
+    return function scale<T extends simpleVertex>(vertex: T) : T & { x: number; y: number; r:number; theta:number}{
             // const [r,theta] =[rScale(vertex.x),normalizeAngle(thetaScale(vertex.y))];
             const [r,theta] =[rScale(vertex.x),thetaScale(vertex.y)]; // not normalized so we get branch length arc directions correct.
             const [xcart,ycart] = polarToCartesian(r,theta);
@@ -84,7 +86,7 @@ export function polarScaleMaker(maxX:number,maxY:number,canvasWidth:number,canva
                 dyFactor:Math.sin(nTheta),
                 rotation:textSafeDegrees(nTheta)}
 
-            return {x:x(xcart),y:y(ycart),r,theta, nodeLabel:nodeLabel}
+            return {...vertex,x:x(xcart),y:y(ycart),r,theta, nodeLabel:nodeLabel}
         }
 }
 

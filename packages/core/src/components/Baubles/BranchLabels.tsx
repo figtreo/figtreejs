@@ -10,6 +10,7 @@ import { textSafeDegrees } from "../../store/polarScale";
 import type { BaseLabelProps} from "./Shapes/Label";
 import {BaseLabel } from "./Shapes/Label";
 import { withAnimation } from "../HOC/withAnimation";
+import { panic } from "../../utils";
 
 
 // TODO think about passing dimensions to all children
@@ -59,13 +60,15 @@ function makeBranchLabels<
                             <g className={"branch-label-layer"}>
                                 {[...preOrderIterator(tree)].filter(n=>filter(n) && !tree.isRoot(n)).map((node) => { 
                                         const v = layout(node);
-                                        const parentVertex = layout(tree.getParent(node));
+                                        const parent = tree.getParent(node)|| panic(`no parent found for a node that should have one`)
+                                        const parentVertex = layout(parent);
                                         const scaledV = scale(v);
                                         const scaledpV = scale(parentVertex);
-                                       
-                                        const rotation = layoutClass==="Polar"?textSafeDegrees(scaledV.theta):0;
+                                       // todo move 
+                                        const theta = layoutClass==="Polar" ? scaledV.theta || panic("Layout is polar but did not compute theta"):0
+                                        const rotation = layoutClass==="Polar"?textSafeDegrees(theta):0;
                                         const step = scale({x:parentVertex.x,y:v.y})
-                                        const {dx,dy} = layoutClass==="Polar"? getPolarBranchDs(scaledV.theta,gap):{dx:0,dy:-1*gap};
+                                        const {dx,dy} = layoutClass==="Polar"? getPolarBranchDs(theta,gap):{dx:0,dy:-1*gap};
                                         const x = (layoutClass==="Polar"? (scaledV.x+step.x)/2 : (scaledV.x+scaledpV.x)/2 )+dx;
                                         const y = (layoutClass==="Polar"? (scaledV.y+step.y)/2  : layoutClass==="Radial"? (scaledV.y+scaledpV.y)/2 : scaledV.y )+dy;
 
