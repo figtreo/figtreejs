@@ -49,7 +49,7 @@ let annotatedTree= tree;
 for (const node of tree.getExternalNodes()){
     annotatedTree = annotatedTree.annotateNode(node,{host:"human"})
 }
-display(annotatedTree.getAnnotationDomain("host"))
+display(annotatedTree.getAnnotationSummary("host"))
 ```
 ```js echo=true
 display(annotatedTree.getAnnotationType("host"))
@@ -58,4 +58,7 @@ Note this is a new tree.
 
 ```js echo=true
 display(annotatedTree===tree)
+```
+```js echo=T
+display(annotatedTree.getAnnotation(annotatedTree.getNode("A"),"host"))
 ```

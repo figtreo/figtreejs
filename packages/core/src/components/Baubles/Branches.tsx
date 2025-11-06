@@ -22,7 +22,7 @@ import { withBranch } from '../HOC';
 export type BranchOptionsType<A extends UserAttrs=UserAttrs> = {
         filter?:(n:NodeRef)=>boolean,
         keyBy?:(n:NodeRef)=>number|string,
-        attrs:A,
+        attrs?:A,
         interactions?:Record<string,(n:NodeRef)=>void>,
         curvature?:number,
         animated?:boolean
@@ -46,7 +46,7 @@ function makeBranches<
                 const {
                     filter = () => true,
                     keyBy = (n: NodeRef) => n.number, // or whatever your NodeRef key is
-                    attrs,
+                    attrs={} as A,
                     interactions,
                     curvature,
                     // ...rest // all shape-specific extras E
