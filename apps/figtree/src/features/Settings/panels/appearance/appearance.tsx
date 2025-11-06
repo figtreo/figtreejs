@@ -3,7 +3,7 @@ import { selectAppearance, setColourBy, setLineWidth, setMinWidth, setWidthBy, s
 import { SettingPanel } from '../PanelHeader';
 import { selectTree } from '../../../../app/hooks';
 import { selectColorableAttributes } from '../colorScales/colourSlice';
-import { AnnotationType } from '@figtreejs/core';
+import { BaseAnnotationType } from '@figtreejs/core';
 const defaultOptions = ["Fixed","User selection"]
 
 
@@ -21,7 +21,7 @@ export function Appearance() {
     const attributes = useAppSelector(selectColorableAttributes)
     
     // const continuousAttributes = tree.getCurrentIndex() > -1? tree.getAnnotationKeys().filter(a => tree.getAnnotationType(a) === AnnotationType.CONTINUOUS):[]
-    const continuousAttributes = tree.getNodeCount() > 0? tree.getAnnotationKeys().filter(a => tree.getAnnotationType(a) === AnnotationType.CONTINUOUS):[]
+    const continuousAttributes = tree.getNodeCount() > 0? tree.getAnnotationKeys().filter(a => tree.getAnnotationType(a) === BaseAnnotationType.NUMERICAL):[]
 
     const attributeKeys = [...defaultOptions, ...attributes] 
 

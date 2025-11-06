@@ -13,7 +13,7 @@ import {
   selectSelectionRoot,
   setSelectionMode,
 } from "./headerSlice"
-import { AnnotationType, postOrderIterator, tipIterator } from "@figtreejs/core"
+import { BaseAnnotationType, postOrderIterator, tipIterator } from "@figtreejs/core"
 import {
   CARTOON_ANNOTATION,
   COLLAPSE_ANNOTATION,
@@ -144,7 +144,7 @@ export function Header() {
                       tree.annotateNode(tree.getNode(selectionRoot), {
                         name: COLOUR_ANNOTATION,
                         value: customColor,
-                        type: AnnotationType.DISCRETE,
+                        type: BaseAnnotationType.DISCRETE,
                       }),
                     ),
                   )
@@ -160,7 +160,7 @@ export function Header() {
                         tree.annotateNode(node, {
                           name: COLOUR_ANNOTATION,
                           value: customColor,
-                          type: AnnotationType.DISCRETE,
+                          type: BaseAnnotationType.DISCRETE,
                         }),
                       ),
                     )
@@ -197,7 +197,7 @@ export function Header() {
                       tree.annotateNode(tree.getNode(selectionRoot), {
                         name: HILIGHT_ANNOTATION,
                         value: customColor,
-                        type: AnnotationType.DISCRETE,
+                        type: BaseAnnotationType.DISCRETE,
                       }),
                     ),
                   )

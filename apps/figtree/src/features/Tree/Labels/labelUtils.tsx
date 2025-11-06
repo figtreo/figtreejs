@@ -1,5 +1,5 @@
 import { format } from "d3-format";
-import { NodeRef, decimalToDate, AnnotationType, ImmutableTree } from "@figtreejs/core";
+import { NodeRef, decimalToDate, BaseAnnotationType, ImmutableTree } from "@figtreejs/core";
 import { timeFormat } from "d3-time-format";
 
 // a function that converts a number to roman numerals
@@ -71,7 +71,7 @@ export function getTextFunction(tree: ImmutableTree, settings: any) {
             break;
         default:
             const type = tree.getAnnotationType(settings.display);
-            if (type === AnnotationType.CONTINUOUS) {
+            if (type === BaseAnnotationType.NUMERICAL) {
                 textFunction = (node: NodeRef) => {
                     if (tree.getAnnotation(node, settings.display)) {
                         return numericalFormatter(tree.getAnnotation(node, settings.display));
@@ -79,7 +79,7 @@ export function getTextFunction(tree: ImmutableTree, settings: any) {
                         return '';
                     }
                 }
-            } else if (type === AnnotationType.RANGE) {
+            } else if (type === BaseAnnotationType.NUMERICAL_SET) {
                 textFunction = (node: NodeRef) => {
                     if (tree.getAnnotation(node, settings.display)) {
                         return `[${tree.getAnnotation(node, settings.display).map(numericalFormatter).join(", ")}]`;

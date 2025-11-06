@@ -12,6 +12,10 @@
       "require": "./dist/index.cjs"
     }
   },
+  "module": "./dist/index.mjs",          
+  "main": "./dist/index.cjs",            
+  "types": "./dist/index.d.ts",
+  
   "lint-staged": {
     "*.{js,ts}": [
       "eslint --fix",

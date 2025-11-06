@@ -1,6 +1,6 @@
 import { getColorScale, useAppSelector } from "../../app/hooks";
 import { selectShapeState } from "../Settings/panels/shapes/shapeSlice";
-import {  Nodes, NodeRef } from "@figtreejs/core";
+import {   CircleNodes, NodeRef } from "@figtreejs/core";
 import { COLOUR_ANNOTATION } from "../../app/constants";
 
 
@@ -32,7 +32,7 @@ export function InternalNodes(props:any) {
     if (settings.activated) {
         if (settings.shape === "Circle") {
             return (
-                <Nodes.Circle {...props} filter={filter} attrs={{ r: radius, fill:filler, stroke, strokeWidth }} />
+                CircleNodes( {...props, filter, attrs:{ r: radius, fill:filler, stroke, strokeWidth } })
             )
         } else if (settings.shape === "Rectangle") {
             return (
