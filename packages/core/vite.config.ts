@@ -1,12 +1,5 @@
 import dts from 'vite-plugin-dts'
-
-
-
-
 import packageJson from "./package.json";
-
-
-
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
@@ -21,7 +14,7 @@ export default defineConfig({
     },
     rollupOptions: {
       // mark peer deps external to avoid bundling react, etc.
-      external: ['react', 'react-dom'],
+      external: ['react', 'react-dom','react/jsx-runtime'],
       output: {
         globals: {
           react: 'React',

@@ -19,7 +19,7 @@ import { withBranch } from '../HOC';
  * User options for designating and styling branches in a figure
  */
 
-export type BranchOptionsType<A extends UserAttrs> = {
+export type BranchOptionsType<A extends UserAttrs=UserAttrs> = {
         filter?:(n:NodeRef)=>boolean,
         keyBy?:(n:NodeRef)=>number|string,
         attrs:A,

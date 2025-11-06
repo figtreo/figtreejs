@@ -1,44 +1,42 @@
-import { dirname, resolve } from 'node:path'
-import { fileURLToPath } from 'node:url'
-import { defineConfig } from 'vite'
-import react from "@vitejs/plugin-react"
-import dts from 'vite-plugin-dts'
-
+import dts from 'vite-plugin-dts';
 import packageJson from "./package.json";
-import { copyFileSync } from 'node:fs'
-const __dirname = dirname(fileURLToPath(import.meta.url))
-
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+// think about standard build as well 
 export default defineConfig({
-  plugins: [react(),
-    dts({ rollupTypes: true,
-      afterBuild: () => {
-        // To pass publint (`npm x publint@latest`) and ensure the
-        // package is supported by all consumers, we must export types that are
-        // read as ESM. To do this, there must be duplicate types with the
-        // correct extension supplied in the package.json exports field.
-        copyFileSync("dist/index.d.ts", "dist/index.d.mts")
-      }
-     })],
-build: {
-  lib: {
-    entry: resolve(__dirname, 'src/index.ts'),
-    name: packageJson.name,
-    // the proper extensions will be added
-    fileName: 'index',
+  plugins: [react(),dts()],
+  define: {
+    // Ensure React uses production branches in the bundle
+    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV ?? 'production'),
   },
-  rollupOptions: {
-    // make sure to externalize deps that shouldn't be bundled
-    // into your library
-    // external: ['react','react/jsx-runtime'],
-    output: {
-      // Provide global variables to use in the UMD build
-      // for externalized deps
-      // globals: {
-      //   react: 'react',
-        
-      // },
+
+  build: {
+
+    sourcemap: true,
+    minify: 'esbuild',
+    lib: {
+      entry: 'src/index.ts',
+     name: packageJson.name, // used only for UMD/IIFE
+      formats: ['es', 'cjs'], // add 'umd' only if you need it
+      fileName: (format) => (format === 'es' ? 'index.mjs' : `index.${format}`)
     },
+    rollupOptions: {
+      external: [],// react is bundled here
+      output: {
+        // Try to keep a single ESM file (avoid shared/vendor chunks)
+        inlineDynamicImports: true,
+        // For ESM we still want index.mjs specifically
+        // Vite overrides this with `fileName` above for lib builds
+      }
+    },
+    target: 'es2018',
   },
-  sourcemap: true,
-},
-})
+
+   test: {
+    globals: true,
+    environment: 'jsdom',          // makes `document` available at runtime
+    include: ['src/**/*.{test,spec}.{ts,tsx}'],
+    // setupFiles: ['./vitest.setup.ts'], // optional
+  },
+});
+
