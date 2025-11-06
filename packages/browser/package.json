@@ -31,7 +31,7 @@
     }
   },
   "devDependencies": {
-    "@figtreejs/eslint-config": "*"
+    "@figtreejs/core": "^0.0.1"
   },
   "dependencies": {
     "react": "^18.3.1",
