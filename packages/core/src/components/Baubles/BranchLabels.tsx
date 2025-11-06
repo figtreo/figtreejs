@@ -27,7 +27,7 @@ export type LabelOptionsType<A extends UserAttrs>={
 }
 
 // The props accepted by the branch label Bauble 
-type BranchLabelPropTypes = Omit< BaubleTypes, "animated"> & {animated?:boolean} //  animation is optional
+export type BranchLabelPropTypes = Omit< BaubleTypes, "animated"> & {animated?:boolean} //  animation is optional
 
 
 /**
