@@ -1,6 +1,6 @@
 import {  createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { Annotation, AnnotationType } from '@figtreejs/core';
+import { Annotation, BaseAnnotationType } from '@figtreejs/core';
 import { scaleOrdinal, scaleSequential } from 'd3-scale';
 import * as d3 from 'd3-scale-chromatic';
 import { RootState } from '../../../../app/store';

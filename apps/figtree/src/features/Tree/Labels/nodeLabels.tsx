@@ -1,7 +1,7 @@
 
 import { getColorScale, useAppSelector } from "../../../app/hooks";
 import { selectLabelState } from "../../Settings/panels/label/labelSlice";
-import { Nodes,NodeRef, ImmutableTree} from "@figtreejs/core";
+import { NodeLabels,NodeRef, ImmutableTree} from "@figtreejs/core";
 
 import { getTextFunction } from "./labelUtils";
 import { COLOUR_ANNOTATION } from "../../../app/constants";
@@ -34,7 +34,7 @@ export function NodeLabels(props:{ attrs?:{[key:string]:any},tree:ImmutableTree,
         const textFunction = getTextFunction(tree,settings);
 
         return (
-            <Nodes.Label {...props} filter={filter} attrs={{ fontSize: settings.fontSize,...attrs }}  text={textFunction} />
+            <NodeLabels {...props} filter={filter} attrs={{ fontSize: settings.fontSize,...attrs }}  text={textFunction} />
         )
 
     } else {

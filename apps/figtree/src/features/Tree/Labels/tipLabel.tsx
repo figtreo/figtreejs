@@ -2,7 +2,7 @@
 import { getColorScale, useAppSelector } from "../../../app/hooks";
 import { selectLabelState } from "../../Settings/panels/label/labelSlice";
 import { selectLayout } from "../../Settings/panels/layout/layoutSlice";
-import {  NodeRef, Nodes } from "@figtreejs/core";
+import {  NodeRef, NodeLabels } from "@figtreejs/core";
 import {  selectNodeDecorations } from "../../Header/headerSlice";
 
 import { getTextFunction } from "./labelUtils";
@@ -38,7 +38,7 @@ export function TipLabels(props: any ) {
         const textFunction = getTextFunction(tree,settings);
 
         return (
-            <Nodes.Label {...props} filter={filter} attrs={{ fontSize: settings.fontSize,...attrs }} aligned={alignTipLabels} text={textFunction} />
+            <NodeLabels {...props} filter={filter} attrs={{ fontSize: settings.fontSize,...attrs }} aligned={alignTipLabels} text={textFunction} />
         )
 
     } else {
