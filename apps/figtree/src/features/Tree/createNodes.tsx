@@ -2,16 +2,21 @@ import { getColorScale, useAppSelector } from "../../app/hooks";
 import { selectShapeState } from "../Settings/panels/shapes/shapeSlice";
 import {   CircleNodes, type NodeRef } from "@figtreejs/core";
 import { COLOUR_ANNOTATION } from "../../app/constants";
+import { RectangleNodes } from "@figtreejs/core";
 
 
-export function InternalNodes(props:any) {
-    const settings = useAppSelector(selectShapeState("node"));
-    const {tree, filter:baseFilter} = props;
-    const filter = (n: NodeRef) => baseFilter(n) && tree.getChildCount(n) > 0;
+export function createNodeComponent( {
+    tree,
+  settings,
+  fillColorScale,
+  factory,
+  filter,
+  ...rest}
+) {
 
     // check if sizing by an attribute or by a constant
     const radius = settings.maxSize / 2;
-    const fillColorScale = useAppSelector( (state)=>getColorScale(state,settings.colourBy));
+
   
     function filler(n:NodeRef):string{
       if(settings.colourBy==="User selection"){
@@ -32,18 +37,13 @@ export function InternalNodes(props:any) {
     if (settings.activated) {
         if (settings.shape === "Circle") {
             return (
-                CircleNodes( {...props, filter, attrs:{ r: radius, fill:filler, stroke, strokeWidth } })
+                CircleNodes( { filter, attrs:{ r: radius, fill:filler, stroke, strokeWidth } })
             )
         } else if (settings.shape === "Rectangle") {
             return (
-                <Nodes.Rectangle {...props} filter={filter} attrs={{ width: settings.maxSize, height: settings.maxSize, fill:filler, stroke, strokeWidth }} />
+                RectangleNodes({filter, attrs:{ width: settings.maxSize, height: settings.maxSize, fill:filler, stroke, strokeWidth }})
             )
         }
-        // } else if (settings.shape === "Swoosh") {
-        //     return (
-        //         <Nodes.Coalescent filter={filter} attrs={{ width: settings.maxSize, height: settings.maxSize, fill:filler, stroke, strokeWidth }} />
-        //     )
-        // }
         else {
             throw new Error("Invalid node shape")
         }

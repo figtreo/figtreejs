@@ -51,6 +51,8 @@ import { max } from "d3-array"
 import {  createLabelsComponent } from "./Labels/createLabel";
 import { BranchLabels } from "@figtreejs/core";
 import { NodeLabels } from "@figtreejs/core";
+import { selectShapeState } from "../Settings/panels/shapes/shapeSlice";
+import { createNodeComponent } from "./createNodes";
 
 const margins = { top: 80, bottom: 80, left: 50, right: 100 }
 //todo make zoom and expansion based on number of tips
@@ -90,71 +92,71 @@ export function Tree({ panelRef }: any) {
 
   //selection Box work //https://codesandbox.io/s/billowing-lake-rzhid4?file=/src/App.tsx
   const svgRef = useRef<SVGSVGElement>(null)
-  //https://codesandbox.io/s/react-area-selection-hook-slggxd?file=/src/area-selection.ts
-  const selection = useAreaSelection({ container: panelRef }) // maybe move this to library so it's possible to select data in little figs
-  const [brushedNodeIds, setBrushedNodeIds] = useState<string[]>([])
+  // //https://codesandbox.io/s/react-area-selection-hook-slggxd?file=/src/area-selection.ts
+  // const selection = useAreaSelection({ container: panelRef }) // maybe move this to library so it's possible to select data in little figs
+  // const [brushedNodeIds, setBrushedNodeIds] = useState<string[]>([])
 
-  //todo only fire on selection release
+  // //todo only fire on selection release
   //todo include taxa and nodes
 
   //get selection
 
   // todo only run this on mouseup after selection
   // TODO note that this counts a branch as selected if it's box is crossed not its path.
-  useEffect(() => {
-    if (svgRef.current && selection) {
-      const branches = select(svgRef.current)
-        .select("g")
-        .selectAll(".branch-layer")
-        .selectAll("path")
-        .select(function () {
-          const el = this as Element
-          const a = el.getBoundingClientRect()
-          const b = selection
-          const selected = !(
-            a.y + a.height < b.y ||
-            a.y > b.y + b.height ||
-            a.x + a.width < b.x ||
-            a.x > b.x + b.width
-          )
-          return selected ? this : null
-        })
+//   useEffect(() => {
+//     if (svgRef.current && selection) {
+//       const branches = select(svgRef.current)
+//         .select("g")
+//         .selectAll(".branch-layer")
+//         .selectAll("path")
+//         .select(function () {
+//           const el = this as Element
+//           const a = el.getBoundingClientRect()
+//           const b = selection
+//           const selected = !(
+//             a.y + a.height < b.y ||
+//             a.y > b.y + b.height ||
+//             a.x + a.width < b.x ||
+//             a.x > b.x + b.width
+//           )
+//           return selected ? this : null
+//         })
 
-      // // .attr("id")
-      // .attr("stroke", "blue")
+//       // // .attr("id")
+//       // .attr("stroke", "blue")
 
-      const taxa = select(svgRef.current)
-        .select("g")
-        .selectAll(".node-label-layer")
-        .selectAll(".node-label")
-        .select(function () {
-          const el = this as Element
-          const a = el.getBoundingClientRect()
-          const b = selection
-          const selected = !(
-            a.y + a.height < b.y ||
-            a.y > b.y + b.height ||
-            a.x + a.width < b.x ||
-            a.x > b.x + b.width
-          )
-          return selected ? this : null
-        })
-      const out: Set<string> = new Set()
-      branches.each(function () {
-        const id = select(this).attr("node-id")
-        out.add(id)
-        //todo tree get tmrca of nodes.
-      })
-// TODO broken since nodes don't keep id in svg anymore
-      taxa.each(function () {
-        const id = select(this).attr("node-id")
-        out.add(id)
-        //todo tree get tmrca of nodes.
-      })
+//       const taxa = select(svgRef.current)
+//         .select("g")
+//         .selectAll(".node-label-layer")
+//         .selectAll(".node-label")
+//         .select(function () {
+//           const el = this as Element
+//           const a = el.getBoundingClientRect()
+//           const b = selection
+//           const selected = !(
+//             a.y + a.height < b.y ||
+//             a.y > b.y + b.height ||
+//             a.x + a.width < b.x ||
+//             a.x > b.x + b.width
+//           )
+//           return selected ? this : null
+//         })
+//       const out: Set<string> = new Set()
+//       branches.each(function () {
+//         const id = select(this).attr("node-id")
+//         out.add(id)
+//         //todo tree get tmrca of nodes.
+//       })
+// // TODO broken since nodes don't keep id in svg anymore
+//       taxa.each(function () {
+//         const id = select(this).attr("node-id")
+//         out.add(id)
+//         //todo tree get tmrca of nodes.
+//       })
 
-      setBrushedNodeIds([...out])
-    }
-  }, [selection, svgRef])
+//       setBrushedNodeIds([...out])
+//     }
+//   }, [selection, svgRef])
 
   // resizing work
 
@@ -197,37 +199,37 @@ export function Tree({ panelRef }: any) {
     [isResizing, panelRef],
   )
 
-  const getSelectedRoot = () => {
-    if (brushedNodeIds.length === 0) {
-      dispatch(setSelectionRoot(undefined))
-    } else {
-      const nodes = brushedNodeIds
-        .map((id) => tree.getNode(parseInt(id)))
-        .filter((n) => n !== undefined)
-      if (nodes.length === 1) {
-        dispatch(setSelectionRoot(nodes[0].number))
-        return
-      }
-      if (nodes.length > 0) {
-        const mrca = tree.getMRCA(nodes)
-        if (mrca === undefined) {
-          throw new Error("Could not find mrca")
-        }
-        dispatch(setSelectionRoot(mrca.number))
-      }
-    }
-  }
+  // const getSelectedRoot = () => {
+  //   if (brushedNodeIds.length === 0) {
+  //     dispatch(setSelectionRoot(undefined))
+  //   } else {
+  //     const nodes = brushedNodeIds
+  //       .map((id) => tree.getNode(parseInt(id)))
+  //       .filter((n) => n !== undefined)
+  //     if (nodes.length === 1) {
+  //       dispatch(setSelectionRoot(nodes[0].number))
+  //       return
+  //     }
+  //     if (nodes.length > 0) {
+  //       const mrca = tree.getMRCA(nodes)
+  //       if (mrca === undefined) {
+  //         throw new Error("Could not find mrca")
+  //       }
+  //       dispatch(setSelectionRoot(mrca.number))
+  //     }
+  //   }
+  // }
   // const clearSelectionRoot = () => {
   //   dispatch(setSelectionRoot(undefined))
   // }
-  useEffect(() => {
-    window.addEventListener("mouseup", getSelectedRoot)
-    // window.addEventListener('mousedown',clearSelectionRoot)
-    return () => {
-      window.removeEventListener("mouseup", getSelectedRoot)
-      // window.removeEventListener('mousedown',clearSelectionRoot) //TODO maybe not on window? also add command to not clear
-    }
-  }, [brushedNodeIds])
+  // useEffect(() => {
+  //   window.addEventListener("mouseup", getSelectedRoot)
+  //   // window.addEventListener('mousedown',clearSelectionRoot)
+  //   return () => {
+  //     window.removeEventListener("mouseup", getSelectedRoot)
+  //     // window.removeEventListener('mousedown',clearSelectionRoot) //TODO maybe not on window? also add command to not clear
+  //   }
+  // }, [brushedNodeIds])
 
 
   useEffect(() => {
@@ -472,6 +474,19 @@ export function Tree({ panelRef }: any) {
    const tipLabelSettings = useAppSelector(selectLabelState('tip'));
    const tipLabelFill = useAppSelector( (state)=>getColorScale(state,bLabelSettings.colourBy));
 
+  const nodeSettings =  useAppSelector(selectShapeState("node"));
+  const nodeFillScale = useAppSelector( (state)=>getColorScale(state,nodeSettings.colourBy));
+
+
+  const tipSettings =  useAppSelector(selectShapeState("tip"));
+  const tipFillScale = useAppSelector( (state)=>getColorScale(state,tipSettings.colourBy));
+
+  const tipBackgroundSettings =  useAppSelector(selectShapeState("tipBackground"));
+  const tipBackgroundFillScale = useAppSelector( (state)=>getColorScale(state,tipBackgroundSettings.colourBy));
+
+
+
+
 
 
 
@@ -542,6 +557,10 @@ export function Tree({ panelRef }: any) {
           fill: branchFiller,
           strokeWidth: lineWidth,
           stroke: branchColourur,
+          cursor:'pointer'
+          },
+          interactions:{
+            onClick:(n)=>dispatch(setSelectionRoot(n.number))
           },
           filter:(n:NodeRef)=>!dontShow.has(n),
           curvature:curvature}),
@@ -572,25 +591,35 @@ export function Tree({ panelRef }: any) {
     // add optional Baubles
     //BranchLabels 
    
-    
+    // order is from the ground up 
     if(bLabelSettings.activated){
       //add it
       const bLabels = createLabelsComponent({tree,settings:bLabelSettings,fillColorScale:bLabelFill,factory:BranchLabels})
       figureElements.push(bLabels)
     }
-    // const tipLabelSettings = useAppSelector(selectLabelState('tip'));
     if(tipLabelSettings.activated){
       //add it
       const tipLabels = createLabelsComponent({tree,settings:tipLabelSettings,fillColorScale:tipLabelFill,factory:NodeLabels,filter:n=>tree.isExternal(n)})
       figureElements.push(tipLabels)
     }
-
-    //     const nodeLabelSettings = useAppSelector(selectLabelState('node'));
     if(nodeLabelSettings.activated){
       //add it
       const nodeLabels = createLabelsComponent({tree,settings:nodeLabelSettings,fillColorScale:nodeLabelFill,factory:NodeLabels,filter:n=>!tree.isExternal(n)})
       figureElements.push(nodeLabels)
     }
+    if(tipBackgroundSettings.activated){
+      const nodeShape = createNodeComponent({tree,settings:tipBackgroundSettings,fillColorScale:tipBackgroundFillScale,filter:n=>tree.isExternal(n)})
+      figureElements.push(nodeShape)
+    }
+
+    if(nodeSettings.activated){
+      const nodeShape = createNodeComponent({tree,settings:nodeSettings,fillColorScale:nodeFillScale,filter:n=>!tree.isExternal(n)})
+      figureElements.push(nodeShape)
+    }    
+    if(tipSettings.activated){
+      const nodeShape = createNodeComponent({tree,settings:tipSettings,fillColorScale:tipFillScale,filter:n=>tree.isExternal(n)})
+      figureElements.push(nodeShape)
+    }    
 
 
 
@@ -615,6 +644,7 @@ export function Tree({ panelRef }: any) {
               </feMerge>
             </filter>
           </defs>
+          <rect width={width} height={height} onClick={()=>dispatch(setSelectionRoot(undefined))} fill={'none'} pointerEvents={"visible"}/>
           {title.activated && (
             <text
               fontSize={title.fontSize}
