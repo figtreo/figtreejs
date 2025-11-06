@@ -258,7 +258,7 @@ export function Tree({ panelRef }: any) {
   const branchSettings = useAppSelector(selectAppearance)
 
   const branchFiller = (n: NodeRef): string => {
-    const custom = tree.getAnnotation(n, COLOUR_ANNOTATION).value
+    const custom = tree.getAnnotation(n, COLOUR_ANNOTATION)?.value?? undefined
     const cartoon = tree.getAnnotation(n, CARTOON_ANNOTATION)
     return cartoon && custom !== undefined ? (custom as string) : "none"
   }
@@ -533,26 +533,28 @@ export function Tree({ panelRef }: any) {
           },
           filter:(n:NodeRef)=>!dontShow.has(n),
           curvature:curvature}),
-        BranchLabels({filter:(n:NodeRef)=>!dontShow.has(n)}),// tODO
-        TipsBackground({filter:(n:NodeRef)=>!dontShow.has(n)}),// tODO
+        // BranchLabels({filter:(n:NodeRef)=>!dontShow.has(n),tree}),// tODO
+        // TipsBackground({filter:(n:NodeRef)=>!dontShow.has(n),tree}),// tODO
         
-        TipLabels({
-            filter:(n:NodeRef)=>!dontShow.has(n),
-            attrs:{
-            filter: (n: NodeRef) =>
-              selectedTaxa.has(n.number)  ? "url(#solid)" : null,
-          }
-        }),
-      Tips({
-        filter:(n:NodeRef)=>!dontShow.has(n)
-      }),
-      InternalNodes({
-           filter:(n:NodeRef)=>!dontShow.has(n)
-      }),
-      NodeLabels({ // todo
-        filter:(n:NodeRef)=>!dontShow.has(n)
-      })
-    ]
+      //   TipLabels({
+      //     tree,
+      //       filter:(n:NodeRef)=>!dontShow.has(n),
+      //       attrs:{
+      //       filter: (n: NodeRef) =>
+      //         selectedTaxa.has(n.number)  ? "url(#solid)" : null,
+      //     }
+      //   }),
+      // Tips({
+      //   tree,
+      //   filter:(n:NodeRef)=>!dontShow.has(n)
+      // }),
+      // InternalNodes({
+      //      filter:(n:NodeRef)=>!dontShow.has(n)
+      // }),
+      // NodeLabels({ // todo
+      //   filter:(n:NodeRef)=>!dontShow.has(n), tree
+      // })
+    ].filter(d=>d)
 
     return (
       <div>

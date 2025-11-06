@@ -5,10 +5,9 @@ import { getTextFunction } from "./labelUtils";
 import { COLOUR_ANNOTATION } from "../../../app/constants";
 
 export function BranchLabels(props:any) {
-    const { attrs={},filter=() => true } = props;
+    const { attrs={},filter=() => true,tree} = props;
     const settings = useAppSelector(selectLabelState("branch"));
   
-
     const fillColorScale = useAppSelector( (state)=>getColorScale(state,settings.colourBy));
     attrs.fill = (n:NodeRef)=>{
         if(settings.colourBy==="User selection"){
@@ -33,7 +32,7 @@ export function BranchLabels(props:any) {
         )
 
     } else {
-        return <g></g>;
+        return null;
     }
 
 

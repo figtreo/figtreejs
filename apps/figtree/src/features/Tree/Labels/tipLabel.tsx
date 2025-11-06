@@ -8,10 +8,10 @@ import {  selectNodeDecorations } from "../../Header/headerSlice";
 import { getTextFunction } from "./labelUtils";
 
 export function TipLabels(props: any ) {
-    const { attrs={},filter:baseFilter } = props;
+    const { attrs={},filter:baseFilter , tree} = props;
     const settings = useAppSelector(selectLabelState("tip"));
     
-    const tree = useAppSelector(selectTree);
+    // const tree = useAppSelector(selectTree);
 
     const { alignTipLabels } = useAppSelector(selectLayout)
 
