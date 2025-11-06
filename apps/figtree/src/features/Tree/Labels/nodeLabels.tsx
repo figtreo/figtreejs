@@ -1,15 +1,15 @@
 
 import { getColorScale, selectTree, useAppSelector } from "../../../app/hooks";
 import { selectLabelState } from "../../Settings/panels/label/labelSlice";
-import { NodeLabels as nl, ImmutableTree, type NodeRef} from "@figtreejs/core";
+import { NodeLabels as nl, ImmutableTree, type NodeRef, type Tree} from "@figtreejs/core";
 
 import { getTextFunction } from "./labelUtils";
 import { COLOUR_ANNOTATION } from "../../../app/constants";
 
-export function NodeLabels(props:{ attrs?:{[key:string]:any},filter:(n:NodeRef)=>boolean }) {
-    const { attrs={},filter:baseFilter } = props;
+export function NodeLabels(props:{ attrs?:{[key:string]:any},filter:(n:NodeRef)=>boolean,tree:ImmutableTree }) {
+    const { attrs={},filter:baseFilter, tree} = props;
     const settings = useAppSelector(selectLabelState("node"));
-    const tree = useAppSelector(selectTree);
+    // const tree = useAppSelector(selectTree);
 
 
     const fillColorScale = useAppSelector( (state)=>getColorScale(state,settings.colourBy));

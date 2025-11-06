@@ -604,16 +604,17 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
   getAnnotations(): AnnotationSummary[] {
       return Object.values(this._data.annotations)
   }
-  getAnnotation(node: NodeRef, name: string): Annotation  {
+  getAnnotation(node: NodeRef, name: string): Annotation |undefined {
     const annotation = (this.getNode(node.number) as Node).annotations[name]
-    if(annotation===undefined) throw new Error(`Annotation ${name} not found on node ${node}`)
+    // if(annotation===undefined) throw new Error(`Annotation ${name} not found on node ${node}`)
     return annotation
   }
 
-  getAnnotationValue<T extends BaseAnnotationType>(node: NodeRef, name: string, type: T): ValueOf<T> {
+  getAnnotationValue<T extends BaseAnnotationType>(node: NodeRef, name: string, type: T): ValueOf<T> |undefined{
       const knownType=  this.getAnnotationType(name)
       if(knownType!==type) throw new Error(`The annotation ${name} is not a ${type} in the tree. It is of type ${knownType}`)
-      return this.getAnnotation(node,name).value as  ValueOf<T>
+        const annotation = this.getAnnotation(node,name)
+      return annotation?.value as  ValueOf<T>?? undefined;
   }
 
 

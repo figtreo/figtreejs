@@ -114,8 +114,8 @@ export interface Tree  {
     getParent(node: NodeRef): NodeRef | undefined
     getChildren(node: NodeRef): NodeRef[] 
 
-    getAnnotation(node: NodeRef, name: string): Annotation
-    getAnnotationValue<T extends BaseAnnotationType>(node:NodeRef, name:string,type:T):ValueOf<T>
+    getAnnotation(node: NodeRef, name: string): Annotation|undefined
+    getAnnotationValue<T extends BaseAnnotationType>(node:NodeRef, name:string,type:T):ValueOf<T>|undefined
     // annotateNode<T extends BaseAnnotationType>(node:NodeRef,annotation:{name:string,value:RawValueOf<T>}):Tree
     annotateNode(node: NodeRef, name: string, value: RawAnnotationValue): Tree
     annotateNode(node: NodeRef, annotation: Record<string, RawAnnotationValue>): Tree
