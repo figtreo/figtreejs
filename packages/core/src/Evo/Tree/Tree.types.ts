@@ -116,8 +116,9 @@ export interface Tree  {
 
     getAnnotation(node: NodeRef, name: string): Annotation
     getAnnotationValue<T extends BaseAnnotationType>(node:NodeRef, name:string,type:T):ValueOf<T>
-    annotateNode<T extends BaseAnnotationType>(node:NodeRef,annotation:{name:string,value:RawValueOf<T>}):Tree
-
+    // annotateNode<T extends BaseAnnotationType>(node:NodeRef,annotation:{name:string,value:RawValueOf<T>}):Tree
+    annotateNode(node: NodeRef, name: string, value: RawAnnotationValue): Tree
+    annotateNode(node: NodeRef, annotation: Record<string, RawAnnotationValue>): Tree
     getLabel(node: NodeRef): string | undefined 
     getAnnotationKeys(): string[]
     getAnnotationType(name: string): BaseAnnotationType
