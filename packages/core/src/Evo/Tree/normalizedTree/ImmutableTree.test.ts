@@ -56,7 +56,8 @@ describe('ImmutableTree', () =>{
             const A = tree.getTaxonByName("A");
             const B = tree.getTaxonByName("B");
             const nodeA = tree.getNodeByTaxon(A) || panic("no node A")
-            const nodeB = tree.getNodeByTaxon(A) || panic("no node A")
+
+            
             expect(tree.getHeight(nodeA)).toBe(0);
             const tree1 = tree.setHeight(nodeA,0.5);
 

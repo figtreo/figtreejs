@@ -1,8 +1,9 @@
 import dts from 'vite-plugin-dts'
 import packageJson from "./package.json";
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
+import { defineConfig } from 'vitest/config';
 
+import react from '@vitejs/plugin-react';
+// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react(),dts()],
   build: {
@@ -30,5 +31,4 @@ export default defineConfig({
     // setupFiles: ['./vitest.setup.ts'], // optional
   },
 });
-
 

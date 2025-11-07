@@ -1,5 +1,5 @@
 
-import React from "react";
+
 import { isFn, useAttributeMappers } from "./helpers";
 import type { LiftToUser } from "./types";
 import type { Attrs, StripProps, UserAttrs } from "./types";

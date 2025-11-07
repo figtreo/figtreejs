@@ -130,5 +130,6 @@ export function getTickLine(length: number, direction: AxisOrientation) {
   } else if (direction === "vertical") {
     return { x1: 0, y1: 0, y2: 0, x2: -1 * length }
   }
+  throw new Error(`unknown direction $direction`)
 }
 

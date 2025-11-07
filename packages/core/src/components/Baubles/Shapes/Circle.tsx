@@ -1,4 +1,4 @@
-import React from "react";
+
 import { animated } from "@react-spring/web";
 import type {   BaseAttrs, InternalInteractionType, numerical } from "../types";
 

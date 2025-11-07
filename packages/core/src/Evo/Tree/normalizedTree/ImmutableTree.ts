@@ -728,11 +728,6 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
     })
   }
 
-  // Topology changes  - updates to root and descendants
-
-  root(n: NodeRef, proportion:number =0.5): ImmutableTree {// eslint-disable-line
-    throw new Error("unroot not implemented in immutable tree")
-  }
 
   insertNode(n: NodeRef, proportion:number =0.5): this {
    return  produce(this, (draft) => {
@@ -765,14 +760,14 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
       node.parent = newNode.number;
   })
 }
-  unroot(n: NodeRef): ImmutableTree {  // eslint-disable-line
+  unroot(_n: NodeRef): ImmutableTree {  // eslint-disable-line
     throw new Error("unroot not implemented in immutable tree")
   }
-  deleteNode(n: NodeRef): ImmutableTree {  // eslint-disable-line
+  deleteNode(_n: NodeRef): ImmutableTree {  // eslint-disable-line
     throw new Error("deleteNode not implemented in immutable tree")
   }
 
-  deleteClade(n: NodeRef): ImmutableTree {  // eslint-disable-line
+  deleteClade(_n: NodeRef): ImmutableTree {  // eslint-disable-line
     throw new Error("deleteClade not implemented in immutable tree")
   }
 
@@ -787,7 +782,7 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
         node = draft._data.nodes.allNodes[draft._data.rootNode]
       }
       const factor = down ? 1 : -1
-      orderNodes(draft._data, node, (nodeA, countA, nodeB, countB) => {
+      orderNodes(draft._data, node, (_nodeA, countA, _nodeB, countB) => {
         return (countA - countB) * factor
       })
     })
@@ -808,7 +803,7 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
     return produce(this, (draft) => {
       if (node.number === draft._data.rootNode) {
         // the node is the root - nothing to do
-        return draft
+        return 
       }
       if (draft._data.rootNode === undefined) {
         throw new Error("No root node in this tree to begin with")

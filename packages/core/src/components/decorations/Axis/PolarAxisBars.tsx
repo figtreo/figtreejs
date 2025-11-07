@@ -1,5 +1,4 @@
 
-import React from 'react'
 import type {  AxisBarsProps} from './Axis.types';
 import { defaultAxisBarsProps } from './Axis.types';
 import type { PolarScaleType } from '../../../store/polarScale';
@@ -27,7 +26,7 @@ export  default function PolarAxisBars(props:AxisBarsProps) {
 
           return(
         <g className={"axisBars"}>
-                {tickValues.filter((t:number,i:number,all:number[]) =>i<all.length-1).map((t:number,i:number)=>{
+                {tickValues.filter((_t:number,i:number,all:number[]) =>i<all.length-1).map((t:number,i:number)=>{
 
                     
 

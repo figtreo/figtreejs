@@ -1,5 +1,3 @@
-import React from 'react'
-
 import { useAttributeMappers } from './helpers';
 import type { LiftToUser } from "./types";
 

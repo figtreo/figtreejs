@@ -140,7 +140,7 @@ export interface Tree  {
     setLabel(node:NodeRef,label:string):Tree
 
     addChild(parent: NodeRef, child: NodeRef): Tree
-    root(node: NodeRef,portion:number): Tree
+    // root(node: NodeRef,portion:number): Tree
     unroot(node:NodeRef):Tree
     toNewick(node?:NodeRef,options?:{includeAnnotations:boolean}): string;
     orderNodesByDensity(down:boolean):Tree

@@ -1,6 +1,3 @@
-import React from 'react'
-
-
 import PolarAxis from './PolarAxis';
 import RectangularAxis from './RectangularAxis';
 import type { AxisProps } from './Axis.types';

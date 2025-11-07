@@ -39,16 +39,29 @@
   "dependencies": {
     "@react-spring/web": "^9.7.5",
     "abs-svg-path": "^0.1.1",
-    "d3-interpolate-path": "^2.3.0",
+    "d3-array": "^3.2.4",
+    "d3-format": "^3.1.0",
+    "d3-scale": "^4.0.2",
+    "d3-shape": "^3.2.0",
+    "d3-time-format": "^4.1.0",
     "immer": "^10.1.1",
     "normalize-svg-path": "^1.1.0",
-    "parse-svg-path": "^0.1.2",
-    "web-streams-polyfill": "^4.1.0"
+    "parse-svg-path": "^0.1.2"
   },
   "devDependencies": {
+    "@figtree/eslint-config": "*",
+    "@figtree/typescript-config": "*",
+    "@testing-library/react": "^16.3.0",
     "@types/abs-svg-path": "^0.1.3",
-    "@types/d3-interpolate-path": "^2.0.3",
-    "jsdom": "^27.1.0"
+    "@types/d3-array": "^3.2.2",
+    "@types/d3-format": "^3.0.4",
+    "@types/d3-scale": "^4.0.9",
+    "@types/d3-shape": "^3.1.7",
+    "@types/d3-time-format": "^4.0.3",
+    "@vitejs/plugin-react": "^5.1.0",
+    "vite": "^7.2.2",
+    "vite-plugin-dts": "^4.5.4",
+    "vitest": "^4.0.8"
   },
   "peerDependencies": {
     "react": "^18.3.1",

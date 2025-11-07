@@ -3,7 +3,7 @@ import { ImmutableTree } from "../NormalizedTree/ImmutableTree";
 import { parseNewick } from "./newickParsing";
 
 //ONLY parses the first tree
-export function  parseNexus(tree:ImmutableTree,nexus:string,options={}):ImmutableTree{
+export function  parseNexus(_tree:ImmutableTree,nexus:string,options={}):ImmutableTree{
 throw new Error("Nexus parsing not implemented")
 
    // odd parts ensure we're not in a taxon label
