@@ -1,9 +1,13 @@
 {
   "name": "@figtreejs/core",
-  "author": "Andrew Rambaut and JT McCrone",
-  "license": "MIT",
   "version": "0.0.1",
   "description": "A react component library for phylogenetic visualization and app building",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/figtreo/figtreejs.git"
+  },
+  "license": "MIT",
+  "author": "Andrew Rambaut and JT McCrone",
   "type": "module",
   "exports": {
     ".": {
@@ -12,9 +16,17 @@
       "require": "./dist/index.cjs"
     }
   },
-  "module": "./dist/index.mjs",
   "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "vite build",
+    "check-types": "tsc --noEmit",
+    "dev": "vite build --watch",
+    "lint": "eslint src/",
+    "test": "vitest",
+    "vitest-preview": "vitest-preview"
+  },
   "lint-staged": {
     "*.{js,ts}": [
       "eslint --fix",
@@ -23,19 +35,6 @@
     "!(*.js|*.ts)": [
       "prettier --write --ignore-unknown"
     ]
-  },
-  "scripts": {
-    "build": "vite build",
-    "dev": "vite build --watch",
-    "test": "vitest",
-    "check-types": "tsc --noEmit",
-    "lint": "eslint src/",
-    "vitest-preview": "vitest-preview"
-  },
-  "devDependencies": {
-    "@types/abs-svg-path": "^0.1.3",
-    "@types/d3-interpolate-path": "^2.0.3",
-    "jsdom": "^27.1.0"
   },
   "dependencies": {
     "@react-spring/web": "^9.7.5",
@@ -46,12 +45,13 @@
     "parse-svg-path": "^0.1.2",
     "web-streams-polyfill": "^4.1.0"
   },
+  "devDependencies": {
+    "@types/abs-svg-path": "^0.1.3",
+    "@types/d3-interpolate-path": "^2.0.3",
+    "jsdom": "^27.1.0"
+  },
   "peerDependencies": {
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/figtreo/figtreejs.git"
   }
 }
