@@ -96,20 +96,20 @@ export class NexusImporter {
     }
   }
 
-  private async getNextCommand(command: RegExp) {
-    let value;
-    let keepGoing = true
-    while (keepGoing) {
-      value = await this.nextToken()
-      if (value === ";") {
-        throw `Hit ; looking for ${command}`
-      }
-      if (command.test(value)) {
-        keepGoing=false
-      }
-    }
-    return value
-  }
+  // private async getNextCommand(command: RegExp) {
+  //   let value;
+  //   let keepGoing = true
+  //   while (keepGoing) {
+  //     value = await this.nextToken()
+  //     if (value === ";") {
+  //       throw `Hit ; looking for ${command}`
+  //     }
+  //     if (command.test(value)) {
+  //       keepGoing=false
+  //     }
+  //   }
+  //   return value
+  // }
   // skip until match and return match
   private async skipUntil(stopper: RegExp):Promise<string> {
     let value;

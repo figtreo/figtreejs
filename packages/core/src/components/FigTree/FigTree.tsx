@@ -1,4 +1,3 @@
-import React from 'react';
 import type { FigtreeProps } from './Figtree.types';
 import { defaultInternalLayoutOptions,  rectangularLayout } from '../../Layouts';
 

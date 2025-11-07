@@ -1,5 +1,3 @@
-import React from 'react'
-
 import { layoutClass } from "../../../Layouts";
 import {arc as arcgen} from "d3-shape"
 import type { InternalCladePropType } from './makeClade';

@@ -1,0 +1,19 @@
+{
+    "$schema": "https://json.schemastore.org/tsconfig",
+    "compilerOptions": {
+        "allowSyntheticDefaultImports": true,
+        "jsx": "react-jsx",
+        "esModuleInterop": false,
+        "isolatedModules": true,
+        "lib": ["DOM", "DOM.Iterable", "ES2020"],
+        "module": "ESNext",
+        "moduleResolution": "bundler",
+        "noEmit": true,
+        "resolveJsonModule": true,
+        "strict": true,
+        "skipLibCheck": true,
+        "target": "ES2020",
+        "verbatimModuleSyntax": true,
+  },
+   "exclude": ["node_modules"]
+}

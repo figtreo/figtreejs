@@ -1,0 +1,11 @@
+{
+  "name": "@figtree/typescript-config",
+  "private": true,
+  "type": "module",
+  "version": "0.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    
+  }
+}

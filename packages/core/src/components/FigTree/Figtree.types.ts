@@ -1,5 +1,5 @@
 import type { ImmutableTree,NodeRef, Tree } from "../../Evo/Tree";
-import type { FunctionalVertex, layoutClass, simpleVertex } from "../../Layouts/functional/rectangularLayout";
+import type { FunctionalVertex, layoutClass } from "../../Layouts/functional/rectangularLayout";
 import type { layoutType, scaleType } from "../../store/store";
 
 export interface Margins{

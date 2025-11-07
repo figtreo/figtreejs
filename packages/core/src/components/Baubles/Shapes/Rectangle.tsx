@@ -1,4 +1,4 @@
-import React from "react";
+
 import type { Interpolation, SpringValue} from "@react-spring/web";
 import { animated, to } from "@react-spring/web";
 import type {BaseAttrs, InternalInteractionType, numerical} from "../types";

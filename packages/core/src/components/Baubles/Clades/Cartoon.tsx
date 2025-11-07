@@ -1,5 +1,3 @@
-
-import React from 'react'
 import { layoutClass } from "../../../Layouts";
 import type { InternalCladePropType } from './makeClade';
 import { normalizePath } from '../../../path.helpers';

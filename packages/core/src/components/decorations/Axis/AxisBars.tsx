@@ -1,4 +1,4 @@
-import React from "react";
+
 
 import RectangularAxisBars from "./RectangularAxisBars";
 import PolarAxisBars from "./PolarAxisBars";

@@ -3,11 +3,12 @@ import packageJson from "./package.json";
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 // think about standard build as well 
-export default defineConfig({
+
+export default defineConfig(({mode})=>({
   plugins: [react(),dts()],
   define: {
     // Ensure React uses production branches in the bundle
-    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV ?? 'production'),
+    'process.env.NODE_ENV': JSON.stringify(mode?? 'production'),
   },
 
   build: {
@@ -38,5 +39,5 @@ export default defineConfig({
     include: ['src/**/*.{test,spec}.{ts,tsx}'],
     // setupFiles: ['./vitest.setup.ts'], // optional
   },
-});
+}));
 

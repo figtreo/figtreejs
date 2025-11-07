@@ -3,7 +3,7 @@ import { render} from "@testing-library/react";
 import { ImmutableTree } from "../../Evo";
 import { FigTree } from "../../components";
 import { polarLayout, radialLayout, rectangularLayout } from "../../Layouts";
-import React from "react";
+
 import { Branches } from "../../components/Baubles/Branches";
 import { NodeLabels } from "../../components/Baubles/NodeLabels";
 

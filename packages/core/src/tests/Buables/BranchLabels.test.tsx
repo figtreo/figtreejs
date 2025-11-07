@@ -4,7 +4,7 @@ import { ImmutableTree } from "../../Evo";
 import { FigTree } from "../../components";
 import { polarLayout, radialLayout, rectangularLayout } from "../../Layouts";
 
-import React from "react";
+
 import { Branches } from "../../components/Baubles/Branches";
 import { BranchLabels } from "../../components/Baubles/BranchLabels";
 

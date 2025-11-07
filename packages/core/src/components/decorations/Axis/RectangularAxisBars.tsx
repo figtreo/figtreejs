@@ -1,4 +1,3 @@
-import React from "react"
 import type {  AxisBarsProps} from "./Axis.types";
 import { defaultAxisBarsProps } from "./Axis.types"
 
@@ -26,7 +25,7 @@ export default function AxisBars(props: AxisBarsProps): JSX.Element {
 
   return (
     <g className={"axisBars"} key="axisBars">
-      {tickValues.filter((t:number,i:number,all:number[]) =>i<all.length-1).map((t:number,i:number)=>{
+      {tickValues.filter((_t:number,i:number,all:number[]) =>i<all.length-1).map((t:number,i:number)=>{
 
     const start = figureScale({x:scale(t),y:axisY});
     const end = figureScale({x:scale(t),y:-0.05});

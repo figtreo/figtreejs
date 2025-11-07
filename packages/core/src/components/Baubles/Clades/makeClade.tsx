@@ -1,4 +1,4 @@
-import React from "react";
+
 import type { NodeRef} from "../../../Evo";
 import { tipIterator } from "../../../Evo";
 import type { layoutType, scaleType } from "../../../store/store";
