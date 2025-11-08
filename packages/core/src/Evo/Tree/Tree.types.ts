@@ -2,7 +2,8 @@ import type { Taxon, TaxonSet } from "./Taxa/Taxon";
 
 
 export interface NodeRef{
-    number:number
+    number:number,
+    _id:symbol,
 }
 export enum BaseAnnotationType {
     DISCRETE = "DISCRETE",// string  could also be stringy numbers
@@ -88,13 +89,13 @@ export interface Tree  {
     getNodeCount():number
     getInternalNodeCount():number
     getExternalNodeCount():number
-    getNode(i:string):NodeRef|undefined;
-    getNode(taxon:Taxon):NodeRef|undefined;
-    getNode(node:number):NodeRef|undefined;
+    getNode(i:string):NodeRef;
+    getNode(taxon:Taxon):NodeRef;
+    getNode(node:number):NodeRef;
     getInternalNodes():NodeRef[]
     getExternalNodes():NodeRef[]
     getNodes():NodeRef[]
-    getTaxon(id:number|NodeRef):Taxon|undefined
+    getTaxon(id:number|NodeRef):Taxon;
 
     isExternal(node:NodeRef):boolean
     isInternal(node:NodeRef):boolean
@@ -103,23 +104,28 @@ export interface Tree  {
     getChildCount(node:NodeRef):number
     getChild(node:NodeRef,i:number):NodeRef
 
-    getNodeByTaxon(taxon: Taxon): NodeRef|undefined
-    getNodeByLabel(label: string): NodeRef|undefined
-    getLevel(node:NodeRef):number;
+    getNodeByTaxon(taxon: Taxon): NodeRef
+    getNodeByLabel(label: string): NodeRef
+    // getLevel(node:NodeRef):number;
    
-    getDivergence(node: NodeRef): number |undefined
-    getHeight(node:NodeRef):number |undefined
-    getLength(node: NodeRef): number |undefined
+    getDivergence(node: NodeRef): number 
+    getHeight(node:NodeRef):number 
+    getLength(node: NodeRef): number 
     
-    getParent(node: NodeRef): NodeRef | undefined
+    getParent(node: NodeRef): NodeRef 
     getChildren(node: NodeRef): NodeRef[] 
 
-    getAnnotation(node: NodeRef, name: string): Annotation|undefined
-    getAnnotationValue<T extends BaseAnnotationType>(node:NodeRef, name:string,type:T):ValueOf<T>|undefined
+    getAnnotation(node: NodeRef, name: string, d?:AnnotationValue): AnnotationValue
+    // getAnnotation<T extends BaseAnnotationType>(node: NodeRef, name: string, d:T): T
+
+    // getAnnotationValue<T extends BaseAnnotationType>(node:NodeRef, name:string,type:T):ValueOf<T>|undefined
     // annotateNode<T extends BaseAnnotationType>(node:NodeRef,annotation:{name:string,value:RawValueOf<T>}):Tree
     annotateNode(node: NodeRef, name: string, value: RawAnnotationValue): Tree
     annotateNode(node: NodeRef, annotation: Record<string, RawAnnotationValue>): Tree
-    getLabel(node: NodeRef): string | undefined 
+
+    getLabel(node: NodeRef): string 
+    hasLabel(node:NodeRef):boolean 
+    
     getAnnotationKeys(): string[]
     getAnnotationType(name: string): BaseAnnotationType
 
@@ -130,9 +136,13 @@ export interface Tree  {
     deleteNode(n:NodeRef):Tree
     removeChild(parent:NodeRef,child:NodeRef):Tree
     deleteClade(n:NodeRef):Tree
-    getNextSibling(node:NodeRef):NodeRef|undefined
-    getRightSibling(node:NodeRef):NodeRef|undefined
-    getLeftSibling(node:NodeRef):NodeRef|undefined
+    // hasNextSibling(node:Node)
+    getNextSibling(node:NodeRef):NodeRef
+    hasRightSibling(node:NodeRef):boolean
+    getRightSibling(node:NodeRef):NodeRef
+    hasLeftSibling(node:NodeRef):boolean
+    getLeftSibling(node:NodeRef):NodeRef
+    
     setHeight(node:NodeRef,height:number):Tree
     setDivergence(node:NodeRef,divergence:number):Tree
     setLength(node:NodeRef,length:number):Tree

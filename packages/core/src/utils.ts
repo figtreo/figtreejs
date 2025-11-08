@@ -44,6 +44,7 @@ export function u<T>(x: T | undefined): NonNullable<T> {
   return x as NonNullable<T>;
 }
 
+
 export function notNull<T>(x: T,message:string): asserts x is NonNullable<T> {
   if (x === undefined) throw new Error(message);
 }

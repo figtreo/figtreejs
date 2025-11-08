@@ -36,9 +36,11 @@
   },
   "dependencies": {
     "@figtreejs/core": "*",
-    "@figtree/typescript-config": "*",
     "@reduxjs/toolkit": "^1.9.7",
+    "d3-array": "^3.2.4",
     "d3-format": "^3.1.0",
+    "d3-scale": "^4.0.2",
+    "d3-scale-chromatic": "^3.1.0",
     "d3-selection": "^3.0.0",
     "d3-time-format": "^4.1.0",
     "react": "^18.3.1",
@@ -46,5 +48,10 @@
     "react-redux": "^8.1.3",
     "redux-undo": "^1.1.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@figtree/eslint-config": "*",
+    "@figtree/typescript-config": "*",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@types/react-dom": "^19.2.2"
+  }
 }

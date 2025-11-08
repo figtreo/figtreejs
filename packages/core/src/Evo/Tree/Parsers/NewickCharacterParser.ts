@@ -42,10 +42,10 @@ export class NewickCharacterParser {
   }
   getTree(): ImmutableTree {
     if(!this.done){
-        throw ("expecting a semi-colon at the end of the newick string")
+        throw new Error ("expecting a semi-colon at the end of the newick string")
     }
     if(!this.started){
-        throw ("No tree to give - parsing has not started.");
+         throw new Error ("No tree to give - parsing has not started.");
     }
     //set hights
 

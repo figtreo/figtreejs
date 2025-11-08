@@ -1,4 +1,3 @@
-
 import type {
   Annotation,
   AnnotationDomain,
@@ -8,6 +7,7 @@ import type {
   MarkovJumpValue,
   NodeRef,
   RawAnnotationValue,
+  RawValueOf,
   Tree,
   ValueOf,
   newickParsingOptions} from "../Tree.types";
@@ -21,6 +21,12 @@ import { TaxonSet } from "../Taxa/Taxon"
 import { format } from "d3-format"
 import { extent } from "d3-array"
 
+import {MaybeType, Nothing,Some,UnwrapOr,UnwrapErr,type Maybe} from "@figtree/maybe/maybe"
+import { symbol } from "d3-shape";
+
+type nodeIndex = string | number | Taxon
+type maybeNodeIndex = Maybe<nodeIndex>
+
 //TODO will need to think about taxonsets and immutability.
 interface Node extends NodeRef {
   number: number
@@ -29,9 +35,8 @@ interface Node extends NodeRef {
   children: number[]
   parent: number | undefined
   length: number | undefined
-  level: number | undefined
   annotations: { [annotation: string]: Annotation}
-  // _id: symbol // an id so we can mark updates to root when topology changes
+  _id: symbol // an id so we can mark updates to root when topology changes
 }
 
 export interface ImmutableTreeData {
@@ -46,7 +51,7 @@ export interface ImmutableTreeData {
   nodeToTaxon: number[]
   rootNode: number
   is_rooted: boolean
-
+  hasLengths:boolean
   annotations: { [annotation: string]: AnnotationSummary }
 }
 
@@ -76,10 +81,9 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
               parent: undefined,
               label: "",
               length: undefined,
-              level: undefined,
               taxon: undefined,
               annotations: {},
-              // _id: Symbol(),
+              _id: Symbol(),
             },
           ],
           byTaxon: [],
@@ -90,6 +94,7 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
         is_rooted: true,
         annotations: {},
         heights: [],
+        hasLengths:false
       }
     }
     this._data = data
@@ -103,9 +108,8 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
     this.taxonSet.addTaxon(taxonOrName)
     return this
   }
-  getTaxonByName(name: string): Taxon {
-    return this.taxonSet.getTaxonByName(name)
-  }
+
+
   getTaxonCount(): number {
     return this.taxonSet.getTaxonCount()
   }
@@ -168,7 +172,7 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
     }
 
     traverseAndCopy(tree, rootNode);
-    newTree = newTree.setLength(newTree.getRoot(), undefined);
+    newTree = newTree.deleteLength(newTree.getRoot());//
 
     return newTree;
   }
@@ -194,13 +198,17 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
         newTree = newTree.setLabel(newNode, label);
       }
       for(const key of tree.getAnnotationKeys()){
-        const annotation = tree.getAnnotation(node, key);
-        if(annotation !== undefined){
+        
+        
+        if(tree.hasAnnotation(node,key)){
+          // access directly to get the full type
+          const annotation = tree.getFullNodeAnnotation(node, key);
+
           if(annotation.type===BaseAnnotationType.MARKOV_JUMPS){
-            const value = annotation.value.map(j=>[Number(j.time),String(j.from),String(j.to)]) as [[number,string,string]] // todo infer type from above
-            newTree = newTree.annotateNode(newNode, {name:annotation.id,value}) as ImmutableTree; // TODO make tree interface genaric and return the same type of tree
+            const value = (annotation.value).map(j=>[Number(j.time),String(j.from),String(j.to)]) as [[number,string,string]] // todo infer type from above
+            newTree = newTree.annotateNode(newNode,key,value) as ImmutableTree; // TODO make tree interface genaric and return the same type of tree
           } else{
-            newTree = newTree.annotateNode(newNode, {name:annotation.id,value:annotation.value}) as ImmutableTree; 
+            newTree = newTree.annotateNode(newNode, key,annotation.value) as ImmutableTree; 
           }
           
         }
@@ -250,42 +258,133 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
   getNodes(): NodeRef[] {
     return this._data.nodes.allNodes
   }
-  getNode(i: string | number | Taxon): NodeRef | undefined {
-    if (typeof i === "number") {
-      return this._data.nodes.allNodes[i]
-    } else if (i instanceof Object) {
-      return this.getNodeByTaxon(i)!
-    } else if (typeof i === "string") {
-      const taxon = this.getTaxonByName(i)
-      if (taxon) {
-        return this.getNodeByTaxon(taxon)!
-      } else {
-        const node = this.getNodeByLabel(i)
-        if (node) {
-          return node
-        }
-      }
+
+  /**
+   * 
+   * A private getting for retrieving a NodeRef from a number
+   */
+  #maybeGetNodeFromNumber(i:number):Maybe<NodeRef>{
+    const n = this._data.nodes.allNodes[i]
+    if(n===undefined){
+      return Nothing()
+    }else{
+      return Some(n)
     }
-    return undefined
-    
+  }
+
+  #maybeGetNode(i:nodeIndex):Maybe<NodeRef>{
+        if (typeof i === "number") {
+              return  this.#maybeGetNodeFromNumber(i as number)
+          } else if (i instanceof Object) {
+            return this.#maybeGetNodeByTaxon(i as Taxon)
+          } else if (typeof i === "string") {
+            const taxon = this.#maybeGetTaxonByName(i as string)
+            if (taxon.type===MaybeType.Some) {
+              return this.#maybeGetNodeByTaxon(taxon.value)
+            } else {
+             return this.#maybeGetNodeByLabel(i as string)
+            }
+      }
+      return Nothing();
+    }
+     
+  getNode(i: nodeIndex): NodeRef  {
+      const node = this.#maybeGetNode(i)
+      switch(node.type){
+        case MaybeType.Some:
+          return node.value;
+        case MaybeType.Nothing:
+          throw new Error(`No node fround for ${i}`)
+      }
+  }
+
+  #maybeGetNodeByTaxon(taxon:Taxon):Maybe<NodeRef>{
+    const n = this.getNode(this._data.nodes.byTaxon[taxon.number])
+    if(n===undefined){
+      return Nothing()
+    }else{
+      return Some(n)
+    }
+  }
+
+  getNodeByTaxon(taxon: Taxon): NodeRef  {
+    const n =this.#maybeGetNodeByTaxon(taxon)
+    switch(n.type){
+      case MaybeType.Nothing:
+        throw new Error(`No node found for Taxon ${taxon}`)
+        case MaybeType.Some:
+          return n.value
+    }
+  }
+
+  #maybeGetTaxonByName(name:string):Maybe<Taxon>{
+      const t =  this.taxonSet.getTaxonByName(name)
+      if(t===undefined){
+        return Nothing()
+      }else{
+        return Some(t)
+      }
+  }
+  getTaxonByName(name: string): Taxon {
+    return this.taxonSet.getTaxonByName(name)
+  }
+
+  #maybeGetNodeByLabel(label: string):Maybe<NodeRef>  {
+   const index = this._data.nodes.byLabel[label];
+   if(index===undefined){
+    return Nothing();
+   }
+    return this.#maybeGetNodeFromNumber(index);
+  }
+
+  getNodeByLabel(label: string): NodeRef  {
+    return this.getNode(this._data.nodes.byLabel[label])
+  }
+
+  #maybeGetTaxonFromNode(node:NodeRef):Maybe<Taxon>{
+      const taxaIndex = this._data.nodeToTaxon[node.number]
+      if (taxaIndex===undefined){
+        return Nothing()
+      }
+     const taxon =  this.taxonSet.getTaxon(taxaIndex)
+     if(taxon===undefined){
+      return Nothing()
+     }
+     return Some(taxon)
+
   }
 
   getTaxonFromNode(node: NodeRef): Taxon  {
-    const taxaIndex = this._data.nodeToTaxon[node.number]
-    if (taxaIndex === undefined) {
-      throw new Error(`Node ${node} not found in Tree`)
-    }
-    return this.taxonSet.getTaxon(taxaIndex)
+   const t = this.#maybeGetTaxonFromNode(node)
+   switch(t.type){
+    case MaybeType.Some:
+      return t.value;
+    case MaybeType.Nothing:
+      throw new Error(`Node taxon found for the provided node`)
+  }
   }
   //TODO overload as above.
-  getTaxon(id: number | NodeRef|string): Taxon  {
-    if (typeof id === "number") {
 
-      return this.taxonSet.getTaxon(id)
-    } else if(typeof id === "string") {
-      return this.getTaxonByName(id)
-    }else {
-      return this.getTaxonFromNode(id)
+  #maybeGetTaxon(id:number|NodeRef|string):Maybe<Taxon>{
+    if (typeof id === "number") {
+          const i = this.taxonSet.getTaxon(id)
+          if(i){
+            return Some(i)
+          }
+          return Nothing()
+        } else if(typeof id === "string") {
+          return this.#maybeGetTaxonByName(id)
+        }else {
+          return this.#maybeGetTaxonFromNode(id)
+        }
+  }
+  getTaxon(id: number | NodeRef|string): Taxon  {
+   const t = this.#maybeGetTaxon(id)
+   switch(t.type){
+      case MaybeType.Some:
+        return t.value;
+      case MaybeType.Nothing:
+        throw new Error(`Node taxon found that matched ${id}`)
     }
   }
 
@@ -307,10 +406,20 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
     return this.getLength(node) !== undefined
   }
   
-  getLength(node: NodeRef): number | undefined {
+  getLength(node: NodeRef): number  {
    const thisNode = this.getNode(node.number);
     const length = (thisNode as Node).length
+    if(length===undefined ){
+      if(this.hasLengths()){
+        throw new Error(`The tree has lengths but, no length was found for node ${node}`)
+      }
+      console.warn(`The tree does not have branchlengths so a length of 1 is used as default`)
+      return 1.0
+    }
     return length
+  }
+  hasLengths():boolean{
+    return this._data.hasLengths
   }
 
   _toString(node: NodeRef,  options?: { blFormat: (value: number) => string; includeAnnotations: boolean }): string {
@@ -430,75 +539,70 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
   }
 
   *getPathToRoot(node: NodeRef): Generator<NodeRef> {
-    let n: NodeRef | undefined = node
-    while (n !== undefined) {
+    let n: NodeRef = node
+    while (!this.isRoot(node)) {
       yield n
       n = this.getParent(n)
     }
   }
-  getNextSibling(node: NodeRef): NodeRef |undefined {
-    const parent = this.getParent(node)
-    if(parent==undefined){
-      return undefined
+
+  getNextSibling(node: NodeRef): NodeRef  {
+    if(!this.hasLeftSibling(node) && !this.hasRightSibling(node)){
+      throw new Error(`Node ${node} has no sibling`)
     }
+    const parent = this.getParent(node);
     const index = (parent as Node).children.map((c) => c).indexOf(node.number)
-    if (this.getChildCount(parent) === 1) {
-      console.warn(`Node ${node.number} has only no sibling`)
-      return undefined
-    } else if (index === this.getChildCount(parent) - 1) {
-      return this.getChild(parent, 0)
-    } else {
+    return this.getChild(parent, (index + 1) %this.getChildCount(parent))
+    
+  }
+
+  hasRightSibling(node: NodeRef): boolean {
+    const parent = this.#maybeGetParent(node);
+    switch(parent.type){
+      case MaybeType.Nothing:
+        return false
+      case MaybeType.Some:
+        return (parent.value as Node).children.map((c) => c).indexOf(node.number) <(this.getChildCount(parent.value)-1)
+    }
+  }
+  getRightSibling(node: NodeRef): NodeRef  {
+   if(!this.hasRightSibling(node)){
+    throw new Error(`node ${node} does not have a right sibling`)
+   }
+    const parent = this.getParent(node); 
+    const index = (parent as Node).children.map((c) => c).indexOf(node.number)
       return this.getChild(parent, index + 1)
+    
+  }
+  hasLeftSibling(node:NodeRef):boolean{
+    const parent = this.#maybeGetParent(node);
+    switch(parent.type){
+      case MaybeType.Nothing:
+        return false
+      case MaybeType.Some:
+        return this.getChildCount(parent.value)>1 &&  (parent.value as Node).children.map((c) => c).indexOf(node.number)>0
     }
   }
 
-  getRightSibling(node: NodeRef): NodeRef |undefined {
-    const parent = this.getParent(node)
-    if(parent==undefined){
-      return undefined
+  getLeftSibling(node: NodeRef): NodeRef  {
+    if(!this.hasLeftSibling(node)){
+      throw new Error(`node ${node} does not have a left sibling`)
     }
+    const parent = this.getParent(node); 
     const index = (parent as Node).children.map((c) => c).indexOf(node.number)
-
-    if (this.getChildCount(parent) === 1) {
-      console.warn(`Node ${node.number} has no sibling`)
-      return undefined
-    } else if (index === this.getChildCount(parent) - 1) {
-      return undefined
-    } else {
-      return this.getChild(parent, index + 1)
-    }
-  }
-  getLeftSibling(node: NodeRef): NodeRef | undefined {
-    const parent = this.getParent(node)
-    if(parent==undefined){
-      return undefined
-    }
-    const index = (parent as Node).children.map((c) => c).indexOf(node.number)
-    if (this.getChildCount(parent) === 1) {
-      console.warn(`Node ${node.number} has no sibling`)
-      return undefined
-    } else if (index === 0) {
-      return undefined
-    } else {
       return this.getChild(parent, index - 1)
     }
-  }
-
+  
   getDivergence(node: NodeRef): number {
-
     let divergence = 0;
     for(const n of this.getPathToRoot(node)){
-      let l = this.getLength(n);
-      if(l===undefined){
-        //The root can have a length but doesn't need one.
-        if(this.isRoot(n)){
-          l = this.hasBranchLength(n)? this.getLength(n)!:0;
-        }else{
-          console.warn(`Node ${n.number} has no length. Assuming a length of 1.`)
-        l =1;
+      if(this.isRoot(n)){ // the root does not need a length but may have one
+        if(this.hasBranchLength(n)){
+          divergence+=this.getLength(n)
         }
+      }else{
+        divergence += this.getLength(n);
       }
-      divergence += l;
     }
     return divergence;
   }
@@ -514,13 +618,18 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
       this._data.nodes.allNodes[node.number].children[index]
     ]
   }
-  getParent(node: NodeRef): NodeRef | undefined {
+  #maybeGetParent(node:NodeRef):Maybe<NodeRef>{
     const parentId = this._data.nodes.allNodes[node.number].parent
-    if (parentId === undefined) {
-      return undefined
-    } else {
-      return this._data.nodes.allNodes[parentId]
-    }
+    return parentId===undefined?Nothing():Some(this.getNode(parentId))
+  }
+  getParent(node: NodeRef): NodeRef  {
+   const parent = this.#maybeGetParent(node)
+   switch(parent.type){
+    case MaybeType.Some:
+      return parent.value;
+    case MaybeType.Nothing:
+      throw new Error(`No parent for node ${node}`)
+   }
   }
   getChildren(node: NodeRef): NodeRef[] {
     return this._data.nodes.allNodes[node.number].children.map((n) =>
@@ -528,14 +637,17 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
     )
   }
 
-
-  getLabel(node: NodeRef): string | undefined {
-    return this._data.nodes.allNodes[node.number].label
+  hasLabel(node:NodeRef):boolean{
+    return this._data.nodes.allNodes[node.number].label===undefined
+  }
+  getLabel(node: NodeRef): string  {
+    const l = this._data.nodes.allNodes[node.number].label;
+    if(l===undefined){
+      throw new Error(`no label for node ${node}`)
+    }
+    return l;
   }
 
-  getLevel(node: NodeRef): number {
-    return this._data.nodes.allNodes[node.number].level!
-  }
   isExternal(node: NodeRef): boolean {
     return (this.getNode(node.number) as Node).children.length === 0
   }
@@ -545,13 +657,7 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
   isRoot(node: NodeRef) {
     return this._data.rootNode === node.number
   }
-  getNodeByTaxon(taxon: Taxon): NodeRef | undefined {
-    return this.getNode(this._data.nodes.byTaxon[taxon.number])
-  }
 
-  getNodeByLabel(label: string): NodeRef | undefined {
-    return this.getNode(this._data.nodes.byLabel[label])
-  }
 
   addNodes(n: number = 1): { tree: ImmutableTree; nodes: NodeRef[] } {
     const newNodes: NodeRef[] = []
@@ -566,10 +672,9 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
             parent: undefined,
             label: "",
             length: undefined,
-            level: undefined,
             taxon: undefined,
             annotations: {},
-            // _id: Symbol(),
+            _id: Symbol(),
           }
           newNodes.push(newNode)
           draft._data.nodes.allNodes.push(newNode)
@@ -604,18 +709,47 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
   getAnnotations(): AnnotationSummary[] {
       return Object.values(this._data.annotations)
   }
-  getAnnotation(node: NodeRef, name: string): Annotation |undefined {
-    const annotation = (this.getNode(node.number) as Node).annotations[name]
-    // if(annotation===undefined) throw new Error(`Annotation ${name} not found on node ${node}`)
-    return annotation
+  #maybeGetAnnotation(node:NodeRef,name:string):Maybe<Annotation>{
+        const a = (this.getNode(node.number) as Node).annotations[name]
+        if(a===undefined){
+          return Nothing()
+        }else{
+          return Some(a)
+        }
+      }
+    
+  
+  getAnnotation(node:NodeRef,name:string,d?:AnnotationValue):AnnotationValue{
+    const a = this.#maybeGetAnnotation(this.getNode(node.number),name)
+    if(d===undefined){
+      const {value} = UnwrapErr(a,`Node ${node} is not annotated with ${name}`)
+      return value;
+    }else{
+      switch(a.type){
+        case MaybeType.Some:
+          return a.value.value; // value of the maybe = annotation . value of the annotation 
+        case MaybeType.Nothing:
+          return d;
+      }
+    }
   }
 
-  getAnnotationValue<T extends BaseAnnotationType>(node: NodeRef, name: string, type: T): ValueOf<T> |undefined{
-      const knownType=  this.getAnnotationType(name)
-      if(knownType!==type) throw new Error(`The annotation ${name} is not a ${type} in the tree. It is of type ${knownType}`)
-        const annotation = this.getAnnotation(node,name)
-      return annotation?.value as  ValueOf<T>?? undefined;
+  getFullNodeAnnotation(node:NodeRef,name:string):Annotation{
+    const a = this.#maybeGetAnnotation(this.getNode(node.number),name)
+    return UnwrapErr(a,`Node ${node} is not annotated with ${name}`)
+  
   }
+
+  hasAnnotation(node:NodeRef,name:string):boolean{
+    const a = this.#maybeGetAnnotation(this.getNode(node.number),name)
+    switch(a.type){
+      case MaybeType.Some:
+        return true
+      case MaybeType.Nothing:
+        return false
+    }
+  }
+
 
 
   // ---------------- Setters ---------------------
@@ -691,10 +825,17 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
     })
   }
 
-  setLength(node: NodeRef, length: number|undefined): this {
+  setLength(node: NodeRef, length: number): this {
     return produce(this, (draft) => {
       const n = draft.getNode(node.number) as Node
       n.length = length
+      draft._data.hasLengths=true
+    })
+  }
+  deleteLength(node:NodeRef):this{
+    return produce(this,draft =>{
+      const n = draft.getNode(node.number)as Node
+      n.length=undefined
     })
   }
   // can only be called once heights are known.
@@ -721,13 +862,6 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
     })
   }
 
-  _setLength(node: NodeRef, length: number): this {
-    return produce(this, (draft) => {
-      const n = draft.getNode(node.number) as Node
-      n.length = length
-    })
-  }
-
 
   insertNode(n: NodeRef, proportion:number =0.5): this {
    return  produce(this, (draft) => {
@@ -737,9 +871,9 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
         parent: undefined,
         label: "",
         length: undefined,
-        level: undefined,
         taxon: undefined,
         annotations: {}, // todo copy annotations from root
+        _id:Symbol()
       }
       draft._data.nodes.allNodes.push(newNode)
       draft._data.nodes.byTaxon.length+=1;
@@ -799,6 +933,7 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
       }
     })
   }
+  //TODO handle lengthless tree
   reroot(node: NodeRef, proportion: number = 0.5): this {
     return produce(this, (draft) => {
       if (node.number === draft._data.rootNode) {
@@ -881,9 +1016,8 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
                 label: "",
                 length: undefined,
                 taxon: undefined,
-                level: undefined,
                 annotations: {},
-                // _id: Symbol(),
+                _id: Symbol(),
               }
               draft._data.nodes.allNodes.push(newNode)
               newNode.length = rootLength
@@ -1115,7 +1249,7 @@ export function* psuedoRootPostOrderIterator(
 
   if (node === undefined) {
     node = tree.getRoot()
-    if (node === undefined) {
+    if (tree.getRoot() === undefined) {
       throw new Error("Tree has no root node. Cannot traverse tree")
     }
   }
