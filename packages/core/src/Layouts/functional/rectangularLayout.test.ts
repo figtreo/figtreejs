@@ -11,13 +11,13 @@ describe("Test rectangular layout",()=>{
         expect(root.y).toBeCloseTo(1.25); 
 
         // //a
-        const a = tree.getNodeByTaxon(tree.getTaxonByName("a"))!;
+        const a = tree.getNodeByTaxon(tree.getTaxonByName("a"));
         const aV = layout(a);
         expect(aV.x).toBeCloseTo(2);
         expect(aV.y).toBeCloseTo(0); 
 
         // //c
-        const c = tree.getNodeByTaxon(tree.getTaxonByName("c"))!;
+        const c = tree.getNodeByTaxon(tree.getTaxonByName("c"));
         const cV = layout(c);
         expect(cV.x).toBeCloseTo(1);
         expect(cV.y).toBeCloseTo(2); 
@@ -29,12 +29,12 @@ describe("Test rectangular layout",()=>{
 
         const layout = rectangularLayout(tree);
         const root = layout(tree.getRoot());
-        const c = tree.getNodeByTaxon(tree.getTaxonByName("c"))!;
+        const c = tree.getNodeByTaxon(tree.getTaxonByName("c"));
         const cV = layout(c) 
         const tree2 = tree.setDivergence(u(tree.getNodeByTaxon(tree.getTaxonByName("a"))),3.0)
         const layout2 =rectangularLayout(tree2);
         const root2 = layout2(tree2.getRoot());
-        const c2 = tree2.getNodeByTaxon(tree.getTaxonByName("c"))!;
+        const c2 = tree2.getNodeByTaxon(tree.getTaxonByName("c"));
         const cV2 = layout2(c2);
 
         expect(c2).toStrictEqual(c)
@@ -53,8 +53,8 @@ describe("Test rectangular layout",()=>{
     const layout = rectangularLayout(tree);
     const reordered = tree.orderNodesByDensity(true)
     const reorderedLayout = rectangularLayout(reordered);
-    const reordededC = reordered.getNodeByTaxon(tree.getTaxonByName("c"))!;
-    const ogC = tree.getNodeByTaxon(tree.getTaxonByName("c"))!;
+    const reordededC = reordered.getNodeByTaxon(tree.getTaxonByName("c"));
+    const ogC = tree.getNodeByTaxon(tree.getTaxonByName("c"));
 
     const ogCvertext = layout(ogC)
     const reorderedCVertex = reorderedLayout(reordededC);

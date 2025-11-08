@@ -121,7 +121,7 @@ describe('ImmutableTree', () =>{
             const tree = ImmutableTree.fromNewick("((A:1,B:1):1,C:2);");
             const A = tree.getTaxonByName("A");
 
-            const node = tree.getParent(u(tree.getNodeByTaxon(A)))!;  // current height is 1.
+            const node = tree.getParent(u(tree.getNodeByTaxon(A)));  // current height is 1.
             const root = tree.getRoot();
 
             const newTree = tree.setHeight(root,0.5);

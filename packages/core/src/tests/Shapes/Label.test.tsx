@@ -8,6 +8,7 @@ import type { StripSprings } from "../../components/Baubles/types";
 import type { BaseLabelAttrsType} from "../../components/Baubles/Shapes/Label";
 import  {BaseLabel } from "../../components/Baubles/Shapes/Label";
 import { withAnimation } from "../../components/HOC/withAnimation";
+import { unNullify } from "../../utils";
 
 export type LabelAttrs=StripSprings<BaseLabelAttrsType>
 
@@ -34,9 +35,9 @@ describe("BaseLabel", () => {
       </svg>
     );
 
-        const path = container.querySelector("path");
+        const path = unNullify(container.querySelector("path"),`path was null`)
         expect(path).not.toBeNull();
-        expect(path!.getAttribute('d')).toBe(d);
+        expect(path.getAttribute('d')).toBe(d);
   });
 });
 
@@ -60,9 +61,10 @@ describe("Label", () => {
       </svg>
     );
 
-        const path = container.querySelector("path");
-        expect(path).not.toBeNull();
-        expect(path!.getAttribute('d')).toBe(d);
+      
+      const path = unNullify(container.querySelector("path"),`path was null`)
+      expect(path).not.toBeNull();
+      expect(path.getAttribute('d')).toBe(d);
   });
 
     test("renders an animated label element that uses transform to position", () => {
@@ -84,8 +86,8 @@ describe("Label", () => {
       </svg>
     );
 
-        const path = container.querySelector("path");
+        const path = unNullify(container.querySelector("path"),`path was null`)
         expect(path).not.toBeNull();
-        expect(path!.getAttribute('d')).toBe(d);
+        expect(path.getAttribute('d')).toBe(d);
   });
 });

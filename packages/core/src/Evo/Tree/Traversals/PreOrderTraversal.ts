@@ -38,7 +38,7 @@ export class PreOrderTraversalCache implements TreeTraversal{
         if(tree.isRoot(node)){ //start over
            return undefined;
         }
-            const parent = tree.getParent(node)!;
+            const parent = tree.getParent(node);
             const rs = tree.getRightSibling(node);
             if(rs){
                 this._forwardCache.set(node,rs)

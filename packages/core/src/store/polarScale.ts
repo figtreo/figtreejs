@@ -1,4 +1,4 @@
-import { extent, min } from "d3-array";
+import { extent } from "d3-array";
 import { scaleLinear } from "d3-scale";
 import type { simpleVertex } from "../Layouts/functional/rectangularLayout";
 
@@ -6,7 +6,7 @@ export type PolarScaleType = <T extends simpleVertex>(vertex: T)=> T & { x: numb
 
 export function polarScaleMaker(maxX:number,maxY:number,canvasWidth:number,canvasHeight:number,invert:boolean=false,minRadius:number=0,angleRange:number=1.7*Math.PI,rootAngle:number=0,pollard=0){
 
-    const maxRadius = min([canvasWidth,canvasHeight])!/2;
+    const maxRadius = Math.min(canvasWidth,canvasHeight)/2;
 
     // These scales adjust the x and y values from arbitrary layout to polar coordinates with r within the svg and theta between 0 and 2pi
 

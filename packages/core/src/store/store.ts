@@ -1,6 +1,6 @@
-import {  min } from 'd3-array'
 import type {  NodeRef } from '../Evo/Tree'
-import type { FunctionalVertex,layoutClass,simpleVertex} from '../Layouts/functional/rectangularLayout'
+import type { FunctionalVertex,simpleVertex} from '../Layouts/functional/rectangularLayout';
+import {layoutClass} from '../Layouts/functional/rectangularLayout'
 import { polarScaleMaker } from './polarScale'
 import type { ScaleLinear} from 'd3-scale';
 import { scaleLinear } from 'd3-scale'
@@ -11,9 +11,6 @@ export type layoutType = (n:NodeRef)=>FunctionalVertex
 // TODO remove this as unneeded
 export const useVertexFactory =(layout:layoutType)=> (node:NodeRef):FunctionalVertex=>{
     const v = layout(node);
-    if(v === undefined){
-        throw new Error(`Node ${node} not found in layout`)
-    }
     return v;
 }
 
@@ -50,7 +47,7 @@ export function getScale({
     domainY,
     canvasWidth,
     canvasHeight,
-    layoutClass,
+    layoutClass:layoutType,
     invert = false,
     minRadius = 0,
     angleRange = 2 * Math.PI,
@@ -63,8 +60,8 @@ export function getScale({
     let xScale:ScaleLinear<number,number>;
     let yScale:ScaleLinear<number,number>; 
 
-    switch (layoutClass) {
-        case "Rectangular": {
+    switch (layoutType) {
+        case layoutClass.Rectangular: {
             const minX = domainX[1] *pollard;
              xScale = scaleLinear().domain([minX,domainX[1]]).range([0, canvasWidth]); // 0 to account for any root length
              yScale = scaleLinear().domain(domainY).range([0, canvasHeight]);
@@ -84,16 +81,16 @@ export function getScale({
                 return { ...vertex, x: xScale(vertex.x), y: calcY(vertex.y) }
             }
         }
-        case "Polar":
+        case layoutClass.Polar:
             return polarScaleMaker(domainX[1], domainY[1], canvasWidth, canvasHeight, invert, minRadius, angleRange, rootAngle,pollard)
-        case "Radial":{
+        case layoutClass.Radial:{
 
                 //TODO need to update so x and y scales are equal otherwise horizontal branches will have a different scale than vertical branches
 // scale x and y to 0 1 
 // then scale to standard witdth height.
                     const normalizeX = scaleLinear().domain(domainX).range([0,1]);
                     const normalizeY = scaleLinear().domain(domainY).range([0,1]);
-                    const maxRange = min([canvasWidth,canvasHeight])!;
+                    const maxRange = Math.min(canvasWidth,canvasHeight);
                     // const scaler = Math.min(canvasWidth,canvasHeight*ratio)
                     // const width = scaler;
                     // const height = scaler/ratio;
