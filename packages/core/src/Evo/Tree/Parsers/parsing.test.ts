@@ -87,10 +87,7 @@ describe("Test tree parsing and normalized Tree",()=>{
     const   bl = [];
 
     const count = tree.getChildCount(root);
-    const rootLength = tree.getLength(root);
-    if(rootLength) {
-        bl.push(tree.getLength(root))
-    }
+
     for (let i = 0; i < count; i++) {
         const child=  tree.getChild(root, i);
         names.push(tree.getTaxonFromNode(child)!.name);
@@ -106,10 +103,7 @@ it('scientific notation', function() {
     const root = tree.getRoot();
     const bl = [];
     const count = tree.getChildCount(root);
-    const rootLength = tree.getLength(root);
-    if (rootLength) {
-        bl.push(tree.getLength(root));
-    }
+
     for (let i = 0; i < count; i++) {
         const child = tree.getChild(root, i);
         bl.push(tree.getLength(child));
@@ -170,7 +164,7 @@ it('comment', function() {
     const tree = ImmutableTree.fromNewick("(a[&test=ok],b:1);",{parseAnnotations:true})
     const a = tree.getTaxonByName("a");
     const aNode = tree.getNodeByTaxon(a)!;
-    const testAnnotation =    tree.getAnnotationValue(aNode, "test",BaseAnnotationType.DISCRETE);
+    const testAnnotation =    tree.getAnnotation(aNode, "test");
     expect(testAnnotation).toEqual( "ok" );
 });
 
@@ -179,9 +173,9 @@ it('markov jump comment', function() {
     const tree = ImmutableTree.fromNewick("(a[&test=ok],b[&jump={{0.1,U,me}}]);",{parseAnnotations:true})
     const a = tree.getNodeByTaxon(tree.getTaxonByName("a"))!;
     const b = tree.getNodeByTaxon(tree.getTaxonByName("b"))!;
-    const testAnnotation =    tree.getAnnotationValue(a, "test",BaseAnnotationType.DISCRETE);
+    const testAnnotation =    tree.getAnnotation(a, "test");
     expect(testAnnotation).toEqual("ok");
-    const jumpAnnotation =    tree.getAnnotationValue(b, "jump",BaseAnnotationType.MARKOV_JUMPS);
+    const jumpAnnotation =    tree.getAnnotation(b, "jump");
     expect(jumpAnnotation).toEqual( [ {time:0.1, from:"U",to: "me"}]);
    
 });
@@ -189,14 +183,14 @@ it('markov jump comment', function() {
 it('double comment', function() {
     const tree = ImmutableTree.fromNewick("(a[&test=ok,other test = 1],b:1);",{parseAnnotations:true})
     const a = tree.getNodeByTaxon(tree.getTaxonByName("a"))!;
-    const testAnnotation =    tree.getAnnotation(a, "test");
+    const testAnnotation =    tree.getFullNodeAnnotation(a, "test");
     
     expect(testAnnotation).toEqual({
                             "id": "test",
                             "type": "DISCRETE",
                             "value": "ok",
                             });
-    const otherTestAnnotation =    tree.getAnnotation(a, "other test");
+    const otherTestAnnotation =    tree.getFullNodeAnnotation(a, "other test");
     expect(otherTestAnnotation).toEqual({
                             "id": "other test",
                             "type": "NUMERICAL",
@@ -209,7 +203,7 @@ it('label annotation', function(){
     {parseAnnotations:true,labelName:"probability"});
     const virus1Node = tree.getNodeByTaxon(tree.getTaxonByName("virus1"))!;
 
-    const probability = tree.getAnnotationValue(tree.getParent(virus1Node)!, "probability",BaseAnnotationType.NUMERICAL);
+    const probability = tree.getAnnotation(tree.getParent(virus1Node)!, "probability");
     
     expect(probability).toEqual(0.95);
     

@@ -30,7 +30,7 @@ export function baseLayout(lc:layoutClass){
             let protoVertex:{x:number,y:number};
             const x = tree.getDivergence(node);
             const leftLabel = tree.getChildCount(node) > 0;
-            const hasParent = tree.getParent(node) !== undefined 
+            const hasParent = !tree.isRoot(node)
             const labelBelow = (tree.getChildCount(node) > 0 && (!hasParent || tree.getChild(tree.getParent(node)!, 0) !== node));
     
     

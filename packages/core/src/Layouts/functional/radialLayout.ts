@@ -31,7 +31,7 @@ export function radialLayout (tree:ImmutableTree,options:{ spread?: number }={})
 
             const branchAngle = (angleStart + angleEnd) / 2.0;
 
-            const length = tree.getLength(node)!==undefined ? tree.getLength(node) : 0;
+            const length = !tree.isRoot(node) ? tree.getLength(node) : 0;
 
             const directionX = Math.cos(branchAngle);
             const directionY = Math.sin(branchAngle);

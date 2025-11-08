@@ -31,7 +31,7 @@ describe('ImmutableTree', () =>{
 
             expect(tree1.getParent(child)).not.toEqual(parent); //bc parent changed when added child
             expect(tree1.getParent(child)).toEqual(tree1.getNode(0)); //bc parent changed when added child
-            expect(tree.getParent(child)).toBeUndefined();
+            expect(()=>tree.getParent(child)).toThrow("No parent for node 1");
             expect(tree1.getChild(parent,0)).toEqual(tree1.getNode(1));
             expect(tree1.getChild(parent,0)).not.toEqual(child); // this child has no parent!
 
