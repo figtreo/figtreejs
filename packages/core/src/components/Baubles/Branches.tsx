@@ -61,7 +61,7 @@ function makeBranches<
                         .map((node) => (
                          <ShapeComponent 
                             key={keyBy(node)} 
-                            parent={tree.getParent(node)}
+                            parent={!tree.isRoot(node)?tree.getParent(node):undefined}
                             node={node}  
                             applyAttrInteractions={applyAttrInteractions} 
                             curvature={curvature}

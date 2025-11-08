@@ -138,7 +138,7 @@ export class NewickCharacterParser {
       // not any specific token so may be a label, a length, or an external node name
       if (this.lengthNext) {
         notNull(this.currentNode,"Internal Parsing error - Current not is not defined")
-        this.tree = this.tree._setLength(this.currentNode, parseFloat(t))
+        this.tree = this.tree.setLength(this.currentNode, parseFloat(t))
         this.lengthNext = false
       } else if (this.labelNext) {
         if (!t.startsWith("#")) {
