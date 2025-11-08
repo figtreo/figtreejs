@@ -10,13 +10,13 @@ describe("Test rectangular layout",()=>{
         expect(root.y).toBeCloseTo(0); 
 
         // //a
-        const a = tree.getNodeByTaxon(tree.getTaxonByName("a"))!;
+        const a = tree.getNodeByTaxon(tree.getTaxonByName("a"));
         const aV = layout(a);
         expect(aV.x).toBeCloseTo(0.0015820025368573631);
         expect(aV.y).toBeCloseTo( -1.7311355093381278); 
 
         // //c
-        const c = tree.getNodeByTaxon(tree.getTaxonByName("c"))!;
+        const c = tree.getNodeByTaxon(tree.getTaxonByName("c"));
         const cV = layout(c);
         expect(cV.x).toBeCloseTo(0.500);
         expect(cV.y).toBeCloseTo(0.8660254037844386); 

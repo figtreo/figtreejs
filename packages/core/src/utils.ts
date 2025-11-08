@@ -19,8 +19,9 @@ export function decimalToDate(decimal:number):Date{
     const year = Math.trunc(decimal);
     const totalNumberOfDays = leapYear(year)? 366:365;
     const day = Math.round(((decimal-year)*totalNumberOfDays));
-    return timeParse("%Y-%j")(`${year}-${day}`)!
-
+    const date = timeParse("%Y-%j")(`${year}-${day}`)
+    // notNull(date,`Could not convert ${decimal} to date tried (year:${year} - day: ${day})`)
+    return unNullify(date,`Could not convert ${decimal} to date tried (year:${year} - day: ${day})`);
 }
 
 /**
@@ -47,5 +48,10 @@ export function u<T>(x: T | undefined): NonNullable<T> {
 
 export function notNull<T>(x: T,message:string): asserts x is NonNullable<T> {
   if (x === undefined) throw new Error(message);
+}
+
+export function unNullify<T>(x: T,message:string):  NonNullable<T> {
+  if (x === null) throw new Error(message);
+  return x as NonNullable<T>
 }
 

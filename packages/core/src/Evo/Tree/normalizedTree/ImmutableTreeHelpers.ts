@@ -8,10 +8,11 @@
  * those can't be called by immer proxies.
  */
 
-import { Maybe, MaybeType, Nothing, Some } from "@figtree/maybe/maybe"
-import { Annotation, NodeRef } from "../Tree.types"
-import { ImmutableTree, ImmutableTreeData, nodeIndex,Node } from "./ImmutableTree"
-import { Taxon, TaxonSet } from "../Taxa"
+import type { Maybe} from "@figtree/maybe/maybe";
+import { MaybeType, Nothing, Some } from "@figtree/maybe/maybe"
+import type { Annotation, NodeRef } from "../Tree.types"
+import type { ImmutableTree,  nodeIndex,Node } from "./ImmutableTree"
+import type { Taxon } from "../Taxa"
 
   /**
    * 
@@ -28,15 +29,15 @@ export  function maybeGetNodeFromNumber(tree:ImmutableTree,i:number):Maybe<NodeR
 
 export function maybeGetNode(tree:ImmutableTree,i:nodeIndex):Maybe<NodeRef>{
         if (typeof i === "number") {
-            return  maybeGetNodeFromNumber(tree, i as number)
+            return  maybeGetNodeFromNumber(tree, i)
         } else if (i instanceof Object) {
-            return maybeGetNodeByTaxon(tree,i as Taxon)
+            return maybeGetNodeByTaxon(tree,i)
         } else if (typeof i === "string") {
-            const taxon = maybeGetTaxonByName(tree,i as string)
+            const taxon = maybeGetTaxonByName(tree,i)
             if (taxon.type===MaybeType.Some) {
             return maybeGetNodeByTaxon(tree,taxon.value)
             } else {
-            return maybeGetNodeByLabel(tree,i as string)
+            return maybeGetNodeByLabel(tree,i)
             }
     }
     return Nothing();

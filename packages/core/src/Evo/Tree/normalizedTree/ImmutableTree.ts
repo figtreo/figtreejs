@@ -7,9 +7,7 @@ import type {
   MarkovJumpValue,
   NodeRef,
   RawAnnotationValue,
-  RawValueOf,
   Tree,
-  ValueOf,
   newickParsingOptions} from "../Tree.types";
 import {
   BaseAnnotationType
@@ -21,8 +19,7 @@ import { TaxonSet } from "../Taxa/Taxon"
 import { format } from "d3-format"
 import { extent } from "d3-array"
 
-import {MaybeType, Nothing,Some,UnwrapOr,UnwrapErr,type Maybe} from "@figtree/maybe/maybe"
-import { symbol } from "d3-shape";
+import {MaybeType,UnwrapErr,type Maybe} from "@figtree/maybe/maybe"
 import { maybeGetAnnotation, maybeGetNode, maybeGetNodeByTaxon, maybeGetParent, maybeGetTaxon, maybeGetTaxonFromNode } from "./ImmutableTreeHelpers";
 
 export type nodeIndex = string | number | Taxon
@@ -363,10 +360,10 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
         ? `(${this.getChildren(node)
             .map((child) => this._toString(child, options))
             .join(",")})${this.hasLabel(node) ? "#" + this.getLabel(node) : ""}`
-        : (this.getTaxonFromNode(node) ? this.getTaxonFromNode(node)!.name : "")) +
+        : (this.getTaxonFromNode(node) ? this.getTaxonFromNode(node).name : "")) +
           (options.includeAnnotations ?
           this._writeAnnotations(node) :"") +
-      (this.hasBranchLength(node)  ? `:${options.blFormat(this.getLength(node)!)}` : "")
+      (this.hasBranchLength(node)  ? `:${options.blFormat(this.getLength(node))}` : "")
     )
   }
 
@@ -562,7 +559,7 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
   }
   getChildren(node: NodeRef): NodeRef[] {
     return this._data.nodes.allNodes[node.number].children.map((n) =>
-      this.getNode(n)!,
+      this.getNode(n),
     )
   }
 
@@ -846,10 +843,10 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
 
   rotate(nodeRef: NodeRef, recursive: boolean = false): this {
     return produce(this, (draft) => {
-      const node = draft.getNode(nodeRef.number)! as Node
+      const node = draft.getNode(nodeRef.number) as Node
       node.children = node.children.reverse()
       if (recursive) {
-        for (const child of node.children.map((n) => draft.getNode(n)!)) {
+        for (const child of node.children.map((n) => draft.getNode(n))) {
           draft.rotate(child, recursive)
         }
       }
@@ -876,9 +873,9 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
       if (rootNode.children.length == 2) {
         // just sum them.
         rootLength = rootNode.children
-          .map((n) => draft.getNode(n)!)
+          .map((n) => draft.getNode(n))
           .map((n) => draft.getLength(n))
-          .reduce((acc, l) => l! + acc!, 0)!
+          .reduce((acc, l) => l + acc, 0)!
       } else {
         // we need the length of the incoming root branch
         const pathToRoot = [...draft.getPathToRoot(node)]
@@ -896,7 +893,7 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
         // the node is not a child of the existing root so the root is actually changing
 
         let node0 = treeNode
-        let parent = draft.getParent(treeNode)! as Node
+        let parent = draft.getParent(treeNode) as Node
 
         if (!parent) {
           throw new Error("no parent")
@@ -908,14 +905,14 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
         const rootChild1 = treeNode
         const rootChild2 = parent
 
-        let oldLength = draft.getLength(parent)!
+        let oldLength = draft.getLength(parent)
 
         while (!draft.isRoot(parent)) {
           // remove the node that will becoming the parent from the children
 
           parent.children = parent.children.filter((n) => n !== node0.number)
 
-          if (draft.getParent(parent)!.number === rootNode.number) {
+          if (draft.getParent(parent).number === rootNode.number) {
             // at the root
             if (rootNode.children.length == 2) {
               if (!draft.hasLeftSibling(parent)&& ! draft.hasRightSibling(parent)) {
@@ -953,11 +950,11 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
             }
           } else {
             // swap the parent and parent's parent's length around
-            const nan = draft.getParent(parent)! as Node // your mammy's mammy
+            const nan = draft.getParent(parent) as Node // your mammy's mammy
             if (!nan) {
               throw new Error("no nan!")
             }
-            const nanLength = draft.getLength(nan)!
+            const nanLength = draft.getLength(nan)
             nan.length = oldLength
             oldLength = nanLength
 
@@ -970,7 +967,7 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
 
           node0 = parent
 
-          parent = draft.getParent(parent)! as Node
+          parent = draft.getParent(parent) as Node
         }
 
         // Reuse the root node as root...
@@ -991,14 +988,14 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
           }
         })
 
-        const l = draft.getLength(rootChild1)! * proportion
+        const l = draft.getLength(rootChild1) * proportion
         rootChild2.length = l
         rootChild1.length! -= l
       } else {
         // the root is staying the same, just the position of the root changing
-        const l = draft.getLength(node)! * (1.0 - proportion)
+        const l = draft.getLength(node) * (1.0 - proportion)
         treeNode.length = l
-        const sibling = draft.getNextSibling(node)! as Node
+        const sibling = draft.getNextSibling(node) as Node
         sibling.length = rootLength - l
       }
       // todo reset heights.
@@ -1022,7 +1019,7 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
     return produce(this, (draft) => {
       draft._data.nodes.allNodes[node.number].children =
         this._data.nodes.allNodes[node.number].children
-          .map((n) => draft.getNode(n)!)
+          .map((n) => draft.getNode(n))
           .sort(compare)
           .map((n) => n.number)
     })
@@ -1108,7 +1105,7 @@ export function* preOrderIterator(
   node: NodeRef | undefined = undefined,
 ): Generator<NodeRef> {
   const traverse = function* (node: NodeRef): Generator<NodeRef> {
-    yield tree.getNode(node.number)! // get from tree so we keep proxy when used in draft
+    yield tree.getNode(node.number) // get from tree so we keep proxy when used in draft
     const childCount = tree.getChildCount(node)
     if (childCount > 0) {
       for (let i = 0; i < childCount; i++) {
@@ -1131,11 +1128,11 @@ export function* preOrderIterator(
 export function* psuedoRootPreOrderIterator(
   tree:Tree,
   node: NodeRef | undefined = undefined,
-  sort: (a: NodeRef, b: NodeRef) => number = (a, b) => a!.number - b!.number,
+  sort: (a: NodeRef, b: NodeRef) => number = (a, b) => a.number - b.number,
 ):Generator<NodeRef> {
   const traverse = function* (node: NodeRef,visited:number|undefined = undefined): Generator<NodeRef> {
-    yield tree.getNode(node.number)! // get from tree so we keep proxy when used in draft
-    const branches = [...tree.getChildren(node),tree.getParent(node)].filter(n=>n!==undefined && n.number!==visited) as NodeRef[] // 
+    yield tree.getNode(node.number) // get from tree so we keep proxy when used in draft
+    const branches = [...tree.getChildren(node),tree.getParent(node)].filter(n=>n!==undefined && n.number!==visited) // 
     branches.sort(sort);
     for(const branch of branches){
         yield* traverse(branch,node.number)
@@ -1159,12 +1156,12 @@ export function* psuedoRootPostOrderIterator(
 ):Generator<NodeRef> {
   const traverse = function* (node: NodeRef,visited:number|undefined = undefined): Generator<NodeRef> {
     // get from tree so we keep proxy when used in draft
-    const branches = [...tree.getChildren(node),tree.getParent(node)].filter(n=>n!==undefined && n.number!==visited) as NodeRef[]
+    const branches = [...tree.getChildren(node),tree.getParent(node)].filter(n=>n!==undefined && n.number!==visited)
     branches.sort(sort);
     for(const branch of branches){
         yield* traverse(branch,node.number)
     }
-    yield tree.getNode(node.number)!
+    yield tree.getNode(node.number)
   }
 
   if (node === undefined) {

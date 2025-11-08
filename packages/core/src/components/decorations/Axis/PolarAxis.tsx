@@ -52,8 +52,8 @@ export default function PolarAxis(props: AxisProps) {
 
 
     const theta = normalizeAngle(figureScale({x:dimensions.domainX[1],y:dimensions.domainY[1]}).theta);
-    const startAngle = figureScale({x:dimensions.domainX[1],y:dimensions.domainY[0]}).theta! + Math.PI/2 ;  
-    const endAngle = startAngle + 0.05+ (figureScale({x:dimensions.domainX[1],y:dimensions.domainY[1]}).theta! - figureScale({x:dimensions.domainX[1],y:dimensions.domainY[0]}).theta!);
+    const startAngle = figureScale({x:dimensions.domainX[1],y:dimensions.domainY[0]}).theta + Math.PI/2 ;  
+    const endAngle = startAngle + 0.05+ (figureScale({x:dimensions.domainX[1],y:dimensions.domainY[1]}).theta - figureScale({x:dimensions.domainX[1],y:dimensions.domainY[0]}).theta);
 
 
 
