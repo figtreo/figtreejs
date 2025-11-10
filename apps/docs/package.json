@@ -6,7 +6,7 @@
     "build": "observable build",
     "clean": "rimraf src/.observablehq/cache",
     "deploy": "observable deploy",
-    "dev": "observable preview",
+    "dev": " rimraf src/.observablehq/cache && observable preview",
     "observable": "observable"
   },
   "dependencies": {
