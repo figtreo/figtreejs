@@ -16,24 +16,6 @@
     "test": "vitest",
     "type-check": "tsc --noEmit"
   },
-  "lint-staged": {
-    "*.{js,ts}": [
-      "eslint ./src",
-      "prettier --write --ignore-unknown"
-    ],
-    "!(*.js|*.ts)": [
-      "prettier --write --ignore-unknown"
-    ]
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ],
-    "rules": {
-      "react/jsx-no-target-blank": "off"
-    }
-  },
   "dependencies": {
     "@figtreejs/core": "*",
     "@reduxjs/toolkit": "^1.9.7",
