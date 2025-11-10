@@ -46,7 +46,8 @@
     "d3-time-format": "^4.1.0",
     "immer": "^10.1.1",
     "normalize-svg-path": "^1.1.0",
-    "parse-svg-path": "^0.1.2"
+    "parse-svg-path": "^0.1.2",
+    "uuid": "^13.0.0"
   },
   "devDependencies": {
     "@figtree/eslint-config": "*",
