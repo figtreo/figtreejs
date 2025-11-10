@@ -1,7 +1,7 @@
 declare module 'normalize-svg-path' {
   // Pull in the derived types (no value import here—types only)
 
-  type NormalizedCommand = import('./svg-path-types').NormalizedCommand;
+  type NormalizedCommand = import('./svg-path-types').NormalizedCommand;  // eslint-disable-line  @typescript-eslint/consistent-type-imports
 
   // What normalize returns: path must be absolute; segments become curves (plus M/Z)
 

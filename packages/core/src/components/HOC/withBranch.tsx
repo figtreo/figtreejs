@@ -48,7 +48,7 @@ export function withBranch<
         const d=normalizePath(pathGenerator(points,curvature,layoutClass))
 
         const {attrs,interactions} = applyAttrInteractions(node)
-        return <WrappedComponent  attrs={attrs} interactions={interactions} d={d} animated={animated} />
+        return <WrappedComponent  attrs={{fill:'none',...attrs}} interactions={interactions} d={d} animated={animated} />
     } 
     return BranchedComponent;
 }
