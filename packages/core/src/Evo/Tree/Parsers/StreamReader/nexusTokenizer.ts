@@ -1,3 +1,5 @@
+import { notNull } from "../../../../utils"
+
 export enum STATUS {
     PARSING = "parsing",
     IN_SINGLE_QUOTE = "in single quote",
@@ -17,6 +19,7 @@ export function nexusTokenizer() {
         let buffer = ""
         for (let i = 0; i < data.length; i++) {
           const char = data[i]
+          notNull(char,`Internal Error. Hit empty character in array`)
           if (this.status === STATUS.PARSING) {
             // on the look out for quotes and comments
             [this.status, this.end] = getStatusAndEnd(char)

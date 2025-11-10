@@ -5,6 +5,7 @@ import { ImmutableTree } from '../../Evo/Tree';
 import { getScale } from '../../store/store';
 import { extent } from 'd3-array';
 import { Branches } from '../Baubles/Branches';
+import { unNullify } from '../../utils';
 
 
 
@@ -17,7 +18,7 @@ import { Branches } from '../Baubles/Branches';
 //TODO this is different than defualt 
 const defaultTree = ImmutableTree.fromNewick("((A:1,B:1):1,C:2);"); //TODO don't expose the need to pass a tree in here.
 
-export const defaultOpts:FigtreeProps = {
+export const defaultOpts = {
     opts:defaultInternalLayoutOptions,
     width:100,
     height:100,
@@ -39,29 +40,29 @@ function FigTree(props:FigtreeProps){
 
     const {width =defaultOpts.width,
         height =defaultOpts.width,
-        margins = defaultOpts.margins!,
+        margins = defaultOpts.margins,
         tree = defaultOpts.tree,
         layout = defaultOpts.layout,
-        animated=defaultOpts.animated!,
-        baubles =defaultOpts.baubles!,
+        animated=defaultOpts.animated,
+        baubles =defaultOpts.baubles,
         // margins = defaultOpts.margins
     } = props;
     
     const opts = props.opts?props.opts:defaultOpts.opts;
     
-    const {rootAngle = defaultOpts.opts!.rootAngle!,
-        angleRange = defaultOpts.opts!.angleRange!,
-        fishEye = defaultOpts.opts!.fishEye!,
-        pollard = defaultOpts.opts!.pollard,
-        minRadius = defaultOpts.opts!.minRadius!,
-        invert = defaultOpts.opts!.invert!
-    } = opts!; 
+    const {rootAngle = defaultOpts.opts.rootAngle,
+        angleRange = defaultOpts.opts.angleRange,
+        fishEye = defaultOpts.opts.fishEye,
+        pollard = defaultOpts.opts.pollard,
+        minRadius = defaultOpts.opts.minRadius,
+        invert = defaultOpts.opts.invert
+    } = opts; 
  //todo this requires opts to not be undefined even though all the values are optional.
     let canvasWidth;
     let canvasHeight;
     let {x,y} = props;
     
-    if(x!==undefined&&y!==undefined){
+    if(x===undefined&&y===undefined){
         // if x and y are provide then these give the top left corner and width and height represent the whole area.
         canvasWidth = width;
         canvasHeight = height;
@@ -74,11 +75,11 @@ function FigTree(props:FigtreeProps){
 
     const layoutMap = layout(tree,opts);
     const {layoutClass} = layoutMap(tree.getRoot());
-    const [minX,maxX] = extent(tree.getNodes().map(n=>layoutMap(n).x));
-    const [minY,maxY] = extent(tree.getNodes().map(n=>layoutMap(n).y));
+    const domainX = extent(tree.getNodes().map(n=>layoutMap(n).x)).map(d=>unNullify(d,`Error finding x extent from layout`)) as [number,number];
+    const domainY = extent(tree.getNodes().map(n=>layoutMap(n).y)).map(d=>unNullify(d,`Error finding y extent from layout`)) as [number,number];
 
 
-    const dimensions = {canvasWidth,canvasHeight,domainX:[minX!,maxX!] as [number,number],domainY:[minY!,maxY!] as [number,number],layoutClass,invert,pollard,minRadius,fishEye,rootAngle,angleRange};
+    const dimensions = {canvasWidth,canvasHeight,domainX ,domainY,layoutClass,invert,pollard,minRadius,fishEye,rootAngle,angleRange};
     const scale = getScale(dimensions);
 
     return (

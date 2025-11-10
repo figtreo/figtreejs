@@ -10,6 +10,7 @@ import type { LabelOptionsType } from "./BranchLabels";
 import type { BaseLabelProps} from "./Shapes";
 import  {BaseLabel } from "./Shapes";
 import { withAnimation } from "../HOC/withAnimation";
+import { layoutClass } from "../../Layouts";
 
 // TODO think about passing dimensions to all children
 
@@ -45,7 +46,7 @@ function makeNodeLabels<
                       const fullAttrs = {...attrs,text}
                       const applyAttrInteractions = useAttributeMappers<A>(fullAttrs,{});
                       const texter = isFn(text) ? (n:NodeRef)=> (text as textFn)(n) : ()=> text;
-                      const {domainX,layoutClass} = dimensions
+                      const {domainX,layoutClass:layoutType} = dimensions
 
                     return (
                             <g className={"node-label-layer"}>
@@ -60,7 +61,7 @@ function makeNodeLabels<
                                         const scaledMax = scale({x:domainX[1],y:v.y})
                                         
                                         const xpos = (aligned? scaledMax.x :scaledV.x) + dx;
-                                        const ypos = (aligned && layoutClass==="Polar"? scaledMax.y :scaledV.y) + dy;
+                                        const ypos = (aligned && layoutType===layoutClass.Polar? scaledMax.y :scaledV.y) + dy;
 
                                         const {alignmentBaseline,rotation,textAnchor}=nodeLabel;
 

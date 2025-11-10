@@ -3,7 +3,7 @@ import { TaxonSet } from "../Taxa/Taxon"
 import type { NodeRef } from "../Tree.types"
 import { ImmutableTree } from "../NormalizedTree/ImmutableTree"
 import { parseAnnotation } from "./AnnotationParser"
-import { notNull } from "../../../utils";
+import { notNull, unNullify } from "../../../utils";
 
 export class NewickCharacterParser {
   done: boolean
@@ -54,7 +54,7 @@ export class NewickCharacterParser {
 
   parseCharacter(t: string): void {
     if(this.done){
-        throw ("Parsing is done. We have seen a ';'")
+        throw new Error ("Parsing is done. We have seen a ';'")
     }
     if (t.length > 2 && t.substring(0, 2) === "[&") {
       const annotations = parseAnnotation(t)
@@ -102,7 +102,8 @@ export class NewickCharacterParser {
         throw new Error("branch length missing")
       }
 
-      const parent = this.nodeStack.pop()!
+      const parent = this.nodeStack.pop()
+      notNull(parent,`Internal Parsing error - node stack unexpectedly empty`)
       notNull(this.currentNode,"Internal Parsing error - Current not is not defined")
       this.tree = this.tree.addChild(parent, this.currentNode)
       // tree.setParent(currentNode!,parent)
@@ -122,7 +123,9 @@ export class NewickCharacterParser {
       }
 
       // the end of an internal node
-      const parent = this.nodeStack.pop()!
+      const parent = this.nodeStack.pop();
+      
+      notNull(parent,`Internal Parsing error - node stack unexpectedly empty`)
       notNull(this.currentNode,"Internal Parsing error - Current not is not defined")
       this.tree = this.tree.addChild(parent, this.currentNode)
       // tree.setParent(currentNode!,parent)
@@ -170,10 +173,10 @@ export class NewickCharacterParser {
         // remove any quoting and then trim whitespace
         // TODO add to bit that parses taxa block
         if (name.startsWith('"') || name.startsWith("'")) {
-          name = name.substr(1)
+          name = name.slice(1)
         }
         if (name.endsWith('"') || name.endsWith("'")) {
-          name = name.substr(0, name.length - 1)
+          name = name.slice(0,- 1)
         }
         name = name.trim()
 
@@ -183,22 +186,23 @@ export class NewickCharacterParser {
         let taxon: Taxon
         if (this.options.translateTaxonNames) {
           if (this.options.translateTaxonNames.has(name)) {
-            name = this.options.translateTaxonNames.get(name)!
+            name = unNullify(this.options.translateTaxonNames.get(name),`${name} not found in taxon translation map`);
           } else {
-            throw `No mapping found for ${name} in tipNameMap. It's name will not be updated`
+            throw new Error(`No mapping found for ${name} in tipNameMap. It's name will not be updated`)
           }
         }
         
         if (this.taxonSet.isFinalized) {
           // if set then it will be finalised by now.
-          taxon = this.taxonSet.getTaxonByName(name)
-          if (taxon === undefined) {
+         
+          if (!this.taxonSet.hasTaxon(name)) {
             // hmm trees won't have
-            throw `Taxon ${name} not found in taxa - but found in tree`
+            throw new Error(`Taxon ${name} not found in taxa - but found in tree`);
           }
+          taxon = this.taxonSet.getTaxonByName(name)
         } else {
           this.taxonSet.addTaxon(name)
-          taxon = this.taxonSet.getTaxonByName(name)!
+          taxon = this.taxonSet.getTaxonByName(name)
         }
 
         this.tree = this.tree.setTaxon(externalNode, taxon)

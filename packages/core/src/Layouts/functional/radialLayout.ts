@@ -4,6 +4,7 @@
 import type { ImmutableTree, NodeRef} from "../../Evo";
 import { preOrderIterator, tipIterator } from "../../Evo";
 import type { NodeLabelType } from "../../store/store";
+import { notNull } from "../../utils";
 import type { FunctionalVertex} from "./rectangularLayout";
 import {layoutClass } from "./rectangularLayout";
 
@@ -26,7 +27,9 @@ export function radialLayout (tree:ImmutableTree,options:{ spread?: number }={})
     
         const dataStack: data[] = [{ angleStart: 0, angleEnd: 2 * Math.PI, xpos: 0, ypos: 0, level: 0, number: tree.getRoot().number }] // TODO start tree.
         for (const node of preOrderIterator(tree)) { 
-            const { angleStart, angleEnd, xpos, ypos, level } = dataStack.pop()!
+            const data = dataStack.pop()
+            notNull(data,`Internal Error, hit the end of the data stack unexpectedly`)
+            const { angleStart, angleEnd, xpos, ypos, level } = data;
         
 
             const branchAngle = (angleStart + angleEnd) / 2.0;
@@ -92,7 +95,9 @@ export function radialLayout (tree:ImmutableTree,options:{ spread?: number }={})
         }
 
     return function(node:NodeRef):FunctionalVertex{
-        if(map.has(node))return map.get(node)!;
+        if(map.has(node)){
+            return map.get(node) as FunctionalVertex; // must be here since we check it above
+        }
         else{
             throw new Error("Node not found in layout -  has the tree changed")
         }

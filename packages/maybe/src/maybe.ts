@@ -44,3 +44,5 @@ export const UnwrapOr = <T>(v:Maybe<T>,d:T):T=>{
             return d;
     }
 }
+// A helper type so we can appease the linters and check some accesses for undefined without having to check them all.
+export type Undefinable<T> = T | undefined 

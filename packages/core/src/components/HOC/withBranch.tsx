@@ -4,6 +4,7 @@ import type { layoutType, scaleType } from '../../store/store';
 import type { AttrAndInteractionApplier, Attrs, DShape} from '../Baubles/types';
 import { layoutClass } from '../../Layouts';
 import { normalizePath } from '../../path.helpers';
+import type { PolarVertex, simpleVertex } from '../../Layouts/functional/rectangularLayout';
 
 
 
@@ -53,24 +54,24 @@ export function withBranch<
 }
 
 
-function pathGenerator(points: { x: number, y: number,r?:number,theta?:number }[], curvature:number,layout:layoutClass): string {
+function pathGenerator(points: simpleVertex[]|PolarVertex[], curvature:number,layout:layoutClass): string {
 
     switch (layout) {
         case layoutClass.Rectangular: {
             return rectangularBranchPath(points,curvature);
         }
         case layoutClass.Polar: {
-            return polarBranchPath(points);
+            return polarBranchPath(points as PolarVertex[]);
         } case layoutClass.Radial:{
             return radialBranchPath(points);
         }default: {
-            throw new Error(`path generator not implemented for this ${layoutClass} of points`)
+            throw new Error(`path generator not implemented for the ${layout as string} of points`)
         }
     }
 }
 
 //TODO remove switch statement on number of positions that was for cartooned nodes that will be handled elsewhere
-function rectangularBranchPath(points: { x: number, y: number,r?:number,theta?:number }[], curvature:number):string{
+function rectangularBranchPath(points:simpleVertex[], curvature:number):string{
     const positions = points.length;
 
     switch (positions) {
@@ -97,12 +98,12 @@ function rectangularBranchPath(points: { x: number, y: number,r?:number,theta?:n
     }
 }
 
-function polarBranchPath(points: { x: number, y: number,r?:number,theta?:number }[]):string{
+function polarBranchPath(points: PolarVertex[]):string{
     const positions = points.length;
     switch (positions) {
         case 3: {
             const [parent,child,step] = points;
-            const arcBit = parent.theta===child.theta ||parent.r===0?"":`A${parent.r},${parent.r} 0 0 ${parent.theta!<child.theta! ?1:0} ${step.x},${step.y}`; 
+            const arcBit = parent.theta===child.theta ||parent.r===0?"":`A${parent.r},${parent.r} 0 0 ${parent.theta<child.theta ?1:0} ${step.x},${step.y}`; 
             return `M${parent.x},${parent.y} ${arcBit} L${child.x},${child.y}`;
 
         } case 0: {
@@ -114,7 +115,7 @@ function polarBranchPath(points: { x: number, y: number,r?:number,theta?:number 
     }
 }
 
-function radialBranchPath(points: { x: number, y: number,r?:number,theta?:number }[]):string{
+function radialBranchPath(points: simpleVertex[]):string{
     const positions = points.length;
 
     switch (positions) {

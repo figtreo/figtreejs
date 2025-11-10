@@ -8,11 +8,6 @@ import { scaleLinear } from 'd3-scale'
 //todo remove props that are just the getting passed to children and use render props instead
 
 export type layoutType = (n:NodeRef)=>FunctionalVertex
-// TODO remove this as unneeded
-export const useVertexFactory =(layout:layoutType)=> (node:NodeRef):FunctionalVertex=>{
-    const v = layout(node);
-    return v;
-}
 
 //Todo cache these
 export type scaleOptions =  {

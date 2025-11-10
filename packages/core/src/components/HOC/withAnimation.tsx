@@ -15,8 +15,7 @@ const animatableProperties = ["stroke", "strokeWidth", "fill", "width", "height"
  *
  */
 export function withAnimation<
-A extends BaseAttrs,
-BaseComponentProps extends BaseBaubleProps & {attrs:A}
+BaseComponentProps extends BaseBaubleProps & {attrs:BaseAttrs}
 >
 (
   AnimatableShape: React.FC<BaseComponentProps>
@@ -30,7 +29,7 @@ React.FC<StripProps<BaseComponentProps> & {animated?:boolean }>
     const aAttrs = animatableProperties.reduce<Record<string, number | string>>(
       (acc, key) => {
         const v = attrs[key];
-        if (v !== undefined) acc[key] = v;
+        acc[key] = v;
         return acc;
       },
       {}

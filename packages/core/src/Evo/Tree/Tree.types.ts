@@ -89,9 +89,7 @@ export interface Tree  {
     getNodeCount():number
     getInternalNodeCount():number
     getExternalNodeCount():number
-    getNode(i:string):NodeRef;
-    getNode(taxon:Taxon):NodeRef;
-    getNode(node:number):NodeRef;
+    getNode(i:string|Taxon|number):NodeRef;
     getInternalNodes():NodeRef[]
     getExternalNodes():NodeRef[]
     getNodes():NodeRef[]

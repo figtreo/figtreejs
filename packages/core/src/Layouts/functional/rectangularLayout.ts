@@ -1,6 +1,6 @@
 import {  mean } from "d3-array";
 import type { ImmutableTree, NodeRef} from "../../";
-import { postOrderIterator} from "../../";
+import { postOrderIterator, unNullify} from "../../";
 import type { NodeLabelType } from "../../store/store";
 
 export enum layoutClass{
@@ -9,7 +9,11 @@ export enum layoutClass{
     Radial = "Radial"
 }
 
-export interface simpleVertex { x:number, y: number,theta?:number,r?:number } 
+export interface simpleVertex { x:number, y: number } 
+export interface simplePolarVertex extends simpleVertex {
+    theta:number,
+    r:number
+}
 
 export interface FunctionalVertex extends simpleVertex {
     layoutClass:layoutClass,
@@ -17,6 +21,10 @@ export interface FunctionalVertex extends simpleVertex {
     
 }
 
+export interface PolarVertex extends simplePolarVertex {
+    layoutClass:layoutClass.Polar,
+    nodeLabel:NodeLabelType
+}
 
 
 export function baseLayout(lc:layoutClass){
@@ -41,8 +49,8 @@ export function baseLayout(lc:layoutClass){
                 
             }else{
                 
-                const kidPositions = tree.getChildren(node).map(child=>map.get(child)!)
-                const y= mean(kidPositions,d=>d.y)!;
+                const kidPositions = tree.getChildren(node).map(child=>unNullify(map.get(child),`Internal Error: child not yet found in layout`))
+                const y= unNullify(mean(kidPositions,d=>d.y),`Error taking the mean of child positions`);
                 protoVertex = {x,y};
             }
             const vertex = {...protoVertex,
@@ -58,7 +66,9 @@ export function baseLayout(lc:layoutClass){
             }
 
         return function(node:NodeRef):FunctionalVertex{
-            if(map.has(node))return map.get(node)!;
+            if(map.has(node)){
+                return map.get(node) as FunctionalVertex; // check above so 
+            } 
             else{
                 console.log(node);
                 throw new Error("Node not found in layout -  has the tree changed")

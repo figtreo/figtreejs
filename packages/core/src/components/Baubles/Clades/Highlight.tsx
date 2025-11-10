@@ -3,6 +3,8 @@ import {arc as arcgen} from "d3-shape"
 import type { InternalCladePropType } from './makeClade';
 import type { Attrs } from '../types';
 import { BasePath, BaseRectangle} from '../Shapes';
+import type { PolarVertex, simplePolarVertex } from "../../../Layouts/functional/rectangularLayout";
+import { notNull } from "../../../utils";
 const arc = arcgen();
 //TODO add padding
 // const padding = 10;
@@ -34,21 +36,21 @@ export function Highlight<A extends Attrs>(props:InternalCladePropType<A>){
                 {...rest}
                 />)
         }else if(layoutType ===layoutClass.Polar){
-                const origin = scale({x:0,y:0});
+            // if we are here then scale returned a polar vertex
+                const origin = scale({x:0,y:0}) as simplePolarVertex; 
                 const transform =  `translate(${origin.x},${origin.y})` 
-                // const scaleR = scaleLinear().domain([0,scaleContext.maxR!]).range([0,verticies.axisLength!])
-                const minR =  v.r!; //padding?
-                const maxR = mdv.r!;
-                //TODO check this
-                const maxTheta=lmv.theta!;
-                const minTheta = rmv.theta!;
+                const minR =  (v as PolarVertex).r; //padding?
+                const maxR = (mdv as PolarVertex).r;
+                const maxTheta=(lmv as PolarVertex).theta;
+                const minTheta = (rmv as PolarVertex).theta;
                 const shape = arc( {
                     innerRadius:minR, 
                     outerRadius:maxR+5,
                     startAngle: minTheta +Math.PI/2,
                     endAngle: maxTheta + Math.PI/2
                 }
-            )!
+            )
+            notNull(shape,`Error making arc shape for Clade Highlight`)
         
                 return <BasePath d={shape} attrs={attrs} transform={transform} interactions={interactions} {...rest}/> //transform={transform}
             

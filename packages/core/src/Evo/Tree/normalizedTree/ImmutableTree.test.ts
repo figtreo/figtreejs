@@ -1,6 +1,6 @@
 //TODO test immutable tree include tests that check nodes to roots update as well.
 
-import { panic, u } from "../../../utils";
+import { notNull, u } from "../../../utils";
 import { ImmutableTree } from "./ImmutableTree";
 import { describe, it, expect } from 'vitest';
 
@@ -20,9 +20,9 @@ describe('ImmutableTree', () =>{
         it('build tree and check parent', function() {
             const prototree = new ImmutableTree()
             const {tree:tree,nodes:[child,child2]}=prototree.addNodes(2)
-
+            notNull(child,'can not be null')
+            notNull(child2,'can not be null')
             const parent = tree.getNode(0);
-            if(!parent) throw new Error("no parent node");
             const tree1 = tree.addChild(parent,child)
                             .addChild(parent,child2);
             
@@ -40,7 +40,9 @@ describe('ImmutableTree', () =>{
             const prototree = new ImmutableTree()
                             
             const {tree:tree,nodes:[parent,child,child2]} = prototree.addNodes(3)
-
+            notNull(child,'can not be null')
+            notNull(child2,'can not be null')
+            notNull(parent,'can not be null')
 
             const tree1 = tree.addChild(parent,child)
                             .addChild(parent,child2)
@@ -55,13 +57,13 @@ describe('ImmutableTree', () =>{
             const tree=  ImmutableTree.fromNewick("((A:1,B:1):1,C:2);");
             const A = tree.getTaxonByName("A");
             const B = tree.getTaxonByName("B");
-            const nodeA = tree.getNodeByTaxon(A) || panic("no node A")
+            const nodeA = tree.getNodeByTaxon(A)
 
             
             expect(tree.getHeight(nodeA)).toBe(0);
             const tree1 = tree.setHeight(nodeA,0.5);
 
-            const nodeA1 = tree1.getNodeByTaxon(A) || panic("no node A")
+            const nodeA1 = tree1.getNodeByTaxon(A) 
             expect(tree1.getHeight(nodeA1)).toBe(0.5);
 
             expect(tree1.getHeight(u(tree1.getNodeByTaxon(u(tree.getTaxonByName("B")))))).toBe(0);
@@ -129,7 +131,6 @@ describe('ImmutableTree', () =>{
             expect(newTree.getHeight(node)).toBe(1.0);
 
             const Cnode = tree.getNode("C");
-            if(!Cnode) throw new Error("no C node");
             expect(newTree.getLength(Cnode)).toBe(0.5);
             // expect(newTree.getLength(tree.getNodeByTaxon(B)!)).toBe(0.5);
 
