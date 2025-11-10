@@ -25,33 +25,42 @@ export class PreOrderTraversalCache implements TreeTraversal{
         };
         if(node===undefined){
             node = tree.getRoot();
-            if(node===undefined){
-                throw new Error("Tree has no root node. Cannot traverse tree");
-            }
         }
         yield* traverse(node);
     }
     
 //Check we've been to next otherwise we need to update again.
     getNext(tree: Tree, node: NodeRef): NodeRef|undefined{
-        if(this._forwardCache.has(node) && this._forwardCache.has(this._forwardCache.get(node)!)) return this._forwardCache.get(node)! //if this node hasn't changed nor the next
+        const n = this._forwardCache.get(node);
+        if(n!==undefined){
+            if (this._forwardCache.get(n)!==undefined){
+                return n //if this node hasn't changed nor the next
+            }
+        } 
+        
         if(tree.isRoot(node)){ //start over
            return undefined;
         }
             const parent = tree.getParent(node);
-            const rs = tree.getRightSibling(node);
-            if(rs){
+            if(tree.hasRightSibling(node)){
+                 const rs = tree.getRightSibling(node);
                 this._forwardCache.set(node,rs)
                 this._reverseCache.set(rs,node)
             }else{
                 this._forwardCache.set(node,parent)
                 this._reverseCache.set(parent,node)
             }
-            return this._forwardCache.get(node)!;
+
+            return this._forwardCache.get(node);
       
     }
     getPrevious(tree: Tree, node: NodeRef): NodeRef|undefined {
-        if(this._reverseCache.has(node) && this._reverseCache.has(this._reverseCache.get(node)!)) return this._reverseCache.get(node); //if this node hasn't changed nor the next
+        const n = this._reverseCache.get(node);
+        if(n!==undefined){
+            if (this._reverseCache.get(n)!==undefined){
+                return n //if this node hasn't changed nor the next
+            }
+        }         
         if(node ===this.traverse(tree).next().value){
             return undefined;
         }
@@ -62,26 +71,25 @@ export class PreOrderTraversalCache implements TreeTraversal{
             this._forwardCache.set(lastChild,node);
         }
         else{
-            const ls = tree.getLeftSibling(node);
-            if(ls){
+            
+            if(tree.hasLeftSibling(node)){
+                const ls = tree.getLeftSibling(node);
                 this._reverseCache.set(node,ls)
                 this._forwardCache.set(ls,node)
             }else{
-                let aunt = undefined;
+             
                 let n = node
-                while(aunt===undefined){
-                    if(n===tree.getRoot()){
-                        throw new Error("Hit root in preorder traversal when should not");
-                    }
-                    aunt = tree.getLeftSibling(n);
-                    n  = tree.getParent(n)!
+                while(!tree.hasLeftSibling(n)){
+                    // aunt = tree.getLeftSibling(n);
+                    n  = tree.getParent(n)
                 }
+                const aunt = tree.getLeftSibling(n);
                 this._reverseCache.set(node,aunt)
                 this._forwardCache.set(aunt,node)
                // look for parent's left sibling if none try again until root
                // if at and no ls error we are at first tip and should have caught this above.
             }
         }
-        return this._reverseCache.get(node)!;
+        return this._reverseCache.get(node);
     }
 }

@@ -10,7 +10,7 @@ import type { Attrs } from "../../Baubles/types";
 export type AxisOrientation = "horizontal" | "vertical" | "polar"
 
 export type AxisTicksOptions = { number?: number, format?: (value: number) => string, padding?: number, style?: {[key:string]:number|string}, length?: number,values?:number[] }
-
+// export type fullAxisTickOptions =
 // optionals are filled by default below
 export interface AxisProps {
     offsetBy?: number,
@@ -32,7 +32,21 @@ export interface AxisProps {
     type?: "Polar" | "Rectangular" //yuck
 }
 
-export const defaultAxisProps  = {
+
+export type DefaultAxisPropType  = {
+    offsetBy: number,
+    scaleBy: number,
+    reverse: boolean,
+    gap: number,
+    title: { text: string, padding: number, style: Attrs },
+    ticks: { number: number, format: (n:number)=>string, padding: number, style:Attrs, length: number },
+    direction: AxisOrientation,
+    strokeWidth:number,
+    type: "Polar" | "Rectangular"
+
+}
+
+export const defaultAxisProps:DefaultAxisPropType  = {
     offsetBy: 0,
     scaleBy: 1,
     reverse: false,
@@ -44,17 +58,20 @@ export const defaultAxisProps  = {
     type: "Rectangular"
 }
 
-export interface AxisScaleContext {
-    width: number;
-    height: number;
-    domain: [number,number];
-    maxR?: number;
-    theta?: [number, number];
-    padding:number
+export interface WorkingTipOptions extends AxisTicksOptions {
+    number: number, format: (n:number)=>string, padding: number, style:Attrs, length: number , values?:number[]
 }
-
-
-
+export interface WorkingAxisProps extends AxisProps {
+    offsetBy: number,
+    scaleBy: number,
+    reverse: boolean,
+    gap: number,
+    title: { text: string, padding: number, style: Attrs },
+    ticks: { number: number, format: (n:number)=>string, padding: number, style:Attrs, length: number , values?:number[]},
+    direction: AxisOrientation,
+    strokeWidth:number,
+    type: "Polar" | "Rectangular"
+}
 
 
 export const defaultAxisBarsProps={

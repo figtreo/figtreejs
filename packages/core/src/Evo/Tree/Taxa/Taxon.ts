@@ -1,3 +1,5 @@
+import { MaybeType } from "@figtree/maybe/maybe";
+import { maybeGetNameFromIndex, maybeGetTaxonByName } from "./helperFunctions";
 
 
 export interface Taxon {
@@ -49,13 +51,15 @@ export class TaxonSet implements TaxonSetInterface{
         let taxon: Taxon;
         if(typeof taxonOrName === "string"){
           const name = taxonOrName;
-          if(this._data.byName[name]){
-              throw new Error(`taxon ${name} already exists in the set. Names must be unique`)
-          }
+        
+            if (Object.prototype.hasOwnProperty.call(this._data.byName, name)) {
+            throw new Error(`taxon ${name} already exists in the set. Names must be unique`);
+            }
+
         taxon = newTaxon(name,this._data.allNames.length)
         }else{
           taxon = taxonOrName;
-          if(this._data.byName[taxon.name]){
+         if( Object.prototype.hasOwnProperty.call(this._data.byName, taxon.name)){
               throw new Error(`taxon ${taxon.name} already exists in the set. Names must be unique`)
           }
           if(this._data.allNames[taxon.number] && this._data.allNames[taxon.number] !== taxon.name){
@@ -69,11 +73,28 @@ export class TaxonSet implements TaxonSetInterface{
     }
 
     getTaxon(id:number):Taxon{
-        return this._data.byName[this._data.allNames[id]]
+      const taxon = maybeGetTaxonByName(this._data,maybeGetNameFromIndex(this._data,id))
+        switch(taxon.type){
+            case MaybeType.Some:
+                return taxon.value;
+            case MaybeType.Nothing:
+                throw new Error(`Taxon by name ${id} not found`) // won't get here I dont' think
+        }
     }
     getTaxonByName(name:string):Taxon{
-        return this._data.byName[name]
+        const taxon = maybeGetTaxonByName(this._data,name)
+        switch(taxon.type){
+            case MaybeType.Some:
+                return taxon.value;
+            case MaybeType.Nothing:
+                throw new Error(`Taxon by name ${name} not found`)
+        }
     }
+    hasTaxon(id:string):boolean{
+        return Object.prototype.hasOwnProperty.call(this._data.byName, id);
+     
+    }
+
     getTaxonCount():number{
         return this._data.allNames.length
     }

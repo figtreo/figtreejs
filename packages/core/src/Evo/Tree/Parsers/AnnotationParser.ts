@@ -1,4 +1,4 @@
-import type { MarkovJumpValue, RawAnnotationValue, ValueOf } from "../Tree.types";
+import type { Annotation, MarkovJumpValue, RawAnnotationValue, ValueOf } from "../Tree.types";
 import {   BaseAnnotationType } from "../Tree.types";
 
 
@@ -27,8 +27,7 @@ export function parseAnnotation(annotationString: string):  ParsedAnnotationRaw 
     let isAnnotationARange = false;
     let inSubRange = false;
     let subValue: string[] = [];
-    // eslint-disable-next-line
-    let value:any = null; 
+    let value:RawAnnotationValue|undefined = undefined; 
     const annotations: ParsedAnnotationRaw = {};
 
     // expect the first token to be a [& and last ]
@@ -46,7 +45,7 @@ export function parseAnnotation(annotationString: string):  ParsedAnnotationRaw 
             if (!isAnnotationARange) {
                 annotationKeyNext = true;
             
-                if(value ===null) throw (`Empty annotation value`)
+                if(value ===undefined) throw new Error(`Empty annotation value`)
             //finalize annotation
             annotations[annotationKey] = value;
             }else{
@@ -73,17 +72,17 @@ export function parseAnnotation(annotationString: string):  ParsedAnnotationRaw 
             // close BEAST annotation
 
             //finalize annotation
-             if(value ===null) throw (`Empty annotation value`)
+             if(value ===undefined) throw new Error (`Empty annotation value`)
             annotations[annotationKey] = value;
         } else {
             // must be annotation
             // remove any quoting and then trim whitespace
             let annotationToken = token;
             if (annotationToken.startsWith("\"") || annotationToken.startsWith("'")) {
-                annotationToken = annotationToken.substr(1);
+                annotationToken = annotationToken.slice(1);
             }
             if (annotationToken.endsWith("\"") || annotationToken.endsWith("'")) {
-                annotationToken = annotationToken.substr(0, annotationToken.length - 1);
+                annotationToken = annotationToken.slice(0, - 1);
             }
             if (annotationKeyNext) {
                 annotationKey = annotationToken.replace(".", "_");
@@ -128,7 +127,7 @@ export function processAnnotationValue(values: RawAnnotationValue):ClassifiedVal
                     if (!Number.isFinite(timeNum) ) {
                        throw new Error(`Expected a markov jump annotation but the first entry ${timeStr} could not be make a number`)
                     }
-                return { time: timeNum, from: String(source), to: String(dest) }
+                return { time: timeNum, from: source, to: dest}
             });
             return {type:BaseAnnotationType.MARKOV_JUMPS,value:jumps}
             } else {
@@ -219,4 +218,24 @@ export function processAnnotationValue(values: RawAnnotationValue):ClassifiedVal
 
 function isPlainObject(v: unknown): v is Record<string, unknown> {
   return typeof v === "object" && v !== null && !Array.isArray(v);
+}
+
+
+export function writeAnnotationValue(a:Annotation):string{
+    switch(a.type){
+        case BaseAnnotationType.DISCRETE:
+            return a.value;
+        case BaseAnnotationType.BOOLEAN:
+            return String(a.value)
+        case BaseAnnotationType.NUMERICAL:
+            return String(a.value)
+        case BaseAnnotationType.NUMERICAL_SET:
+            return a.value.map(d=>String(d)).join(", ")
+        case BaseAnnotationType.DISCRETE_SET:
+            return a.value.join(", ")
+        case BaseAnnotationType.MARKOV_JUMPS:
+            return a.value.map(d=>`{${String(d.time)},${d.from},${d.to}}`).join(", ")
+        case BaseAnnotationType.DENSITIES:
+              throw new Error(`No defined why to write densities (${a.id}) as a string. \n Please convert keys and values to separate array annotations.`)
+    }
 }

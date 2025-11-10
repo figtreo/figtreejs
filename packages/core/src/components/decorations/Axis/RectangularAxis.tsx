@@ -1,15 +1,16 @@
 import React from "react"
 import { line } from "d3-shape"
-import { mean, quantile, range } from "d3-array"
+import { mean } from "d3-array"
 import type { ScaleContinuousNumeric } from "d3-scale"
 import type {
   AxisOrientation,
   AxisProps,
-  AxisTicksOptions} from "./Axis.types";
+  WorkingTipOptions} from "./Axis.types";
 import {
   defaultAxisProps,
 } from "./Axis.types"
 import { makeAxisScale } from "./PolarAxis"
+import { unNullify } from "../../../utils";
 
 export default function Axis(props: AxisProps) {
   const { dimensions, layoutClass } = props
@@ -21,7 +22,7 @@ export default function Axis(props: AxisProps) {
     attrs
   } = props
 
-  const ticks = props.ticks
+  const ticks:WorkingTipOptions = props.ticks
     ? { ...defaultAxisProps.ticks, ...props.ticks }
     : defaultAxisProps.ticks
   const title = props.title
@@ -34,16 +35,17 @@ export default function Axis(props: AxisProps) {
 
   // scaleSequentialQuantile doesn’t implement tickValues or tickFormat.
   let tickValues: number[]
-  if ((ticks as AxisTicksOptions).values !=undefined) {
-    tickValues = (ticks as AxisTicksOptions).values!
+  if (ticks.values !==undefined) {
+    tickValues = ticks.values
   } else {
-    if (!scale.ticks) {
-      tickValues = range(ticks.number).map((i) =>
-        quantile(scale.domain(), i / (ticks.number - 1)),
-      ) as number[]
-    } else {
+    // if (!scale.ticks) {
+    //   const tickNum = unNullify(ticks.number,`No values provided for ticks, and scale does not provide ticks function. Please specify the target number of ticks`)
+    //   tickValues = range(tickNum).map((i) =>
+    //     quantile(scale.domain(), i / (tickNum - 1)),
+    //   ) as number[]
+    // } else {
       tickValues = scale.ticks(ticks.number)
-    }
+    // }
   }
 
 
@@ -74,7 +76,8 @@ export default function Axis(props: AxisProps) {
       )
     : null
   //TODO break this into parts HOC with logic horizontal/ vertical axis ect.
-   const titlePos = figureScale({x:mean(scale.range())!,y:axisY})
+  const xPos = unNullify(mean(scale.range()),`Error calculating x position for title`)
+   const titlePos = figureScale({x:xPos,y:axisY})
   return (
     <g className={"axis"} >
       {/*This is for Bars*/}
@@ -111,25 +114,25 @@ export function getPath(
     .x((d) => d[0])
     .y((d) => d[1])
 
+  
+  let range;
   switch (direction) {
-    case 'horizontal' :
-      return f(scale.range().map<[number, number]>((d) => [d, 0]))!
-    case 'polar' :
-        return f(scale.range().map<[number, number]>((d) => [d, 0]))!
-    case "vertical":
-      return f(scale.range().map<[number, number]>((d) => [0, d]))!
-    
+    case 'vertical' :
+      range =scale.range().map<[number, number]>((d) => [0, d]);
+      break
     default:
-      throw new Error(`Direction ${direction} not implemented`)
+      range =scale.range().map<[number, number]>((d) => [d, 0])
   }
+  const rangeLine = unNullify(f(range),`Error in makeing axis line`)
+
+  return rangeLine;
 }
 
 export function getTickLine(length: number, direction: AxisOrientation) {
   if (direction === "horizontal" || direction === "polar") {
     return { x1: 0, y1: 0, y2: length, x2: 0 }
-  } else if (direction === "vertical") {
+  } 
     return { x1: 0, y1: 0, y2: 0, x2: -1 * length }
-  }
-  throw new Error(`unknown direction $direction`)
+  
 }
 

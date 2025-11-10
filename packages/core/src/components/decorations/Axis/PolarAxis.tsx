@@ -1,12 +1,13 @@
 import React from 'react'
 
-import { mean, quantile, range } from "d3-array"
+import { mean } from "d3-array"
 import {  scaleLinear } from 'd3-scale';
-import type { AxisProps, AxisTicksOptions} from './Axis.types';
+import type { AxisProps,  WorkingTipOptions} from './Axis.types';
 import { defaultAxisProps } from './Axis.types';
 
 import { normalizeAngle, type PolarScaleType } from '../../../store/polarScale';
 import type { dimensionType } from '../../FigTree/Figtree.types';
+import { unNullify } from '../../../utils';
 
 //TODO do things to scale and allow date as origin not maxD.
 
@@ -22,7 +23,7 @@ export default function PolarAxis(props: AxisProps) {
 
   } = props as { scale: PolarScaleType } & AxisProps;
   
-  const ticks = props.ticks
+  const ticks:WorkingTipOptions = props.ticks
     ? { ...defaultAxisProps.ticks, ...props.ticks }
     : defaultAxisProps.ticks
   const title = props.title
@@ -35,16 +36,16 @@ export default function PolarAxis(props: AxisProps) {
   const scale = makeAxisScale(props, dimensions)
 
   let tickValues: number[]
-  if ((ticks as AxisTicksOptions).values !=undefined) {
-    tickValues = (ticks as AxisTicksOptions).values!
+  if (ticks.values !=undefined) {
+    tickValues =ticks.values
     } else {
-      if (!scale.ticks) {
-          tickValues = range(ticks.number).map((i) =>
-          quantile(scale.domain(), i / (ticks.number - 1)),
-          ) as number[]
-      } else {
+      // if (!scale.ticks) {
+      //     tickValues = range(ticks.number).map((i) =>
+      //     quantile(scale.domain(), i / (ticks.number - 1)),
+      //     ) as number[]
+      // } else {
           tickValues = scale.ticks(ticks.number)
-      }
+      // }
     }
 
 
@@ -95,8 +96,9 @@ export default function PolarAxis(props: AxisProps) {
         }),
       )
     : null
-
-    const titlePos = figureScale({x:mean(scale.range())!,y:axisY});
+    
+    const xPos = unNullify(mean(scale.range()),`Error calculating x position for title`)  
+    const titlePos = figureScale({x:xPos,y:axisY});
     const titleXPadding = title.padding*Math.cos(theta);
     const titleYPadding = title.padding*Math.sin(theta);
 

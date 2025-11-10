@@ -3,6 +3,7 @@ import type { InternalCladePropType } from './makeClade';
 import { normalizePath } from '../../../path.helpers';
 import type { Attrs } from '../types';
 import { BasePath } from '../Shapes';
+import type { PolarVertex } from "../../../Layouts/functional/rectangularLayout";
 
 //TODO add padding
 // const padding = 10;
@@ -36,16 +37,17 @@ export function Cartoon<A extends Attrs>(props:InternalCladePropType<A>){
         }else if(layoutType ===layoutClass.Polar){
         
                         //todo maybe swap lmv and rmv
-            const top = lmv;
-            const bottom =rmv;
+                        // if we are here scale has returns a polarVertex
+            const top = lmv as PolarVertex;
+            const bottom =rmv as PolarVertex;
           
-      const arcBit =  top.theta===bottom.theta||top.r===0?"": `A${top.r},${top.r} 0 0 ${top.theta!<bottom.theta! ?1:0} ${bottom.x},${bottom.y}`; 
+      const arcBit =  top.theta===bottom.theta||top.r===0?"": `A${top.r},${top.r} 0 0 ${top.theta<bottom.theta ?1:0} ${bottom.x},${bottom.y}`; 
        d = `M${x},${y}L${top.x},${top.y} ${arcBit} Z`
         
         }else{
             return null
         }
 
-        const normalized = normalizePath(d!);
+        const normalized = normalizePath(d);
         return <BasePath d={normalized} attrs={attrs} interactions={interactions} {...rest}/> 
 }

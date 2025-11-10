@@ -11,6 +11,8 @@ import type { BaseLabelProps} from "./Shapes/Label";
 import {BaseLabel } from "./Shapes/Label";
 import { withAnimation } from "../HOC/withAnimation";
 import { panic } from "../../utils";
+import  { layoutClass } from "../../Layouts";
+import type { PolarVertex } from "../../Layouts/functional/rectangularLayout";
 
 
 // TODO think about passing dimensions to all children
@@ -54,23 +56,23 @@ function makeBranchLabels<
                       const fullAttrs = {...attrs,text}
                       const applyAttrInteractions = useAttributeMappers<A>(fullAttrs,{});
                       const texter = isFn(text) ? (n:NodeRef)=> text(n) : ()=> text;
-                      const {layoutClass} = dimensions
+                      const {layoutClass:layoutType} = dimensions
 
                     return (
                             <g className={"branch-label-layer"}>
                                 {[...preOrderIterator(tree)].filter(n=>filter(n) && !tree.isRoot(n)).map((node) => { 
                                         const v = layout(node);
-                                        const parent = tree.getParent(node)|| panic(`no parent found for a node that should have one`)
+                                        const parent = tree.getParent(node)
                                         const parentVertex = layout(parent);
                                         const scaledV = scale(v);
                                         const scaledpV = scale(parentVertex);
-                                       // todo move 
-                                        const theta = layoutClass==="Polar" ? scaledV.theta || panic("Layout is polar but did not compute theta"):0
-                                        const rotation = layoutClass==="Polar"?textSafeDegrees(theta):0;
+                                       // todo fix this so we don't need all the casting etc. 
+                                        const theta = layoutType===layoutClass.Polar ? (scaledV as PolarVertex).theta || panic("Layout is polar but did not compute theta"):0
+                                        const rotation = layoutType===layoutClass.Polar?textSafeDegrees(theta):0;
                                         const step = scale({x:parentVertex.x,y:v.y})
-                                        const {dx,dy} = layoutClass==="Polar"? getPolarBranchDs(theta,gap):{dx:0,dy:-1*gap};
-                                        const x = (layoutClass==="Polar"? (scaledV.x+step.x)/2 : (scaledV.x+scaledpV.x)/2 )+dx;
-                                        const y = (layoutClass==="Polar"? (scaledV.y+step.y)/2  : layoutClass==="Radial"? (scaledV.y+scaledpV.y)/2 : scaledV.y )+dy;
+                                        const {dx,dy} = layoutType===layoutClass.Polar? getPolarBranchDs(theta,gap):{dx:0,dy:-1*gap};
+                                        const x = (layoutType===layoutClass.Polar? (scaledV.x+step.x)/2 : (scaledV.x+scaledpV.x)/2 )+dx;
+                                        const y = (layoutType===layoutClass.Polar? (scaledV.y+step.y)/2  : layoutType===layoutClass.Radial? (scaledV.y+scaledpV.y)/2 : scaledV.y )+dy;
 
                                         
                                         const {attrs}=applyAttrInteractions(node)

@@ -57,7 +57,7 @@ export class NexusImporter {
   private async nextToken() {
     const { done, value } = await this.reader.read()
     if (done) {
-      throw "unexpectedly hit the end of the stream"
+      throw new Error("unexpectedly hit the end of the stream")
     }
     return value
   }
@@ -65,10 +65,10 @@ export class NexusImporter {
   private async skipSemiColon() {
     const { done, value } = await this.reader.read()
     if (done) {
-      throw "unexpectedly hit the end of the stream"
+      throw new Error( "unexpectedly hit the end of the stream")
     }
     if (!value.match(/;$/)) {
-      throw `expected ";" got ${value}`
+      throw new Error( `expected ";" got ${value}`)
     }
   }
 
@@ -79,7 +79,7 @@ export class NexusImporter {
       const value = await this.nextToken()
       if (value.match(/\bbegin/i)) {
         token = await this.nextToken()
-        this.skipSemiColon()
+        await this.skipSemiColon()
         keepGoing=false
       }
     }
@@ -147,9 +147,10 @@ export class NexusImporter {
           const taxaLine = await this.readUntil(/;/)
           const ntaxa = taxaLine.match(/ntax=(\d+);/)
           if (ntaxa) {
+            notNull(ntaxa[1],`No number of taxa found despite matching regex`)
             ntax = parseInt(ntaxa[1])
           } else {
-            throw `Expected dimension in form of ntax=(\\d+);. Got ${taxaLine}`
+            throw new Error( `Expected dimension in form of ntax=(\\d+);. Got ${taxaLine}`)
           }
           break
         }
@@ -161,22 +162,22 @@ export class NexusImporter {
           }
           if (ntax) {
             if (ntax != this.taxonSet.getTaxonCount()) {
-              throw `found ${this.taxonSet.getTaxonCount()} taxa. Expected: ${ntax}}`
+              throw new Error( `found ${this.taxonSet.getTaxonCount()} taxa. Expected: ${ntax}}`)
             }
           }
           break
         }
         case /end/i.test(command):{
           if (this.taxonSet.getTaxonCount() === 0) {
-            throw "hit end of taxa section but didn't find any taxa"
+            throw new Error( "hit end of taxa section but didn't find any taxa")
           }
           this.taxonSet.lockTaxa() // no more taxa can be added since we parsed a block;
-          this.skipSemiColon()
+          await this.skipSemiColon()
           keepGoing = false
           break
         }
         default:
-          throw `Reached impossible code looking for dimensions or taxlabels or end in taxa block "${command}"`
+          throw new Error( `Reached impossible code looking for dimensions or taxlabels or end in taxa block "${command}"`)
       }
     }
   }
@@ -203,8 +204,8 @@ export class NexusImporter {
               }
               // todo get taxa to add here.
               if (this.taxonSet.isFinalized) {
-                if (this.taxonSet.getTaxonByName(token) === undefined) {
-                  throw `Taxon ${token} not found in taxa block - but found in translate block`
+                if(! this.taxonSet.hasTaxon(token)){
+                  throw new Error( `Taxon ${token} not found in taxa block - but found in translate block`)
                 }
               } else {
                 //new taxon set so add it;
@@ -244,7 +245,8 @@ export class NexusImporter {
           while (!parser.isDone()) {
             while (buffer.length > 0) {
               const c = buffer.pop()
-              parser.parseCharacter(c!)
+              notNull(c,`Unexpectedly hit the end of the buffer`)
+              parser.parseCharacter(c)
             }
             if (!parser.isDone()) {
               // get next token
@@ -260,7 +262,7 @@ export class NexusImporter {
           break
         }
         case /end/i.test(command):
-          this.skipSemiColon()
+          await this.skipSemiColon()
           this.hasTree = false
           // Give up the ghost.
           //TODO read to the end of the file.
@@ -268,7 +270,7 @@ export class NexusImporter {
           keepGoing = false
           break
         default:
-          throw `Reached impossible code in treeblock block "${command}"`
+          throw new Error( `Reached impossible code in treeblock block "${command}"`)
       }
     }
   }
