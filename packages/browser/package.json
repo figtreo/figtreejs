@@ -22,12 +22,12 @@
     "build": "vite build",
     "check-types": "tsc --noEmit ",
     "dev": "vite build --watch",
-    "lint": "eslint .",
+    "lint": "eslint ./src",
     "test": "vitest"
   },
   "lint-staged": {
     "*.{js,ts}": [
-      "eslint --fix",
+      "eslint ./src",
       "prettier --write --ignore-unknown"
     ],
     "!(*.js|*.ts)": [
