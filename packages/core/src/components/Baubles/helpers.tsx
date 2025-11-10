@@ -16,7 +16,7 @@ function mapAttrsToProps
         for (const key in attrs) {
             const k = key as keyof A;
             const v = attrs[k];
-            props[k] = isFn(v) ? (v as Fn)(node) : v as number|string;
+            props[k] = isFn(v) ? (v as Fn)(node) : v as number|string; // eslint-disable-line @typescript-eslint/no-unnecessary-type-assertion
             
         }
         return props as A;

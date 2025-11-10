@@ -6,7 +6,7 @@ import type {  BaseAttrs, BaseBaubleProps, StripProps } from "../Baubles/types";
 
 
 // keep this as a const tuple to narrow keys
-const animatableProperties = ["stroke", "strokeWidth", "fill", "width", "height", "r"] as const;
+const animatableProperties = ["stroke", "strokeWidth",  "width", "height", "r"] as const;
 
 
 /**

@@ -62,7 +62,7 @@ function FigTree(props:FigtreeProps){
     let canvasHeight;
     let {x,y} = props;
     
-    if(x===undefined&&y===undefined){
+    if(x!==undefined &&y !==undefined){
         // if x and y are provide then these give the top left corner and width and height represent the whole area.
         canvasWidth = width;
         canvasHeight = height;

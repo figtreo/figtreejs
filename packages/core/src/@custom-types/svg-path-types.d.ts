@@ -1,7 +1,7 @@
 // This file is a *module* (it exports types).
 // It derives types from the value type of 'abs-svg-path'.
 
-export type AbsFn = typeof import('abs-svg-path');
+export type AbsFn = typeof import('abs-svg-path'); // eslint-disable-line  @typescript-eslint/consistent-type-imports
 
 // Array element type of the *input* to abs()
 export type AnyCommand = Parameters<AbsFn>[0][number];
