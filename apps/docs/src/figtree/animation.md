@@ -48,7 +48,7 @@ const tree = new Promise((resolve)=>resolve(Tree.fromNewick(newickString)))
                                 .then(t=>annotateTips(hostData,t))
 ```
 ```js echo
-const fillScale = d3.scaleOrdinal(d3.schemeAccent).domain(tree.getAnnotationSummary("host").domain)
+const fillScale = d3.scaleOrdinal(d3.schemeAccent).domain([...tree.getAnnotationSummary("host").domain,'unknown'])
 ```
 We'll be using the same set up as before but now I'll set the curvature of the branch from a slider.
 
@@ -76,7 +76,7 @@ const options = {
                         filter:n=>tree.isExternal(n),
                         attrs:{
                             r:6,
-                            fill:n=>fillScale(tree.getAnnotation(n,'host').value),
+                            fill: n=>fillScale(tree.getAnnotation(n,'host','unknown')),
                             stroke:'black',
                             strokeWidth:2
                         }
@@ -130,7 +130,7 @@ const options2 = {
                         filter:n=>tree.isExternal(n),
                         attrs:{
                             r:6,
-                            fill:n=>fillScale(tree.getAnnotation(n,'host').value),
+                            fill: n=>fillScale(tree.getAnnotation(n,'host','unknown')),
                             stroke:'black',
                             strokeWidth:2
                         }

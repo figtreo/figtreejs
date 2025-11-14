@@ -1,8 +1,9 @@
 
 import type { SpringValue, Interpolation } from "@react-spring/web";
-import { to,  animated } from "@react-spring/web";
-import type { BaseAttrs, numerical, stringy } from "../types";
+import { to,  animated, useSpring } from "@react-spring/web";
+import type { numerical } from "../types";
 import { isSpringNumber } from "../types";
+import { LabelInjection } from "../../HOC/withNode";
 
 
 
@@ -11,28 +12,15 @@ import { isSpringNumber } from "../types";
  * These will be stripped and trickle up to the user
  */
 
-export type BaseLabelAttrsType= BaseAttrs & {  
+type BaseTextDOMProps = Omit< React.ComponentProps<'text'>, 'ref'> & {ref?: React.Ref<SVGTextElement>};
+export type LabelAttrs = BaseTextDOMProps & {text:string}
+type LabelProps =  LabelAttrs & LabelInjection  // need these to match injected exactly for type inference
 
-        fontFamily?:React.SVGAttributes<SVGTextElement>['fontFamily'],
-        fontWeight?:numerical,
-        fill?:stringy,
-}
-/** attrs derived by higher order components */
-export type DerivedAttrs ={
-        alignmentBaseline: React.SVGAttributes<SVGTextElement>['alignmentBaseline'];
-        textAnchor: React.SVGAttributes<SVGTextElement>['textAnchor'];
-        rotation:numerical
-    }
 /** The props needed for rendering a label in the svg*/
 
-export interface BaseLabelProps  {
-    x:numerical,
-    y:numerical,
-    attrs:BaseLabelAttrsType & DerivedAttrs,
-    text:string;
-    d?:stringy // path
-    animated?:boolean
-}
+
+
+
 // transform={to([animatedProperties.x, animatedProperties.y, animatedProperties.rotation], (x, y, rotation) => `translate(${x},${y}) rotate(${rotation})`)}
 function getTransform(x:numerical,y:numerical,rotation:numerical):string| SpringValue<string> | Interpolation<string>{
     if(isSpringNumber(x)||isSpringNumber(y)||isSpringNumber(rotation)){
@@ -41,14 +29,34 @@ function getTransform(x:numerical,y:numerical,rotation:numerical):string| Spring
     return `translate(${x},${y}) rotate(${rotation})`
 }
 
-export function BaseLabel(props: BaseLabelProps) {
-        const {alignmentBaseline, textAnchor,rotation,...other} = props.attrs
-        const {x,y,text,d} = props;
-        const transform = getTransform(x,y,rotation)
-    return (<g>
+export function BaseLabel(props: LabelProps) {
+        const {alignmentBaseline, textAnchor,rotation,x,y,text,d,animated:a,...other} = props
+        
+           const animatedValues = useSpring({
+                  x,
+                  y,
+                  rotation,
+                config: { duration: 500 },
+             });
+            
+        if(!a){
+            const transform = getTransform(x,y,rotation)
+            return (
+                <g>
                     <animated.text alignmentBaseline={alignmentBaseline} textAnchor={textAnchor} transform={transform} {...other}>{text}</animated.text>
                     {d?<animated.path strokeWidth={1} stroke='grey' strokeDasharray="2" d={d} />:null}
-                </g>)
+                </g>
+            )
+        }else{
+             const animatedTransform = getTransform(animatedValues.x,animatedValues.y,animatedValues.rotation)
+              return (
+                <g>
+                    <animated.text alignmentBaseline={alignmentBaseline} textAnchor={textAnchor} transform={animatedTransform} {...other}>{text}</animated.text>
+                    {d?<animated.path strokeWidth={1} stroke='grey' strokeDasharray="2" d={d} />:null}
+                </g>
+                )
+        }
+   
 }
 
 

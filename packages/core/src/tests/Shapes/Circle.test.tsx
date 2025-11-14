@@ -60,7 +60,7 @@ describe("Circle", () => {
     expect(circle.getAttribute('cx')).toBe('0');
     expect(circle.getAttribute('cy')).toBe('0');
     expect(circle.getAttribute('r')).toBe('1');
-    expect(circle.getAttribute('fill')).toBe('blue');
+    expect(circle.getAttribute('fill')).toBe('rgba(0, 0, 255, 1)');
   });
 });
 

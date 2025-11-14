@@ -1,10 +1,16 @@
 import { layoutClass } from "../../../Layouts";
 import {arc as arcgen} from "d3-shape"
-import type { InternalCladePropType } from './makeClade';
-import type { Attrs } from '../types';
+import { Clade, withClades } from "../../HOC/withClades";
+
 import { BasePath, BaseRectangle} from '../Shapes';
 import type { PolarVertex, simplePolarVertex } from "../../../Layouts/functional/rectangularLayout";
 import { notNull } from "../../../utils";
+import { ScaleContext } from "../../../Context/scaleContext";
+import { layoutContext } from "../../../Context/layoutContext";
+import { animatedContext } from "../../../Context/aminatedContext";
+import { useContext } from "react";
+import { RectProps } from "../Shapes/Rectangle";
+import { PathProps } from "../Shapes/Branch";
 const arc = arcgen();
 //TODO add padding
 // const padding = 10;
@@ -13,27 +19,54 @@ const arc = arcgen();
  * For Polar layouts this will be a shaded arc.
  * In a rectangular figure this will be a rectangle around the clade
  */
-export function Highlight<A extends Attrs>(props:InternalCladePropType<A>){
-           const {clade,applyAttrInteractions,scale,layout,...rest} = props
-           const {root,leftMost,rightMost,mostDiverged} = clade
+
+type BaseHighlightAttrs ={
+    d?:string,
+    x?:number,
+    y?:number,
+    width?:number,
+    height?:number,
+    transform?:string,
+    stroke?:string,
+    stokeWidth?:number,
+    fill?:string,
+    animated:boolean
+}
+
+type Injected  ={
+    d?:string,
+    x?:number,
+    y?:number,
+    width?:number,
+    height?:number,
+    transform?:string,
+    animated:boolean
+}
+type HighlightAttrs = Omit<BaseHighlightAttrs,keyof Injected>
+
+function Highlight(props:HighlightAttrs & {clade:Clade}){
+           const {clade,...rest} = props
+        const scale = useContext(ScaleContext);
+        const layout = useContext(layoutContext);
+        const animated = useContext(animatedContext);
+        
+        const {root,leftMost,rightMost,mostDiverged} = clade
         const v = scale(layout(root));
-        const {attrs,interactions} = applyAttrInteractions(root)
         const lmv = scale(layout(leftMost)) // left most child v (top of highlight)
         const rmv = scale(layout(rightMost)) // right most child v (top of highlight)
         const mdv = scale(layout(mostDiverged)) // right most child v (top of highlight)
         const {layoutClass:layoutType} = layout(root);
         if(layoutType ===layoutClass.Rectangular){
 
-           
             const width = mdv.x - v.x;
             const height = Math.abs(lmv.y-rmv.y)
-
             return (<BaseRectangle 
-                interactions = {interactions} 
-                attrs={{...attrs,width,height}}
+                width={width}
+                height={height}
                 x={v.x}
                 y={Math.min(lmv.y,rmv.y)} 
                 {...rest}
+                animated={animated}
                 />)
         }else if(layoutType ===layoutClass.Polar){
             // if we are here then scale returned a polar vertex
@@ -52,12 +85,11 @@ export function Highlight<A extends Attrs>(props:InternalCladePropType<A>){
             )
             notNull(shape,`Error making arc shape for Clade Highlight`)
         
-                return <BasePath d={shape} attrs={attrs} transform={transform} interactions={interactions} {...rest}/> //transform={transform}
+                return <BasePath d={shape} transform={transform}  {...rest} animated={animated}/> //transform={transform}
             
         }else{
             return null
         }
-
-
-
 }
+
+export const Highlights = withClades(Highlight)

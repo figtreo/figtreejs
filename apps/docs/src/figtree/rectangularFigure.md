@@ -37,6 +37,7 @@ const tree = new Promise((resolve)=>resolve(Tree.fromNewick(newickString)))
                                 .then(t=>annotateTips(hostData,t))
 ```
 
+
 Then we make an svg to house the figure. 
 Width is a special parameter determined by observable. 
 We could easily set it to our own preferred size.
@@ -138,7 +139,7 @@ I'll also add rectangle at the root.
 
 First we'll make a color scale.
 ```js echo
-const fillScale = d3.scaleOrdinal(d3.schemeAccent).domain(tree.getAnnotationSummary("host").domain)
+const fillScale = d3.scaleOrdinal(d3.schemeAccent).domain([...tree.getAnnotationSummary("host").domain,'unknown'])
 ```
 
 ```js  echo
@@ -158,7 +159,7 @@ const options3 = {...options2,
                         filter:n=>tree.isExternal(n),
                         attrs:{
                             r:6,
-                            fill:n=>fillScale(tree.getAnnotation(n,'host').value),
+                            fill:n=>fillScale(tree.getAnnotation(n,'host','unknown')),
                             stroke:'black',
                             strokeWidth:2
                         }

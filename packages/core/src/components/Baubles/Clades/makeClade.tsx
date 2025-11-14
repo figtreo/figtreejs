@@ -59,7 +59,7 @@ A extends Attrs
         const Clades:React.FC<BaubleTypes> = ({scale,layout,tree}) =>{
                     const {
                            nodes,
-                            keyBy = (n: NodeRef) => n.number, // or whatever your NodeRef key is
+                            keyBy = (n: NodeRef) => n._id, // or whatever your NodeRef key is
                             attrs,
                             interactions
                         } = initial;
@@ -94,6 +94,7 @@ A extends Attrs
         return Clades;
     }
 }
+// These are react components 
 /**
  *  A highlight around a clade of interest. 
  * ForPolar layouts this will be a shaded arc.

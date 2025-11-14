@@ -13,8 +13,8 @@ const animatableProperties = ["stroke", "strokeWidth",  "width", "height", "r"] 
  * An HOC that take an animatable shape and wraps the logic needed to animate using springs
  * The props of the returned component are raw string/number not spring<value>
  *
- */
-export function withAnimation<
+ 
+ function withAnimation<
 BaseComponentProps extends BaseBaubleProps & {attrs:BaseAttrs}
 >
 (
@@ -75,3 +75,4 @@ React.FC<StripProps<BaseComponentProps> & {animated?:boolean }>
 }
 
 
+*/

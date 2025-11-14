@@ -45,7 +45,7 @@ Figtree.js handles that for you. Notice that branches are drawn differently in e
 This options will be shared by all figures.
 ```js echo
 
-const fillScale = d3.scaleOrdinal(d3.schemeAccent).domain(tree.getAnnotationSummary("host").domain)
+const fillScale = d3.scaleOrdinal(d3.schemeAccent).domain([...tree.getAnnotationSummary("host").domain,'unknown'])
 
 const options = {
                     width:width,
@@ -58,7 +58,7 @@ const options = {
                         filter:n=>tree.isExternal(n),
                         attrs:{
                             r:6,
-                            fill:n=>fillScale(tree.getAnnotation(n,'host').value),
+                            fill:n=>fillScale(tree.getAnnotation(n,'host','unknown')),
                             stroke:'black',
                             strokeWidth:2
                         }
@@ -163,7 +163,7 @@ Plot.plot({
             Plot.dot(tree.getNodes().filter(d=>tree.isExternal(d)).map(d=>({...rl(d),node:d})),{
                 filter:d=>tree.isExternal(d.node),
                 r:6 ,
-                fill: n=>fillScale(tree.getAnnotation(n.node,'host').value),
+                fill: n=>fillScale(tree.getAnnotation(n.node,'host','unknown')),
                 x:"x",
                 y:"y",
                 stroke:'black',
