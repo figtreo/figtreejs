@@ -4,11 +4,13 @@ import { defaultInternalLayoutOptions,  rectangularLayout } from '../../Layouts'
 import { ImmutableTree } from '../../Evo/Tree';
 import { getScale } from '../../store/store';
 import { extent } from 'd3-array';
-import { Branches } from '../Baubles/Branches';
+import { Branches, setupBranchBauble } from '../../BaubleMakers/Branches';
 import { unNullify } from '../../utils';
+import { Bauble } from '../Baubles/Bauble';
 
-
-
+import { ScaleContext } from '../../Context/scaleContext';
+import { layoutContext } from '../../Context/layoutContext'; 
+import { animatedContext } from '../../Context/aminatedContext';
 /**
  * The FigTree component
  * This takes a tree and layout options. It calls the layout and handles state for this figure.
@@ -82,6 +84,9 @@ function FigTree(props:FigtreeProps){
     const dimensions = {canvasWidth,canvasHeight,domainX ,domainY,layoutClass,invert,pollard,minRadius,fishEye,rootAngle,angleRange};
     const scale = getScale(dimensions);
 
+    const baubleSpecs = baubles.map(d=>setupBranchBauble(d,tree))
+
+
     return (
                 <g>
                     {/* <defs>
@@ -92,10 +97,14 @@ function FigTree(props:FigtreeProps){
                     {/*<rect x="0" y="0" width="100%" height="100%" fill="none" pointerEvents={"visible"} onClick={()=>nodeDispatch({type:"clearSelection"})}/>*/}
                     {/* <g transform={`translate(${margins.left},${margins.top})`} clipPath={'url(#clip)'} > */}
                     <g transform={`translate(${x},${y})`} >
-                        {baubles.map((Bauble,i)=>(
-                            <Bauble key={i} tree={tree} scale={scale} layout={layoutMap} dimensions={dimensions} animated={animated} />
-                        )
-                    )}
+                        <ScaleContext.Provider value={scale}>
+                            <layoutContext.Provider value ={layoutMap}>
+                                <animatedContext.Provider value ={animated}>
+                                    {baubleSpecs.map((specs,i)=>(<Bauble key={specs.id??i} {...specs} />))}
+                                </animatedContext.Provider>
+                            </layoutContext.Provider>
+                        </ScaleContext.Provider>
+                       
                     </g>
                 </g>
 

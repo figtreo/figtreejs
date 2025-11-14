@@ -1,10 +1,13 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import type { NodeRef } from '../../Evo';
-import type { layoutType, scaleType } from '../../store/store';
-import type { AttrAndInteractionApplier, Attrs, DShape} from '../Baubles/types';
+
 import { layoutClass } from '../../Layouts';
 import { normalizePath } from '../../path.helpers';
 import type { PolarVertex, simpleVertex } from '../../Layouts/functional/rectangularLayout';
+import { ScaleContext } from '../../Context/scaleContext';
+import { layoutContext } from '../../Context/layoutContext';
+import { animatedContext } from '../../Context/aminatedContext';
+import { PathAttrs } from '../Baubles/Shapes/Branch';
 
 
 
@@ -12,16 +15,9 @@ import type { PolarVertex, simpleVertex } from '../../Layouts/functional/rectang
 // and return a component that takes a node / layout/ scale and attrs:number|string | function
 
 
-
-export type BranchedProps<A extends Attrs> ={
-    node:NodeRef,
-    parent?:NodeRef,
-    applyAttrInteractions:AttrAndInteractionApplier<A>;
-    scale:scaleType;
-    layout:layoutType;
-    curvature?:number,
-    animated?:boolean
-
+type Injected = {
+d:string
+  animated:boolean
 }
 
 /**
@@ -29,16 +25,22 @@ export type BranchedProps<A extends Attrs> ={
  * calculates those values from a node and its parent.
  *
  */
-export function withBranch<
-  A extends Attrs,
-//   E extends object = {}
-    >
-    (
-    WrappedComponent: React.FC<DShape<A> >
-    ):React.FC<BranchedProps<A>> {
+
+
+
+export function withBranch(
+  WrappedComponent: React.FC<PathAttrs & Injected>
+){
+    
+     type ExposedProps = PathAttrs & {node:NodeRef,parent?:NodeRef,curvature?:number}
         // we will now calculate the x,y, attrs, and interactions
-    function BranchedComponent(props:BranchedProps<A>){
-        const {node,parent,applyAttrInteractions,scale,layout,curvature=0,animated=false} = props
+    const BranchedComponent=(props:ExposedProps)=>{
+        const scale = useContext(ScaleContext);
+        const layout = useContext(layoutContext);
+        const animated = useContext(animatedContext);
+
+        const {node,parent,curvature=0,...rest} = props
+
        
         const v = layout(node);
         const {layoutClass} = v;
@@ -47,9 +49,10 @@ export function withBranch<
         const points = [p,v,step].map(vertex=>scale(vertex))
         const d=normalizePath(pathGenerator(points,curvature,layoutClass))
 
-        const {attrs,interactions} = applyAttrInteractions(node)
-        return <WrappedComponent  attrs={{fill:'none',...attrs}} interactions={interactions} d={d} animated={animated} />
+        return <WrappedComponent d={d} animated={animated}{...(rest) } />
     } 
+     BranchedComponent.displayName =
+    `withBranchArray(${WrappedComponent.displayName || WrappedComponent.name || 'Component'})`;
     return BranchedComponent;
 }
 

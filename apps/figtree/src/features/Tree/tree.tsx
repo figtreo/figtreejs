@@ -26,14 +26,13 @@ import {
   type NodeRef,
   BaseAnnotationType,
 } from "@figtreejs/core"
-import { useAreaSelection } from "../../app/area-selection"
-import { select } from "d3-selection"
+
 import {
   selectSelectionMode,
   selectSelectionRoot,
   setSelectionRoot,
 } from "../Header/headerSlice"
-import AxisElement from "./AxisElement"
+
 import {
   CARTOON_ANNOTATION,
   COLOUR_ANNOTATION,
@@ -42,7 +41,6 @@ import {
 import { selectTree } from "../../app/hooks"
 import { ActionCreators } from "redux-undo"
 import { addScaleFromAnnotation } from "../Settings/panels/colorScales/colourSlice"
-import { Legends } from "./ColorLegend"
 import { selectTitle } from "../Settings/panels/title/titleSlice"
 import { saveSvg } from "../../app/utils"
 import { selectTanglegram } from "../Settings/panels/tanglegram/tangleSlice"
@@ -257,9 +255,10 @@ export function Tree({ panelRef }: any) {
   const branchSettings = useAppSelector(selectAppearance)
 
   const branchFiller = (n: NodeRef): string => {
-    const custom = tree.getAnnotation(n, COLOUR_ANNOTATION)?.value?? undefined
-    const cartoon = tree.getAnnotation(n, CARTOON_ANNOTATION)
-    return cartoon && custom !== undefined ? (custom as string) : "none"
+
+    return tree.getAnnotation(n, COLOUR_ANNOTATION,'none') as string;
+    // const cartoon = tree.getAnnotation(n, CARTOON_ANNOTATION,'none');
+    // return cartoon!=='none' && custom !== 'none' ? (custom as string) : "none"
   }
 
 
@@ -271,11 +270,9 @@ export function Tree({ panelRef }: any) {
 
   function branchColourur(n: NodeRef): string {
     if (branchSettings.colourBy === "User selection") {
-      const custom = tree.getAnnotation(n, COLOUR_ANNOTATION)?.value
-      return custom === undefined ? branchSettings.colour : (custom as string)
+      return  tree.hasAnnotation(n,COLOUR_ANNOTATION) ? branchSettings.colour : tree.getAnnotation(n, COLOUR_ANNOTATION) as string
     } else {
-      const annotation = tree.getAnnotation(n, branchSettings.colourBy)
-      if (annotation === undefined) {
+      if(!tree.hasAnnotation(n,branchSettings.colourBy)){
         return branchSettings.colour
       }
       return branchColorScale(
@@ -513,10 +510,10 @@ export function Tree({ panelRef }: any) {
     const dontShow = new Set();
     const highlightedNodes =  tree
       .getInternalNodes()
-      .filter((n) => tree.getAnnotation(n, HILIGHT_ANNOTATION) !== undefined)
+      .filter((n) => tree.hasAnnotation(n, HILIGHT_ANNOTATION) )
     const cartoonNodes = tree
       .getInternalNodes()
-      .filter((n) => tree.getAnnotation(n, CARTOON_ANNOTATION)!== undefined)
+      .filter((n) => tree.hasAnnotation(n, CARTOON_ANNOTATION))
     // hide these branches/nodes
       for(const n of cartoonNodes){
         for(const node of postOrderIterator(tree,n)){
@@ -528,7 +525,7 @@ export function Tree({ panelRef }: any) {
 
       const highlights = CladeHighlight({nodes:highlightedNodes,attrs:{
               fill: (n: NodeRef) =>
-                tree.getAnnotation(n, HILIGHT_ANNOTATION)?.value as string,
+                tree.getAnnotation(n, HILIGHT_ANNOTATION) as string,
               opacity: 0.4,
             }})
       const cartoons = CladeCartoon({nodes:cartoonNodes,attrs:{ fill: branchFiller,

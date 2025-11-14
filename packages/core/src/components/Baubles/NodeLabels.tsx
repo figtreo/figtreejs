@@ -35,7 +35,7 @@ function makeNodeLabels<
         const Labels:React.FC<NodeLabelPropTypes> = ({ tree, scale, layout,dimensions, animated=false}) => {
                         const {
                             filter = () => true,
-                            keyBy = (n: NodeRef) => n.number, // or whatever your NodeRef key is
+                            keyBy = (n: NodeRef) => n._id, // or whatever your NodeRef key is
                             attrs={} as A,
                             aligned=false,
                             gap = 6,

@@ -32,7 +32,13 @@ export type NodeLabelType = {
                     dyFactor:number
                     rotation:number
                 }
-
+export const defaultNodeLabelData:NodeLabelType ={
+                        alignmentBaseline:"middle",
+                    textAnchor:"middle",
+                    dxFactor: 1,
+                    dyFactor:1,
+                    rotation:0
+}
 // scale adds x and y to whatever comes in.
 export type scaleType = <T extends simpleVertex>(vertex: T) => T & { x: number; y: number };
 // export type scale = scaleType<simpleVertex>  // TODO use generics to clean up!

@@ -34,7 +34,7 @@ const tree = new Promise((resolve)=>resolve(Tree.fromNewick(newickString)))
                                 .then(t=>annotateTips(hostData,t))
 ```
 ```js 
-const fillScale = d3.scaleOrdinal(d3.schemeAccent).domain(tree.getAnnotationSummary("host").domain)
+const fillScale = d3.scaleOrdinal(d3.schemeAccent).domain([...tree.getAnnotationSummary("host").domain,'unknown'])
 ```
 
 
@@ -80,7 +80,7 @@ const options = {
                         filter:n=>tree.isExternal(n),
                         attrs:{
                             r:6,
-                            fill:n=>fillScale(tree.getAnnotation(n,'host').value),
+                            fill: n=>fillScale(tree.getAnnotation(n,'host','unknown')),
                             stroke:'black',
                             strokeWidth:2
                         },
@@ -128,7 +128,7 @@ const options2 = {
                         filter:n=>tree.isExternal(n),
                         attrs:{
                             r:n=>n===hoveredNode?10:6,
-                            fill:n=>fillScale(tree.getAnnotation(n,'host').value),
+                             fill: n=>fillScale(tree.getAnnotation(n,'host','unknown')),
                             stroke:'black',
                             strokeWidth:2,
                             cursor:'pointer' // makes a hand to highlight interactivity
@@ -208,7 +208,7 @@ const options3 = {
                         filter:n=>treeRef.isExternal(n),
                         attrs:{
                             r:6,
-                            fill:n=>fillScale(treeRef.getAnnotation(n,'host').value),
+                            fill: n=>fillScale(tree.getAnnotation(n,'host','unknown')),
                             stroke:'black',
                             strokeWidth:2,
                         }

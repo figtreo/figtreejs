@@ -1,3 +1,4 @@
+import { InternalBranchOptions } from "../../BaubleMakers/Branches";
 import type { ImmutableTree,NodeRef, Tree } from "../../Evo/Tree";
 import type { FunctionalVertex, layoutClass } from "../../Layouts/functional/rectangularLayout";
 import type { layoutType, scaleType } from "../../store/store";
@@ -50,7 +51,7 @@ export type BaubleTypes = {
     dimensions:dimensionType,
     animated?:boolean
 }
-type Bauble= React.FC<BaubleTypes>
+// type Bauble= React.FC<BaubleTypes>
 
 export interface FigtreeProps{
     width:number,
@@ -58,7 +59,7 @@ export interface FigtreeProps{
     layout:layoutFunction,
     tree:ImmutableTree,
     margins?:Margins,
-    baubles?:Bauble[]
+    baubles?:InternalBranchOptions[]
     opts?:layoutOptions
     animated?:boolean,
     x?:number,

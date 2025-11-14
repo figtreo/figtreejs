@@ -17,13 +17,13 @@ export interface simplePolarVertex extends simpleVertex {
 
 export interface FunctionalVertex extends simpleVertex {
     layoutClass:layoutClass,
-    nodeLabel:NodeLabelType
+    nodeLabel?:NodeLabelType
     
 }
 
 export interface PolarVertex extends simplePolarVertex {
     layoutClass:layoutClass.Polar,
-    nodeLabel:NodeLabelType
+    nodeLabel?:NodeLabelType
 }
 
 

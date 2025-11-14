@@ -22,12 +22,20 @@ export type InternalInteractionType = {
         onExit?:()=>void
     }
 
+export type InteractionType = {
+        onClick?:(n:NodeRef)=>void
+        OnMouseOver?:(n:NodeRef)=>void
+        onEnter?:(n:NodeRef)=>void
+        onExit?:(n:NodeRef)=>void
+    }
 
 
 /** Attributes as they enter rendered possibly animated svg elements */
 export type BaseAttrs = Record<string, numerical | stringy>;
+export type BasePos = Record<string, numerical | stringy>;
 /** Attribute as they are passed internally to possibly animated svg elements */
 export type Attrs = Record<string, number | string>;
+export type AttrsRecord<A extends object> = Record<string,A>;
 /** Attributes provided by the user. They will be applied to elements prior to rendering */
 export type UserAttrs = Record<string, number | string|((n:NodeRef)=>number|string)>;
 
@@ -37,25 +45,35 @@ export type UserAttrs = Record<string, number | string|((n:NodeRef)=>number|stri
 export type StripProps<P> = {
   [K in keyof P]:
     K extends "attrs" ? StripSprings<P[K]> :
-    K extends "x" | "y" | "d" ? DeSpring<P[K]> :
+    K extends "pos" ? StripSprings<P[K]> :
     P[K];
 };
 
+
+export type XYAttrs = {x:numerical,y:numerical} & BaseAttrs
 /** Wide type for all svg base baubles */
-export type BaseBaubleProps= {
+export type BaseBaubleProps<A extends BaseAttrs>= {
     interactions?: InternalInteractionType;
-    x?: numerical;
-    y?: numerical;
-    d?: stringy;
+    attrs:A
+  }
+
+export type BaseXYProps<A extends BaseAttrs>= {
+    interactions?: InternalInteractionType;
+    x: numerical;
+    y: numerical;
+    attrs:A
   }
 
 
 /** props for baubles that need x,y for positioning */
 export type XYShape<A extends Attrs> ={
     interactions?: InternalInteractionType;
-    x: number;
-    y: number;
-    attrs:A;
+    attrs:A &{x:number,y:number};
+    animated?:boolean
+}
+export type XYBaseShape<A extends BaseAttrs> ={
+    interactions?: InternalInteractionType;
+    attrs:A &{x:numerical,y:numerical};
     animated?:boolean
 }
 /** props for Baubles that need d for positioning */
