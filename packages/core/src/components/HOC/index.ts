@@ -1,7 +1,7 @@
-//Internal exports 
+//Internal exports
 
-export {withAnimation} from "./withAnimation"
-export type { NodedProps } from './withNode';
-export { withNode } from "./withNode"
-export type { BranchedProps } from './withBranch';
-export { withBranch } from "./withBranch"
+export { withNode } from "./withNode";
+export { withNodes } from "./withNodes";
+export { withBranch } from "./withBranch";
+export { withBranches } from "./withBranches";
+export { withClades } from "./withClades";

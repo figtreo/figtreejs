@@ -1,49 +1,45 @@
+import type { BaubleTarget } from "./Bauble";
+import { CladeShapes } from "./Bauble";
 
-
-
-import { BaubleTarget, CladeShapes } from './Bauble';
-
-import { Attrs, InternalInteractionType } from './types';
-import { NodeRef } from '../../Evo';
-import { Cartoons } from './Clades/Cartoon';
-import { Highlights } from './Clades/Highlight';
-import { Clade } from '../HOC/withClades';
-
-
-
+import type { InternalInteractionType } from "./types";
+import type { NodeRef } from "../../Evo";
+import { Cartoons } from "./Clades/Cartoon";
+import { Highlights } from "./Clades/Highlight";
+import type { Clade } from "../HOC/withClades";
+import type { PathAttrs, RectAttrs } from "./Shapes";
 
 // Accessor for Node Shapes
 
-
-export function Clades(props:CladeProps){
-    const {shape,...rest} = props
-    switch(shape){
-        case CladeShapes.Cartoon:
-            return <Cartoons {...(rest as Omit<CartoonCladeProps, 'shape'>)} />
-        case CladeShapes.Highlight:
-            return <Highlights {...(rest as Omit<HighlighCladeProps, 'shape'>)} />
-    }
+export function Clades(props: CladeProps) {
+  switch (props.shape) {
+    case CladeShapes.Cartoon:
+      return <Cartoons {...props} />;
+    case CladeShapes.Highlight:
+      return <Highlights {...props} />;
+  }
 }
 
+type CartoonCladeProps = {
+  shape: CladeShapes.Cartoon;
+  clades: Clade[];
+  attrs: { [key: string]: PathAttrs };
+  interactions?: { [key: string]: InternalInteractionType }; // keyed by node id // check type
+  // shape:NodeShapes,
+  keyBy?: (n: NodeRef) => string;
+};
+type HighlighCladeProps = {
+  shape: CladeShapes.Highlight;
+  clades: Clade[];
+  attrs: { [key: string]: Omit<RectAttrs, "width" | "height"> };
+  interactions?: { [key: string]: InternalInteractionType }; // keyed by node id // check type
+  // shape:NodeShapes,
+  keyBy?: (n: NodeRef) => string;
+};
 
+export type HighlightRectAttrs = Omit<RectAttrs, "width" | "height">; //width and height provided by figtree
+export type CladeProps = CartoonCladeProps | HighlighCladeProps;
 
-type CartoonCladeProps ={
-        shape:CladeShapes.Cartoon
-        clades:Clade[],
-        attrs:{[key:string]:Attrs },
-        interactions?:{[key:string]:InternalInteractionType}, // keyed by node id // check type
-        // shape:NodeShapes,
-        keyBy?:(n:NodeRef)=>string
-    }
-type HighlighCladeProps=  {
-        shape:CladeShapes.Highlight
-        clades:Clade[],
-        attrs:{[key:string]:Attrs },
-        interactions?:{[key:string]:InternalInteractionType}, // keyed by node id // check type
-        // shape:NodeShapes,
-        keyBy?:(n:NodeRef)=>string
-    }
-    
-export type CladeProps = CartoonCladeProps | HighlighCladeProps
-
-export type CladeSpec = CladeProps &{target:BaubleTarget.Clade,id:string}
+export type CladeSpec = CladeProps & {
+  target: BaubleTarget.Clade;
+  id?: string;
+};

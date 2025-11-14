@@ -1,68 +1,68 @@
 import { layoutClass } from "../../../Layouts";
 
-import { normalizePath } from '../../../path.helpers';
-import { BasePath } from '../Shapes';
+import { normalizePath } from "../../../path.helpers";
+import { BasePath } from "../Shapes";
 import type { PolarVertex } from "../../../Layouts/functional/rectangularLayout";
-import { PathProps } from "../Shapes/Branch";
+import type { PathProps } from "../Shapes/Branch";
 import { useContext } from "react";
 import { ScaleContext } from "../../../Context/scaleContext";
 import { layoutContext } from "../../../Context/layoutContext";
 import { animatedContext } from "../../../Context/aminatedContext";
-import { Clade, withClades } from "../../HOC/withClades";
+import type { Clade } from "../../HOC/withClades";
+import { withClades } from "../../HOC/withClades";
 
 //TODO add padding
 // const padding = 10;
 //TODO make normalization part of an hoc or d animation.
 
 /**
- * A cartoon drawing of a clade in the tree. 
+ * A cartoon drawing of a clade in the tree.
  * It will not yet render for radial layouts
  */
-type Injected  ={
-    d:string,
-    animated:boolean
+type Injected = {
+  d: string;
+  animated: boolean;
+};
+export type CladeProps = Omit<PathProps, keyof Injected> & { clade: Clade };
+function Cartoon(props: CladeProps) {
+  const { clade, ...rest } = props;
+  const scale = useContext(ScaleContext);
+  const layout = useContext(layoutContext);
+  const animated = useContext(animatedContext);
+  const { root, leftMost, rightMost, mostDiverged } = clade;
+  const v = scale(layout(root));
+
+  const { x, y } = v;
+  const lmv = scale(layout(leftMost)); // left most child v (top of highlight)
+  const rmv = scale(layout(rightMost)); // right most child v (top of highlight)
+  const mdv = scale(layout(mostDiverged)); // right most child v (top of highlight)
+  const { layoutClass: layoutType } = layout(root);
+  let d: string;
+  if (layoutType === layoutClass.Rectangular) {
+    const maxX = mdv.x;
+    const maxY = rmv.y;
+
+    const minY = lmv.y;
+
+    d = `M${x},${y}L${maxX},${maxY}L${maxX},${minY}Z`;
+  } else if (layoutType === layoutClass.Polar) {
+    //todo maybe swap lmv and rmv
+    // if we are here scale has returns a polarVertex
+    const top = lmv as PolarVertex;
+    const bottom = rmv as PolarVertex;
+
+    const arcBit =
+      top.theta === bottom.theta || top.r === 0
+        ? ""
+        : `A${top.r},${top.r} 0 0 ${top.theta < bottom.theta ? 1 : 0} ${bottom.x},${bottom.y}`;
+    d = `M${x},${y}L${top.x},${top.y} ${arcBit} Z`;
+  } else {
+    return null;
+  }
+
+  const normalized = normalizePath(d);
+
+  return <BasePath d={normalized} {...rest} animated={animated} />;
 }
-export type CladeProps = Omit<PathProps,keyof Injected> & {clade:Clade}
-function Cartoon(props:CladeProps){
-           const {clade,...rest} = props
-        const scale = useContext(ScaleContext);
-        const layout = useContext(layoutContext);
-        const animated = useContext(animatedContext);
-        const {root,leftMost,rightMost,mostDiverged} = clade
-        const v = scale(layout(root));
 
-        const {x,y} = v;
-        const lmv = scale(layout(leftMost)) // left most child v (top of highlight)
-        const rmv = scale(layout(rightMost)) // right most child v (top of highlight)
-        const mdv = scale(layout(mostDiverged)) // right most child v (top of highlight)
-        const {layoutClass:layoutType} = layout(root);
-        let d:string
-        if(layoutType ===layoutClass.Rectangular){
-
-            const maxX = mdv.x;
-            const maxY = rmv.y;
-            
-            const minY = lmv.y;
-
-            d = `M${x},${y}L${maxX},${maxY}L${maxX},${minY}Z`
-
-        }else if(layoutType ===layoutClass.Polar){
-        
-                        //todo maybe swap lmv and rmv
-                        // if we are here scale has returns a polarVertex
-            const top = lmv as PolarVertex;
-            const bottom =rmv as PolarVertex;
-          
-            const arcBit =  top.theta===bottom.theta||top.r===0?"": `A${top.r},${top.r} 0 0 ${top.theta<bottom.theta ?1:0} ${bottom.x},${bottom.y}`; 
-                d = `M${x},${y}L${top.x},${top.y} ${arcBit} Z`
-        
-        }else{
-            return null
-        }
-
-        const normalized = normalizePath(d);
-
-        return <BasePath d={normalized} {...rest} animated={animated}/> 
-}
-
-export const Cartoons = withClades(Cartoon)
+export const Cartoons = withClades(Cartoon);

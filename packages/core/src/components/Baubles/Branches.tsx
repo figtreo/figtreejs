@@ -1,9 +1,13 @@
 import { withBranch } from "../HOC";
-import {  BranchProps, withBranches } from "../HOC/withBranches";
-import { BaubleTarget } from "./Bauble";
+import type { BranchProps } from "../HOC/withBranches";
+import { withBranches } from "../HOC/withBranches";
+import type { BaubleTarget } from "./Bauble";
 import { BasePath } from "./Shapes";
-import { PathAttrs } from "./Shapes/Branch";
+import type { PathAttrs } from "./Shapes/Branch";
 
-export type BranchSpec = BranchProps<PathAttrs> &{target:BaubleTarget.Branch, id?:string}
+export type BranchSpec = BranchProps<PathAttrs> & {
+  target: BaubleTarget.Branch;
+  id?: string;
+};
 
-export const Branches = withBranches<PathAttrs>(withBranch(BasePath))
+export const Branches = withBranches<PathAttrs>(withBranch(BasePath));
