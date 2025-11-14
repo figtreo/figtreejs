@@ -19,12 +19,6 @@ exports[`Node labels > renders a tree node labels - polar 1`] = `
               class="branch-layer"
             >
               <path
-                d="M 191.0442564366689 190 C191.0442564366689,190 191.0442564366689,190 191.0442564366689,190 C191.0442564366689,190 191.0442564366689,190 191.0442564366689,190 C191.0442564366689,190 191.0442564366689,190 191.0442564366689,190 C191.0442564366689,190 191.0442564366689,190 191.0442564366689,190 C191.0442564366689,190 191.0442564366689,190 191.0442564366689,190 C191.0442564366689,190 191.0442564366689,190 191.0442564366689,190 "
-                fill="none"
-                stroke="black"
-                stroke-width="2"
-              />
-              <path
                 d="M 191.0442564366689 190 C191.0442564366689,190 186.399298787742,253.16276972672102 184.07681996327852,284.7441545900815 C184.07681996327852,284.7441545900815 182.9155805510468,300.5348470217618 182.33496084493095,308.4301932376019 C182.33496084493095,308.4301932376019 182.04465099187303,312.37786634552197 181.89949606534407,314.351702899482 C181.89949606534407,314.351702899482 181.82691860207956,315.338621176462 181.79062987044733,315.832080314952 C181.79062987044733,315.832080314952 181.77248550463122,316.078809884197 181.76341332172314,316.20217466881957 C181.76341332172314,316.20217466881957 181.75434113881508,316.32553945344205 181.75434113881508,316.32553945344205 "
                 fill="none"
                 stroke="black"
@@ -50,12 +44,11 @@ exports[`Node labels > renders a tree node labels - polar 1`] = `
               />
             </g>
             <g
-              class="node-label-layer"
+              class="node-layer"
             >
               <g>
                 <text
                   alignment-baseline="middle"
-                  text="Label!"
                   text-anchor="end"
                   transform="translate(186.63904337251307,185.9264146186202) rotate(42.76015593933792)"
                 >
@@ -71,7 +64,6 @@ exports[`Node labels > renders a tree node labels - polar 1`] = `
               <g>
                 <text
                   alignment-baseline="middle"
-                  text="Label!"
                   text-anchor="end"
                   transform="translate(181.31429251944306,322.30938079597354) rotate(-85.79406886544032)"
                 >
@@ -87,7 +79,6 @@ exports[`Node labels > renders a tree node labels - polar 1`] = `
               <g>
                 <text
                   alignment-baseline="middle"
-                  text="Label!"
                   text-anchor=" start"
                   transform="translate(384.8897905252257,218.98118206564644) rotate(8.503114598040845)"
                 >
@@ -103,7 +94,6 @@ exports[`Node labels > renders a tree node labels - polar 1`] = `
               <g>
                 <text
                   alignment-baseline="middle"
-                  text="Label!"
                   text-anchor="end"
                   transform="translate(-4.955494981928866,190.31215997163142) rotate(-0.0912523289214846)"
                 >
@@ -119,7 +109,6 @@ exports[`Node labels > renders a tree node labels - polar 1`] = `
               <g>
                 <text
                   alignment-baseline="middle"
-                  text="Label!"
                   text-anchor=" start"
                   transform="translate(259.58246268070167,179.5297852953468) rotate(351.31438074411614)"
                 >
@@ -153,12 +142,6 @@ exports[`Node labels > renders a tree node labels - polar 1`] = `
             class="branch-layer"
           >
             <path
-              d="M 191.0442564366689 190 C191.0442564366689,190 191.0442564366689,190 191.0442564366689,190 C191.0442564366689,190 191.0442564366689,190 191.0442564366689,190 C191.0442564366689,190 191.0442564366689,190 191.0442564366689,190 C191.0442564366689,190 191.0442564366689,190 191.0442564366689,190 C191.0442564366689,190 191.0442564366689,190 191.0442564366689,190 C191.0442564366689,190 191.0442564366689,190 191.0442564366689,190 "
-              fill="none"
-              stroke="black"
-              stroke-width="2"
-            />
-            <path
               d="M 191.0442564366689 190 C191.0442564366689,190 186.399298787742,253.16276972672102 184.07681996327852,284.7441545900815 C184.07681996327852,284.7441545900815 182.9155805510468,300.5348470217618 182.33496084493095,308.4301932376019 C182.33496084493095,308.4301932376019 182.04465099187303,312.37786634552197 181.89949606534407,314.351702899482 C181.89949606534407,314.351702899482 181.82691860207956,315.338621176462 181.79062987044733,315.832080314952 C181.79062987044733,315.832080314952 181.77248550463122,316.078809884197 181.76341332172314,316.20217466881957 C181.76341332172314,316.20217466881957 181.75434113881508,316.32553945344205 181.75434113881508,316.32553945344205 "
               fill="none"
               stroke="black"
@@ -184,12 +167,11 @@ exports[`Node labels > renders a tree node labels - polar 1`] = `
             />
           </g>
           <g
-            class="node-label-layer"
+            class="node-layer"
           >
             <g>
               <text
                 alignment-baseline="middle"
-                text="Label!"
                 text-anchor="end"
                 transform="translate(186.63904337251307,185.9264146186202) rotate(42.76015593933792)"
               >
@@ -205,7 +187,6 @@ exports[`Node labels > renders a tree node labels - polar 1`] = `
             <g>
               <text
                 alignment-baseline="middle"
-                text="Label!"
                 text-anchor="end"
                 transform="translate(181.31429251944306,322.30938079597354) rotate(-85.79406886544032)"
               >
@@ -221,7 +202,6 @@ exports[`Node labels > renders a tree node labels - polar 1`] = `
             <g>
               <text
                 alignment-baseline="middle"
-                text="Label!"
                 text-anchor=" start"
                 transform="translate(384.8897905252257,218.98118206564644) rotate(8.503114598040845)"
               >
@@ -237,7 +217,6 @@ exports[`Node labels > renders a tree node labels - polar 1`] = `
             <g>
               <text
                 alignment-baseline="middle"
-                text="Label!"
                 text-anchor="end"
                 transform="translate(-4.955494981928866,190.31215997163142) rotate(-0.0912523289214846)"
               >
@@ -253,7 +232,6 @@ exports[`Node labels > renders a tree node labels - polar 1`] = `
             <g>
               <text
                 alignment-baseline="middle"
-                text="Label!"
                 text-anchor=" start"
                 transform="translate(259.58246268070167,179.5297852953468) rotate(351.31438074411614)"
               >
@@ -344,12 +322,6 @@ exports[`Node labels > renders a tree node labels 1`] = `
               class="branch-layer"
             >
               <path
-                d="M 0.001 237.5 C0.001,237.5 0,237.5 0,237.5 C0,237.5 0,237.5005 0,237.50074999999998 C0,237.50074999999998 0,237.500875 0,237.50093750000002 C0,237.50093750000002 0,237.50096875000003 0,237.50098437500003 C0,237.50098437500003 0,237.5009921875 0,237.50099609375002 C0,237.50099609375002 0,237.501 0,237.501 "
-                fill="none"
-                stroke="black"
-                stroke-width="2"
-              />
-              <path
                 d="M 0.001 237.5 C0.001,237.5 0,95 0,95 C0,95 126.66666666666666,95.0005 190,95.00075000000001 C190,95.00075000000001 221.66666666666666,95.00087500000001 237.5,95.0009375 C237.5,95.0009375 245.41666666666666,95.00096875 249.375,95.000984375 C249.375,95.000984375 251.35416666666666,95.0009921875 252.34375,95.00099609375 C252.34375,95.00099609375 253.33333333333331,95.001 253.33333333333331,95.001 "
                 fill="none"
                 stroke="black"
@@ -375,12 +347,11 @@ exports[`Node labels > renders a tree node labels 1`] = `
               />
             </g>
             <g
-              class="node-label-layer"
+              class="node-layer"
             >
               <g>
                 <text
                   alignment-baseline="bottom"
-                  text="Label!"
                   text-anchor="end"
                   transform="translate(-6,231.5) rotate(0)"
                 >
@@ -396,7 +367,6 @@ exports[`Node labels > renders a tree node labels 1`] = `
               <g>
                 <text
                   alignment-baseline="hanging"
-                  text="Label!"
                   text-anchor="end"
                   transform="translate(247.33333333333331,101) rotate(0)"
                 >
@@ -412,7 +382,6 @@ exports[`Node labels > renders a tree node labels 1`] = `
               <g>
                 <text
                   alignment-baseline="middle"
-                  text="Label!"
                   text-anchor="start"
                   transform="translate(386,0) rotate(0)"
                 >
@@ -428,7 +397,6 @@ exports[`Node labels > renders a tree node labels 1`] = `
               <g>
                 <text
                   alignment-baseline="middle"
-                  text="Label!"
                   text-anchor="start"
                   transform="translate(386,190) rotate(0)"
                 >
@@ -444,7 +412,6 @@ exports[`Node labels > renders a tree node labels 1`] = `
               <g>
                 <text
                   alignment-baseline="middle"
-                  text="Label!"
                   text-anchor="start"
                   transform="translate(132.66666666666666,380) rotate(0)"
                 >
@@ -478,12 +445,6 @@ exports[`Node labels > renders a tree node labels 1`] = `
             class="branch-layer"
           >
             <path
-              d="M 0.001 237.5 C0.001,237.5 0,237.5 0,237.5 C0,237.5 0,237.5005 0,237.50074999999998 C0,237.50074999999998 0,237.500875 0,237.50093750000002 C0,237.50093750000002 0,237.50096875000003 0,237.50098437500003 C0,237.50098437500003 0,237.5009921875 0,237.50099609375002 C0,237.50099609375002 0,237.501 0,237.501 "
-              fill="none"
-              stroke="black"
-              stroke-width="2"
-            />
-            <path
               d="M 0.001 237.5 C0.001,237.5 0,95 0,95 C0,95 126.66666666666666,95.0005 190,95.00075000000001 C190,95.00075000000001 221.66666666666666,95.00087500000001 237.5,95.0009375 C237.5,95.0009375 245.41666666666666,95.00096875 249.375,95.000984375 C249.375,95.000984375 251.35416666666666,95.0009921875 252.34375,95.00099609375 C252.34375,95.00099609375 253.33333333333331,95.001 253.33333333333331,95.001 "
               fill="none"
               stroke="black"
@@ -509,12 +470,11 @@ exports[`Node labels > renders a tree node labels 1`] = `
             />
           </g>
           <g
-            class="node-label-layer"
+            class="node-layer"
           >
             <g>
               <text
                 alignment-baseline="bottom"
-                text="Label!"
                 text-anchor="end"
                 transform="translate(-6,231.5) rotate(0)"
               >
@@ -530,7 +490,6 @@ exports[`Node labels > renders a tree node labels 1`] = `
             <g>
               <text
                 alignment-baseline="hanging"
-                text="Label!"
                 text-anchor="end"
                 transform="translate(247.33333333333331,101) rotate(0)"
               >
@@ -546,7 +505,6 @@ exports[`Node labels > renders a tree node labels 1`] = `
             <g>
               <text
                 alignment-baseline="middle"
-                text="Label!"
                 text-anchor="start"
                 transform="translate(386,0) rotate(0)"
               >
@@ -562,7 +520,6 @@ exports[`Node labels > renders a tree node labels 1`] = `
             <g>
               <text
                 alignment-baseline="middle"
-                text="Label!"
                 text-anchor="start"
                 transform="translate(386,190) rotate(0)"
               >
@@ -578,7 +535,6 @@ exports[`Node labels > renders a tree node labels 1`] = `
             <g>
               <text
                 alignment-baseline="middle"
-                text="Label!"
                 text-anchor="start"
                 transform="translate(132.66666666666666,380) rotate(0)"
               >
@@ -669,12 +625,6 @@ exports[`Node labels > renders a tree node labels in radial layout 1`] = `
               class="branch-layer"
             >
               <path
-                d="M 303.9999492243224 284.97489210109876 C303.9999492243224,284.97489210109876 303.9999492243224,284.97489210109876 303.9999492243224,284.97489210109876 C303.9999492243224,284.97489210109876 303.9999492243224,284.97489210109876 303.9999492243224,284.97489210109876 C303.9999492243224,284.97489210109876 303.9999492243224,284.97489210109876 303.9999492243224,284.97489210109876 C303.9999492243224,284.97489210109876 303.9999492243224,284.97489210109876 303.9999492243224,284.97489210109876 C303.9999492243224,284.97489210109876 303.9999492243224,284.97489210109876 303.9999492243224,284.97489210109876 C303.9999492243224,284.97489210109876 303.9999492243224,284.97489210109876 303.9999492243224,284.97489210109876 "
-                fill="none"
-                stroke="black"
-                stroke-width="2"
-              />
-              <path
                 d="M 303.9999492243224 284.97489210109876 C303.9999492243224,284.97489210109876 227.99989844864467,189.9497842021975 227.99989844864467,189.9497842021975 C227.99989844864467,189.9497842021975 189.9998730608058,142.43723025274684 170.99986036688637,118.68095327802152 C170.99986036688637,118.68095327802152 161.49985401992666,106.80281479065886 156.7498508464468,100.86374554697753 C156.7498508464468,100.86374554697753 154.37484925970688,97.89421092513686 153.1873484663369,96.40944361421654 C153.1873484663369,96.40944361421654 152.59359806965193,95.66705995875637 152.29672287130944,95.29586813102628 C152.29672287130944,95.29586813102628 151.99984767296695,94.92467630329621 151.99984767296695,94.92467630329621 "
                 fill="none"
                 stroke="black"
@@ -700,12 +650,11 @@ exports[`Node labels > renders a tree node labels in radial layout 1`] = `
               />
             </g>
             <g
-              class="node-label-layer"
+              class="node-layer"
             >
               <g>
                 <text
                   alignment-baseline="middle"
-                  text="Label!"
                   text-anchor="end"
                   transform="translate(297.9999492243224,284.97489210109876) rotate(0)"
                 >
@@ -721,7 +670,6 @@ exports[`Node labels > renders a tree node labels in radial layout 1`] = `
               <g>
                 <text
                   alignment-baseline="middle"
-                  text="Label!"
                   text-anchor="end"
                   transform="translate(148.99984767296695,89.72852388058958) rotate(0)"
                 >
@@ -737,7 +685,6 @@ exports[`Node labels > renders a tree node labels in radial layout 1`] = `
               <g>
                 <text
                   alignment-baseline="middle"
-                  text="Label!"
                   text-anchor="start"
                   transform="translate(231.24985501012264,-5.190660633322136) rotate(0)"
                 >
@@ -753,7 +700,6 @@ exports[`Node labels > renders a tree node labels in radial layout 1`] = `
               <g>
                 <text
                   alignment-baseline="middle"
-                  text="Label!"
                   text-anchor="end"
                   transform="translate(-5.999989978491366,95.13618828386687) rotate(0)"
                 >
@@ -769,7 +715,6 @@ exports[`Node labels > renders a tree node labels in radial layout 1`] = `
               <g>
                 <text
                   alignment-baseline="middle"
-                  text="Label!"
                   text-anchor="start"
                   transform="translate(383,385.19615242270663) rotate(0)"
                 >
@@ -803,12 +748,6 @@ exports[`Node labels > renders a tree node labels in radial layout 1`] = `
             class="branch-layer"
           >
             <path
-              d="M 303.9999492243224 284.97489210109876 C303.9999492243224,284.97489210109876 303.9999492243224,284.97489210109876 303.9999492243224,284.97489210109876 C303.9999492243224,284.97489210109876 303.9999492243224,284.97489210109876 303.9999492243224,284.97489210109876 C303.9999492243224,284.97489210109876 303.9999492243224,284.97489210109876 303.9999492243224,284.97489210109876 C303.9999492243224,284.97489210109876 303.9999492243224,284.97489210109876 303.9999492243224,284.97489210109876 C303.9999492243224,284.97489210109876 303.9999492243224,284.97489210109876 303.9999492243224,284.97489210109876 C303.9999492243224,284.97489210109876 303.9999492243224,284.97489210109876 303.9999492243224,284.97489210109876 "
-              fill="none"
-              stroke="black"
-              stroke-width="2"
-            />
-            <path
               d="M 303.9999492243224 284.97489210109876 C303.9999492243224,284.97489210109876 227.99989844864467,189.9497842021975 227.99989844864467,189.9497842021975 C227.99989844864467,189.9497842021975 189.9998730608058,142.43723025274684 170.99986036688637,118.68095327802152 C170.99986036688637,118.68095327802152 161.49985401992666,106.80281479065886 156.7498508464468,100.86374554697753 C156.7498508464468,100.86374554697753 154.37484925970688,97.89421092513686 153.1873484663369,96.40944361421654 C153.1873484663369,96.40944361421654 152.59359806965193,95.66705995875637 152.29672287130944,95.29586813102628 C152.29672287130944,95.29586813102628 151.99984767296695,94.92467630329621 151.99984767296695,94.92467630329621 "
               fill="none"
               stroke="black"
@@ -834,12 +773,11 @@ exports[`Node labels > renders a tree node labels in radial layout 1`] = `
             />
           </g>
           <g
-            class="node-label-layer"
+            class="node-layer"
           >
             <g>
               <text
                 alignment-baseline="middle"
-                text="Label!"
                 text-anchor="end"
                 transform="translate(297.9999492243224,284.97489210109876) rotate(0)"
               >
@@ -855,7 +793,6 @@ exports[`Node labels > renders a tree node labels in radial layout 1`] = `
             <g>
               <text
                 alignment-baseline="middle"
-                text="Label!"
                 text-anchor="end"
                 transform="translate(148.99984767296695,89.72852388058958) rotate(0)"
               >
@@ -871,7 +808,6 @@ exports[`Node labels > renders a tree node labels in radial layout 1`] = `
             <g>
               <text
                 alignment-baseline="middle"
-                text="Label!"
                 text-anchor="start"
                 transform="translate(231.24985501012264,-5.190660633322136) rotate(0)"
               >
@@ -887,7 +823,6 @@ exports[`Node labels > renders a tree node labels in radial layout 1`] = `
             <g>
               <text
                 alignment-baseline="middle"
-                text="Label!"
                 text-anchor="end"
                 transform="translate(-5.999989978491366,95.13618828386687) rotate(0)"
               >
@@ -903,7 +838,6 @@ exports[`Node labels > renders a tree node labels in radial layout 1`] = `
             <g>
               <text
                 alignment-baseline="middle"
-                text="Label!"
                 text-anchor="start"
                 transform="translate(383,385.19615242270663) rotate(0)"
               >
@@ -994,12 +928,6 @@ exports[`Node labels > renders a tree with aligned Node labels and a function fo
               class="branch-layer"
             >
               <path
-                d="M 191.0442564366689 190 C191.0442564366689,190 191.0442564366689,190 191.0442564366689,190 C191.0442564366689,190 191.0442564366689,190 191.0442564366689,190 C191.0442564366689,190 191.0442564366689,190 191.0442564366689,190 C191.0442564366689,190 191.0442564366689,190 191.0442564366689,190 C191.0442564366689,190 191.0442564366689,190 191.0442564366689,190 C191.0442564366689,190 191.0442564366689,190 191.0442564366689,190 "
-                fill="none"
-                stroke="black"
-                stroke-width="2"
-              />
-              <path
                 d="M 191.0442564366689 190 C191.0442564366689,190 186.399298787742,253.16276972672102 184.07681996327852,284.7441545900815 C184.07681996327852,284.7441545900815 182.9155805510468,300.5348470217618 182.33496084493095,308.4301932376019 C182.33496084493095,308.4301932376019 182.04465099187303,312.37786634552197 181.89949606534407,314.351702899482 C181.89949606534407,314.351702899482 181.82691860207956,315.338621176462 181.79062987044733,315.832080314952 C181.79062987044733,315.832080314952 181.77248550463122,316.078809884197 181.76341332172314,316.20217466881957 C181.76341332172314,316.20217466881957 181.75434113881508,316.32553945344205 181.75434113881508,316.32553945344205 "
                 fill="none"
                 stroke="black"
@@ -1025,12 +953,11 @@ exports[`Node labels > renders a tree with aligned Node labels and a function fo
               />
             </g>
             <g
-              class="node-label-layer"
+              class="node-layer"
             >
               <g>
                 <text
                   alignment-baseline="middle"
-                  text="0"
                   text-anchor="end"
                   transform="translate(47.140629674245915,56.929544208260616) rotate(42.76015593933792)"
                 >
@@ -1046,7 +973,6 @@ exports[`Node labels > renders a tree with aligned Node labels and a function fo
               <g>
                 <text
                   alignment-baseline="middle"
-                  text="1"
                   text-anchor="end"
                   transform="translate(176.66933487051617,385.4721505226946) rotate(-85.79406886544032)"
                 >
@@ -1062,7 +988,6 @@ exports[`Node labels > renders a tree with aligned Node labels and a function fo
               <g>
                 <text
                   alignment-baseline="middle"
-                  text="2"
                   text-anchor=" start"
                   transform="translate(384.8897905252257,218.98118206564644) rotate(8.503114598040845)"
                 >
@@ -1078,7 +1003,6 @@ exports[`Node labels > renders a tree with aligned Node labels and a function fo
               <g>
                 <text
                   alignment-baseline="middle"
-                  text="3"
                   text-anchor="end"
                   transform="translate(-4.955494981928866,190.31215997163142) rotate(-0.0912523289214846)"
                 >
@@ -1094,7 +1018,6 @@ exports[`Node labels > renders a tree with aligned Node labels and a function fo
               <g>
                 <text
                   alignment-baseline="middle"
-                  text="4"
                   text-anchor=" start"
                   transform="translate(384.7964933188385,160.4015084310766) rotate(351.31438074411614)"
                 >
@@ -1128,12 +1051,6 @@ exports[`Node labels > renders a tree with aligned Node labels and a function fo
             class="branch-layer"
           >
             <path
-              d="M 191.0442564366689 190 C191.0442564366689,190 191.0442564366689,190 191.0442564366689,190 C191.0442564366689,190 191.0442564366689,190 191.0442564366689,190 C191.0442564366689,190 191.0442564366689,190 191.0442564366689,190 C191.0442564366689,190 191.0442564366689,190 191.0442564366689,190 C191.0442564366689,190 191.0442564366689,190 191.0442564366689,190 C191.0442564366689,190 191.0442564366689,190 191.0442564366689,190 "
-              fill="none"
-              stroke="black"
-              stroke-width="2"
-            />
-            <path
               d="M 191.0442564366689 190 C191.0442564366689,190 186.399298787742,253.16276972672102 184.07681996327852,284.7441545900815 C184.07681996327852,284.7441545900815 182.9155805510468,300.5348470217618 182.33496084493095,308.4301932376019 C182.33496084493095,308.4301932376019 182.04465099187303,312.37786634552197 181.89949606534407,314.351702899482 C181.89949606534407,314.351702899482 181.82691860207956,315.338621176462 181.79062987044733,315.832080314952 C181.79062987044733,315.832080314952 181.77248550463122,316.078809884197 181.76341332172314,316.20217466881957 C181.76341332172314,316.20217466881957 181.75434113881508,316.32553945344205 181.75434113881508,316.32553945344205 "
               fill="none"
               stroke="black"
@@ -1159,12 +1076,11 @@ exports[`Node labels > renders a tree with aligned Node labels and a function fo
             />
           </g>
           <g
-            class="node-label-layer"
+            class="node-layer"
           >
             <g>
               <text
                 alignment-baseline="middle"
-                text="0"
                 text-anchor="end"
                 transform="translate(47.140629674245915,56.929544208260616) rotate(42.76015593933792)"
               >
@@ -1180,7 +1096,6 @@ exports[`Node labels > renders a tree with aligned Node labels and a function fo
             <g>
               <text
                 alignment-baseline="middle"
-                text="1"
                 text-anchor="end"
                 transform="translate(176.66933487051617,385.4721505226946) rotate(-85.79406886544032)"
               >
@@ -1196,7 +1111,6 @@ exports[`Node labels > renders a tree with aligned Node labels and a function fo
             <g>
               <text
                 alignment-baseline="middle"
-                text="2"
                 text-anchor=" start"
                 transform="translate(384.8897905252257,218.98118206564644) rotate(8.503114598040845)"
               >
@@ -1212,7 +1126,6 @@ exports[`Node labels > renders a tree with aligned Node labels and a function fo
             <g>
               <text
                 alignment-baseline="middle"
-                text="3"
                 text-anchor="end"
                 transform="translate(-4.955494981928866,190.31215997163142) rotate(-0.0912523289214846)"
               >
@@ -1228,7 +1141,6 @@ exports[`Node labels > renders a tree with aligned Node labels and a function fo
             <g>
               <text
                 alignment-baseline="middle"
-                text="4"
                 text-anchor=" start"
                 transform="translate(384.7964933188385,160.4015084310766) rotate(351.31438074411614)"
               >
@@ -1319,12 +1231,6 @@ exports[`Node labels > renders a tree with aligned Node labels and a function fo
               class="branch-layer"
             >
               <path
-                d="M 0.001 237.5 C0.001,237.5 0,237.5 0,237.5 C0,237.5 0,237.5005 0,237.50074999999998 C0,237.50074999999998 0,237.500875 0,237.50093750000002 C0,237.50093750000002 0,237.50096875000003 0,237.50098437500003 C0,237.50098437500003 0,237.5009921875 0,237.50099609375002 C0,237.50099609375002 0,237.501 0,237.501 "
-                fill="none"
-                stroke="black"
-                stroke-width="2"
-              />
-              <path
                 d="M 0.001 237.5 C0.001,237.5 0,95 0,95 C0,95 126.66666666666666,95.0005 190,95.00075000000001 C190,95.00075000000001 221.66666666666666,95.00087500000001 237.5,95.0009375 C237.5,95.0009375 245.41666666666666,95.00096875 249.375,95.000984375 C249.375,95.000984375 251.35416666666666,95.0009921875 252.34375,95.00099609375 C252.34375,95.00099609375 253.33333333333331,95.001 253.33333333333331,95.001 "
                 fill="none"
                 stroke="black"
@@ -1350,12 +1256,11 @@ exports[`Node labels > renders a tree with aligned Node labels and a function fo
               />
             </g>
             <g
-              class="node-label-layer"
+              class="node-layer"
             >
               <g>
                 <text
                   alignment-baseline="bottom"
-                  text="0"
                   text-anchor="end"
                   transform="translate(374,231.5) rotate(0)"
                 >
@@ -1371,7 +1276,6 @@ exports[`Node labels > renders a tree with aligned Node labels and a function fo
               <g>
                 <text
                   alignment-baseline="hanging"
-                  text="1"
                   text-anchor="end"
                   transform="translate(374,101) rotate(0)"
                 >
@@ -1387,7 +1291,6 @@ exports[`Node labels > renders a tree with aligned Node labels and a function fo
               <g>
                 <text
                   alignment-baseline="middle"
-                  text="2"
                   text-anchor="start"
                   transform="translate(386,0) rotate(0)"
                 >
@@ -1403,7 +1306,6 @@ exports[`Node labels > renders a tree with aligned Node labels and a function fo
               <g>
                 <text
                   alignment-baseline="middle"
-                  text="3"
                   text-anchor="start"
                   transform="translate(386,190) rotate(0)"
                 >
@@ -1419,7 +1321,6 @@ exports[`Node labels > renders a tree with aligned Node labels and a function fo
               <g>
                 <text
                   alignment-baseline="middle"
-                  text="4"
                   text-anchor="start"
                   transform="translate(386,380) rotate(0)"
                 >
@@ -1453,12 +1354,6 @@ exports[`Node labels > renders a tree with aligned Node labels and a function fo
             class="branch-layer"
           >
             <path
-              d="M 0.001 237.5 C0.001,237.5 0,237.5 0,237.5 C0,237.5 0,237.5005 0,237.50074999999998 C0,237.50074999999998 0,237.500875 0,237.50093750000002 C0,237.50093750000002 0,237.50096875000003 0,237.50098437500003 C0,237.50098437500003 0,237.5009921875 0,237.50099609375002 C0,237.50099609375002 0,237.501 0,237.501 "
-              fill="none"
-              stroke="black"
-              stroke-width="2"
-            />
-            <path
               d="M 0.001 237.5 C0.001,237.5 0,95 0,95 C0,95 126.66666666666666,95.0005 190,95.00075000000001 C190,95.00075000000001 221.66666666666666,95.00087500000001 237.5,95.0009375 C237.5,95.0009375 245.41666666666666,95.00096875 249.375,95.000984375 C249.375,95.000984375 251.35416666666666,95.0009921875 252.34375,95.00099609375 C252.34375,95.00099609375 253.33333333333331,95.001 253.33333333333331,95.001 "
               fill="none"
               stroke="black"
@@ -1484,12 +1379,11 @@ exports[`Node labels > renders a tree with aligned Node labels and a function fo
             />
           </g>
           <g
-            class="node-label-layer"
+            class="node-layer"
           >
             <g>
               <text
                 alignment-baseline="bottom"
-                text="0"
                 text-anchor="end"
                 transform="translate(374,231.5) rotate(0)"
               >
@@ -1505,7 +1399,6 @@ exports[`Node labels > renders a tree with aligned Node labels and a function fo
             <g>
               <text
                 alignment-baseline="hanging"
-                text="1"
                 text-anchor="end"
                 transform="translate(374,101) rotate(0)"
               >
@@ -1521,7 +1414,6 @@ exports[`Node labels > renders a tree with aligned Node labels and a function fo
             <g>
               <text
                 alignment-baseline="middle"
-                text="2"
                 text-anchor="start"
                 transform="translate(386,0) rotate(0)"
               >
@@ -1537,7 +1429,6 @@ exports[`Node labels > renders a tree with aligned Node labels and a function fo
             <g>
               <text
                 alignment-baseline="middle"
-                text="3"
                 text-anchor="start"
                 transform="translate(386,190) rotate(0)"
               >
@@ -1553,7 +1444,6 @@ exports[`Node labels > renders a tree with aligned Node labels and a function fo
             <g>
               <text
                 alignment-baseline="middle"
-                text="4"
                 text-anchor="start"
                 transform="translate(386,380) rotate(0)"
               >

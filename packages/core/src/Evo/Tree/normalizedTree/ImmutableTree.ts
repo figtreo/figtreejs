@@ -892,16 +892,19 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
     });
   }
   unroot(_n: NodeRef): ImmutableTree {
-    // eslint-disable-line
+    // eslint-disable-line  @typescript-eslint/no-unused-vars
+
     throw new Error("unroot not implemented in immutable tree");
   }
   deleteNode(_n: NodeRef): ImmutableTree {
-    // eslint-disable-line
+    // eslint-disable-line  @typescript-eslint/no-unused-vars
+
     throw new Error("deleteNode not implemented in immutable tree");
   }
 
   deleteClade(_n: NodeRef): ImmutableTree {
-    // eslint-disable-line
+    // eslint-disable-line  @typescript-eslint/no-unused-vars
+
     throw new Error("deleteClade not implemented in immutable tree");
   }
 

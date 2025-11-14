@@ -1,65 +1,60 @@
+import type { NodeSpec } from "./Nodes";
+import { Nodes } from "./Nodes";
+import type { BranchLabelSpec, NodeLabelSpec } from "./Labels";
+import { BranchLabels, NodeLabels } from "./Labels";
+import type { BranchSpec } from "./Branches";
+import { Branches } from "./Branches";
+import type { CladeSpec } from "./Clades";
+import { Clades } from "./Clades";
 
-import { Nodes, NodeSpec} from "./Nodes"
-import { BranchLabels, BranchLabelSpec, NodeLabels, NodeLabelSpec } from "./Labels"
-import { Branches, BranchSpec } from "./Branches"
-import {  CladeSpec } from "./Clades"
-import { Cartoons } from "./Clades/Cartoon"
-import { Highlights } from "./Clades/Highlight"
 /**
- * 
+ * The main bauble which decides which baubles to renders base on the incoming specification
  */
-export function Bauble(props:BaubleSpec){
-    // const{id} = props
-    switch(props.target){ // switch before destructure so destructure is type aware
-        case BaubleTarget.Node:{
-            const {target,...rest} = props
-          return <Nodes {...rest} />
-        }
-        case BaubleTarget.Branch:{
-            const {target,...rest} = props ;
-            return <Branches  {...(rest)} />
-        }
-        case BaubleTarget.NodeLabel:{
-            const {target,...rest} = props ;
-            return <NodeLabels   {...rest} />
-        }
-
-        case BaubleTarget.BranchLabel:{
-             const {target,...rest} = props ;
-            return <BranchLabels   {...rest} />
-        }
-            
-        case BaubleTarget.Clade:{
-             const {shape,target,...rest} = props
-                return shape === CladeShapes.Cartoon ? (
-                <Cartoons  {...rest} />
-                ) : (
-                <Highlights   {...rest} />
-                );
-            }
+export function Bauble(props: BaubleSpec) {
+  // const{id} = props
+  switch (
+    props.target // switch before destructure so destructure is type aware
+  ) {
+    case BaubleTarget.Node: {
+      return <Nodes {...props} />;
     }
+    case BaubleTarget.Branch: {
+      return <Branches {...props} />;
+    }
+    case BaubleTarget.NodeLabel: {
+      return <NodeLabels {...props} />;
     }
 
+    case BaubleTarget.BranchLabel: {
+      return <BranchLabels {...props} />;
+    }
 
+    case BaubleTarget.Clade: {
+      return <Clades {...props} />;
+    }
+  }
+}
 
 export enum BaubleTarget {
-Node,
-Branch,
-NodeLabel,
-BranchLabel,
-Clade
+  Node,
+  Branch,
+  NodeLabel,
+  BranchLabel,
+  Clade,
 }
-
 
 export enum NodeShapes {
-    Circle,
-    Rectangle,
+  Circle,
+  Rectangle,
 }
 export enum CladeShapes {
-    Cartoon,
-    Highlight
+  Cartoon,
+  Highlight,
 }
 
-
-
-export type BaubleSpec = NodeSpec | BranchSpec | NodeLabelSpec | BranchLabelSpec |CladeSpec
+export type BaubleSpec =
+  | NodeSpec
+  | BranchSpec
+  | NodeLabelSpec
+  | BranchLabelSpec
+  | CladeSpec;
