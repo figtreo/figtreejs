@@ -119,15 +119,16 @@ export function setupBaubles(
       aligned: options.aligned ?? false,
     };
   } else if (options.target === BaubleTarget.BranchLabel) {
-    const branches = nodes
-      .filter((n) => !tree.isRoot(n))
+    const sineRoot = nodes.filter((n) => !tree.isRoot(n));
+    const branches = sineRoot
+      // .filter((n) => !tree.isRoot(n))
       .map((node) => ({ node, parent: tree.getParent(node) }));
     const attrMapper = mapAttrsToProps(options.attrs); //fill is none unless we are told otherwise
     const interactionMapper = mapInteractionsToProps(
       options.interactions ?? {},
     );
     const textMapper = mapAttrsToProps({ text: options.text });
-    const attrs = nodes.reduce((acc: Record<string, TextAttrs>, n) => {
+    const attrs = sineRoot.reduce((acc: Record<string, TextAttrs>, n) => {
       const nodeAttrs = attrMapper(n);
       const nodeInteractions = interactionMapper(n);
       const text = textMapper(n);
