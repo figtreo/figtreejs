@@ -1,7 +1,7 @@
 import type {
   InteractionType,
   InternalInteractionType,
-} from "../components/Baubles/types";
+} from "../Components/Baubles/types";
 import type { NodeRef } from "../Evo";
 
 export type ExposedAttrs<A> = {
@@ -21,8 +21,8 @@ export type BaseBaubleOptions<A> = {
 } & (filterOption | nodeOption);
 
 // is T needed here?
+// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
 function isFn<T>(val: unknown): val is (n: NodeRef) => T {
-  // eslint-disable-line @typescript-eslint/no-unnecessary-type-parameters
   return typeof val === "function";
 }
 

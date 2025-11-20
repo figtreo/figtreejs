@@ -1,7 +1,7 @@
 import { describe, test } from "vitest";
 import { render } from "@testing-library/react";
 import { ImmutableTree } from "../../Evo";
-import { FigTree } from "../../components";
+import { FigTree } from "../../Components";
 import { polarLayout, radialLayout, rectangularLayout } from "../../Layouts";
 import { Branches, NodeLabels } from "../../BaubleMakers/Makers";
 
@@ -28,7 +28,7 @@ describe("Node labels", () => {
         />
       </svg>,
     );
-    fig.debug();
+    //fig.debug();
     expect(fig).toMatchSnapshot();
   });
   test("renders a tree with aligned Node labels and a function for text", () => {
@@ -51,7 +51,7 @@ describe("Node labels", () => {
         />
       </svg>,
     );
-    fig.debug();
+    //fig.debug();
     expect(fig).toMatchSnapshot();
   });
   test("renders a tree node labels - polar", () => {
@@ -74,7 +74,7 @@ describe("Node labels", () => {
         />
       </svg>,
     );
-    fig.debug();
+    //fig.debug();
     expect(fig).toMatchSnapshot();
   });
   test("renders a tree with aligned Node labels and a function for text - polar", () => {
@@ -97,7 +97,7 @@ describe("Node labels", () => {
         />
       </svg>,
     );
-    fig.debug();
+    //fig.debug();
     expect(fig).toMatchSnapshot();
   });
   test("renders a tree node labels in radial layout", () => {
@@ -120,7 +120,7 @@ describe("Node labels", () => {
         />
       </svg>,
     );
-    fig.debug();
+    //fig.debug();
     expect(fig).toMatchSnapshot();
   });
 });

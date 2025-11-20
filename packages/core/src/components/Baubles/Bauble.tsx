@@ -41,6 +41,7 @@ export enum BaubleTarget {
   NodeLabel,
   BranchLabel,
   Clade,
+  Axis,
 }
 
 export enum NodeShapes {

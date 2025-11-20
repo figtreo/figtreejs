@@ -13,6 +13,7 @@ import { animatedContext } from "../../Context/aminatedContext";
 import { setupBaubles } from "../../BaubleMakers/setUpBaubles";
 import { Branches } from "../../BaubleMakers/Makers";
 import { DimensionContext } from "../../Context/dimensionContext";
+import { Axis } from "../Decorations";
 /**
  * The FigTree component
  * This takes a tree and layout options. It calls the layout and handles state for this figure.
@@ -50,6 +51,7 @@ function FigTree(props: FigtreeProps) {
     animated = defaultOpts.animated,
     baubles = defaultOpts.baubles,
     // margins = defaultOpts.margins
+    axis,
   } = props;
 
   const opts = props.opts ? props.opts : defaultOpts.opts;
@@ -118,6 +120,7 @@ function FigTree(props: FigtreeProps) {
           <DimensionContext.Provider value={dimensions}>
             <layoutContext.Provider value={layoutMap}>
               <animatedContext.Provider value={animated}>
+                {axis ? <Axis {...axis} /> : null}
                 {baubleSpecs.map((specs, i) => (
                   <Bauble key={specs.id ?? i} {...specs} />
                 ))}

@@ -1,119 +1,145 @@
 import { extent } from "d3-array";
 import { scaleLinear } from "d3-scale";
-import type { simplePolarVertex, simpleVertex } from "../Layouts/functional/rectangularLayout";
+import type { simplePolarVertex, simpleVertex } from "../Layouts/types";
 
-export type PolarScaleType = <T extends simpleVertex>(vertex: T)=> T & { x: number; y: number; r:number; theta:number}
+export type PolarScaleType = <T extends simpleVertex>(
+  vertex: T,
+) => T & { x: number; y: number; r: number; theta: number };
 
-export function polarScaleMaker(maxX:number,maxY:number,canvasWidth:number,canvasHeight:number,invert:boolean=false,minRadius:number=0,angleRange:number=1.7*Math.PI,rootAngle:number=0,pollard=0){
+export function polarScaleMaker(
+  maxX: number,
+  maxY: number,
+  canvasWidth: number,
+  canvasHeight: number,
+  invert: boolean = false,
+  minRadius: number = 0,
+  angleRange: number = 1.7 * Math.PI,
+  rootAngle: number = 0,
+  pollard = 0,
+) {
+  const maxRadius = Math.min(canvasWidth, canvasHeight) / 2;
 
-    const maxRadius = Math.min(canvasWidth,canvasHeight)/2;
+  // These scales adjust the x and y values from arbitrary layout to polar coordinates with r within the svg and theta between 0 and 2pi
 
-    // These scales adjust the x and y values from arbitrary layout to polar coordinates with r within the svg and theta between 0 and 2pi
+  const safeAngleRange = normalizeAngle(angleRange);
+  const minX = maxX * pollard;
+  const rRange = invert
+    ? [minRadius * maxRadius, maxRadius].reverse()
+    : [minRadius * maxRadius, maxRadius];
+  const rScale = scaleLinear().domain([minX, maxX]).range(rRange);
 
-    const safeAngleRange = normalizeAngle(angleRange);
-    const minX = maxX*pollard;
-    const rRange = invert? [minRadius*maxRadius,maxRadius].reverse():[minRadius*maxRadius,maxRadius];
-    const rScale = scaleLinear()
-        .domain([minX,maxX])
-        .range(rRange);
+  const startAngle = rootAngle + (2 * 3.14 - safeAngleRange) / 2; //2pi - angle range  is what we ignore and we want to center this on the root angle
+  const endAngle = startAngle + safeAngleRange;
 
+  const thetaScale = scaleLinear()
+    .domain([0, maxY])
+    .range([startAngle, endAngle]); // rotated to match figtree orientation
 
-    const startAngle =rootAngle+(2*3.14 - safeAngleRange)/2; //2pi - angle range  is what we ignore and we want to center this on the root angle
-    const endAngle = startAngle+safeAngleRange;
-    
-    const thetaScale = scaleLinear()
-        .domain([0,maxY])
-        .range([startAngle,endAngle]); // rotated to match figtree orientation
+  // (x,y) =>polarToCartesian(rScale(x),thetaScale(y))=>(x,y)
 
-    // (x,y) =>polarToCartesian(rScale(x),thetaScale(y))=>(x,y)
-    
-    // Once we have the polar coordinates we will convert back to cartesian coordinates
-    // But we need to adjust the aspect ratio to fit the circle
+  // Once we have the polar coordinates we will convert back to cartesian coordinates
+  // But we need to adjust the aspect ratio to fit the circle
 
-    // center (0,0) polartoCartesian(maxRadius,startAngle) is top left of svg
-    const extremes = [[0,0],polarToCartesian(maxRadius,startAngle),polarToCartesian(maxRadius,endAngle)]; 
+  // center (0,0) polartoCartesian(maxRadius,startAngle) is top left of svg
+  const extremes = [
+    [0, 0],
+    polarToCartesian(maxRadius, startAngle),
+    polarToCartesian(maxRadius, endAngle),
+  ];
 
-    // Also need every pi/2 point we pass through.
-    //assumes range is <=2pi
-    const normlizedStart = normalizeAngle(startAngle);
-    const normlizedEnd = normalizeAngle(normlizedStart+safeAngleRange); 
+  // Also need every pi/2 point we pass through.
+  //assumes range is <=2pi
+  const normlizedStart = normalizeAngle(startAngle);
+  const normlizedEnd = normalizeAngle(normlizedStart + safeAngleRange);
 
-    
-
-    if(normlizedEnd>normlizedStart){
-        for (const theta of [Math.PI/2,Math.PI,3*Math.PI/2].filter(d=>d>normlizedStart && d<normlizedEnd)){
-            const [x,y] = polarToCartesian(maxRadius,theta);
-            extremes.push([x,y]);
-        }
-    }else{//we've crossed 0
-
-        for (const theta of [0,Math.PI/2,Math.PI,3*Math.PI/2].filter(d=>d>normlizedStart || d<normlizedEnd)){
-            const [x,y] = polarToCartesian(maxRadius,theta);
-            extremes.push([x,y]);
-        }
-
+  if (normlizedEnd > normlizedStart) {
+    for (const theta of [Math.PI / 2, Math.PI, (3 * Math.PI) / 2].filter(
+      (d) => d > normlizedStart && d < normlizedEnd,
+    )) {
+      const [x, y] = polarToCartesian(maxRadius, theta);
+      extremes.push([x, y]);
     }
+  } else {
+    //we've crossed 0
 
-    const xDomain = extent(extremes,(d)=>d[0]) as [number, number];
-    const yDomain = extent(extremes,(d)=>d[1]) as [number, number];
-
-    const ratio = (xDomain[1]-xDomain[0])/(yDomain[1]-yDomain[0]);
-
-    const scaler = Math.min(canvasWidth,canvasHeight*ratio)
-    const width = scaler;
-    const height = scaler/ratio;
-
-    const xShift = (canvasWidth-width)/2;
-    const yShift = (canvasHeight-height)/2;
-
-    const yRange = [yShift,canvasHeight-yShift];
-    const xRange = [xShift,canvasWidth-xShift];
-    
-    const x = scaleLinear().domain(xDomain).range(xRange);
-    const y = scaleLinear().domain(yDomain).range(yRange);
-
-    return function scale<T extends simpleVertex>(vertex: T) : T & simplePolarVertex{
-            // const [r,theta] =[rScale(vertex.x),normalizeAngle(thetaScale(vertex.y))];
-            const [r,theta] =[rScale(vertex.x),thetaScale(vertex.y)]; // not normalized so we get branch length arc directions correct.
-            const [xcart,ycart] = polarToCartesian(r,theta);
-
-            const nTheta = normalizeAngle(theta); // normalized so we can think straight when doing things with text.
-
-            const nodeLabel= {
-                alignmentBaseline:"middle",
-                textAnchor: (nTheta>Math.PI/2 && nTheta<3*Math.PI/2?"end":" start"),
-                dxFactor:Math.cos(nTheta),
-                dyFactor:Math.sin(nTheta),
-                rotation:textSafeDegrees(nTheta)}
-
-            return {...vertex,x:x(xcart),y:y(ycart),r,theta, nodeLabel:nodeLabel}
-        }
-}
-
-
-export function polarToCartesian(r:number,theta:number){
-    return [r*Math.cos(theta),r*Math.sin(theta)];
-}
-
-export function normalizeAngle(theta:number){
-    while(theta>2*Math.PI ){
-    theta-=2*Math.PI
+    for (const theta of [0, Math.PI / 2, Math.PI, (3 * Math.PI) / 2].filter(
+      (d) => d > normlizedStart || d < normlizedEnd,
+    )) {
+      const [x, y] = polarToCartesian(maxRadius, theta);
+      extremes.push([x, y]);
     }
-    return theta;
+  }
+
+  const xDomain = extent(extremes, (d) => d[0]) as [number, number];
+  const yDomain = extent(extremes, (d) => d[1]) as [number, number];
+
+  const ratio = (xDomain[1] - xDomain[0]) / (yDomain[1] - yDomain[0]);
+
+  const scaler = Math.min(canvasWidth, canvasHeight * ratio);
+  const width = scaler;
+  const height = scaler / ratio;
+
+  const xShift = (canvasWidth - width) / 2;
+  const yShift = (canvasHeight - height) / 2;
+
+  const yRange = [yShift, canvasHeight - yShift];
+  const xRange = [xShift, canvasWidth - xShift];
+
+  const x = scaleLinear().domain(xDomain).range(xRange);
+  const y = scaleLinear().domain(yDomain).range(yRange);
+
+  return function scale<T extends simpleVertex>(
+    vertex: T,
+  ): T & simplePolarVertex {
+    // const [r,theta] =[rScale(vertex.x),normalizeAngle(thetaScale(vertex.y))];
+    const [r, theta] = [rScale(vertex.x), thetaScale(vertex.y)]; // not normalized so we get branch length arc directions correct.
+    const [xcart, ycart] = polarToCartesian(r, theta);
+
+    const nTheta = normalizeAngle(theta); // normalized so we can think straight when doing things with text.
+
+    const nodeLabel = {
+      alignmentBaseline: "middle",
+      textAnchor:
+        nTheta > Math.PI / 2 && nTheta < (3 * Math.PI) / 2 ? "end" : " start",
+      dxFactor: Math.cos(nTheta),
+      dyFactor: Math.sin(nTheta),
+      rotation: textSafeDegrees(nTheta),
+    };
+
+    return {
+      ...vertex,
+      x: x(xcart),
+      y: y(ycart),
+      r,
+      theta,
+      nodeLabel: nodeLabel,
+    };
+  };
 }
 
-export function degrees(theta:number){
-    return normalizeAngle(theta)*180/Math.PI;
+export function polarToCartesian(r: number, theta: number) {
+  return [r * Math.cos(theta), r * Math.sin(theta)];
 }
 
-//this function converts radians to degrees and adjusts degrees 
+export function normalizeAngle(theta: number) {
+  while (theta > 2 * Math.PI) {
+    theta -= 2 * Math.PI;
+  }
+  return theta;
+}
+
+export function degrees(theta: number) {
+  return (normalizeAngle(theta) * 180) / Math.PI;
+}
+
+//this function converts radians to degrees and adjusts degrees
 // so the text is not fliped
-export function textSafeDegrees(radians:number){
-    const d =  degrees(normalizeAngle(radians));
+export function textSafeDegrees(radians: number) {
+  const d = degrees(normalizeAngle(radians));
 
-    if(d>90 && d<270){
-        return d-180;
-    }else{
-        return d
-    }
+  if (d > 90 && d < 270) {
+    return d - 180;
+  } else {
+    return d;
+  }
 }

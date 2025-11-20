@@ -440,13 +440,15 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
       includeAnnotations: boolean;
     },
   ): string {
-    if (options === undefined) {
-      options = { blFormat: format("0.2"), includeAnnotations: false };
-    }
+    const ops = {
+      blFormat: format("0.2"),
+      includeAnnotations: false,
+      ...options,
+    };
     if (node === undefined) {
       node = this.getRoot();
     }
-    return this._toString(node, options) + ";";
+    return this._toString(node, ops) + ";";
   }
 
   getMRCA(node1: NodeRef | NodeRef[], node2?: NodeRef): NodeRef {
@@ -675,7 +677,6 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
       draft._data.nodeToTaxon[node.number] = taxon.number;
     });
   }
-
   getAnnotationSummary(name: string): AnnotationSummary {
     if (
       (this._data.annotations[name] as Undefinable<AnnotationSummary>) ===
@@ -891,20 +892,16 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
       node.parent = newNode.number;
     });
   }
+  // eslint-disable-next-line  @typescript-eslint/no-unused-vars
   unroot(_n: NodeRef): ImmutableTree {
-    // eslint-disable-line  @typescript-eslint/no-unused-vars
-
     throw new Error("unroot not implemented in immutable tree");
   }
+  // eslint-disable-next-line  @typescript-eslint/no-unused-vars
   deleteNode(_n: NodeRef): ImmutableTree {
-    // eslint-disable-line  @typescript-eslint/no-unused-vars
-
     throw new Error("deleteNode not implemented in immutable tree");
   }
-
+  // eslint-disable-next-line  @typescript-eslint/no-unused-vars
   deleteClade(_n: NodeRef): ImmutableTree {
-    // eslint-disable-line  @typescript-eslint/no-unused-vars
-
     throw new Error("deleteClade not implemented in immutable tree");
   }
 

@@ -1,6 +1,6 @@
 import { render } from "@testing-library/react";
 import { ImmutableTree } from "../../Evo";
-import { FigTree } from "../../components";
+import { FigTree } from "../../Components";
 import { polarLayout, rectangularLayout } from "../../Layouts";
 
 import { u } from "../../utils";
@@ -32,7 +32,7 @@ describe("Figures", () => {
         />
       </svg>,
     );
-    fig.debug();
+    //fig.debug();
     expect(fig).toMatchSnapshot();
     // expect(fig).toBeInTheDocument();
   });
@@ -59,7 +59,7 @@ describe("Figures", () => {
         />
       </svg>,
     );
-    fig.debug();
+    //fig.debug();
     expect(fig).toMatchSnapshot();
     // expect(fig).toBeInTheDocument();
   });

@@ -1,7 +1,7 @@
 import { describe, test } from "vitest";
 import { render } from "@testing-library/react";
 import { ImmutableTree } from "../../Evo";
-import { FigTree } from "../../components";
+import { FigTree } from "../../Components";
 import { rectangularLayout } from "../../Layouts";
 import {
   Branches,
@@ -28,7 +28,7 @@ describe("Figures", () => {
         />
       </svg>,
     );
-    fig.debug();
+    //fig.debug();
     expect(fig).toMatchSnapshot();
     // expect(fig).toBeInTheDocument();
   });
@@ -50,7 +50,7 @@ describe("Figures", () => {
         />
       </svg>,
     );
-    fig.debug();
+    //fig.debug();
     expect(fig).toMatchSnapshot();
   });
 
@@ -82,7 +82,7 @@ describe("Figures", () => {
         />
       </svg>,
     );
-    fig.debug();
+    //fig.debug();
     expect(fig).toMatchSnapshot();
     // screen.debug()
     // expect(fig).toBeInTheDocument();
@@ -116,7 +116,7 @@ describe("Figures", () => {
         />
       </svg>,
     );
-    fig.debug();
+    //fig.debug();
     expect(fig).toMatchSnapshot();
     // expect(fig).toBeInTheDocument();
   });

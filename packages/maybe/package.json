@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "version": "0.0.0",
-"exports": {
+  "exports": {
     "./maybe": "./src/maybe.ts"
   },
   "license": "MIT",

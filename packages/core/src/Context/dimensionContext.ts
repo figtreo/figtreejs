@@ -1,5 +1,5 @@
 import { createContext } from "react";
-import type { dimensionType } from "../components/FigTree/Figtree.types";
+import type { dimensionType } from "../Components/FigTree/Figtree.types";
 import { layoutClass } from "../Layouts";
 
 const defaultDimension: dimensionType = {

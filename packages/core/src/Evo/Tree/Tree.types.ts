@@ -140,7 +140,7 @@ export interface Tree {
     node: NodeRef,
     name: string,
     d?: AnnotationValue,
-  ): AnnotationValue;
+  ): AnnotationValue; // what about or undefined?
   // getAnnotation<T extends BaseAnnotationType>(node: NodeRef, name: string, d:T): T
 
   // getAnnotationValue<T extends BaseAnnotationType>(node:NodeRef, name:string,type:T):ValueOf<T>|undefined
