@@ -139,7 +139,7 @@ export function withNodeLabel<T extends object>(
           ? (scaledV.y + step.y) / 2
           : layoutType === layoutClass.Radial
             ? (scaledV.y + scaledPv.y) / 2
-            : v.y) + dy;
+            : scaledV.y) + dy;
 
       return (
         <WrappedComponent
