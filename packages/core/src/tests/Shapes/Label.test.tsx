@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { BaseLabel } from "../../components/Baubles/Shapes/Label";
+import { BaseLabel } from "../../Components/Baubles/Shapes/Label";
 import { unNullify } from "../../utils";
 
 describe("BaseLabel", () => {

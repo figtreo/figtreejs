@@ -6,12 +6,12 @@ import type {
   PathAttrs,
   RectAttrs,
   HighlightRectAttrs,
-} from "../components";
+} from "../Components";
 import {
   BaubleTarget,
   CladeShapes,
   NodeShapes,
-} from "../components/Baubles/Bauble";
+} from "../Components/Baubles/Bauble";
 import type { BaseBaubleOptions, ExposedAttrs } from "./utils";
 
 type RectangleNodeAttrs = ExposedAttrs<RectAttrs>;

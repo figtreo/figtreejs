@@ -3,10 +3,7 @@ import type { NodeRef } from "../../Evo";
 
 import { layoutClass } from "../../Layouts";
 import { normalizePath } from "../../path.helpers";
-import type {
-  PolarVertex,
-  simpleVertex,
-} from "../../Layouts/functional/rectangularLayout";
+import type { PolarVertex, simpleVertex } from "../../Layouts/types";
 import { ScaleContext } from "../../Context/scaleContext";
 import { layoutContext } from "../../Context/layoutContext";
 import { animatedContext } from "../../Context/aminatedContext";

@@ -1,10 +1,8 @@
 import type { InternalBaubleOptions } from "../../BaubleMakers/setUpBaubles";
 import type { ImmutableTree, NodeRef, Tree } from "../../Evo/Tree";
-import type {
-  FunctionalVertex,
-  layoutClass,
-} from "../../Layouts/functional/rectangularLayout";
+import type { FunctionalVertex, layoutClass } from "../../Layouts/types";
 import type { layoutType, scaleType } from "../../store/store";
+import type { AxisProps } from "../Decorations";
 
 export interface Margins {
   top: number;
@@ -67,4 +65,5 @@ export interface FigtreeProps {
   animated?: boolean;
   x?: number;
   y?: number;
+  axis?: AxisProps;
 }

@@ -6,7 +6,7 @@ import { animatedContext } from "../../Context/aminatedContext";
 import { DimensionContext } from "../../Context/dimensionContext";
 import { layoutClass } from "../../Layouts";
 import { defaultNodeLabelData } from "../../store/store";
-import type { PolarVertex } from "../../Layouts/functional/rectangularLayout";
+import type { PolarVertex } from "../../Layouts/types";
 import { textSafeDegrees } from "../../store/polarScale";
 import { unNullify } from "../../utils";
 

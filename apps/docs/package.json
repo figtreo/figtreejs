@@ -10,8 +10,8 @@
     "observable": "observable"
   },
   "dependencies": {
+    "@figtreejs/browser": "*",
     "@observablehq/framework": "^1.13.2",
-    "@figtreejs/browser":"*",
     "d3-dsv": "^3.0.1",
     "d3-time-format": "^4.1.0"
   },

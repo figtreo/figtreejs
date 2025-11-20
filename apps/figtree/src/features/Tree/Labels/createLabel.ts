@@ -23,8 +23,8 @@ export function createLabelsComponent({
 }) {
   const fill = (n: NodeRef) => {
     if (settings.colourBy === 'User selection') {
-      const custom = tree.getAnnotation(n, COLOUR_ANNOTATION);
-      return custom === undefined ? settings.colour : (custom as string);
+      // const custom = tree.getAnnotation(n, COLOUR_ANNOTATION);
+      return !tree.hasAnnotation(n, COLOUR_ANNOTATION)? settings.colour : (tree.getAnnotation(n, COLOUR_ANNOTATION) as string);
     }
     const annotation = tree.getAnnotation(n, settings.colourBy);
     if (annotation === undefined) return settings.colour;

@@ -5,13 +5,13 @@ import type {
   PathAttrs,
   RectAttrs,
   TextAttrs,
-} from "../components";
-import type { BaubleSpec } from "../components/Baubles/Bauble";
+} from "../Components";
+import type { BaubleSpec } from "../Components/Baubles/Bauble";
 import {
   BaubleTarget,
   CladeShapes,
   NodeShapes,
-} from "../components/Baubles/Bauble";
+} from "../Components/Baubles/Bauble";
 import type { ImmutableTree, NodeRef } from "../Evo";
 import { tipIterator } from "../Evo";
 import type {
@@ -21,15 +21,14 @@ import type {
   InternalNodeOptions,
 } from "./Makers";
 import { mapAttrsToProps, mapInteractionsToProps } from "./utils";
-import type { Clade } from "../components/HOC/withClades";
+import type { Clade } from "../Components/HOC/withClades";
 import { notNull } from "../utils";
 
 export type InternalBaubleOptions =
   | InternalNodeOptions
   | InternalBranchOptions
   | InternalLabelOptions
-  | InternalCladeOptions;
-// TODO fix redundancy and keep types happy
+  | InternalCladeOptions; // TODO fix redundancy and keep types happy
 export function setupBaubles(
   options: InternalBaubleOptions,
   tree: ImmutableTree,
@@ -143,7 +142,7 @@ export function setupBaubles(
       target: options.target,
     };
   } else {
-    //if(options.target===BaubleTarget.Clade)
+    // if(options.target===BaubleTarget.Clade){
     const clades: Clade[] = nodes.map((n) => {
       const tips = [...tipIterator(tree, n)];
       const leftMost = tips[0];

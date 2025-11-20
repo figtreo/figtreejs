@@ -2,7 +2,7 @@ import { layoutClass } from "../../../Layouts";
 
 import { normalizePath } from "../../../path.helpers";
 import { BasePath } from "../Shapes";
-import type { PolarVertex } from "../../../Layouts/functional/rectangularLayout";
+import type { PolarVertex } from "../../../Layouts/types";
 import type { PathProps } from "../Shapes/Branch";
 import { useContext } from "react";
 import { ScaleContext } from "../../../Context/scaleContext";

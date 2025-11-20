@@ -1,6 +1,6 @@
 import { createContext } from "react";
 import type { scaleType } from "../store/store";
-import type { simpleVertex } from "../Layouts/functional/rectangularLayout";
+import type { simpleVertex } from "../Layouts/types";
 
 const defaultScale: scaleType = <T extends simpleVertex>(vertex: T) => {
   return {

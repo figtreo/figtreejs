@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { BasePath } from "../../components/Baubles/Shapes";
+import { BasePath } from "../../Components/Baubles/Shapes";
 
 describe("BaseBranch", () => {
   test("renders BaseBranch, SVG path which has the right attributes", () => {

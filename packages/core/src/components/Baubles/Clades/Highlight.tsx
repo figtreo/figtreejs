@@ -4,10 +4,7 @@ import type { Clade } from "../../HOC/withClades";
 import { withClades } from "../../HOC/withClades";
 
 import { BasePath, BaseRectangle } from "../Shapes";
-import type {
-  PolarVertex,
-  simplePolarVertex,
-} from "../../../Layouts/functional/rectangularLayout";
+import type { PolarVertex, simplePolarVertex } from "../../../Layouts/types";
 import { notNull } from "../../../utils";
 import { ScaleContext } from "../../../Context/scaleContext";
 import { layoutContext } from "../../../Context/layoutContext";

@@ -14,7 +14,7 @@ import { selectLabelState } from "../Settings/panels/label/labelSlice";
 import {
   FigTree,
   Branches,
-  CladeHighlight,
+  HighlightClades,
   postOrderIterator,
   tipIterator,
   ImmutableTree,
@@ -22,7 +22,7 @@ import {
   polarLayout,
   layoutClass,
   radialLayout,
-  CladeCartoon,
+  CartoonClades,
   type NodeRef,
   BaseAnnotationType,
 } from "@figtreejs/core"
@@ -270,7 +270,7 @@ export function Tree({ panelRef }: any) {
 
   function branchColourur(n: NodeRef): string {
     if (branchSettings.colourBy === "User selection") {
-      return  tree.hasAnnotation(n,COLOUR_ANNOTATION) ? branchSettings.colour : tree.getAnnotation(n, COLOUR_ANNOTATION) as string
+      return  !tree.hasAnnotation(n,COLOUR_ANNOTATION) ? branchSettings.colour : tree.getAnnotation(n, COLOUR_ANNOTATION) as string
     } else {
       if(!tree.hasAnnotation(n,branchSettings.colourBy)){
         return branchSettings.colour
@@ -523,12 +523,12 @@ export function Tree({ panelRef }: any) {
             }
       }
 
-      const highlights = CladeHighlight({nodes:highlightedNodes,attrs:{
+      const highlights = HighlightClades({nodes:highlightedNodes,attrs:{
               fill: (n: NodeRef) =>
                 tree.getAnnotation(n, HILIGHT_ANNOTATION) as string,
               opacity: 0.4,
             }})
-      const cartoons = CladeCartoon({nodes:cartoonNodes,attrs:{ fill: branchFiller,
+      const cartoons = CartoonClades({nodes:cartoonNodes,attrs:{ fill: branchFiller,
               strokeWidth: lineWidth,
               stroke: branchColourur,
             }})
