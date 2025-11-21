@@ -13,6 +13,7 @@ export default defineConfig(
     languageOptions: {
       parserOptions: {
         projectService: true,
+        allowDefaultProject: true
       },
     },
     rules: {

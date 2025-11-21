@@ -1,5 +1,5 @@
 {
-  "name": "@figtree/typescript-config",
+  "name": "@figtreejs/typescript-config",
   "private": true,
   "type": "module",
   "version": "0.0.0",

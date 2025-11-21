@@ -1,5 +1,5 @@
 {
-  "extends": "@figtree/typescript-config/vite.json",
+  "extends": "@figtreejs/typescript-config/vite.json",
   "compilerOptions": {
     "noEmit": true,
     "jsx": "react-jsx", 

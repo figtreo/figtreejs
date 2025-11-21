@@ -1,6 +1,7 @@
 {
   "name": "@figtreejs/figtree",
   "version": "0.0.1",
+  "private":true,
   "repository": {
     "type": "git",
     "url": "https://github.com/figtreo/figtreejs.git"
@@ -30,8 +31,8 @@
     "redux-undo": "^1.1.0"
   },
   "devDependencies": {
-    "@figtree/eslint-config": "*",
-    "@figtree/typescript-config": "*",
+    "@figtreejs/eslint-config": "*",
+    "@figtreejs/typescript-config": "*",
     "@testing-library/jest-dom": "^6.9.1",
     "@types/react-dom": "^19.2.2"
   }

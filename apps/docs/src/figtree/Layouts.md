@@ -115,7 +115,7 @@ const svg3 = html`<svg id="radial" width=${width} height=${width*9/16}></svg>`
 ```js echo
 figtree({...options,svg:svg3,layout:radialLayout});
 ```
-# Deeper exploration
+## Deeper exploration
 What is going on under the hood? Each layout function takes a tree and returns a function that converts a node to a vertex.
 Figtreejs passes this function to the required baubles to render each shape, but we can use it outside of the figure as well.
 This can be particularly useful if we want to render a tree with a different library, such as observable plot.

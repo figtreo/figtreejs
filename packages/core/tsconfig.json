@@ -1,12 +1,12 @@
 {
-  "extends": "@figtree/typescript-config/vite.json",
+  "extends": "@figtreejs/typescript-config/vite.json",
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
     "noEmit": true,
     "noUncheckedIndexedAccess": false,
-    "jsx": "react-jsx", 
-    "types": ["vitest/globals"],     // gives types for describe/test/expect
+    "jsx": "react-jsx",
+    "types": ["vitest/globals"], // gives types for describe/test/expect
     "lib": ["ES2020", "DOM", "DOM.Iterable"] // DOM types for `document`
   },
-  "include": ["src", "eslint.config.js"]
+  "include": ["src/**/*.ts", "src/**/*.tsx", "*.js", "*.ts"] // /src files and config files
 }
