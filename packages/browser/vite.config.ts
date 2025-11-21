@@ -5,6 +5,9 @@ import react from '@vitejs/plugin-react';
 // think about standard build as well 
 
 export default defineConfig(({mode})=>({
+  server:{
+    port:8004
+  },
   plugins: [react(),dts()],
   define: {
     // Ensure React uses production branches in the bundle

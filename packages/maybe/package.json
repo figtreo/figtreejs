@@ -1,5 +1,5 @@
 {
-  "name": "@figtree/maybe",
+  "name": "@figtreejs/maybe",
   "private": true,
   "type": "module",
   "version": "0.0.0",
@@ -8,8 +8,8 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "@figtree/eslint-config": "*",
-    "@figtree/typescript-config": "*",
+    "@figtreejs/eslint-config": "*",
+    "@figtreejs/typescript-config": "*",
     "typescript": "^5.9.3"
   }
 }

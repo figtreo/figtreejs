@@ -28,8 +28,8 @@
     "vitest-preview": "vitest-preview"
   },
   "lint-staged": {
-    "*.{js,ts}": [
-      "eslint src/",
+    "src/**/*.{js,jsx,ts,tsx}": [
+      "eslint",
       "prettier --write --ignore-unknown"
     ],
     "!(*.js|*.ts)": [
@@ -50,9 +50,9 @@
     "uuid": "^13.0.0"
   },
   "devDependencies": {
-    "@figtree/eslint-config": "*",
-    "@figtree/maybe": "*",
-    "@figtree/typescript-config": "*",
+    "@figtreejs/eslint-config": "*",
+    "@figtreejs/maybe": "*",
+    "@figtreejs/typescript-config": "*",
     "@testing-library/react": "^16.3.0",
     "@types/abs-svg-path": "^0.1.3",
     "@types/d3-array": "^3.2.2",

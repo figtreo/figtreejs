@@ -28,7 +28,7 @@ import {
   type Undefinable,
   UnwrapErr,
   type Maybe,
-} from "@figtree/maybe/maybe";
+} from "@figtreejs/maybe/maybe";
 import {
   maybeGetAnnotation,
   maybeGetNode,

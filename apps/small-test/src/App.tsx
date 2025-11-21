@@ -2,7 +2,7 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
-import {AnimatedCircle,CircleNodes,ImmutableTree,FigTree,rectangularLayout,polarLayout} from "@figtreejs/core"
+import {CircleNodes,ImmutableTree,FigTree,rectangularLayout,polarLayout} from "@figtreejs/core"
 
 const tree = ImmutableTree.fromNewick('((A:1,B:1):1,C:1);')
 // const n = CircleNodes({attrs:{r:5}})
@@ -29,8 +29,6 @@ function App() {
           count is {count}
         </button>
         <svg width={400} height={300}>
-          {/* {/* <AnimatedCircle attrs={{r:count*2}} x={(100*count)%400} y={50} animated={true}/> */}
-          <AnimatedCircle attrs={{r:count*2}} x={(100*count)%400} y={25} animated={false}/> */}
           <FigTree
             width={400}
             height={300}

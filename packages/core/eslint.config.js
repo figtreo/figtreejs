@@ -1,5 +1,5 @@
 import { defineConfig } from "eslint/config";
-import defaultConfig  from "@figtree/eslint-config";
+import defaultConfig  from "@figtreejs/eslint-config";
 
 export default defineConfig({
   "extends": [defaultConfig],

@@ -8,6 +8,7 @@
   },
   "license": "MIT",
   "author": "Andrew Rambaut and JT McCrone",
+  "type": "module",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -21,13 +22,13 @@
   "scripts": {
     "build": "vite build",
     "check-types": "tsc --noEmit ",
-    "dev": "vite build --watch",
-    "lint": "eslint ./src",
+    "dev": "vite",
+    "lint": "eslint src/",
     "test": "vitest"
   },
   "lint-staged": {
-    "*.{js,ts}": [
-      "eslint ./src",
+    "src/**/*.{js,jsx,ts,tsx}": [
+      "eslint",
       "prettier --write --ignore-unknown"
     ],
     "!(*.js|*.ts)": [
@@ -39,7 +40,8 @@
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "@figtree/typescript-config": "*",
+    "@figtreejs/typescript-config": "*",
+    "@figtreejs/eslint-config": "*",
     "@types/react-dom": "^19.2.2",
     "@vitejs/plugin-react": "^5.1.0",
     "typescript": "^5.9.3",
