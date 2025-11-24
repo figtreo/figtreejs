@@ -13,7 +13,9 @@
     "lint-staged": "lint-staged",
     "prepare": "husky",
     "test": "turbo test",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",  
+    "build-ci": "turbo build lint test",
+    "release-ci": "npm run build-ci && changeset publish"
   },
   "devDependencies": {
     "@changesets/cli": "^2.29.7",

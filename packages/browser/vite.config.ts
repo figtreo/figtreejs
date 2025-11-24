@@ -8,7 +8,7 @@ export default defineConfig(({mode})=>({
   server:{
     port:8004
   },
-  plugins: [react(),dts()],
+  plugins: [react(),dts({ rollupTypes: true })],
   define: {
     // Ensure React uses production branches in the bundle
     'process.env.NODE_ENV': JSON.stringify(mode?? 'production'),
