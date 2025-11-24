@@ -1,6 +1,6 @@
 import {  DiscreteLegend } from "@figtreejs/core";
 import { getColorScale, useAppSelector } from "../../app/hooks";
-import { type colorScale, selectColorableAttributes } from "../Settings/panels/colorScales/colourSlice";
+import { type colorScale, selectColorableAttributes } from "../settings/panels/colorScales/colourSlice";
 
 
 // const attributes = useAppSelector(selectColorableAttributes)

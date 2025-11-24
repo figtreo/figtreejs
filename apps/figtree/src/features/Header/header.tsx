@@ -12,7 +12,7 @@ import {
   selectSelectionMode,
   selectSelectionRoot,
   setSelectionMode,
-} from "./headerSlice"
+} from "./header-slice"
 import { BaseAnnotationType, postOrderIterator, tipIterator } from "@figtreejs/core"
 import {
   CARTOON_ANNOTATION,
@@ -21,7 +21,7 @@ import {
   HILIGHT_ANNOTATION,
 } from "../../app/constants"
 import { selectTree } from "../../app/hooks"
-import { setTree } from "../Tree/treeSlice"
+import { setTree } from "../tree/tree-slice"
 
 export function Header() {
   const dispatch = useAppDispatch()
