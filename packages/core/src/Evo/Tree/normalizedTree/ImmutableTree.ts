@@ -436,8 +436,8 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
   toNewick(
     node?: NodeRef,
     options?: {
-      blFormat: (value: number) => string;
-      includeAnnotations: boolean;
+      blFormat?: (value: number) => string;
+      includeAnnotations?: boolean;
     },
   ): string {
     const ops = {

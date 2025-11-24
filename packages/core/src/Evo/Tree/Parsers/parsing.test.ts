@@ -225,6 +225,38 @@ describe("Test tree parsing and normalized Tree", () => {
     });
   });
 
+  it("SET comment", function () {
+    const tree = ImmutableTree.fromNewick(
+      "(a[&test={ok,Not ok},other test = {0,1}],b:1);",
+      {
+        parseAnnotations: true,
+      },
+    );
+    const a = tree.getNodeByTaxon(tree.getTaxonByName("a"));
+    const testAnnotation = tree.getFullNodeAnnotation(a, "test");
+    expect(testAnnotation).toEqual({
+      id: "test",
+      type: "DISCRETE_SET",
+      value: ["ok", "Not ok"],
+    });
+
+    const otestAnnotation = tree.getFullNodeAnnotation(a, "other test");
+    expect(otestAnnotation).toEqual({
+      id: "other test",
+      type: "NUMERICAL_SET",
+      value: [0, 1],
+    });
+  });
+
+  it("SET comment writing", function () {
+    const treeString = "(a[&test={ok, Not ok}, other test={0, 1}],b:1);";
+    const tree = ImmutableTree.fromNewick(treeString, {
+      parseAnnotations: true,
+    });
+    expect(tree.toNewick(undefined, { includeAnnotations: true })).toEqual(
+      treeString,
+    );
+  });
   it("label annotation", function () {
     const tree = ImmutableTree.fromNewick(
       "((((((virus1:0.1,virus2:0.12)0.95:0.08,(virus3:0.011,virus4:0.0087)1.0:0.15)0.65:0.03,virus5:0.21)1.0:0.2,(virus6:0.45,virus7:0.4)0.51:0.02)1.0:0.1,virus8:0.4)1.0:0.1,(virus9:0.04,virus10:0.03)1.0:0.6);",
