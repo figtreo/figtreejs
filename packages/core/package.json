@@ -37,6 +37,7 @@
     ]
   },
   "dependencies": {
+    "@figtreejs/maybe": "*",
     "@react-spring/web": "^9.7.5",
     "abs-svg-path": "^0.1.1",
     "d3-array": "^3.2.4",
@@ -51,7 +52,6 @@
   },
   "devDependencies": {
     "@figtreejs/eslint-config": "*",
-    "@figtreejs/maybe": "*",
     "@figtreejs/typescript-config": "*",
     "@microsoft/api-extractor": "^7.55.1",
     "@testing-library/react": "^16.3.0",
