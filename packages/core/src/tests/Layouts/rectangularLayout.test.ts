@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { ImmutableTree } from "../../Evo";
-import { rectangularLayout } from "../../Layouts";
+import { ImmutableTree } from "../../evo";
+import { rectangularLayout } from "../../layouts";
 import { u } from "../../utils";
 
 describe("Test rectangular layout", () => {

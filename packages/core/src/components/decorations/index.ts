@@ -1,2 +1,2 @@
-export * from "./Axis";
-export * from "./Legend";
+export * from "./axis";
+export * from "./legend";

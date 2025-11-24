@@ -1,9 +1,9 @@
 import { render } from "@testing-library/react";
-import { ImmutableTree } from "../../Evo";
-import { FigTree } from "../../Components";
-import { polarLayout, rectangularLayout } from "../../Layouts";
+import { ImmutableTree } from "../../evo";
+import { FigTree } from "../../components";
+import { polarLayout, rectangularLayout } from "../../layouts";
 import { u } from "../../utils";
-import { Branches, CartoonClades } from "../../BaubleMakers/Makers";
+import { Branches, CartoonClades } from "../../bauble-makers/makers";
 
 const tree = ImmutableTree.fromNewick("((A:1,B:1):2,C:1);");
 

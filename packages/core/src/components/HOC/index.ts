@@ -1,7 +1,7 @@
 //Internal exports
 
-export { withNode } from "./withNode";
-export { withNodes } from "./withNodes";
-export { withBranch } from "./withBranch";
-export { withBranches } from "./withBranches";
-export { withClades } from "./withClades";
+export { withNode } from "./with-node";
+export { withNodes } from "./with-nodes";
+export { withBranch } from "./with-branch";
+export { withBranches } from "./with-branches";
+export { withClades } from "./with-clades";

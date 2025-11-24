@@ -1,2 +1,2 @@
-export { default as Axis } from "./Axis";
-export type { AxisProps, AxisBarsProps } from "./Axis.types";
+export { default as Axis } from "./axis";
+export type { AxisProps, AxisBarsProps } from "./axis-types";

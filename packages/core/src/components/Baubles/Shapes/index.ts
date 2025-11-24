@@ -1,9 +1,9 @@
 // Package exports
-export type { CircleAttrs } from "./Circle";
-export { BaseCircle } from "./Circle";
-export type { PathAttrs } from "./Branch";
-export { BasePath } from "./Branch";
-export type { RectAttrs } from "./Rectangle";
-export { BaseRectangle, CenteredRectangle } from "./Rectangle";
-export type { TextAttrs } from "./Label";
-export { BaseLabel } from "./Label";
+export type { CircleAttrs } from "./circle";
+export { BaseCircle } from "./circle";
+export type { PathAttrs } from "./branch";
+export { BasePath } from "./branch";
+export type { RectAttrs } from "./rectangle";
+export { BaseRectangle, CenteredRectangle } from "./rectangle";
+export type { TextAttrs } from "./label";
+export { BaseLabel } from "./label";

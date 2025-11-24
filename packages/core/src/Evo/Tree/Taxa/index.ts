@@ -1,1 +1,1 @@
-export * from "./Taxon";
+export * from "./taxon";

@@ -1,9 +1,9 @@
-import PolarAxis from "./PolarAxis";
-import RectangularAxis from "./RectangularAxis";
-import type { AxisProps } from "./Axis.types";
-import { layoutClass } from "../../../Layouts";
+import PolarAxis from "./polar-axis";
+import RectangularAxis from "./rectangular-axis";
+import type { AxisProps } from "./axis-types";
+import { layoutClass } from "../../../layouts";
 import { useContext } from "react";
-import { DimensionContext } from "../../../Context/dimensionContext";
+import { DimensionContext } from "../../../context/dimension-context";
 
 //TODO do things to scale and allow date as origin not maxD.
 

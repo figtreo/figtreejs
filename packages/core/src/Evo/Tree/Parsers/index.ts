@@ -1,3 +1,3 @@
-export * from "./AnnotationParser"
-export * from "./newickParsing"
-export * from "./nexusParsing"
+export * from "./annotation-parser";
+export * from "./newick-parsing";
+export * from "./nexus-parsing";

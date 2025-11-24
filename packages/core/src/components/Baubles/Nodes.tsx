@@ -1,12 +1,12 @@
-import type { CircleAttrs, RectAttrs } from "./Shapes";
-import { BaseCircle, CenteredRectangle } from "./Shapes";
+import type { CircleAttrs, RectAttrs } from "./shapes";
+import { BaseCircle, CenteredRectangle } from "./shapes";
 
-import { withNode } from "../HOC";
-import type { BaubleTarget } from "./Bauble";
-import { NodeShapes } from "./Bauble";
-import { withNodes } from "../HOC/withNodes";
+import { withNode } from "../hoc";
+import type { BaubleTarget } from "./bauble";
+import { NodeShapes } from "./bauble";
+import { withNodes } from "../hoc/with-nodes";
 import type { InternalInteractionType } from "./types";
-import type { NodeRef } from "../../Evo";
+import type { NodeRef } from "../../evo";
 
 /**
  * Add a Circle node Bauble to the figure.

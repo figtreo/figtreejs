@@ -1,14 +1,14 @@
-import { layoutClass } from "../../../Layouts";
+import { layoutClass } from "../../../layouts";
 import { arc as arcgen } from "d3-shape";
-import type { Clade } from "../../HOC/withClades";
-import { withClades } from "../../HOC/withClades";
+import type { Clade } from "../../hoc/with-clades";
+import { withClades } from "../../hoc/with-clades";
 
-import { BasePath, BaseRectangle } from "../Shapes";
-import type { PolarVertex, simplePolarVertex } from "../../../Layouts/types";
+import { BasePath, BaseRectangle } from "../shapes";
+import type { PolarVertex, simplePolarVertex } from "../../../layouts/types";
 import { notNull } from "../../../utils";
-import { ScaleContext } from "../../../Context/scaleContext";
-import { layoutContext } from "../../../Context/layoutContext";
-import { animatedContext } from "../../../Context/aminatedContext";
+import { ScaleContext } from "../../../context/scale-context";
+import { layoutContext } from "../../../context/layout-context";
+import { animatedContext } from "../../../context/aminated-context";
 import { useContext } from "react";
 
 const arc = arcgen();

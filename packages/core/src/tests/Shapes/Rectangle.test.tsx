@@ -3,7 +3,7 @@ import { render, screen } from "@testing-library/react";
 import {
   BaseRectangle,
   CenteredRectangle,
-} from "../../Components/Baubles/Shapes";
+} from "../../components/baubles/shapes";
 
 describe("BaseRectangle", () => {
   test("renders an SVG rect which is centered and has the right attributes", () => {

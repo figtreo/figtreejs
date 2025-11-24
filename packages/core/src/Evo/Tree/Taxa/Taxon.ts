@@ -1,5 +1,5 @@
 import { MaybeType } from "@figtreejs/maybe/maybe";
-import { maybeGetNameFromIndex, maybeGetTaxonByName } from "./helperFunctions";
+import { maybeGetNameFromIndex, maybeGetTaxonByName } from "./helper-functions";
 
 export interface Taxon {
   name: string;

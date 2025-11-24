@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { BaseCircle } from "../../Components/Baubles/Shapes";
+import { BaseCircle } from "../../components/baubles/shapes";
 
 describe("BaseCircle", () => {
   test("renders an SVG circle with the right attributes", () => {

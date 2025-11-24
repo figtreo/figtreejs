@@ -1,11 +1,7 @@
-import type { NodeRef } from "../Evo/Tree";
-import type {
-  FunctionalVertex,
-  NodeLabelType,
-  simpleVertex,
-} from "../Layouts/";
-import { layoutClass } from "../Layouts/";
-import { polarScaleMaker } from "./polarScale";
+import type { NodeRef } from "../evo/tree";
+import type { FunctionalVertex, NodeLabelType, simpleVertex } from "../layouts";
+import { layoutClass } from "../layouts";
+import { polarScaleMaker } from "./polar-scale";
 import type { ScaleLinear } from "d3-scale";
 import { scaleLinear } from "d3-scale";
 

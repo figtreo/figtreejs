@@ -2,7 +2,7 @@ import type { SpringValue, Interpolation } from "@react-spring/web";
 import { to, animated, useSpring } from "@react-spring/web";
 import type { numerical } from "../types";
 import { isSpringNumber } from "../types";
-import type { LabelInjection } from "../../HOC/withNode";
+import type { LabelInjection } from "../../hoc/with-node";
 
 /**
  * Label attributes for styling and rendering labels.

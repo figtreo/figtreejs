@@ -1,15 +1,15 @@
-import { layoutClass } from "../../../Layouts";
+import { layoutClass } from "../../../layouts";
 
 import { normalizePath } from "../../../path.helpers";
-import { BasePath } from "../Shapes";
-import type { PolarVertex } from "../../../Layouts/types";
-import type { PathProps } from "../Shapes/Branch";
+import { BasePath } from "../shapes";
+import type { PolarVertex } from "../../../layouts/types";
+import type { PathProps } from "../shapes/branch";
 import { useContext } from "react";
-import { ScaleContext } from "../../../Context/scaleContext";
-import { layoutContext } from "../../../Context/layoutContext";
-import { animatedContext } from "../../../Context/aminatedContext";
-import type { Clade } from "../../HOC/withClades";
-import { withClades } from "../../HOC/withClades";
+import { ScaleContext } from "../../../context/scale-context";
+import { layoutContext } from "../../../context/layout-context";
+import { animatedContext } from "../../../context/aminated-context";
+import type { Clade } from "../../hoc/with-clades";
+import { withClades } from "../../hoc/with-clades";
 
 //TODO add padding
 // const padding = 10;
