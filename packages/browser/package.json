@@ -23,8 +23,7 @@
     "build": "vite build",
     "check-types": "tsc --noEmit ",
     "dev": "vite",
-    "lint": "eslint src/",
-    "test": "vitest"
+    "lint": "eslint src/"
   },
   "lint-staged": {
     "src/**/*.{js,jsx,ts,tsx}": [
