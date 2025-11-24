@@ -1,4 +1,4 @@
-export * from "./Baubles"
-export * from "./FigTree"
+export * from "./baubles";
+export * from "./figtree";
 // export * from "./Tanglegram"
-export * from "./Decorations"
+export * from "./decorations";

@@ -1,19 +1,19 @@
-import type { FigtreeProps } from "./Figtree.types";
-import { defaultInternalLayoutOptions, rectangularLayout } from "../../Layouts";
+import type { FigtreeProps } from "./figtree-types";
+import { defaultInternalLayoutOptions, rectangularLayout } from "../../layouts";
 
-import { ImmutableTree } from "../../Evo/Tree";
+import { ImmutableTree } from "../../evo/tree";
 import { getScale } from "../../store/store";
 import { extent } from "d3-array";
 import { unNullify } from "../../utils";
-import { Bauble } from "../Baubles/Bauble";
+import { Bauble } from "../baubles/bauble";
 
-import { ScaleContext } from "../../Context/scaleContext";
-import { layoutContext } from "../../Context/layoutContext";
-import { animatedContext } from "../../Context/aminatedContext";
-import { setupBaubles } from "../../BaubleMakers/setUpBaubles";
-import { Branches } from "../../BaubleMakers/Makers";
-import { DimensionContext } from "../../Context/dimensionContext";
-import { Axis } from "../Decorations";
+import { ScaleContext } from "../../context/scale-context";
+import { layoutContext } from "../../context/layout-context";
+import { animatedContext } from "../../context/aminated-context";
+import { setupBaubles } from "../../bauble-makers/set-up-baubles";
+import { Branches } from "../../bauble-makers/makers";
+import { DimensionContext } from "../../context/dimension-context";
+import { Axis } from "../decorations";
 /**
  * The FigTree component
  * This takes a tree and layout options. It calls the layout and handles state for this figure.

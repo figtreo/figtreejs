@@ -1,3 +1,1 @@
-
-export { DiscreteLegend} from "./DiscreteLegend";
-
+export { DiscreteLegend } from "./discrete-legend";

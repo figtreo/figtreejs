@@ -1,12 +1,12 @@
-import type { BaubleTarget } from "./Bauble";
-import { CladeShapes } from "./Bauble";
+import type { BaubleTarget } from "./bauble";
+import { CladeShapes } from "./bauble";
 
 import type { InternalInteractionType } from "./types";
-import type { NodeRef } from "../../Evo";
-import { Cartoons } from "./Clades/Cartoon";
-import { Highlights } from "./Clades/Highlight";
-import type { Clade } from "../HOC/withClades";
-import type { PathAttrs, RectAttrs } from "./Shapes";
+import type { NodeRef } from "../../evo";
+import { Cartoons } from "./clades/cartoon";
+import { Highlights } from "./clades/highlight";
+import type { Clade } from "../hoc/with-clades";
+import type { PathAttrs, RectAttrs } from "./shapes";
 
 // Accessor for Node Shapes
 

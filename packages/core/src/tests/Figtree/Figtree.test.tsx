@@ -1,13 +1,13 @@
 import { describe, test } from "vitest";
 import { render } from "@testing-library/react";
-import { ImmutableTree } from "../../Evo";
-import { FigTree } from "../../Components";
-import { rectangularLayout } from "../../Layouts";
+import { ImmutableTree } from "../../evo";
+import { FigTree } from "../../components";
+import { rectangularLayout } from "../../layouts";
 import {
   Branches,
   CircleNodes,
   RectangleNodes,
-} from "../../BaubleMakers/Makers";
+} from "../../bauble-makers/makers";
 
 const tree = ImmutableTree.fromNewick("((A:1,B:1):2,C:1);");
 

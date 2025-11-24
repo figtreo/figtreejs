@@ -1,7 +1,7 @@
 // src/index.ts
 import * as Core from "@figtreejs/core";
-import figtree from "./FigtreeRender";
-import { figtreeStatic } from "./FigtreeRender";
+import figtree from "./figtree-render";
+import { figtreeStatic } from "./figtree-render";
 
 // named export
 export * from "@figtreejs/core";

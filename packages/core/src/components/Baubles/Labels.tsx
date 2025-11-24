@@ -1,10 +1,10 @@
-import type { NodeRef } from "../../Evo";
-import { withBranches } from "../HOC/withBranches";
-import { withNodeLabel } from "../HOC/withNode";
-import { withNodes } from "../HOC/withNodes";
-import type { BaubleTarget } from "./Bauble";
-import { BaseLabel } from "./Shapes";
-import type { TextAttrs } from "./Shapes/Label";
+import type { NodeRef } from "../../evo";
+import { withBranches } from "../hoc/with-branches";
+import { withNodeLabel } from "../hoc/with-node";
+import { withNodes } from "../hoc/with-nodes";
+import type { BaubleTarget } from "./bauble";
+import { BaseLabel } from "./shapes";
+import type { TextAttrs } from "./shapes/label";
 import type { AttrsRecord } from "./types";
 
 export const BranchLabels = withBranches<TextAttrs>(

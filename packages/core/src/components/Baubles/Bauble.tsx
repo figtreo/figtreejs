@@ -1,11 +1,11 @@
-import type { NodeSpec } from "./Nodes";
-import { Nodes } from "./Nodes";
-import type { BranchLabelSpec, NodeLabelSpec } from "./Labels";
-import { BranchLabels, NodeLabels } from "./Labels";
-import type { BranchSpec } from "./Branches";
-import { Branches } from "./Branches";
-import type { CladeSpec } from "./Clades";
-import { Clades } from "./Clades";
+import type { NodeSpec } from "./nodes";
+import { Nodes } from "./nodes";
+import type { BranchLabelSpec, NodeLabelSpec } from "./labels";
+import { BranchLabels, NodeLabels } from "./labels";
+import type { BranchSpec } from "./branches";
+import { Branches } from "./branches";
+import type { CladeSpec } from "./clades";
+import { Clades } from "./clades";
 
 /**
  * The main bauble which decides which baubles to renders base on the incoming specification

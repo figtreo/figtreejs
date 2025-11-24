@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { ImmutableTree } from "../../Evo";
-import { radialLayout } from "../../Layouts";
+import { ImmutableTree } from "../../evo";
+import { radialLayout } from "../../layouts";
 describe("Test rectangular layout", () => {
   it("check x and y on root", function () {
     const tree = ImmutableTree.fromNewick("((a:1,b:1):1,c:1);");
