@@ -1,8 +1,8 @@
 import { configureStore, type ThunkAction, type Action } from '@reduxjs/toolkit';
-import treeReducer from '../features/Tree/treeSlice';
-import settingReducer from '../features/Settings/settingsSlice';
-import headerReducer from '../features/Header/headerSlice';
-import colorScaleReducer from '../features/Settings/panels/colorScales/colourSlice'
+import treeReducer from '../features/tree/tree-slice';
+import settingReducer from '../features/settings/settingsSlice';
+import headerReducer from '../features/header/header-slice';
+import colorScaleReducer from '../features/settings/panels/colorScales/colourSlice'
 import undoable from 'redux-undo';
 
 
