@@ -24,7 +24,7 @@
     "check-types": "tsc --noEmit",
     "dev": "vite build --watch",
     "lint": "eslint src/",
-    "test": "vitest",
+    "test": "vitest run",
     "vitest-preview": "vitest-preview"
   },
   "lint-staged": {
