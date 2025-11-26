@@ -10,16 +10,16 @@ export default {
     {
       name: "Evo",
       pages: [
-        {name: "Tree", path: "/Evo/tree"},
+        {name: "Tree", path: "/evo/tree"},
       ]
     },
     {
       name: "Examples",
       pages: [
-        {name: "My first figure", path: "/figtree/rectangularFigure"},
-        {name: "Introduction to layouts", path: "/figtree/Layouts"},
+        {name: "My first figure", path: "/figtree/rectangular-figure"},
+        {name: "Introduction to layouts", path: "/figtree/layouts"},
         {name: "Introduction to animation", path: "/figtree/animation"},
-        {name: "Animating with the tree", path: "/figtree/treeAnimations"},
+        {name: "Animating with the tree", path: "/figtree/tree-animations"},
       ]
     }
   ],
