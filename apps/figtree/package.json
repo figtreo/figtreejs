@@ -1,7 +1,7 @@
 {
   "name": "@figtreejs/figtree",
-  "version": "0.0.0",
-  "private":true,
+  "version": "0.0.1-alpha.0",
+  "private": true,
   "repository": {
     "type": "git",
     "url": "https://github.com/figtreo/figtreejs.git"
@@ -23,15 +23,15 @@
     "d3-scale-chromatic": "^3.1.0",
     "d3-selection": "^3.0.0",
     "d3-time-format": "^4.1.0",
-    "@figtreejs/core":"*",
+    "@figtreejs/core": "0.0.1-alpha.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-redux": "^8.1.3",
     "redux-undo": "^1.1.0"
   },
   "devDependencies": {
-    "@figtreejs/eslint-config": "*",
-    "@figtreejs/typescript-config": "*",
+    "@figtreejs/eslint-config": "0.0.1-alpha.0",
+    "@figtreejs/typescript-config": "0.0.1-alpha.0",
     "@testing-library/jest-dom": "^6.9.1",
     "@types/react-dom": "^19.2.2"
   }
