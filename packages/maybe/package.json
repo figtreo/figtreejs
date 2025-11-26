@@ -1,6 +1,5 @@
 {
   "name": "@figtreejs/maybe",
-  "private": true,
   "type": "module",
   "version": "0.0.1-alpha.0",
   "exports": {

@@ -4,7 +4,7 @@
 /node_modules
 /.pnp
 .pnp.js
-dist
+apps/docs/dist
 **/*/node_modules/**/*
 
 # testing
