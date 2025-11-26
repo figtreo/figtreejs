@@ -1,8 +1,8 @@
 import { Axis, AxisBars, layoutClass } from "@figtreejs/core"
 import { useAppSelector } from "../../app/hooks"
-import { selectAxis } from "../settings/panels/axis/axisSlice"
+import { selectAxis } from "../Settings/panels/axis/axis-slice"
 import { getNumericalFormatter } from "./labels/label-utils"
-import { selectLayout } from "../settings/panels/layout/layoutSlice"
+import { selectLayout } from "../Settings/panels/layout/layout-slice"
 
 export default function AxisElement(props:any) {
 

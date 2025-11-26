@@ -1,10 +1,10 @@
 import { useAppSelector, useAppDispatch } from '../../../../app/hooks';
-import {  flipAnimate, selectLayout, setExpansion, setFisheye, setLayout, setPollard, setZoom } from './layoutSlice';
-import { SettingPanel } from '../PanelHeader';
+import {  flipAnimate, selectLayout, setExpansion, setFisheye, setLayout, setPollard, setZoom } from './layout-slice';
+import { SettingPanel } from '../panel-header';
 import './layout.css'
-import { RectangularOptions } from './rectangularOptions';
-import { PolarOptions } from './polarOptions';
-import { RadialOptions } from './radialOptions';
+import { RectangularOptions } from './rectangular-options';
+import { PolarOptions } from './polar-options';
+import { RadialOptions } from './radial-options';
 import rectTreeImage from '../../../../figtreeGraphics/rectangularTree.png'
 import polarTreeImage from '../../../../figtreeGraphics/polarTree.png'
 import radialTreeImage from '../../../../figtreeGraphics/radialTree.png'

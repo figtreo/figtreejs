@@ -3,7 +3,7 @@ import { Tree } from "./tree";
 import './treePanel.css'
 import { selectTree } from '../../app/hooks';
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { addScaleFromAnnotation } from "../settings/panels/colorScales/colourSlice";
+import { addScaleFromAnnotation } from "../Settings/panels/color/colour-slice";
 import { BaseAnnotationType } from "@figtreejs/core";
 export function TreePanel(){
   const tree = useAppSelector(selectTree);

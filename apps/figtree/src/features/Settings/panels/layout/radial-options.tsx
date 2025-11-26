@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from '../../../../app/hooks';
-import { selectLayout, setSpread} from './layoutSlice';
+import { selectLayout, setSpread} from './layout-slice';
 
 export function RadialOptions() {
     const {  spread } = useAppSelector(selectLayout);

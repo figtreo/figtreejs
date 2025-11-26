@@ -1,7 +1,7 @@
 import { useAppDispatch, useAppSelector } from "../../../../app/hooks";
-import { SettingPanel } from "../PanelHeader";
-import { selectColorableAttributes } from "../colorScales/colourSlice";
-import { flipActivated, selectTanglegram, setAlpha, setColor, setColorBy, setWidth } from "./tangleSlice";
+import { SettingPanel } from "../panel-header";
+import { selectColorableAttributes } from "../color/colour-slice";
+import { flipActivated, selectTanglegram, setAlpha, setColor, setColorBy, setWidth } from "./tangle-slice";
 const defaultOptions = ["Fixed","User selection",]
 
 

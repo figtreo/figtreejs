@@ -1,5 +1,5 @@
 import { getColorScale, useAppSelector } from "../../../app/hooks";
-import { selectLabelState } from "../../settings/panels/label/labelSlice";
+import { selectLabelState } from "../../Settings/panels/label/label-slice";
 import { type NodeRef, type Tree, BranchLabels, ImmutableTree, type BaubleTypes} from "@figtreejs/core";
 import { getTextFunction } from "./label-utils";
 import { COLOUR_ANNOTATION } from "../../../app/constants";

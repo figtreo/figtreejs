@@ -3,9 +3,9 @@ import { Labels } from "./panels/label/label";
 import { Layout } from "./panels/layout/layout";
 import {  Shapes } from "./panels/shapes/shape";
 import { Axis } from "./panels/axis/axis"
-import { ColourScales } from "./panels/colorScales/colourScale";
+import { ColourScales } from "./panels/color/colour-scale";
 import {  useAppSelector } from "../../app/hooks";
-import { selectColorableAttributes } from "./panels/colorScales/colourSlice";
+import { selectColorableAttributes } from "./panels/color/colour-slice";
 import { Title } from "./panels/title/title";
 
 

@@ -4,12 +4,12 @@ import { useAppSelector, useAppDispatch, getColorScale } from "../../app/hooks"
 import {
   selectAppearance,
   selectLineWidth,
-} from "../settings/panels/appearance/appearanceSlice"
+} from "../Settings/panels/appearance/appearance-slice"
 import {
   selectLayout,
   setPointOfInterest,
-} from "../settings/panels/layout/layoutSlice"
-import { selectLabelState } from "../settings/panels/label/labelSlice";
+} from "../Settings/panels/layout/layout-slice"
+import { selectLabelState } from "../Settings/panels/label/label-slice";
 
 import {
   FigTree,
@@ -40,16 +40,16 @@ import {
 } from "../../app/constants"
 import { selectTree } from "../../app/hooks"
 import { ActionCreators } from "redux-undo"
-import { addScaleFromAnnotation } from "../settings/panels/colorScales/colourSlice"
-import { selectTitle } from "../settings/panels/title/titleSlice"
+import { addScaleFromAnnotation } from "../Settings/panels/color/colour-slice"
+import { selectTitle } from "../Settings/panels/title/title-slice"
 import { saveSvg } from "../../app/utils"
-import { selectTanglegram } from "../settings/panels/tanglegram/tangleSlice"
+import { selectTanglegram } from "../Settings/panels/tanglegram/tangle-slice"
 import { setTree } from "./tree-slice"
 import { max } from "d3-array"
 import {  createLabelsComponent } from "./labels/create-label";
 import { BranchLabels } from "@figtreejs/core";
 import { NodeLabels } from "@figtreejs/core";
-import { selectShapeState } from "../settings/panels/shapes/shapeSlice";
+import { selectShapeState } from "../Settings/panels/shapes/shape-slice";
 import { createNodeComponent } from "./createNodes";
 
 const margins = { top: 80, bottom: 80, left: 50, right: 100 }

@@ -1,8 +1,8 @@
 import React from "react";
-import { labelActions, type labelTarget, selectLabelState } from "./labelSlice";
+import { labelActions, type labelTarget, selectLabelState } from "./label-slice";
 import { useAppDispatch, useAppSelector } from "../../../../app/hooks";
-import { SettingPanel } from "../PanelHeader";
-import { selectColorableAttributes } from "../colorScales/colourSlice";
+import { SettingPanel } from "../panel-header";
+import { selectColorableAttributes } from "../color/colour-slice";
 
 const defaultOptions = ["User selection","Node Heights","Branch lengths"]
 

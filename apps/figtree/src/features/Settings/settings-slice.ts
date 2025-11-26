@@ -1,12 +1,12 @@
-import layoutReducer from './panels/layout/layoutSlice';
-import appearanceReducer from './panels/appearance/appearanceSlice';
+import layoutReducer from './panels/layout/layout-slice';
+import appearanceReducer from './panels/appearance/appearance-slice';
 import { combineReducers } from '@reduxjs/toolkit';
-import timeScaleSlice from './panels/timeScale/timeScaleSlice';
-import { tipLabelReducer, nodeLabelReducer, branchLabelReducer } from './panels/label/labelSlice';
-import { nodeBackgroundReducer, tipBackgroundReducer, tipShapeReducer ,nodeShapeReducer} from './panels/shapes/shapeSlice';
-import axisReducer from './panels/axis/axisSlice'
-import titleReducer from './panels/title/titleSlice'
-import { tanglegramReducer } from './panels/tanglegram/tangleSlice';
+import timeScaleSlice from './panels/time/time-scale-slice';
+import { tipLabelReducer, nodeLabelReducer, branchLabelReducer } from './panels/label/label-slice';
+import { nodeBackgroundReducer, tipBackgroundReducer, tipShapeReducer ,nodeShapeReducer} from './panels/shapes/shape-slice';
+import axisReducer from './panels/axis/axis-slice'
+import titleReducer from './panels/title/title-slice'
+import { tanglegramReducer } from './panels/tanglegram/tangle-slice';
 
 const  settingsReducer = combineReducers({
     layout:layoutReducer,

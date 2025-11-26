@@ -1,7 +1,7 @@
 import { useAppDispatch, useAppSelector } from "../../../../app/hooks";
-import { flipActivated, selectAxis, setScale, setTicks, setTitle } from "./axisSlice";
-import { flipShowGrid, setFormat,setSigDigs, setLineWeight, flipReverseAxis, setOriginValue, setFontSize } from "./axisSlice"
-import { SettingPanel } from "../PanelHeader";
+import { flipActivated, selectAxis, setScale, setTicks, setTitle } from "./axis-slice";
+import { flipShowGrid, setFormat,setSigDigs, setLineWeight, flipReverseAxis, setOriginValue, setFontSize } from "./axis-slice"
+import { SettingPanel } from "../panel-header";
 
 export function Axis() {
 
