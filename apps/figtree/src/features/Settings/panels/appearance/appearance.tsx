@@ -1,8 +1,8 @@
 import { useAppSelector, useAppDispatch } from '../../../../app/hooks';
-import { selectAppearance, setColourBy, setLineWidth, setMinWidth, setWidthBy, setColour } from './appearanceSlice';
-import { SettingPanel } from '../PanelHeader';
+import { selectAppearance, setColourBy, setLineWidth, setMinWidth, setWidthBy, setColour } from './appearance-slice';
+import { SettingPanel } from '../panel-header';
 import { selectTree } from '../../../../app/hooks';
-import { selectColorableAttributes } from '../colorScales/colourSlice';
+import { selectColorableAttributes } from '../color/colour-slice';
 import { BaseAnnotationType } from '@figtreejs/core';
 const defaultOptions = ["Fixed","User selection"]
 

@@ -1,5 +1,5 @@
 import { getColorScale, useAppSelector } from "../../app/hooks";
-import { selectShapeState } from "../settings/panels/shapes/shapeSlice";
+import { selectShapeState } from "../Settings/panels/shapes/shape-slice";
 import {   CircleNodes, type NodeRef } from "@figtreejs/core";
 import { COLOUR_ANNOTATION } from "../../app/constants";
 import { RectangleNodes } from "@figtreejs/core";

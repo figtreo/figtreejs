@@ -1,6 +1,6 @@
 import { useAppSelector, useAppDispatch } from '../../../../app/hooks';
-import { SettingPanel } from '../PanelHeader';
-import { setScaleBy, setOffset, setScale, setRootAge, selectTimeScale } from './timeScaleSlice'
+import { SettingPanel } from '../panel-header';
+import { setScaleBy, setOffset, setScale, setRootAge, selectTimeScale } from './time-scale-slice'
 
 export function TimeScale() {
     const { scaleBy, offset, rootAge, scale } = useAppSelector(selectTimeScale);

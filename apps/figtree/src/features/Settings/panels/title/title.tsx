@@ -1,6 +1,6 @@
 import { useAppDispatch, useAppSelector } from "../../../../app/hooks";
-import { SettingPanel } from "../PanelHeader";
-import { flipActivated, selectTitle, setColor, setFontSize, setFontWeight, setText, setX, setY } from "./titleSlice";
+import { SettingPanel } from "../panel-header";
+import { flipActivated, selectTitle, setColor, setFontSize, setFontWeight, setText, setX, setY } from "./title-slice";
 
 export function Title(){
     const dispatch = useAppDispatch();

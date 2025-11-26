@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from '../../../../app/hooks';
-import { selectLayout, setRootAngle, setAngleRange, flipShowRoot, setRootLength, flipAlignTipLabels, flipInvert, setMinR } from './layoutSlice';
+import { selectLayout, setRootAngle, setAngleRange, flipShowRoot, setRootLength, flipAlignTipLabels, flipInvert, setMinR } from './layout-slice';
 
 const roundPI= 3.14;//inputs can't get to 0
 export function PolarOptions() {

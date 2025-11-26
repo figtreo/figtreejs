@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from '../../../../app/hooks';
-import {  selectLayout, setCurvature,  setRootLength, flipAlignTipLabels,  flipInvert } from './layoutSlice';
+import {  selectLayout, setCurvature,  setRootLength, flipAlignTipLabels,  flipInvert } from './layout-slice';
 
 export function RectangularOptions() {
     const { invert, curvature, rootLength, alignTipLabels } = useAppSelector(selectLayout);
