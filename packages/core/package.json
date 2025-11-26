@@ -1,6 +1,6 @@
 {
   "name": "@figtreejs/core",
-  "version": "0.0.1-alpha.0",
+  "version": "0.0.1-alpha.1",
   "description": "A react component library for phylogenetic visualization and app building",
   "repository": {
     "type": "git",
@@ -37,7 +37,7 @@
     ]
   },
   "dependencies": {
-    "@figtreejs/maybe": "0.0.1-alpha.0",
+    "@figtreejs/maybe": "0.0.1-alpha.1",
     "@react-spring/web": "^9.7.5",
     "abs-svg-path": "^0.1.1",
     "d3-array": "^3.2.4",

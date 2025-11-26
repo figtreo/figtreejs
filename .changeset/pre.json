@@ -11,6 +11,7 @@
     "@figtreejs/typescript-config": "0.0.0"
   },
   "changesets": [
+    "better-snails-beam",
     "eighty-knives-shave"
   ]
 }
