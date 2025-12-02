@@ -27,5 +27,5 @@ yarn-error.log*
 **/*/node_modules/*
 **/*/types/*
 .turbo
-
+.npmrc
 .observablehq/
