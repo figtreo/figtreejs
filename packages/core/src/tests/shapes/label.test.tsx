@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { BaseLabel } from "../../components/baubles/shapes/label";
-import { unNullify } from "../../utils";
+import { unNullify } from "../../utils/maybe";
 
 describe("BaseLabel", () => {
   test("renders an SVG text element that uses transform to position", () => {

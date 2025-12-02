@@ -1,6 +1,6 @@
 //TODO test immutable tree include tests that check nodes to roots update as well.
 
-import { notNull, u } from "../../../utils";
+import { notNull, u } from "../../../utils/maybe";
 import { ImmutableTree } from "./immutable-tree";
 import { describe, it, expect } from "vitest";
 

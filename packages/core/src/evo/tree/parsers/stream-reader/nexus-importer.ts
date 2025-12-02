@@ -1,4 +1,4 @@
-import { notNull } from "../../../../utils";
+import { notNull } from "../../../../utils/maybe";
 import type { ImmutableTree } from "../../normalized-tree";
 import { TaxonSet } from "../../taxa/taxon";
 

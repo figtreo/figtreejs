@@ -5,7 +5,7 @@ import { withClades } from "../../hoc/with-clades";
 
 import { BasePath, BaseRectangle } from "../shapes";
 import type { PolarVertex, simplePolarVertex } from "../../../layouts/types";
-import { notNull } from "../../../utils";
+import { notNull } from "../../../utils/maybe";
 import { ScaleContext } from "../../../context/scale-context";
 import { layoutContext } from "../../../context/layout-context";
 import { animatedContext } from "../../../context/aminated-context";

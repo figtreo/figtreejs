@@ -3,7 +3,7 @@ import type { ImmutableTree, NodeRef } from "../../evo";
 import { postOrderIterator } from "../../evo";
 import type { NodeLabelType, FunctionalVertex } from "../types";
 import { layoutClass } from "../types";
-import { unNullify } from "../../utils";
+import { unNullify } from "../../utils/maybe";
 
 export function baseLayout(lc: layoutClass) {
   function layout(tree: ImmutableTree): (node: NodeRef) => FunctionalVertex {

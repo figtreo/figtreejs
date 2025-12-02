@@ -28,7 +28,7 @@ import {
   type Undefinable,
   UnwrapErr,
   type Maybe,
-} from "@figtreejs/maybe/maybe";
+} from "../../../utils";
 import {
   maybeGetAnnotation,
   maybeGetNode,
@@ -37,7 +37,7 @@ import {
   maybeGetTaxon,
   maybeGetTaxonFromNode,
 } from "./immutable-tree-helpers";
-import { notNull, unNullify } from "../../../utils";
+import { notNull, unNullify } from "../../../utils/maybe";
 import { v4 as uuidv4 } from "uuid";
 
 export type nodeIndex = string | number | Taxon;

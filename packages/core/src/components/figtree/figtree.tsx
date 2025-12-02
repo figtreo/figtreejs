@@ -4,7 +4,7 @@ import { defaultInternalLayoutOptions, rectangularLayout } from "../../layouts";
 import { ImmutableTree } from "../../evo/tree";
 import { getScale } from "../../store/store";
 import { extent } from "d3-array";
-import { unNullify } from "../../utils";
+import { unNullify } from "../../utils/maybe";
 import { Bauble } from "../baubles/bauble";
 
 import { ScaleContext } from "../../context/scale-context";

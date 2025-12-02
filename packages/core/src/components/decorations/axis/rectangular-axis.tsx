@@ -9,7 +9,7 @@ import type {
 } from "./axis-types";
 import { defaultAxisProps } from "./axis-types";
 import { makeAxisScale } from "./polar-axis";
-import { unNullify } from "../../../utils";
+import { unNullify } from "../../../utils/maybe";
 import { DimensionContext } from "../../../context/dimension-context";
 import { ScaleContext } from "../../../context/scale-context";
 import RectangleAxisBars from "./rectangular-axis-bars";

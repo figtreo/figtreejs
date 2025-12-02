@@ -3,7 +3,7 @@ import { TaxonSet } from "../taxa/taxon";
 import type { NodeRef } from "../tree-types";
 import { ImmutableTree } from "../normalized-tree/immutable-tree";
 import { parseAnnotation } from "./annotation-parser";
-import { notNull, unNullify } from "../../../utils";
+import { notNull, unNullify } from "../../../utils/maybe";
 
 export class NewickCharacterParser {
   done: boolean;

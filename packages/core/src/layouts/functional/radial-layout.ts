@@ -3,7 +3,7 @@
 import type { ImmutableTree, NodeRef } from "../../evo";
 import { preOrderIterator, tipIterator } from "../../evo";
 import type { NodeLabelType } from "../types";
-import { notNull } from "../../utils";
+import { notNull } from "../../utils/maybe";
 import type { FunctionalVertex } from "../types";
 import { layoutClass } from "../types";
 

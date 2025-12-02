@@ -6,8 +6,8 @@
  * those can't be called by immer proxies.
  */
 
-import type { Maybe, Undefinable } from "@figtreejs/maybe/maybe";
-import { MaybeType, Nothing, Some } from "@figtreejs/maybe/maybe";
+import type { Maybe, Undefinable } from "../../../utils";
+import { Nothing, Some, MaybeType } from "../../../utils";
 import type { Annotation, NodeRef } from "../tree-types";
 import type { ImmutableTree, nodeIndex, Node } from "./immutable-tree";
 import type { Taxon } from "../taxa";

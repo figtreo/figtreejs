@@ -1,5 +1,5 @@
-import type { Maybe, Undefinable } from "@figtreejs/maybe/maybe";
-import { Nothing, Some, MaybeType } from "@figtreejs/maybe/maybe";
+import type { Maybe, Undefinable } from "../../../utils";
+import { Nothing, Some, MaybeType } from "../../../utils";
 import type { Taxon, TaxonSetData } from "./taxon";
 
 export function maybeGetNameFromIndex(

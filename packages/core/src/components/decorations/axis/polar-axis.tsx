@@ -7,7 +7,7 @@ import { defaultAxisProps } from "./axis-types";
 
 import { normalizeAngle } from "../../../store/polar-scale";
 import type { dimensionType } from "../../figtree/figtree-types";
-import { unNullify } from "../../../utils";
+import { unNullify } from "../../../utils/maybe";
 import { DimensionContext } from "../../../context/dimension-context";
 import { ScaleContext } from "../../../context/scale-context";
 import PolarAxisBars from "./polar-axis-bars";

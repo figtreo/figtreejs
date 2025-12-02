@@ -8,7 +8,7 @@ import { layoutClass } from "../../layouts";
 import { defaultNodeLabelData } from "../../store/store";
 import type { PolarVertex } from "../../layouts/types";
 import { textSafeDegrees } from "../../store/polar-scale";
-import { unNullify } from "../../utils";
+import { unNullify } from "../../utils/maybe";
 
 //The goal here is now to take a shape components that accepts Attrs: number | string , x/y
 // and return a component that takes a node / layout/ scale and attrs:number|string | function

@@ -3,7 +3,7 @@ import { ImmutableTree } from "../../evo";
 import { FigTree } from "../../components";
 import { polarLayout, rectangularLayout } from "../../layouts";
 
-import { u } from "../../utils";
+import { u } from "../../utils/maybe";
 import { Branches, HighlightClades } from "../../bauble-makers/makers";
 
 const tree = ImmutableTree.fromNewick("((A:1,B:1):2,C:1);");

@@ -1,4 +1,4 @@
-import { notNull } from "../../../../utils";
+import { notNull } from "../../../../utils/maybe";
 
 export enum STATUS {
   PARSING = "parsing",

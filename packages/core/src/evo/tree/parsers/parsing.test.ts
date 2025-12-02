@@ -1,4 +1,4 @@
-import { u } from "../../../utils";
+import { u } from "../../../utils/maybe";
 import { ImmutableTree } from "../normalized-tree/immutable-tree";
 import { processAnnotationValue } from "./annotation-parser";
 import { describe, it, expect } from "vitest";

@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { ImmutableTree } from "../../evo";
 import { rectangularLayout } from "../../layouts";
-import { u } from "../../utils";
+import { u } from "../../utils/maybe";
 
 describe("Test rectangular layout", () => {
   it("check x and y on root", function () {

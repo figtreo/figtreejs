@@ -22,7 +22,7 @@ import type {
 } from "./makers";
 import { mapAttrsToProps, mapInteractionsToProps } from "./utils";
 import type { Clade } from "../components/hoc/with-clades";
-import { notNull } from "../utils";
+import { notNull } from "../utils/maybe";
 
 export type InternalBaubleOptions =
   | InternalNodeOptions
