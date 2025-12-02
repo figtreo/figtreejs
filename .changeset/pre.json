@@ -1,0 +1,13 @@
+{
+  "mode": "pre",
+  "tag": "beta",
+  "initialVersions": {
+    "@figtreejs/examples": "0.0.0",
+    "@figtreejs/figtree": "0.0.0",
+    "@figtreejs/browser": "0.0.0",
+    "@figtreejs/core": "0.0.0",
+    "@figtreejs/eslint-config": "0.0.0",
+    "@figtreejs/typescript-config": "0.0.0"
+  },
+  "changesets": []
+}
