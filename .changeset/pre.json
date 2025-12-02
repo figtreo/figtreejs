@@ -9,5 +9,7 @@
     "@figtreejs/eslint-config": "0.0.0",
     "@figtreejs/typescript-config": "0.0.0"
   },
-  "changesets": []
+  "changesets": [
+    "sixty-boxes-occur"
+  ]
 }

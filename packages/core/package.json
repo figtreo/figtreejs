@@ -1,6 +1,6 @@
 {
   "name": "@figtreejs/core",
-  "version": "0.0.0",
+  "version": "0.0.1-beta.0",
   "description": "A react component library for phylogenetic visualization and app building",
   "repository": {
     "type": "git",

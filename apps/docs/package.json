@@ -2,7 +2,7 @@
   "name": "@figtreejs/examples",
   "private": true,
   "type": "module",
-   "version": "0.0.0",
+  "version": "0.0.1-beta.0",
   "scripts": {
     "build": "observable build",
     "clean": "rimraf src/.observablehq/cache",
@@ -11,7 +11,7 @@
     "observable": "observable"
   },
   "dependencies": {
-    "@figtreejs/browser": "*",
+    "@figtreejs/browser": "0.0.1-beta.0",
     "@observablehq/framework": "^1.13.2",
     "d3-dsv": "^3.0.1",
     "d3-time-format": "^4.1.0"

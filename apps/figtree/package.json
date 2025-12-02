@@ -1,7 +1,7 @@
 {
   "name": "@figtreejs/figtree",
-  "version": "0.0.0",
-  "private":true,
+  "version": "0.0.1-beta.0",
+  "private": true,
   "repository": {
     "type": "git",
     "url": "https://github.com/figtreo/figtreejs.git"
@@ -23,7 +23,7 @@
     "d3-scale-chromatic": "^3.1.0",
     "d3-selection": "^3.0.0",
     "d3-time-format": "^4.1.0",
-    "@figtreejs/core":"*",
+    "@figtreejs/core": "0.0.1-beta.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-redux": "^8.1.3",
