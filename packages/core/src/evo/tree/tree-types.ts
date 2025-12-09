@@ -1,9 +1,17 @@
 import type { Taxon, TaxonSet } from "./taxa/taxon";
 
+/**
+ * The base interface for a node.
+ * Information about the node will be provided by the tree.
+ */
 export interface NodeRef {
   number: number;
   _id: string;
 }
+/**
+ * Types of annotations that can exist on nodes in a tree.
+ * Each type corresponds to a value type.
+ */
 export enum BaseAnnotationType {
   DISCRETE = "DISCRETE", // string  could also be stringy numbers
   BOOLEAN = "BOOLEAN", // true false
@@ -17,6 +25,8 @@ export enum BaseAnnotationType {
 }
 export type MarkovJumpValue = { from: string; to: string; time?: number };
 
+// A helper type function that returns the value type of an annotation given its
+// figtree type.
 export type ValueOf<T extends BaseAnnotationType> =
   T extends BaseAnnotationType.DISCRETE
     ? string
@@ -34,6 +44,9 @@ export type ValueOf<T extends BaseAnnotationType> =
                 ? Record<string, number>
                 : never;
 
+// A helper function that returns the raw value type that corresponds to a figtreejs annotation type.
+// This generally is the same as the value type, but some annotations such as markov jumps are transformed
+// between being read from a nexus file and stored in the tree.
 export type RawValueOf<T extends BaseAnnotationType> =
   T extends BaseAnnotationType.DISCRETE
     ? string
@@ -51,6 +64,10 @@ export type RawValueOf<T extends BaseAnnotationType> =
                 ? Record<string, number>
                 : never;
 
+/**
+ *  A helper type function that returns the domain of an annotation based on the
+ * type of an annotation.
+ */
 export type DomainOf<T extends BaseAnnotationType> =
   T extends BaseAnnotationType.DISCRETE
     ? string[]
@@ -79,25 +96,42 @@ export type Annotation = {
   [K in BaseAnnotationType]: AbstractAnnotation<K>;
 }[BaseAnnotationType];
 
+/**
+ * The type of summary information that can be provided by a tree.
+ */
 export interface AbstractAnnotationSummary<T extends BaseAnnotationType> {
   id: string;
   type: T;
   domain: DomainOf<T>;
 }
 
+/**
+ * unions across all types of annotations.
+ */
 export type AnnotationDomain = {
   [K in BaseAnnotationType]: DomainOf<K>;
 }[BaseAnnotationType];
+
 export type AnnotationValue = {
   [K in BaseAnnotationType]: ValueOf<K>;
 }[BaseAnnotationType];
+
 export type AnnotationSummary = {
   [K in BaseAnnotationType]: AbstractAnnotationSummary<K>;
 }[BaseAnnotationType];
+
 export type RawAnnotationValue = {
   [K in BaseAnnotationType]: RawValueOf<K>;
 }[BaseAnnotationType];
 
+/**
+ * A object for the parsing options available for importing a newick string.
+ * dateFormat : string if provided with date prefix the data will be parsed from the taxon label and stored in an annotation called 'date'
+ * datePrefix : string The character immediately preceding the date assuming the date is at the end of the taxon label
+ * labelName : If there are node labels they will be parsed as annotations and stored with this annotation name
+ * tipNameMap : If taxon are present as number or some other encoding this map will be used to insert the full taxon name.
+ * taxonSet : If provided this taxon set will be used to link taxa across trees.
+ */
 export interface newickParsingOptions {
   dateFormat?: string;
   datePrefix?: string;
