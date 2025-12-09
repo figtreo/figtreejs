@@ -1,12 +1,23 @@
 import { MaybeType } from "../../../utils";
 import { maybeGetNameFromIndex, maybeGetTaxonByName } from "./helper-functions";
 
+/**
+ * A interface for taxon.
+ * There should only be one taxon per individual sampled.
+ * The taxon is meant to be synonymous with the individual and may be shared across multiple trees.
+ */
 export interface Taxon {
   name: string;
   number: number;
   annotations: { [annotation: string]: string | string[] | number | number[] };
 }
 
+/**
+ * An internal helper function for constructing a new taxon.
+ * @param name - taxon name
+ * @param number - taxon number
+ * @returns
+ */
 function newTaxon(name: string, number: number): Taxon {
   return {
     name,
@@ -15,19 +26,47 @@ function newTaxon(name: string, number: number): Taxon {
   };
 }
 
+/**
+ * An interface for a taxon set - a group of taxa in a tree.
+ */
 export interface TaxonSetInterface {
+  /**
+   * Add a taxon the the set
+   * @param name - Add a new taxon with this name
+   */
   addTaxon(name: string): TaxonSetInterface;
-  getTaxon(id: number): Taxon | undefined;
+  /**
+   * Get a taxon by it's number
+   * @param id -taxon number
+   */
+  getTaxon(id: number): Taxon | undefined; // remove this undefined?
+  /**
+   * Get a taxon object by it's name.
+   * @param name -the taxon name
+   */
   getTaxonByName(name: string): Taxon;
+  /**
+   * Return the number of taxa in the set.
+   */
   getTaxonCount(): number;
+  /**
+   * Lock the taxa set. No taxa can be added or removed at this point. The population is fixed.
+   */
   lockTaxa(): TaxonSetInterface;
 }
 
+/**
+ * The interface for a taxon set internal data structure.
+ */
 export interface TaxonSetData {
   allNames: string[];
   byName: { [taxon: string]: Taxon };
   finalized: boolean;
 }
+
+/**
+ * A concrete implementation of the taxonset interface
+ */
 export class TaxonSet implements TaxonSetInterface {
   _data: TaxonSetData;
   constructor(taxonSetData?: TaxonSetData) {
