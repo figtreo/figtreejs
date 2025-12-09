@@ -5,6 +5,10 @@ import { TaxonSet } from "../../taxa/taxon";
 import { NewickCharacterParser } from "../newick-character-parser";
 import { newickDeliminators, nexusTokenizer } from "./nexus-tokenizer";
 
+/**
+ * A nexus importing class that parses a stream and into an asynchronous
+ * iterator over trees.
+ */
 export class NexusImporter {
   reader: ReadableStreamDefaultReader<string>;
   taxonSet: TaxonSet;
@@ -27,7 +31,10 @@ export class NexusImporter {
     this.currentBlock = undefined;
     this.options = options;
   }
-
+  /**
+   * The main public api.
+   * an asynchronous iterator over the trees provided by the stream
+   */
   async *getTrees(): AsyncIterableIterator<ImmutableTree> {
     while (this.currentBlock !== "trees") {
       await this.parseNextBlock();

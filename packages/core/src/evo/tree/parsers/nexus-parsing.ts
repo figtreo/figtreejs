@@ -1,12 +1,17 @@
 /* eslint-disable */
 import { ImmutableTree } from "../normalized-tree/immutable-tree";
+import { newickParsingOptions } from "../tree-types";
 import { parseNewick } from "./newick-parsing";
 
-//ONLY parses the first tree
+/**
+ * An internal helper function that parses the first tree in a nexus string
+ * @param nexus - The nexus string to be parsed.
+ * @param options - newickParsingOptions - parseAnnotations is set to true
+ * @returns
+ */
 export function parseNexus(
-  _tree: ImmutableTree,
   nexus: string,
-  options = {},
+  options: newickParsingOptions = {},
 ): ImmutableTree {
   // odd parts ensure we're not in a taxon label
   //TODO make this parsing more robust

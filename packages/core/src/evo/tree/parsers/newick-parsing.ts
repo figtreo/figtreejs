@@ -2,6 +2,12 @@ import { NewickCharacterParser } from "./newick-character-parser";
 import type { ImmutableTree, newickParsingOptions } from "..";
 import { TaxonSet } from "..";
 
+/**
+ * An internal function to parse a newick string.
+ * @param newick
+ * @param options
+ * @returns
+ */
 export function parseNewick(
   newick: string,
   options: newickParsingOptions = {},
