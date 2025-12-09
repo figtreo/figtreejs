@@ -4,6 +4,10 @@ import type { NodeRef } from "../tree-types";
 import { ImmutableTree } from "../normalized-tree/immutable-tree";
 import { parseAnnotation } from "./annotation-parser";
 import { notNull, unNullify } from "../../../utils/maybe";
+/**
+ * A class that contains the logic for parsing newick strings.
+ * It the tokens of the string should be split as in
+ *   /\s*('[^']+'|"[^"]+"|\[&[^[]+]|,|:|\)|\(|;)\s\*/
 
 export class NewickCharacterParser {
   done: boolean;
@@ -52,6 +56,10 @@ export class NewickCharacterParser {
     return this.tree;
   }
 
+  /**
+   * Parse the next token
+   * @param t token
+   */
   parseCharacter(t: string): void {
     if (this.done) {
       throw new Error("Parsing is done. We have seen a ';'");

@@ -130,6 +130,12 @@ export function parseAnnotation(annotationString: string): ParsedAnnotationRaw {
   return annotations;
 }
 
+/**
+ * Process an annotation value and return the possibly transformed value and
+ * figtreejs annotation type
+ * @param values RawAnnotationValue
+ * @returns ClassifiedValue {type: BaseAnnotationType, value: ValueOf<BaseAnnotationType>};
+ */
 export function processAnnotationValue(
   values: RawAnnotationValue,
 ): ClassifiedValue {

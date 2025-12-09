@@ -7,6 +7,11 @@ export enum STATUS {
   IN_COMMENT = "in comment",
 }
 
+/**
+ * A helper function that converts an incoming stream into tokens in
+ * a nexus file.
+ * @returns A pipe string tokenizer for use in a transform stream.
+ */
 export function nexusTokenizer() {
   return {
     lastChunk: "",
