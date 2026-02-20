@@ -1,5 +1,11 @@
 # @figtreejs/core
 
+## 0.0.1-beta.1
+
+### Patch Changes
+
+- 6279d10: Rotates radial tip labels properly to match branch angle
+
 ## 0.0.1-beta.0
 
 ### Patch Changes
