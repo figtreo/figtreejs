@@ -64,21 +64,20 @@ export function radialLayout(
       dx = Math.cos(branchAngle);
       dy = Math.sin(branchAngle);
     }
+
+    const nTheta = normalizeAngle(branchAngle);
     const vertex = {
       x,
       y,
       layoutClass: layoutClass.Radial,
-      theta: branchAngle,
+      theta: nTheta,
       nodeLabel: {
         dxFactor: dx,
         dyFactor: dy,
         alignmentBaseline: "middle",
         textAnchor:
-          normalizeAngle(branchAngle) > Math.PI / 2 &&
-          normalizeAngle(branchAngle) < (3 * Math.PI) / 2
-            ? "end"
-            : "start",
-        rotation: 0, // textSafeDegrees(normalizeAngle(branchAngle))
+          nTheta > Math.PI / 2 && nTheta < (3 * Math.PI) / 2 ? "end" : " start",
+        rotation: textSafeDegrees(nTheta) * 2, // why is this magic 2 needed?
       } as NodeLabelType,
     };
 
@@ -135,9 +134,9 @@ export function textSafeDegrees(radians: number) {
   //trial and error  - must be a better way
   if (d > 90 && d < 270) {
     return (d - 180) / 2;
-  } else if (d > 0 && d < 88) {
+  } else if (d > 0 && d < 90) {
     return d / 2;
-  } else if (d < 360 && d > 272) {
+  } else if (d < 360 && d > 270) {
     return (360 + d) / 2;
   } else {
     return d;

@@ -1,271 +1,312 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>ft Demo</title>
     <!-- <script src="./js/d3.js" charset="utf-8"></script> -->
     <!--<script src="https://d3js.org/d3.v5.min.js" charset="utf-8"></script>-->
     <style>
-        text {
-            font-family: "helvetica-neue", "helvetica", "sans-serif";
-            font-size: 14pt;
-            font-weight: 300;
-        }
+      text {
+        font-family: "helvetica-neue", "helvetica", "sans-serif";
+        font-size: 14pt;
+        font-weight: 300;
+      }
 
-        .branch {
-            fill: none;
-            stroke: #541753;
-            stroke-width: 2px;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }
+      .branch {
+        fill: none;
+        stroke: #541753;
+        stroke-width: 2px;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
 
-        .branch.hovered {
-            stroke-width: 4px;
-        }
+      .branch.hovered {
+        stroke-width: 4px;
+      }
 
-        .external-node .node-shape:not(.rough) {
-            fill: #22b680;
-            stroke: rgb(255, 255, 255);
-            stroke-width: 1;
-        }
+      .external-node .node-shape:not(.rough) {
+        fill: #22b680;
+        stroke: rgb(255, 255, 255);
+        stroke-width: 1;
+      }
 
-        .external-node .node-shape.hovered {
-            stroke: rgb(0, 0, 0);
-            /*stroke-width: 1;*/
-        }
+      .external-node .node-shape.hovered {
+        stroke: rgb(0, 0, 0);
+        /*stroke-width: 1;*/
+      }
 
-        .external-node .node-shape.unselected {
-            fill: #22b680;
-            /*stroke: rgb(255, 255, 255);*/
-        }
+      .external-node .node-shape.unselected {
+        fill: #22b680;
+        /*stroke: rgb(255, 255, 255);*/
+      }
 
-        .external-node .node-shape.selected {
-            fill: #edb23b;
-            /*stroke: rgb(0,0,0);*/
-        }
+      .external-node .node-shape.selected {
+        fill: #edb23b;
+        /*stroke: rgb(0,0,0);*/
+      }
 
-        .internal-node .node-shape {
-            fill: #29c5ef;
-            /*stroke: rgb(255, 255, 255);*/
-            /*stroke-width: 1;*/
-        }
+      .internal-node .node-shape {
+        fill: #29c5ef;
+        /*stroke: rgb(255, 255, 255);*/
+        /*stroke-width: 1;*/
+      }
 
-        .internal-node .node-shape.hovered {
-            stroke: rgb(0, 0, 0);
-        }
+      .internal-node .node-shape.hovered {
+        stroke: rgb(0, 0, 0);
+      }
 
+      #root .node-shape {
+        fill: #e31e58;
+        /*stroke: rgb(255, 255, 255);*/
+        /*stroke-width: 1;*/
+      }
 
-        #root .node-shape {
-            fill: #e31e58;
-            /*stroke: rgb(255, 255, 255);*/
-            /*stroke-width: 1;*/
-        }
+      .node-background {
+        fill: rgb(255, 255, 255);
+        /*stroke: rgb(255, 255, 255);*/
+        /*stroke-width: 1;*/
+      }
 
-        .node-background {
-            fill: rgb(255, 255, 255);
-            /*stroke: rgb(255, 255, 255);*/
-            /*stroke-width: 1;*/
-        }
+      .node-label {
+        font-family: "helvetica-neue", "helvetica", "sans-serif";
+        /* font-size: 14pt; */
+        font-weight: 300;
+      }
 
-        .node-label {
-            font-family: "helvetica-neue", "helvetica", "sans-serif";
-            /* font-size: 14pt; */
-            font-weight: 300;
-        }
+      .trend-line {
+        stroke: rgb(0, 0, 0);
+        stroke-width: 2px;
+        stroke-linecap: round;
+      }
 
-        .trend-line {
-            stroke: rgb(0, 0, 0);
-            stroke-width: 2px;
-            stroke-linecap: round;
-        }
+      .axis text {
+        font-family: "helvetica-neue", "helvetica", "sans-serif";
+        font-size: 12pt;
+        font-weight: 300;
+      }
 
-        .axis text {
-            font-family: "helvetica-neue", "helvetica", "sans-serif";
-            font-size: 12pt;
-            font-weight: 300;
-        }
+      .axis-label text {
+        font-family: "helvetica-neue", "helvetica", "sans-serif";
+        font-size: 12pt;
+        font-weight: bold;
+      }
 
-        .axis-label text {
-            font-family: "helvetica-neue", "helvetica", "sans-serif";
-            font-size: 12pt;
-            font-weight: bold;
-        }
+      .node-label.support {
+        font-size: 10pt;
+      }
 
-        .node-label.support {
-            font-size: 10pt;
-        }
+      .branch-label.length {
+        display: none;
+        font-size: 8pt;
+      }
 
-        .branch-label.length {
-            display: none;
-            font-size: 8pt;
-        }
-
-        #tooltip {
-            background: #F6EECA;
-            border: 1px solid #005C68;
-            color: #005C68;
-            border-radius: 5px;
-            padding: 5px;
-            font-family: "helvetica-neue", "helvetica", "sans-serif";
-            font-size: 12pt;
-            font-weight: 300;
-        }
+      #tooltip {
+        background: #f6eeca;
+        border: 1px solid #005c68;
+        color: #005c68;
+        border-radius: 5px;
+        padding: 5px;
+        font-family: "helvetica-neue", "helvetica", "sans-serif";
+        font-size: 12pt;
+        font-weight: 300;
+      }
     </style>
-</head>
+  </head>
 
-<body>
-    <div id="tooltip" display="none" style="position: absolute; display: none;"></div>
+  <body>
+    <div
+      id="tooltip"
+      display="none"
+      style="position: absolute; display: none"
+    ></div>
 
     <div>
-        <figure>
-            <svg id="phylogram_1a" width="800" height="600"></svg>
-            <!-- <svg id="phylogram_1b" width="600" height="500"></svg> -->
+      <figure>
+        <svg id="phylogram_1a" width="800" height="600"></svg>
+        <!-- <svg id="phylogram_1b" width="600" height="500"></svg> -->
+      </figure>
+      <button id="sort_up_button">Sort ascending</button>
+      <button id="sort_down_button">Sort descending</button>
+      <button id="rectangular_button">Draw rectangular</button>
+      <button id="triangular_button">Draw triangular</button>
+      <button id="curve_button">Draw curvey</button>
 
-        </figure>
-        <button id="sort_up_button">Sort ascending</button>
-        <button id="sort_down_button">Sort descending</button>
-        <button id="rectangular_button">Draw rectangular</button>
-        <button id="triangular_button">Draw triangular</button>
-        <button id="curve_button">Draw curvey</button>
-
-
-        <button id="rectangularLayout_button"> Rectangular Layout</button>
-        <button id="circularLayout_button">Polar Layout</button>
-        <button id="radialLayout_button">Radial Layout</button>
+      <button id="rectangularLayout_button">Rectangular Layout</button>
+      <button id="circularLayout_button">Polar Layout</button>
+      <button id="radialLayout_button">Radial Layout</button>
     </div>
 
     <script type="module">
+      import { ImmutableTree, ft } from "./dist/index.mjs";
+      const newickString =
+        "((((((virus1:0.1,virus2:0.12)0.95:0.08,(virus3:0.011,virus4:0.0087)1.0:0.15)0.65:0.03,virus5:0.21)1.0:0.2,(virus6:0.45,virus7:0.4)0.51:0.02)1.0:0.1,virus8:0.4)1.0:0.1,(virus9:0.04,virus10:0.03)1.0:0.6);";
+      const newickString2 =
+        "((((((virus3:0.011,virus4:0.0087)1.0:0.15)0.65:0.03,virus5:0.21)1.0:0.2,(virus6:0.45,virus7:0.4)0.51:0.02)1.0:0.1,virus8:0.4)1.0:0.1,(virus9:0.04,virus10:0.03)1.0:0.6);";
 
-        import { ImmutableTree, ft } from "./dist/index.mjs"
-        const newickString =
-            '((((((virus1:0.1,virus2:0.12)0.95:0.08,(virus3:0.011,virus4:0.0087)1.0:0.15)0.65:0.03,virus5:0.21)1.0:0.2,(virus6:0.45,virus7:0.4)0.51:0.02)1.0:0.1,virus8:0.4)1.0:0.1,(virus9:0.04,virus10:0.03)1.0:0.6);';
-        const newickString2 =
-            '((((((virus3:0.011,virus4:0.0087)1.0:0.15)0.65:0.03,virus5:0.21)1.0:0.2,(virus6:0.45,virus7:0.4)0.51:0.02)1.0:0.1,virus8:0.4)1.0:0.1,(virus9:0.04,virus10:0.03)1.0:0.6);';
+      let tree = ImmutableTree.fromNewick(newickString, {
+        labelName: "probability",
+      });
+      let tree2 = ImmutableTree.fromNewick(newickString2, {
+        labelName: "probability",
+      });
 
-        let tree = ImmutableTree.fromNewick(newickString, { labelName: 'probability' })
-        let tree2 = ImmutableTree.fromNewick(newickString2, { labelName: 'probability' })
+      const virus1Node = tree.getNode("virus1");
+      const probability = tree.getAnnotation(
+        tree.getParent(virus1Node),
+        "probability",
+      ); // tree.annotateNode(tree.root,{root:true})
+      const treeSVG = document.getElementById("phylogram_1a");
+      const treeSVG2 = document.getElementById("phylogram_1b");
 
-        const virus1Node = tree.getNode("virus1");
-        const probability = tree.getAnnotation(tree.getParent(virus1Node), "probability");    // tree.annotateNode(tree.root,{root:true})
-        const treeSVG = document.getElementById('phylogram_1a');
-        const treeSVG2 = document.getElementById('phylogram_1b');
-
-        const { width, height } = treeSVG.getBoundingClientRect();
-        const margins = { top: 70, right: 70, bottom: 70, left: 70 }
-        let curvature = 0;
-        let layout = ft.rectangularLayout
-        const  figureOptions =()=>       {
-            return {
-            svg: treeSVG,
-            tree: tree,
-            layout:layout,
-            width, height, //TODO get width and height if not supplied
-            margins,
-            animated:true,
-            baubles: [
+      const { width, height } = treeSVG.getBoundingClientRect();
+      const margins = { top: 70, right: 70, bottom: 70, left: 70 };
+      let curvature = 0;
+      let layout = ft.rectangularLayout;
+      const figureOptions = () => {
+        return {
+          svg: treeSVG,
+          tree: tree,
+          layout: layout,
+          width,
+          height, //TODO get width and height if not supplied
+          margins,
+          animated: true,
+          baubles: [
             // ft.Axis({bars:{}}),
-            ft.Branches({ attrs: { stroke: "black", strokeWidth: 2, cursor:"pointer"}, curvature:curvature,
-             interactions:{onClick:()=>console.log("clicked"), onMouseOver:()=>console.log("enter"), onMouseLeave:()=>console.log("leave")}}),
-            ft.NodeLabels({filter:(n)=>tree.isExternal(n), attrs: { fill: "black", fontSize: 12, fontWeight: 300 }, text: (n) => tree.getTaxon(n).name,aligned:true  }),
+            ft.Branches({
+              attrs: { stroke: "black", strokeWidth: 2, cursor: "pointer" },
+              curvature: curvature,
+              interactions: {
+                onClick: () => console.log("clicked"),
+                onMouseOver: () => console.log("enter"),
+                onMouseLeave: () => console.log("leave"),
+              },
+            }),
+            ft.NodeLabels({
+              filter: (n) => tree.isExternal(n),
+              attrs: { fill: "black", fontSize: 12, fontWeight: 300 },
+              text: (n) => tree.getTaxon(n).name,
+              aligned: false,
+            }),
             ft.CircleNodes({ attrs: { r: 7, fill: "#005C68" } }),
-            ft.CircleNodes({ attrs: { r: 5, fill: (n) => tree.getChildCount(n) > 0 ? tree.isRoot(n) ? "#e31e58" : "#29c5ef" : "#22b680" , cursor:"pointer"},interactions:{onClick:(n)=>console.log(n)}}),
-           // ft.BranchLabels({ attrs: { fill: "black", fontSize: 8, fontWeight: 300 }, text: (n) => tree.getLength(n) }),
-            ],
-            opts: {} // todo remove the need for this empty options
+            ft.CircleNodes({
+              attrs: {
+                r: 5,
+                fill: (n) =>
+                  tree.getChildCount(n) > 0
+                    ? tree.isRoot(n)
+                      ? "#e31e58"
+                      : "#29c5ef"
+                    : "#22b680",
+                cursor: "pointer",
+              },
+              interactions: { onClick: (n) => console.log(n) },
+            }),
+            // ft.BranchLabels({ attrs: { fill: "black", fontSize: 8, fontWeight: 300 }, text: (n) => tree.getLength(n) }),
+          ],
+          opts: {}, // todo remove the need for this empty options
+        };
+      };
 
-        }
-    }
-
-    const  figureOptions2 =()=>       {
-            return {
-            svg: treeSVG2,
-            tree: tree2,
-            layout:layout,
-            width, height, //TODO get width and height if not supplied
-            margins,
-            animated:true,
-            baubles: [
+      const figureOptions2 = () => {
+        return {
+          svg: treeSVG2,
+          tree: tree2,
+          layout: layout,
+          width,
+          height, //TODO get width and height if not supplied
+          margins,
+          animated: true,
+          baubles: [
             // ft.Axis({bars:{}}),
             // ft.Branches({ attrs: { stroke: "black", strokeWidth: 2, cursor:"pointer"}, curvature:curvature,
             //  interactions:{onClick:()=>console.log("clicked"), onMouseOver:()=>console.log("enter"), onMouseLeave:()=>console.log("leave")}}),
             // ft.NodeLabels({filter:(n)=>tree2.isExternal(n), attrs: { fill: "black", fontSize: 12, fontWeight: 300 }, text: (n) => tree2.getTaxon(n),aligned:true  }),
             // ft.CircleNodes({ attrs: { r: 7, fill: (n) => tree2.getChildCount(n) > "#005C68" } }),
-            ft.CircleNodes({ attrs: { r: 5, fill: (n) => tree2.getChildCount(n) > 0 ? tree2.isRoot(n) ? "#e31e58" : "#29c5ef" : "#22b680" , cursor:"pointer"},interactions:{onClick:(n)=>console.log(n)}}),
+            ft.CircleNodes({
+              attrs: {
+                r: 5,
+                fill: (n) =>
+                  tree2.getChildCount(n) > 0
+                    ? tree2.isRoot(n)
+                      ? "#e31e58"
+                      : "#29c5ef"
+                    : "#22b680",
+                cursor: "pointer",
+              },
+              interactions: { onClick: (n) => console.log(n) },
+            }),
             // ft.BranchLabels({ attrs: { fill: "black", fontSize: 8, fontWeight: 300 }, text: (n) => tree2.getLength(n) }),
-            ],
-            opts: {} // todo remove the need for this empty options
+          ],
+          opts: {}, // todo remove the need for this empty options
+        };
+      };
+      ft.figtree(figureOptions());
 
-        }
-    }
+      // ft.figtree(figureOptions2());
+
+      document.getElementById("sort_up_button").onclick = function () {
+        // tree  = tree.orderNodesByDensity(false);
+        tree = tree.orderNodesByDensity(false);
+        // ft.figtree(figureOptions())
+      };
+      document.getElementById("sort_down_button").onclick = function () {
+        tree = tree.orderNodesByDensity(true);
         ft.figtree(figureOptions());
+      };
 
-        // ft.figtree(figureOptions2());
+      document.getElementById("rectangular_button").onclick = function () {
+        curvature = 0;
+        ft.figtree(figureOptions());
+      };
+      document.getElementById("triangular_button").onclick = function () {
+        curvature = 1;
+        ft.figtree(figureOptions());
+      };
+      document.getElementById("curve_button").onclick = function () {
+        curvature = 0.5;
 
+        ft.figtree(figureOptions());
+      };
 
-        document.getElementById('sort_up_button').onclick = function () {
-            // tree  = tree.orderNodesByDensity(false);
-           tree = tree.orderNodesByDensity(false);
-            // ft.figtree(figureOptions())
+      document.getElementById("rectangularLayout_button").onclick =
+        function () {
+          layout = ft.rectangularLayout;
+          ft.figtree(figureOptions());
         };
-        document.getElementById('sort_down_button').onclick = function () {
-            tree = tree.orderNodesByDensity(true);
-            ft.figtree(figureOptions())
-        };
-
-        document.getElementById('rectangular_button').onclick = function () {
-            curvature=0;
-            ft.figtree(figureOptions())
-        };
-        document.getElementById('triangular_button').onclick = function () {
-            curvature=1;
-            ft.figtree(figureOptions())
-        };
-        document.getElementById('curve_button').onclick = function () {
-            curvature=0.5;
-
-            ft.figtree(figureOptions())
-        };
-
-
-        document.getElementById('rectangularLayout_button').onclick = function () {
-            layout = ft.rectangularLayout
-            ft.figtree(figureOptions())
-        };
-        document.getElementById('circularLayout_button').onclick = function () {
-            layout = ft.polarLayout
-            ft.figtree(figureOptions())
-        };
-        document.getElementById('radialLayout_button').onclick = function () {
-           layout =ft.radialLayout;
-            ft.figtree(figureOptions())
-        };
+      document.getElementById("circularLayout_button").onclick = function () {
+        layout = ft.polarLayout;
+        ft.figtree(figureOptions());
+      };
+      document.getElementById("radialLayout_button").onclick = function () {
+        layout = ft.radialLayout;
+        ft.figtree(figureOptions());
+      };
     </script>
 
-<div>
-    <figure>
-        <svg id="phylogram_2"  width="600" height="500"></svg>
-    </figure>
-</div>
-<style>
-    #phylogram_2 #root .node-shape {
+    <div>
+      <figure>
+        <svg id="phylogram_2" width="600" height="500"></svg>
+      </figure>
+    </div>
+    <style>
+      #phylogram_2 #root .node-shape {
         fill: #e31e58;
         /*stroke: rgb(255, 255, 255);*/
         /*stroke-width: 1;*/
-    }
+      }
 
-    #phylogram_2 #old-root .node-shape {
+      #phylogram_2 #old-root .node-shape {
         fill: #e31e58;
         /*stroke: rgb(255, 255, 255);*/
         /*stroke-width: 1;*/
-    }
-    image path {
+      }
+      image path {
         stroke: "red";
-    }
-</style>
+      }
+    </style>
 
-<!--
+    <!--
 
 <script type="module">
 
@@ -655,75 +696,70 @@
     </figure>
 </div> -->
 
-
-
     <script type="module">
-        // import { Tree, TransmissionLayout,ExplodedLayout,RectangularBauble,CircleBauble,ft} from "./dist/ft.esm.js"
-        //
-        //
-        // const newickString =
-        //     '((((((virus1:0.1,virus2:0.12)0.95:0.08,(virus3:0.011,virus4:0.0087)1.0:0.15)0.65:0.03,virus5:0.21)1.0:0.2,(virus6:0.45,virus7:0.4)0.51:0.02)1.0:0.1,virus8:0.4)1.0:0.1,(virus9:0.04,virus10:0.03)1.0:0.6);';
-        //
-        // const tree = Tree.parseNewick(newickString, "probability");
-        // tree.annotateTips({
-        //     "virus1": { host: "camel" },
-        //     "virus2": { host: "camel" },
-        //     "virus3": { host: "human" },
-        //     "virus4": { host: "human" },
-        //     "virus5": { host: "bat" },
-        //     "virus6": { host: "bat" },
-        //     "virus7": { host: "bat" },
-        //     "virus8": { host: "bat" },
-        //     "virus9": { host: "whale" },
-        //     "virus10": { host: "whale" }
-        // });
-        //
-        // tree.annotateNodesFromTips("host");
-        // tree.orderByNodeDensity();
-        // const treeSVG = document.getElementById('phylogram_3');
-        // const layout = new ExplodedLayout(tree,{groupGap:9,direction:"down"});
-        //
-        // const ft = new ft(treeSVG, layout,
-        //     { top: 10, bottom: 60, left: 10, right: 150},
-        //     {   hoverBorder: 2, backgroundBorder: 2,
-        //         baubles: [
-        //             new CircleBauble({ vertexFilter: (v) => v.degree !== 2 }),
-        //             new RectangularBauble({ vertexFilter: (v) => v.degree === 2})
-        //         ],
-        //         // branchScale:10,
-        //         origin:0,
-        //         offset:0,
-        //         branchScale:10,
-        //         reverseAxis:false
-        //     });
-        //
-        //
-        // ft.draw();
-        //
-        // layout.internalNodeLabels="probability";
-        // const cladeToRemove = tree.tipMap.get("virus4").parent;
-        // const leftpareent = cladeToRemove.parent;
-        // // tree.removeClade(cladeToRemove).removeNode(leftpareent)
-        //
-        // layout.cartoon(layout.nodeMap.get(tree.tipMap.get("virus1").parent));
-        //
-        // // ft.addLabels('.external-node', ft.nodeInfo);
-        // ft.addToolTip('.node', layout.nodeInfo);
-        //
-        // ft.hilightBranches();
-        // ft.hilightInternalNodes();
-        // ft.onClickNode((v)=>{
-        //     console.log(v)
-        //     console.log(v.x+ft.settings.offset)
-        //     layout.cartoon(v)
-        // });
-        //
-        // // tree.annotateNodesFromTips("host");
-        //
-        // ft.update();
-
+      // import { Tree, TransmissionLayout,ExplodedLayout,RectangularBauble,CircleBauble,ft} from "./dist/ft.esm.js"
+      //
+      //
+      // const newickString =
+      //     '((((((virus1:0.1,virus2:0.12)0.95:0.08,(virus3:0.011,virus4:0.0087)1.0:0.15)0.65:0.03,virus5:0.21)1.0:0.2,(virus6:0.45,virus7:0.4)0.51:0.02)1.0:0.1,virus8:0.4)1.0:0.1,(virus9:0.04,virus10:0.03)1.0:0.6);';
+      //
+      // const tree = Tree.parseNewick(newickString, "probability");
+      // tree.annotateTips({
+      //     "virus1": { host: "camel" },
+      //     "virus2": { host: "camel" },
+      //     "virus3": { host: "human" },
+      //     "virus4": { host: "human" },
+      //     "virus5": { host: "bat" },
+      //     "virus6": { host: "bat" },
+      //     "virus7": { host: "bat" },
+      //     "virus8": { host: "bat" },
+      //     "virus9": { host: "whale" },
+      //     "virus10": { host: "whale" }
+      // });
+      //
+      // tree.annotateNodesFromTips("host");
+      // tree.orderByNodeDensity();
+      // const treeSVG = document.getElementById('phylogram_3');
+      // const layout = new ExplodedLayout(tree,{groupGap:9,direction:"down"});
+      //
+      // const ft = new ft(treeSVG, layout,
+      //     { top: 10, bottom: 60, left: 10, right: 150},
+      //     {   hoverBorder: 2, backgroundBorder: 2,
+      //         baubles: [
+      //             new CircleBauble({ vertexFilter: (v) => v.degree !== 2 }),
+      //             new RectangularBauble({ vertexFilter: (v) => v.degree === 2})
+      //         ],
+      //         // branchScale:10,
+      //         origin:0,
+      //         offset:0,
+      //         branchScale:10,
+      //         reverseAxis:false
+      //     });
+      //
+      //
+      // ft.draw();
+      //
+      // layout.internalNodeLabels="probability";
+      // const cladeToRemove = tree.tipMap.get("virus4").parent;
+      // const leftpareent = cladeToRemove.parent;
+      // // tree.removeClade(cladeToRemove).removeNode(leftpareent)
+      //
+      // layout.cartoon(layout.nodeMap.get(tree.tipMap.get("virus1").parent));
+      //
+      // // ft.addLabels('.external-node', ft.nodeInfo);
+      // ft.addToolTip('.node', layout.nodeInfo);
+      //
+      // ft.hilightBranches();
+      // ft.hilightInternalNodes();
+      // ft.onClickNode((v)=>{
+      //     console.log(v)
+      //     console.log(v.x+ft.settings.offset)
+      //     layout.cartoon(v)
+      // });
+      //
+      // // tree.annotateNodesFromTips("host");
+      //
+      // ft.update();
     </script>
-
-</body>
-
+  </body>
 </html>
