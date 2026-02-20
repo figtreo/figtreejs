@@ -1,5 +1,3 @@
-// export function layout (tree:ImmutableTree,node?:NodeRef):Map<NodeRef,FunctionalVertex>{
-
 import type { ImmutableTree, NodeRef } from "../../evo";
 import { preOrderIterator, tipIterator } from "../../evo";
 import type { NodeLabelType } from "../types";
@@ -17,6 +15,13 @@ type data = {
   level: number;
   number: number;
 };
+
+/**
+ * The radial (unrooted) layout
+ * @param tree
+ * @param options  {spread: number} - increases this increases the space between tips
+ * @returns (node)=>FunctionalVertex
+ */
 
 export function radialLayout(
   tree: ImmutableTree,

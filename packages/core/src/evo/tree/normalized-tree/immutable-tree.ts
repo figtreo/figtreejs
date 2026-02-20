@@ -143,9 +143,7 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
     nexus: string,
     options?: newickParsingOptions,
   ): ImmutableTree {
-    const tree = new this();
-    return parseNexus(tree, nexus, options);
-    // throw new Error("Nexus parsing not implemented")
+    return parseNexus(nexus, options);
   }
   static fromString(
     string: string,
