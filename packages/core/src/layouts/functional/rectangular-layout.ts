@@ -5,6 +5,13 @@ import type { NodeLabelType, FunctionalVertex } from "../types";
 import { layoutClass } from "../types";
 import { unNullify } from "../../utils/maybe";
 
+/**
+ * This is the base class for layouts that place the parent nodes at the mean of their children.
+ * It forms the basis of the polar and rectangular layouts.
+ * The difference between the two is handled by the scaling functions.
+ * @param lc - layoutClass rectangular / polar
+ * @returns
+ */
 export function baseLayout(lc: layoutClass) {
   function layout(tree: ImmutableTree): (node: NodeRef) => FunctionalVertex {
     const map = new Map<NodeRef, FunctionalVertex>();

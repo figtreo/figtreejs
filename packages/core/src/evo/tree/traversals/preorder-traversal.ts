@@ -1,5 +1,10 @@
 import type { Tree, NodeRef } from "../tree-types";
 import type { TreeTraversal } from "./traversal-types";
+
+/**
+ * A class for a cached pre-order traversal.
+ * This needs to be revisited before it can be used.
+ */
 export class PreOrderTraversalCache implements TreeTraversal {
   _forwardCache: Map<NodeRef, NodeRef>;
   _reverseCache: Map<NodeRef, NodeRef>;
