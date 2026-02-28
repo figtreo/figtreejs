@@ -671,7 +671,7 @@ exports[`Node labels > renders a tree node labels in radial layout 1`] = `
                 <text
                   alignment-baseline="middle"
                   text-anchor="end"
-                  transform="translate(148.99984767296695,89.72852388058958) rotate(0)"
+                  transform="translate(148.99984767296695,89.72852388058958) rotate(59.99999999999997)"
                 >
                   Label!
                 </text>
@@ -685,8 +685,8 @@ exports[`Node labels > renders a tree node labels in radial layout 1`] = `
               <g>
                 <text
                   alignment-baseline="middle"
-                  text-anchor="start"
-                  transform="translate(231.24985501012264,-5.190660633322136) rotate(0)"
+                  text-anchor=" start"
+                  transform="translate(231.24985501012264,-5.190660633322136) rotate(660.1047197551197)"
                 >
                   Label!
                 </text>
@@ -701,7 +701,7 @@ exports[`Node labels > renders a tree node labels in radial layout 1`] = `
                 <text
                   alignment-baseline="middle"
                   text-anchor="end"
-                  transform="translate(-5.999989978491366,95.13618828386687) rotate(0)"
+                  transform="translate(-5.999989978491366,95.13618828386687) rotate(-0.10471975511964615)"
                 >
                   Label!
                 </text>
@@ -715,8 +715,8 @@ exports[`Node labels > renders a tree node labels in radial layout 1`] = `
               <g>
                 <text
                   alignment-baseline="middle"
-                  text-anchor="start"
-                  transform="translate(383,385.19615242270663) rotate(0)"
+                  text-anchor=" start"
+                  transform="translate(383,385.19615242270663) rotate(59.99999999999999)"
                 >
                   Label!
                 </text>
@@ -794,7 +794,7 @@ exports[`Node labels > renders a tree node labels in radial layout 1`] = `
               <text
                 alignment-baseline="middle"
                 text-anchor="end"
-                transform="translate(148.99984767296695,89.72852388058958) rotate(0)"
+                transform="translate(148.99984767296695,89.72852388058958) rotate(59.99999999999997)"
               >
                 Label!
               </text>
@@ -808,8 +808,8 @@ exports[`Node labels > renders a tree node labels in radial layout 1`] = `
             <g>
               <text
                 alignment-baseline="middle"
-                text-anchor="start"
-                transform="translate(231.24985501012264,-5.190660633322136) rotate(0)"
+                text-anchor=" start"
+                transform="translate(231.24985501012264,-5.190660633322136) rotate(660.1047197551197)"
               >
                 Label!
               </text>
@@ -824,7 +824,7 @@ exports[`Node labels > renders a tree node labels in radial layout 1`] = `
               <text
                 alignment-baseline="middle"
                 text-anchor="end"
-                transform="translate(-5.999989978491366,95.13618828386687) rotate(0)"
+                transform="translate(-5.999989978491366,95.13618828386687) rotate(-0.10471975511964615)"
               >
                 Label!
               </text>
@@ -838,8 +838,8 @@ exports[`Node labels > renders a tree node labels in radial layout 1`] = `
             <g>
               <text
                 alignment-baseline="middle"
-                text-anchor="start"
-                transform="translate(383,385.19615242270663) rotate(0)"
+                text-anchor=" start"
+                transform="translate(383,385.19615242270663) rotate(59.99999999999999)"
               >
                 Label!
               </text>
