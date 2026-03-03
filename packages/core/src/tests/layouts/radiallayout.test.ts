@@ -12,12 +12,12 @@ describe("Test rectangular layout", () => {
     // //a
     const a = tree.getNodeByTaxon(tree.getTaxonByName("a"));
     const aV = layout(a);
-    expect(aV.x).toBeCloseTo(0.0015820025368573631);
-    expect(aV.y).toBeCloseTo(-1.7311355093381278);
+    expect(aV.x).toBeCloseTo(-1.4421376941044097);
+    expect(aV.y).toBeCloseTo(1.0445158798278553);
 
     const c = tree.getNodeByTaxon(tree.getTaxonByName("c"));
     const cV = layout(c);
-    expect(cV.x).toBeCloseTo(0.5);
-    expect(cV.y).toBeCloseTo(0.8660254037844386);
+    expect(cV.x).toBeCloseTo(0.4539904997395474);
+    expect(cV.y).toBeCloseTo(-0.8910065241883676);
   });
 });

@@ -1200,50 +1200,47 @@ export function* preOrderIterator(
   yield* traverse(node);
 }
 
-//TODO return the node and edge length of direction
-export function* psuedoRootPreOrderIterator(
-  tree: Tree,
-  node: NodeRef | undefined = undefined,
-  sort: (a: NodeRef, b: NodeRef) => number = (a, b) => a.number - b.number,
-): Generator<NodeRef> {
-  const traverse = function* (
-    node: NodeRef,
-    visited: number | undefined = undefined,
-  ): Generator<NodeRef> {
-    yield tree.getNode(node.number); // get from tree so we keep proxy when used in draft
-    const branches = [...tree.getChildren(node), tree.getParent(node)].filter(
-      (n) => n.number !== visited,
-    ); //
-    branches.sort(sort);
-    for (const branch of branches) {
-      yield* traverse(branch, node.number);
-    }
-  };
-
-  if (node === undefined) {
-    node = tree.getRoot();
-  }
-  yield* traverse(node);
-}
-
+type PseudoNode = NodeRef & {
+  pseudoChildren: NodeRef[];
+  pseudoLength: number | undefined;
+  pseudoParent: NodeRef | undefined;
+};
+// children order will matter but parents are always added after children
 export function* psuedoRootPostOrderIterator(
   tree: Tree,
   node: NodeRef | undefined = undefined,
-  sort: (a: NodeRef, b: NodeRef) => number = (a, b) => a.number - b.number,
-): Generator<NodeRef> {
+  // sort: (a: NodeRef, b: NodeRef) => number = (a, b) => a.number - b.number,
+): Generator<PseudoNode> {
   const traverse = function* (
     node: NodeRef,
     visited: number | undefined = undefined,
-  ): Generator<NodeRef> {
+  ): Generator<PseudoNode> {
     // get from tree so we keep proxy when used in draft
-    const branches = [...tree.getChildren(node), tree.getParent(node)].filter(
-      (n) => n.number !== visited,
-    );
-    branches.sort(sort);
-    for (const branch of branches) {
-      yield* traverse(branch, node.number);
+    const branches = [...tree.getChildren(node)];
+    if (!tree.isRoot(node)) {
+      branches.push(tree.getParent(node));
     }
-    yield tree.getNode(node.number);
+    const pseudoChildren = branches.filter((n) => n.number !== visited);
+    const pseudoParent = branches.find((node) => node.number === visited);
+    // branches.sort(sort);
+    let pseudoLength = undefined;
+    if (!tree.isRoot(node) && pseudoParent === tree.getParent(node)) {
+      // the root will not have a parent
+      pseudoLength = tree.getLength(node);
+    } else {
+      if (pseudoParent !== undefined) {
+        pseudoLength = tree.getLength(pseudoParent);
+      }
+    }
+    for (const someKid of pseudoChildren) {
+      yield* traverse(someKid, node.number);
+    }
+    yield {
+      ...tree.getNode(node.number),
+      pseudoLength,
+      pseudoChildren,
+      pseudoParent,
+    };
   };
 
   if (node === undefined) {
@@ -1251,6 +1248,105 @@ export function* psuedoRootPostOrderIterator(
   }
   yield* traverse(node);
 }
+
+// children order will matter but parents are always added after children
+export function* psuedoRootPreOrderIterator(
+  tree: Tree,
+  node: NodeRef | undefined = undefined,
+  // sort: (a: NodeRef, b: NodeRef) => number = (a, b) => a.number - b.number,
+): Generator<PseudoNode> {
+  const traverse = function* (
+    node: NodeRef,
+    visited: number | undefined = undefined,
+  ): Generator<PseudoNode> {
+    // get from tree so we keep proxy when used in draft
+    const branches = [...tree.getChildren(node)];
+    if (!tree.isRoot(node)) {
+      branches.push(tree.getParent(node));
+    }
+    const pseudoChildren = branches.filter((n) => n.number !== visited);
+    const pseudoParent = branches.find((node) => node.number === visited);
+    // branches.sort(sort);
+    let pseudoLength = undefined;
+    if (!tree.isRoot(node) && pseudoParent === tree.getParent(node)) {
+      // the root will not have a parent
+      pseudoLength = tree.getLength(node);
+    } else {
+      if (pseudoParent !== undefined) {
+        pseudoLength = tree.getLength(pseudoParent);
+      }
+    }
+
+    yield {
+      ...tree.getNode(node.number),
+      pseudoLength,
+      pseudoChildren,
+      pseudoParent,
+    };
+
+    for (const someKid of pseudoChildren) {
+      yield* traverse(someKid, node.number);
+    }
+  };
+
+  if (node === undefined) {
+    node = tree.getRoot();
+  }
+  yield* traverse(node);
+}
+
+// children order will matter but parents are always added after children
+export function* pseudoTipIterator(
+  tree: Tree,
+  node: NodeRef | undefined,
+  pseudoParent: NodeRef | undefined,
+): Generator<PseudoNode> {
+  const traverse = function* (
+    node: NodeRef,
+    visited: number | undefined = undefined,
+  ): Generator<PseudoNode> {
+    // get from tree so we keep proxy when used in draft
+    const branches = [...tree.getChildren(node)];
+    if (!tree.isRoot(node)) {
+      branches.push(tree.getParent(node));
+    }
+    const pseudoChildren = branches.filter((n) => n.number !== visited);
+    const pseudoParent = branches.find((node) => node.number === visited);
+    // branches.sort(sort);
+    let pseudoLength = undefined;
+    if (!tree.isRoot(node) && pseudoParent === tree.getParent(node)) {
+      // the root will not have a parent
+      pseudoLength = tree.getLength(node);
+    } else {
+      if (pseudoParent !== undefined) {
+        pseudoLength = tree.getLength(pseudoParent);
+      }
+    }
+
+    if (pseudoChildren.length == 0) {
+      yield {
+        ...tree.getNode(node.number),
+        pseudoLength,
+        pseudoChildren,
+        pseudoParent,
+      };
+    } else {
+      for (const someKid of pseudoChildren) {
+        yield* traverse(someKid, node.number);
+      }
+    }
+  };
+
+  if (node === undefined) {
+    node = tree.getRoot();
+  }
+  if (pseudoParent !== undefined) {
+    yield* traverse(node, pseudoParent.number);
+  } else {
+    yield* traverse(node);
+  }
+}
+
 export function* postOrderIterator(
   tree: Tree,
   node: NodeRef | undefined = undefined,

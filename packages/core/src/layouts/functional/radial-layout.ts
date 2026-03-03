@@ -1,5 +1,5 @@
 import type { ImmutableTree, NodeRef } from "../../evo";
-import { preOrderIterator, tipIterator } from "../../evo";
+import { pseudoTipIterator, psuedoRootPreOrderIterator } from "../../evo";
 import type { NodeLabelType } from "../types";
 import { notNull } from "../../utils/maybe";
 import type { FunctionalVertex } from "../types";
@@ -25,37 +25,45 @@ type data = {
 
 export function radialLayout(
   tree: ImmutableTree,
-  options: { spread?: number } = {},
+  options: { spread?: number; root?: NodeRef; startAngle?: number } = {},
 ): (node: NodeRef) => FunctionalVertex {
-  const { spread = 1 } = options;
+  const {
+    spread = 1,
+    root = tree.getRoot(),
+    startAngle = (2.5 * Math.PI) / 2,
+  } = options;
+
   console.log("radial layout with spread", spread);
   const map = new Map<NodeRef, FunctionalVertex>();
 
+  const fakeThroughRoot = tree.isRoot(root) && tree.getChildCount(root) == 2;
+
   const dataStack: data[] = [
     {
-      angleStart: 0,
-      angleEnd: 2 * Math.PI,
+      angleStart: startAngle,
+      angleEnd: startAngle + 2 * Math.PI,
       xpos: 0,
       ypos: 0,
       level: 0,
-      number: tree.getRoot().number,
+      number: root.number,
     },
   ]; // TODO start tree.
-  for (const node of preOrderIterator(tree)) {
+
+  for (const node of psuedoRootPreOrderIterator(tree, root)) {
     const data = dataStack.pop();
     notNull(data, `Internal Error, hit the end of the data stack unexpectedly`);
     const { angleStart, angleEnd, xpos, ypos, level } = data;
 
-    const branchAngle = (angleStart + angleEnd) / 2.0;
+    const branchAngle = (angleEnd + angleStart) / 2.0;
 
-    const length = !tree.isRoot(node) ? tree.getLength(node) : 0;
+    const length = node.pseudoLength !== undefined ? node.pseudoLength : 0;
 
     const directionX = Math.cos(branchAngle);
     const directionY = Math.sin(branchAngle);
     const x = xpos + length * directionX;
     const y = ypos + length * directionY;
 
-    const leftLabel = tree.getChildCount(node) > 0;
+    const leftLabel = node.pseudoChildren.length > 0;
     let dx, dy;
     if (!leftLabel) {
       dx = Math.cos(branchAngle);
@@ -65,7 +73,15 @@ export function radialLayout(
       dy = Math.sin(branchAngle);
     }
 
-    const nTheta = normalizeAngle(branchAngle);
+    // we want to give the impression we are traversing from the root.
+    const directionalUpdate = tree.isRoot(tree.getNode(node.number))
+      ? 0
+      : node.pseudoParent === undefined ||
+          node.pseudoParent.number !== tree.getParent(node).number
+        ? -Math.PI
+        : 0;
+    const nTheta = normalizeAngle(branchAngle - directionalUpdate);
+
     const vertex = {
       x,
       y,
@@ -81,11 +97,13 @@ export function radialLayout(
       } as NodeLabelType,
     };
 
-    if (tree.getChildCount(node) > 0) {
+    if (node.pseudoChildren.length > 0) {
       const childLeafs: number[] = [];
       let totalLeafs = 0;
-      for (let i = 0; i < tree.getChildCount(node); i++) {
-        const leafCount = [...tipIterator(tree, tree.getChild(node, i))].length;
+      for (let i = 0; i < node.pseudoChildren.length; i++) {
+        const leafCount = [
+          ...pseudoTipIterator(tree, node.pseudoChildren[i], node.pseudoParent),
+        ].length;
         childLeafs[i] = leafCount;
         totalLeafs += leafCount;
       }
@@ -93,15 +111,25 @@ export function radialLayout(
       let span = angleEnd - angleStart;
       let updatedAngleStart = angleStart;
 
-      if (tree.getRoot() !== node) {
+      // We don't want to adjust our path when we hit a degree 2 node or the root
+      // if we start at the root has 2 children. In that case we want the roo
+      // to sit on the middle of branch (even though it is really encoded as two branches)
+
+      if (node.pseudoChildren.length > 1) {
         // span *= 1.0 + ((safeOpts.spread * Math.PI / 180) / 10.0);
-        span *= 1.0 + (spread * Math.PI) / 180 / 10.0;
-        updatedAngleStart = branchAngle - span / 2.0;
+        console.log(fakeThroughRoot);
+        if (!fakeThroughRoot || !tree.isRoot(tree.getNode(node.number))) {
+          // this bumps the start angle so branches don't make a straight line.
+          // we want to inheret the open space from out parent, but also we want
+          // between 0 and 0.1 PI seem to be OK.
+          // this shoots for numbers between 0 and 100
+          span *= 1.0 + (spread / 1000) * Math.PI;
+          updatedAngleStart = branchAngle - span / 2.0;
+        }
       }
-
+      console.log("here");
       let a2 = updatedAngleStart;
-
-      for (let i = tree.getChildCount(node) - 1; i > -1; i--) {
+      for (let i = node.pseudoChildren.length - 1; i > -1; i--) {
         // i think we need to go in reverse order here
         const a1 = a2;
         a2 = a1 + (span * childLeafs[i]) / totalLeafs;
@@ -111,11 +139,11 @@ export function radialLayout(
           xpos: x,
           ypos: y,
           level: level + 1,
-          number: tree.getChild(node, i).number,
+          number: node.pseudoChildren[i].number,
         });
       }
     }
-    map.set(node, vertex);
+    map.set(tree.getNode(node.number), vertex);
   }
 
   return function (node: NodeRef): FunctionalVertex {

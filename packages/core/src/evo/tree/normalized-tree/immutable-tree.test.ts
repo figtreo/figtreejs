@@ -1,7 +1,13 @@
 //TODO test immutable tree include tests that check nodes to roots update as well.
 
 import { notNull, u } from "../../../utils/maybe";
-import { ImmutableTree } from "./immutable-tree";
+import {
+  ImmutableTree,
+  postOrderIterator,
+  preOrderIterator,
+  psuedoRootPostOrderIterator,
+  psuedoRootPreOrderIterator,
+} from "./immutable-tree";
 import { describe, it, expect } from "vitest";
 
 describe("ImmutableTree", () => {
@@ -154,5 +160,44 @@ describe("testing annotating", () => {
     const A = tree.getNode("A");
     const annotatedTree = tree.annotateNode(A, { state: "WA" });
     annotatedTree.getAnnotation(A, "state");
+  });
+});
+//.       -----2 (A)
+//        |
+// -------1
+// |      |
+// 0      ------3 (B)
+// |
+// -----4 (C)
+describe("Tree traversals", () => {
+  it("preOrder", () => {
+    const tree = ImmutableTree.fromNewick("((A:1,B:1):1,C:2);");
+    const nodes = [...preOrderIterator(tree)];
+    expect(nodes.map((n) => n.number)).toEqual([0, 1, 2, 3, 4]);
+  });
+
+  it("postOrder", () => {
+    const tree = ImmutableTree.fromNewick("((A:1,B:1):1,C:2);");
+    const nodes = [...postOrderIterator(tree)];
+    expect(nodes.map((n) => n.number)).toEqual([2, 3, 1, 4, 0]);
+  });
+
+  it("pseudoRootPostOrder", () => {
+    const tree = ImmutableTree.fromNewick("((A:1,B:1):1,C:2);");
+    const nodes = [...psuedoRootPostOrderIterator(tree, tree.getNode("A"))];
+    expect(nodes.map((n) => n.number)).toEqual([3, 4, 0, 1, 2]);
+  });
+
+  it("pseudoRootPreOrder", () => {
+    const tree = ImmutableTree.fromNewick("((A:1,B:1):1,C:2);");
+    const nodes = [...psuedoRootPreOrderIterator(tree, tree.getNode("A"))];
+    expect(nodes.map((n) => n.number)).toEqual([2, 1, 3, 0, 4]);
+  });
+
+  it("pseudoRootPreOrder", () => {
+    const tree = ImmutableTree.fromNewick("((A:1,B:1):1,C:2);");
+    const rooted = tree.reroot(tree.getNode("A"));
+    const nodes = [...psuedoRootPreOrderIterator(rooted, tree.getNode("A"))];
+    expect(nodes.map((n) => n.number)).toEqual([2, 0, 1, 3, 4]);
   });
 });

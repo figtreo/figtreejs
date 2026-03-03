@@ -134,6 +134,15 @@
       <button id="rectangularLayout_button">Rectangular Layout</button>
       <button id="circularLayout_button">Polar Layout</button>
       <button id="radialLayout_button">Radial Layout</button>
+      <input
+        type="number"
+        id="spread"
+        name="spread"
+        min="-100"
+        max="100"
+        step="1.0"
+        value="0"
+      />
     </div>
 
     <script type="module">
@@ -161,6 +170,7 @@
       const { width, height } = treeSVG.getBoundingClientRect();
       const margins = { top: 70, right: 70, bottom: 70, left: 70 };
       let curvature = 0;
+      let spread = 0;
       let layout = ft.rectangularLayout;
       const figureOptions = () => {
         return {
@@ -204,7 +214,10 @@
             }),
             // ft.BranchLabels({ attrs: { fill: "black", fontSize: 8, fontWeight: 300 }, text: (n) => tree.getLength(n) }),
           ],
-          opts: {}, // todo remove the need for this empty options
+          opts: {
+            spread,
+            // root:tree.getNode("virus2")
+          }, // todo remove the need for this empty options
         };
       };
 
@@ -282,6 +295,12 @@
         layout = ft.radialLayout;
         ft.figtree(figureOptions());
       };
+      document
+        .getElementById("spread")
+        .addEventListener("change", function (e) {
+          spread = e.target.value;
+          ft.figtree(figureOptions());
+        });
     </script>
 
     <div>
