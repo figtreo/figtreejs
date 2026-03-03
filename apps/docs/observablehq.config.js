@@ -20,8 +20,10 @@ export default {
         {name: "Introduction to layouts", path: "/figtree/layouts"},
         {name: "Introduction to animation", path: "/figtree/animation"},
         {name: "Animating with the tree", path: "/figtree/tree-animations"},
+        {name:"JSX",path: "/figtree/jsx"}
       ]
-    }
+    },
+
   ],
 
   // // Content to add to the head of the page, e.g. for a favicon:
