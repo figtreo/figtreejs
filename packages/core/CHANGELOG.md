@@ -1,5 +1,11 @@
 # @figtreejs/core
 
+## 0.1.0-beta.2
+
+### Minor Changes
+
+- e918ff2: updates to react-19
+
 ## 0.0.1-beta.1
 
 ### Patch Changes
