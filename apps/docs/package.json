@@ -10,6 +10,15 @@
     "dev": " rimraf src/.observablehq/cache/_node/@figtreejs && observable preview",
     "observable": "observable"
   },
+  "lint-staged": {
+    "src/**/*.{js,jsx,ts,tsx}": [
+      "eslint",
+      "prettier --write --ignore-unknown"
+    ],
+    "!(*.js|*.ts)": [
+      "prettier --write --ignore-unknown"
+    ]
+  },
   "dependencies": {
     "@figtreejs/browser": "0.0.1-beta.1",
     "@observablehq/framework": "^1.13.2",
