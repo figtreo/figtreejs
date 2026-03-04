@@ -1,5 +1,16 @@
 # @figtreejs/browser
 
+## 0.1.0-beta.3
+
+### Minor Changes
+
+- 46c6e75: This update changes the radial layout. Internally, the code is easier to folllow. It also allows for pseudorooting and traversals
+
+### Patch Changes
+
+- Updated dependencies [46c6e75]
+  - @figtreejs/core@0.1.0-beta.3
+
 ## 0.1.0-beta.2
 
 ### Minor Changes

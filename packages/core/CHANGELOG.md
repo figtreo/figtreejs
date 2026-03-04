@@ -1,5 +1,11 @@
 # @figtreejs/core
 
+## 0.1.0-beta.3
+
+### Minor Changes
+
+- 46c6e75: This update changes the radial layout. Internally, the code is easier to folllow. It also allows for pseudorooting and traversals
+
 ## 0.1.0-beta.2
 
 ### Minor Changes

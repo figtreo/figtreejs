@@ -10,6 +10,7 @@
     "@figtreejs/typescript-config": "0.0.0"
   },
   "changesets": [
+    "cool-ends-doubt",
     "cool-times-press",
     "sixty-boxes-occur",
     "true-kiwis-behave"

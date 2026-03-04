@@ -1,5 +1,12 @@
 # @figtreejs/examples
 
+## 0.0.1-beta.3
+
+### Patch Changes
+
+- Updated dependencies [46c6e75]
+  - @figtreejs/browser@0.1.0-beta.3
+
 ## 0.0.1-beta.2
 
 ### Patch Changes
