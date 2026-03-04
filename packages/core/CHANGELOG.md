@@ -1,5 +1,11 @@
 # @figtreejs/core
 
+## 0.1.0-beta.5
+
+### Patch Changes
+
+- bc6d916: Fixes bug in addNodes where taxon list was not updated
+
 ## 0.1.0-beta.4
 
 ### Patch Changes

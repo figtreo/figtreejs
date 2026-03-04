@@ -1,5 +1,12 @@
 # @figtreejs/figtree
 
+## 0.0.1-beta.5
+
+### Patch Changes
+
+- Updated dependencies [bc6d916]
+  - @figtreejs/core@0.1.0-beta.5
+
 ## 0.0.1-beta.4
 
 ### Patch Changes
