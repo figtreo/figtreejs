@@ -7,7 +7,7 @@ import {
   rectangularLayout,
   polarLayout,
   radialLayout,
-} from "npm:@figtreejs/core@0.1.0-beta.2";
+} from "npm:@figtreejs/core@0.1.0-beta.4";
 import {
   ImmutableTree as Tree,
   FigTree,
@@ -16,7 +16,7 @@ import {
   BranchLabels,
   CircleNodes,
   RectangleNodes,
-} from "npm:@figtreejs/core@0.1.0-beta.2";
+} from "npm:@figtreejs/core@0.1.0-beta.4";
 ```
 
 Figtreejs uses this api under the hood so leveraging it here is fairly straightforward.
@@ -96,6 +96,9 @@ const options = {
       },
     }),
   ],
+  opts: {
+    root: treeRef.getNode("virus7"),
+  },
 };
 ```
 
