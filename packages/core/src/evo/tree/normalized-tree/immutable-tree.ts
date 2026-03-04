@@ -655,6 +655,7 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
           };
           newNodes.push(newNode);
           draft._data.nodes.allNodes.push(newNode);
+          draft._data.nodeToTaxon.length = number + i + 1; // add an empty elements for the new nodes
         }
       }),
       nodes: newNodes,
