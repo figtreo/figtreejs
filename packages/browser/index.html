@@ -194,7 +194,7 @@
             }),
             ft.NodeLabels({
               filter: (n) => tree.isExternal(n),
-              attrs: { fill: "black", fontSize: 12, fontWeight: 300 },
+              attrs: { fill: "black", fontSize: 12, fontWeight: 300, gap: 20 },
               text: (n) => tree.getTaxon(n).name,
               aligned: false,
             }),
@@ -216,7 +216,7 @@
           ],
           opts: {
             spread,
-            // root:tree.getNode("virus2")
+            root: tree.getNode("virus10"),
           }, // todo remove the need for this empty options
         };
       };

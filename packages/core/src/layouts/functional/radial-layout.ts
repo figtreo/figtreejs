@@ -63,16 +63,6 @@ export function radialLayout(
     const x = xpos + length * directionX;
     const y = ypos + length * directionY;
 
-    const leftLabel = node.pseudoChildren.length > 0;
-    let dx, dy;
-    if (!leftLabel) {
-      dx = Math.cos(branchAngle);
-      dy = Math.sin(branchAngle);
-    } else {
-      dx = Math.cos(branchAngle);
-      dy = Math.sin(branchAngle);
-    }
-
     // we want to give the impression we are traversing from the root.
     const directionalUpdate = tree.isRoot(tree.getNode(node.number))
       ? 0
@@ -81,6 +71,16 @@ export function radialLayout(
         ? -Math.PI
         : 0;
     const nTheta = normalizeAngle(branchAngle - directionalUpdate);
+
+    const leftLabel = node.pseudoChildren.length > 0;
+    let dx, dy;
+    if (!leftLabel) {
+      dx = Math.cos(nTheta);
+      dy = Math.sin(nTheta);
+    } else {
+      dx = Math.cos(nTheta);
+      dy = Math.sin(nTheta);
+    }
 
     const vertex = {
       x,
