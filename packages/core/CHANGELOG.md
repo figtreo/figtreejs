@@ -1,5 +1,11 @@
 # @figtreejs/core
 
+## 0.1.0-beta.4
+
+### Patch Changes
+
+- 66dc3a2: Fixes bug in pseudo traversals that were sensitive to the root placement
+
 ## 0.1.0-beta.3
 
 ### Minor Changes
