@@ -172,6 +172,7 @@
       let curvature = 0;
       let spread = 0;
       let layout = ft.rectangularLayout;
+
       const figureOptions = () => {
         return {
           svg: treeSVG,
@@ -187,7 +188,10 @@
               attrs: { stroke: "black", strokeWidth: 2, cursor: "pointer" },
               curvature: curvature,
               interactions: {
-                onClick: () => console.log("clicked"),
+                onClick: (n) => {
+                  tree = tree.reroot(n, 0.5);
+                  ft.figtree(figureOptions());
+                },
                 onMouseOver: () => console.log("enter"),
                 onMouseLeave: () => console.log("leave"),
               },
@@ -221,39 +225,6 @@
         };
       };
 
-      const figureOptions2 = () => {
-        return {
-          svg: treeSVG2,
-          tree: tree2,
-          layout: layout,
-          width,
-          height, //TODO get width and height if not supplied
-          margins,
-          animated: true,
-          baubles: [
-            // ft.Axis({bars:{}}),
-            // ft.Branches({ attrs: { stroke: "black", strokeWidth: 2, cursor:"pointer"}, curvature:curvature,
-            //  interactions:{onClick:()=>console.log("clicked"), onMouseOver:()=>console.log("enter"), onMouseLeave:()=>console.log("leave")}}),
-            // ft.NodeLabels({filter:(n)=>tree2.isExternal(n), attrs: { fill: "black", fontSize: 12, fontWeight: 300 }, text: (n) => tree2.getTaxon(n),aligned:true  }),
-            // ft.CircleNodes({ attrs: { r: 7, fill: (n) => tree2.getChildCount(n) > "#005C68" } }),
-            ft.CircleNodes({
-              attrs: {
-                r: 5,
-                fill: (n) =>
-                  tree2.getChildCount(n) > 0
-                    ? tree2.isRoot(n)
-                      ? "#e31e58"
-                      : "#29c5ef"
-                    : "#22b680",
-                cursor: "pointer",
-              },
-              interactions: { onClick: (n) => console.log(n) },
-            }),
-            // ft.BranchLabels({ attrs: { fill: "black", fontSize: 8, fontWeight: 300 }, text: (n) => tree2.getLength(n) }),
-          ],
-          opts: {}, // todo remove the need for this empty options
-        };
-      };
       ft.figtree(figureOptions());
 
       // ft.figtree(figureOptions2());
@@ -261,7 +232,7 @@
       document.getElementById("sort_up_button").onclick = function () {
         // tree  = tree.orderNodesByDensity(false);
         tree = tree.orderNodesByDensity(false);
-        // ft.figtree(figureOptions())
+        ft.figtree(figureOptions());
       };
       document.getElementById("sort_down_button").onclick = function () {
         tree = tree.orderNodesByDensity(true);

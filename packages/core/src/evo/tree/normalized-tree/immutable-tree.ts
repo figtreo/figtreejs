@@ -21,7 +21,7 @@ import { immerable, produce } from "immer";
 import type { Taxon, TaxonSetInterface } from "../taxa/taxon";
 import { TaxonSet } from "../taxa/taxon";
 import { format } from "d3-format";
-import { extent } from "d3-array";
+import { extent, min } from "d3-array";
 
 import {
   MaybeType,
@@ -1200,6 +1200,24 @@ export function* preOrderIterator(
   yield* traverse(node);
 }
 
+// we want to traverse the tree in a consistent order
+// this requires ignoring the root when we hit it.
+function stableNodeNumber(tree: Tree, a: NodeRef, node: NodeRef) {
+  let num;
+  if (tree.isRoot(a)) {
+    num = min(
+      tree.getChildren(a).filter((child) => child.number != node.number),
+      (n) => n.number,
+    );
+  } else {
+    num = a.number;
+  }
+  return unNullify(
+    num,
+    "There was an error finding the path through the root. check the children",
+  );
+}
+
 type PseudoNode = NodeRef & {
   pseudoChildren: NodeRef[];
   pseudoLength: number | undefined;
@@ -1223,6 +1241,10 @@ export function* psuedoRootPostOrderIterator(
     const pseudoChildren = branches.filter((n) => n.number !== visited);
     const pseudoParent = branches.find((node) => node.number === visited);
     // branches.sort(sort);
+    pseudoChildren.sort(
+      (a, b) =>
+        stableNodeNumber(tree, a, node) - stableNodeNumber(tree, b, node),
+    );
     let pseudoLength = undefined;
     if (!tree.isRoot(node) && pseudoParent === tree.getParent(node)) {
       // the root will not have a parent
@@ -1264,9 +1286,13 @@ export function* psuedoRootPreOrderIterator(
     if (!tree.isRoot(node)) {
       branches.push(tree.getParent(node));
     }
+
     const pseudoChildren = branches.filter((n) => n.number !== visited);
     const pseudoParent = branches.find((node) => node.number === visited);
-    // branches.sort(sort);
+    pseudoChildren.sort(
+      (a, b) =>
+        stableNodeNumber(tree, a, node) - stableNodeNumber(tree, b, node),
+    );
     let pseudoLength = undefined;
     if (!tree.isRoot(node) && pseudoParent === tree.getParent(node)) {
       // the root will not have a parent
@@ -1310,9 +1336,13 @@ export function* pseudoTipIterator(
     if (!tree.isRoot(node)) {
       branches.push(tree.getParent(node));
     }
+    // branches.sort((a,b)=>a.number-b.number)
     const pseudoChildren = branches.filter((n) => n.number !== visited);
     const pseudoParent = branches.find((node) => node.number === visited);
-    // branches.sort(sort);
+    pseudoChildren.sort(
+      (a, b) =>
+        stableNodeNumber(tree, a, node) - stableNodeNumber(tree, b, node),
+    );
     let pseudoLength = undefined;
     if (!tree.isRoot(node) && pseudoParent === tree.getParent(node)) {
       // the root will not have a parent
