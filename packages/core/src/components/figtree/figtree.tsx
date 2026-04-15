@@ -1,7 +1,7 @@
 import type { FigtreeProps } from "./figtree-types";
 import { defaultInternalLayoutOptions, rectangularLayout } from "../../layouts";
 
-import { ImmutableTree } from "../../evo/tree";
+import { ImmutableTree, postOrderIterator } from "../../evo/tree";
 import { getScale } from "../../store/store";
 import { extent } from "d3-array";
 import { unNullify } from "../../utils/maybe";
@@ -82,12 +82,21 @@ function FigTree(props: FigtreeProps) {
 
   const layoutMap = layout(tree, opts);
   const { layoutClass } = layoutMap(tree.getRoot());
-  const domainX = extent(tree.getNodes().map((n) => layoutMap(n).x)).map((d) =>
-    unNullify(d, `Error finding x extent from layout`),
-  ) as [number, number];
-  const domainY = extent(tree.getNodes().map((n) => layoutMap(n).y)).map((d) =>
-    unNullify(d, `Error finding y extent from layout`),
-  ) as [number, number];
+
+  // use iterator to return only connected nodes
+  const domainX = extent(
+    [...postOrderIterator(tree)].map((n) => layoutMap(n).x),
+  ).map((d) => unNullify(d, `Error finding x extent from layout`)) as [
+    number,
+    number,
+  ];
+
+  const domainY = extent(
+    [...postOrderIterator(tree)].map((n) => layoutMap(n).y),
+  ).map((d) => unNullify(d, `Error finding y extent from layout`)) as [
+    number,
+    number,
+  ];
 
   const dimensions = {
     canvasWidth,
