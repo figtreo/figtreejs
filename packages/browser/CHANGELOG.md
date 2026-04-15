@@ -1,5 +1,18 @@
 # @figtreejs/browser
 
+## 0.1.0-beta.8
+
+### Minor Changes
+
+- a3d18da: Updates how we use getNodes.
+
+  Now that nodes can be removed from the trees hierarchy getNodes is not used internally in figure creation as it can return unattached nodes.
+
+### Patch Changes
+
+- Updated dependencies [a3d18da]
+  - @figtreejs/core@0.1.0-beta.8
+
 ## 0.1.0-beta.7
 
 ### Patch Changes

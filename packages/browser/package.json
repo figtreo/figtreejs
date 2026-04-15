@@ -1,6 +1,6 @@
 {
   "name": "@figtreejs/browser",
-  "version": "0.1.0-beta.7",
+  "version": "0.1.0-beta.8",
   "description": "A standalone library for phylogenetic visualization",
   "repository": {
     "type": "git",
@@ -39,7 +39,7 @@
     ]
   },
   "dependencies": {
-    "@figtreejs/core": "0.1.0-beta.7",
+    "@figtreejs/core": "0.1.0-beta.8",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },
