@@ -1,5 +1,13 @@
 # @figtreejs/browser
 
+## 0.1.0-beta.7
+
+### Patch Changes
+
+- 26c9e5d: Baubles use postorder traversal so only nodes in topology are rendered
+- Updated dependencies [26c9e5d]
+  - @figtreejs/core@0.1.0-beta.7
+
 ## 0.1.0-beta.6
 
 ### Patch Changes
