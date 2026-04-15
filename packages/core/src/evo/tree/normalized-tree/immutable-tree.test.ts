@@ -200,4 +200,24 @@ describe("Tree traversals", () => {
     const nodes = [...psuedoRootPreOrderIterator(rooted, tree.getNode("A"))];
     expect(nodes.map((n) => n.number)).toEqual([2, 0, 1, 3, 4]);
   });
+
+  it("remove internal Node", () => {
+    const tree = ImmutableTree.fromNewick("((A:1,B:1):1,C:2);");
+    const n = tree.getParent(tree.getNode("A"));
+    const newTree = tree.removeNode(n);
+    expect(newTree.toNewick()).toEqual("(A:2,B:2,C:2);");
+  });
+
+  it("remove external Node", () => {
+    const tree = ImmutableTree.fromNewick("((A:1,B:1):1,C:2);");
+    const n = tree.getNode("A");
+    const newTree = tree.removeNode(n);
+    expect(newTree.toNewick()).toEqual("((B:1):1,C:2);");
+  });
+  it("remove clade", () => {
+    const tree = ImmutableTree.fromNewick("((A:1,B:1):1,C:2);");
+    const n = tree.getParent(tree.getNode("A"));
+    const newTree = tree.removeClade(n);
+    expect(newTree.toNewick()).toEqual("(C:2);");
+  });
 });

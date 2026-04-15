@@ -894,13 +894,42 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
   unroot(_n: NodeRef): ImmutableTree {
     throw new Error("unroot not implemented in immutable tree");
   }
-  // eslint-disable-next-line  @typescript-eslint/no-unused-vars
-  deleteNode(_n: NodeRef): ImmutableTree {
-    throw new Error("deleteNode not implemented in immutable tree");
+
+  removeNode(n: NodeRef): this {
+    // if root - error
+    if (this.isRoot(n)) {
+      throw new Error("Can not delete the root node");
+    }
+    return produce(this, (draft) => {
+      const node = draft._data.nodes.allNodes[n.number];
+      const parent = draft.getParent(node) as Node; // safe because node is not the root
+      const length = draft.getLength(node);
+      // remove node from parent.
+      const nIndex = parent.children.indexOf(n.number);
+      parent.children.splice(nIndex, 0, ...node.children); // add children here in array to keep order
+      parent.children = parent.children.filter((d) => d != node.number);
+      // if internal node remove add children to former parent.
+      for (const childNumber of node.children) {
+        const child = draft._data.nodes.allNodes[childNumber];
+        child.parent = parent.number;
+        if (draft.hasLengths() && child.length) {
+          child.length += length;
+        }
+      }
+    });
   }
-  // eslint-disable-next-line  @typescript-eslint/no-unused-vars
-  deleteClade(_n: NodeRef): ImmutableTree {
-    throw new Error("deleteClade not implemented in immutable tree");
+
+  removeClade(n: NodeRef): this {
+    // if root - error
+    if (this.isRoot(n)) {
+      throw new Error("Can not delete the root node");
+    }
+    return produce(this, (draft) => {
+      const node = draft._data.nodes.allNodes[n.number];
+      const parent = draft.getParent(node) as Node; // safe because node is not the root
+      // remove node from parent.
+      parent.children = parent.children.filter((d) => d != node.number);
+    });
   }
 
   orderNodesByDensity(down: boolean, node?: NodeRef): this {

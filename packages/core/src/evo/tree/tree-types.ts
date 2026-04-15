@@ -309,11 +309,19 @@ export interface Tree {
    */
   addNodes(n?: number): { tree: Tree; nodes: NodeRef[] };
   /**
-   * Delete a node from a tree.
+   * Remove a node from the tree topology.
+   * The node still exists, and is known to the tree, it is just removed from the topology
    * It is not possible to delete the root node.
    * @param n - NodeRef
    */
-  deleteNode(n: NodeRef): Tree;
+  removeNode(n: NodeRef): Tree;
+  /**
+   * Remove a node and its descendants from the tree topology.
+   * The node still exists, and is known to the tree, it is just removed from the topology
+   * It is not possible to delete the root node.
+   * @param n - NodeRef
+   */
+  removeClade(n: NodeRef): Tree;
   /**
    * Remove a child node from a parent node's descendants
    * @param parent - The node whose child will be removed
