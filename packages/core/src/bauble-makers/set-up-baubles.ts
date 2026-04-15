@@ -13,7 +13,7 @@ import {
   NodeShapes,
 } from "../components/baubles/bauble";
 import type { ImmutableTree, NodeRef } from "../evo";
-import { tipIterator } from "../evo";
+import { postOrderIterator, tipIterator } from "../evo";
 import type {
   InternalBranchOptions,
   InternalCladeOptions,
@@ -38,7 +38,9 @@ export function setupBaubles(
   notNull(filterer, "Issue with filter option when making baubles");
 
   const nodes: NodeRef[] =
-    "nodes" in options ? options.nodes : tree.getNodes().filter(filterer);
+    "nodes" in options
+      ? options.nodes
+      : [...postOrderIterator(tree)].filter(filterer);
 
   const interactionMapper = mapInteractionsToProps(options.interactions ?? {});
 
