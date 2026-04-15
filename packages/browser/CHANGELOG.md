@@ -1,5 +1,13 @@
 # @figtreejs/browser
 
+## 0.1.0-beta.6
+
+### Patch Changes
+
+- 7267760: Implements methods to remove node and clade from tree traversals
+- Updated dependencies [7267760]
+  - @figtreejs/core@0.1.0-beta.6
+
 ## 0.1.0-beta.5
 
 ### Patch Changes
