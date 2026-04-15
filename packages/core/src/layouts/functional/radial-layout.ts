@@ -33,7 +33,6 @@ export function radialLayout(
     startAngle = (2.5 * Math.PI) / 2,
   } = options;
 
-  console.log("radial layout with spread", spread);
   const map = new Map<NodeRef, FunctionalVertex>();
 
   const fakeThroughRoot = tree.isRoot(root) && tree.getChildCount(root) == 2;
@@ -117,7 +116,6 @@ export function radialLayout(
 
       if (node.pseudoChildren.length > 1) {
         // span *= 1.0 + ((safeOpts.spread * Math.PI / 180) / 10.0);
-        console.log(fakeThroughRoot);
         if (!fakeThroughRoot || !tree.isRoot(tree.getNode(node.number))) {
           // this bumps the start angle so branches don't make a straight line.
           // we want to inheret the open space from out parent, but also we want
@@ -127,7 +125,6 @@ export function radialLayout(
           updatedAngleStart = branchAngle - span / 2.0;
         }
       }
-      console.log("here");
       let a2 = updatedAngleStart;
       for (let i = node.pseudoChildren.length - 1; i > -1; i--) {
         // i think we need to go in reverse order here

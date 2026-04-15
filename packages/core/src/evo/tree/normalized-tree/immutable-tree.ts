@@ -209,7 +209,6 @@ export class ImmutableTree implements Tree, TaxonSetInterface {
     if (tree.hasTaxon(node)) {
       const taxon = tree.getTaxonFromNode(node);
       newTree = newTree.addTaxon(taxon);
-      console.log("Current taxa:", newTree.taxonSet);
       newTree = newTree.setTaxon(newNode, taxon);
     }
 
