@@ -1,5 +1,13 @@
 # @figtreejs/browser
 
+## 0.1.0-beta.9
+
+### Patch Changes
+
+- a69b31e: Updates Markov jump parsing to include robust counting arrays of length 4
+- Updated dependencies [a69b31e]
+  - @figtreejs/core@0.1.0-beta.9
+
 ## 0.1.0-beta.8
 
 ### Minor Changes
