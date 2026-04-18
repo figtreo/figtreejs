@@ -158,16 +158,45 @@ export function processAnnotationValue(
             const timeNum = Number(timeStr);
             if (!Number.isFinite(timeNum)) {
               throw new Error(
-                `Expected a markov jump annotation but the first entry ${timeStr} could not be make a number`,
+                `Expected a markov jump annotation but the first entry ${timeStr} could not be made a number`,
               );
             }
             return { time: timeNum, from: source, to: dest };
           },
         );
         return { type: BaseAnnotationType.MARKOV_JUMPS, value: jumps };
+      } else if (
+        tuples
+          .map((v) => v.length === 4)
+          .reduce((acc, curr) => acc && curr, true)
+      ) {
+        // Robust counting
+        const jumps: MarkovJumpValue[] = tuples.map(
+          ([locationSrt, timeStr, source, dest]) => {
+            const timeNum = Number(timeStr);
+            if (!Number.isFinite(timeNum)) {
+              throw new Error(
+                `Expected a markov jump annotation but the second entry ${timeStr} could not be made a number`,
+              );
+            }
+            const putativeSite = Number(locationSrt);
+            if (!Number.isFinite(putativeSite)) {
+              throw new Error(
+                `Expected a markov jump annotation but the first entry ${timeStr} could not be made a number`,
+              );
+            }
+            return {
+              site: putativeSite,
+              time: timeNum,
+              from: source,
+              to: dest,
+            };
+          },
+        );
+        return { type: BaseAnnotationType.MARKOV_JUMPS, value: jumps };
       } else {
         throw Error(
-          `Markov jump with dimension ${tuples[0].length} detected. Expected 3. ${tuples.map((t) => t.length).join(",")}`,
+          `Markov jump with dimension ${tuples[0].length} detected. Expected 3 or 4. ${tuples.map((t) => t.length).join(",")}`,
         );
       }
     }

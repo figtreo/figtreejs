@@ -59,7 +59,11 @@ export type RawValueOf<T extends BaseAnnotationType> =
           : T extends BaseAnnotationType.DISCRETE_SET
             ? string[]
             : T extends BaseAnnotationType.MARKOV_JUMPS
-              ? [number, string, string][] | [string, string, string][]
+              ?
+                  | [number, string, string][]
+                  | [string, string, string][]
+                  | [number, string, string, string][]
+                  | [string, string, string, string][]
               : T extends BaseAnnotationType.DENSITIES
                 ? Record<string, number>
                 : never;
