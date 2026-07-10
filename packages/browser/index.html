@@ -128,10 +128,12 @@
       <button id="sort_up_button">Sort ascending</button>
       <button id="sort_down_button">Sort descending</button>
       <button id="rectangular_button">Draw rectangular</button>
+
       <button id="triangular_button">Draw triangular</button>
       <button id="curve_button">Draw curvey</button>
 
       <button id="rectangularLayout_button">Rectangular Layout</button>
+      <button id="explode_button">Explode</button>
       <button id="circularLayout_button">Polar Layout</button>
       <button id="radialLayout_button">Radial Layout</button>
       <input
@@ -148,22 +150,11 @@
     <script type="module">
       import { ImmutableTree, ft } from "./dist/index.mjs";
       const newickString =
-        "((((((virus1:0.1,virus2:0.12)0.95:0.08,(virus3:0.011,virus4:0.0087)1.0:0.15)0.65:0.03,virus5:0.21)1.0:0.2,(virus6:0.45,virus7:0.4)0.51:0.02)1.0:0.1,virus8:0.4)1.0:0.1,(virus9:0.04,virus10:0.03)1.0:0.6);";
-      const newickString2 =
-        "((((((virus3:0.011,virus4:0.0087)1.0:0.15)0.65:0.03,virus5:0.21)1.0:0.2,(virus6:0.45,virus7:0.4)0.51:0.02)1.0:0.1,virus8:0.4)1.0:0.1,(virus9:0.04,virus10:0.03)1.0:0.6);";
+        "((((((virus1[&group=0]:0.1,virus2[&group=0]:0.12)0.95[&group=0]:0.08,(virus3[&group=0]:0.011,virus4[&group=0]:0.0087)1.0[&group=0]:0.15)0.65[&group=0]:0.03,virus5[&group=1]:0.21)1.0[&group=0]:0.2,(virus6[&group=0]:0.45,virus7[&group=0]:0.4)0.51[&group=0]:0.02)1.0[&group=0]:0.1,virus8[&group=0]:0.4)1.0[&group=0]:0.1,(virus9[&group=0]:0.04,virus10[&group=0]:0.03)1.0[&group=0]:0.6)[&group=0];";
 
       let tree = ImmutableTree.fromNewick(newickString, {
-        labelName: "probability",
+        parseAnnotations: true,
       });
-      let tree2 = ImmutableTree.fromNewick(newickString2, {
-        labelName: "probability",
-      });
-
-      const virus1Node = tree.getNode("virus1");
-      const probability = tree.getAnnotation(
-        tree.getParent(virus1Node),
-        "probability",
-      ); // tree.annotateNode(tree.root,{root:true})
       const treeSVG = document.getElementById("phylogram_1a");
       const treeSVG2 = document.getElementById("phylogram_1b");
 
@@ -221,12 +212,13 @@
           opts: {
             spread,
             root: tree.getNode("virus10"),
+            explodeBy: "group",
           }, // todo remove the need for this empty options
         };
       };
 
       ft.figtree(figureOptions());
-
+      console.log(ft.explodedLayout);
       // ft.figtree(figureOptions2());
 
       document.getElementById("sort_up_button").onclick = function () {
@@ -253,6 +245,10 @@
         ft.figtree(figureOptions());
       };
 
+      document.getElementById("explode_button").onclick = function () {
+        layout = ft.explodedLayout;
+        ft.figtree(figureOptions());
+      };
       document.getElementById("rectangularLayout_button").onclick =
         function () {
           layout = ft.rectangularLayout;

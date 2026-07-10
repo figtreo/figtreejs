@@ -27,7 +27,7 @@ export function explodedLayout(
     explodeBy,
     interGroupGap = 5,
     intraGroupGap = 2,
-    orderBy = (a, b) => (a > b ? -1 : 1),
+    orderBy = (a, b) => (a < b ? -1 : 1),
     collapse = () => false,
   } = options;
 
@@ -35,7 +35,7 @@ export function explodedLayout(
   const postOrderNodes = [...postOrderIterator(tree)];
   const sortedNodes = [...tree.getNodes()].sort((a: NodeRef, b: NodeRef) => {
     const aGroup = tree.getAnnotation(a, explodeBy);
-    const bGroup = tree.getAnnotation(a, explodeBy);
+    const bGroup = tree.getAnnotation(b, explodeBy);
     if (aGroup === bGroup) {
       return postOrderNodes.indexOf(a) - postOrderNodes.indexOf(b);
     } else {
