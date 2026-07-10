@@ -256,6 +256,7 @@ export class NexusImporter {
           await this.nextToken(); //todo - read to'=' not just next token
           const parser = new NewickCharacterParser(this.taxonSet, {
             translateTaxonNames: this.translateTaxonMap,
+            labelName: this.options.labelName,
           });
           // read to first '(';
           token = await this.skipUntil(/\(/);
